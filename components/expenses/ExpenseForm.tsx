@@ -1,22 +1,28 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from 'react-native';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import { Pressable } from 'react-native';
+import { ChevronDown, ChevronUp, Plus, Trash2, AlignLeft } from 'lucide-react-native';
 
-// Define the validation schema
-const expenseSchema = z.object({
+// Define the validation schema for a single expense
+const singleExpenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
   date: z.string().min(1, 'Date is required'),
 });
 
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+// Schema for multiple expenses
+const expenseFormSchema = z.object({
+  mode: z.enum(['single', 'multiple']),
+  expenses: z.array(singleExpenseSchema),
+});
+
+type ExpenseFormData = z.infer<typeof expenseFormSchema>;
 
 interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => void;
@@ -25,23 +31,50 @@ interface ExpenseFormProps {
 
 export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
   const { colors, spacing, borderRadius } = useTheme();
+  const [showDescriptions, setShowDescriptions] = useState<Record<number, boolean>>({});
+
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    setValue,
     watch,
+    setValue,
   } = useForm<ExpenseFormData>({
-    resolver: zodResolver(expenseSchema),
+    resolver: zodResolver(expenseFormSchema),
     defaultValues: {
-      amount: initialData?.amount || '',
-      description: initialData?.description || '',
-      category: initialData?.category || '',
-      date: initialData?.date || new Date().toISOString().split('T')[0],
+      mode: 'single',
+      expenses: [
+        {
+          amount: '',
+          description: '',
+          category: '',
+          date: new Date().toISOString().split('T')[0],
+        },
+      ],
     },
   });
 
-  const selectedCategory = watch('category');
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'expenses',
+  });
+
+  const mode = watch('mode');
+
+  const toggleDescription = (index: number) => {
+    setShowDescriptions(prev => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const addExpense = () => {
+    append({
+      amount: '',
+      description: '',
+      category: '',
+      date: new Date().toISOString().split('T')[0],
+    });
+  };
 
   return (
     <ScrollView
@@ -49,149 +82,234 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
-        <Controller
-          control={control}
-          name="amount"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={styles.amountInputContainer}>
-              <Text style={[styles.currencySymbol, { color: colors.text }]}>$</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  styles.amountInput,
-                  {
-                    color: colors.text,
-                    borderColor: errors.amount ? colors.error : colors.border,
-                    backgroundColor: colors.card,
-                  },
-                ]}
-                placeholderTextColor={colors.textSecondary}
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
+      <View style={styles.modeSelector}>
+        <Pressable
+          style={[
+            styles.modeButton,
+            {
+              backgroundColor: mode === 'single' ? colors.primary : colors.secondary,
+              borderTopLeftRadius: borderRadius.md,
+              borderBottomLeftRadius: borderRadius.md,
+            },
+          ]}
+          onPress={() => setValue('mode', 'single')}
+        >
+          <Text
+            style={[
+              styles.modeButtonText,
+              { color: mode === 'single' ? '#FFFFFF' : colors.text },
+            ]}
+          >
+            Single
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[
+            styles.modeButton,
+            {
+              backgroundColor: mode === 'multiple' ? colors.primary : colors.secondary,
+              borderTopRightRadius: borderRadius.md,
+              borderBottomRightRadius: borderRadius.md,
+            },
+          ]}
+          onPress={() => setValue('mode', 'multiple')}
+        >
+          <Text
+            style={[
+              styles.modeButtonText,
+              { color: mode === 'multiple' ? '#FFFFFF' : colors.text },
+            ]}
+          >
+            Multiple
+          </Text>
+        </Pressable>
+      </View>
+
+      {fields.map((field, index) => (
+        <View key={field.id} style={styles.expenseContainer}>
+          {mode === 'multiple' && (
+            <View style={styles.expenseHeader}>
+              <Text style={[styles.expenseTitle, { color: colors.text }]}>
+                Expense {index + 1}
+              </Text>
+              {fields.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => remove(index)}
+                  leftIcon={<Trash2 size={16} color={colors.error} />}
+                >
+                  Remove
+                </Button>
+              )}
+            </View>
+          )}
+
+          <View style={styles.formGroup}>
+            <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
+            <Controller
+              control={control}
+              name={`expenses.${index}.amount`}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <View style={styles.amountInputContainer}>
+                  <Text style={[styles.currencySymbol, { color: colors.text }]}>$</Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      styles.amountInput,
+                      {
+                        color: colors.text,
+                        borderColor: error ? colors.error : colors.border,
+                        backgroundColor: colors.card,
+                      },
+                    ]}
+                    placeholderTextColor={colors.textSecondary}
+                    placeholder="0.00"
+                    keyboardType="decimal-pad"
+                    onChangeText={onChange}
+                    value={value}
+                  />
+                </View>
+              )}
+            />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+            <View style={styles.categoriesContainer}>
+              {mockCategories.map((category) => (
+                <Controller
+                  key={category.id}
+                  control={control}
+                  name={`expenses.${index}.category`}
+                  render={({ field: { onChange, value } }) => (
+                    <Pressable
+                      style={[
+                        styles.categoryChip,
+                        {
+                          backgroundColor:
+                            value === category.name
+                              ? colors.primary
+                              : colors.secondary,
+                          borderRadius: borderRadius.md,
+                        },
+                      ]}
+                      onPress={() => onChange(category.name)}
+                    >
+                      <Text
+                        style={[
+                          styles.categoryChipText,
+                          {
+                            color:
+                              value === category.name
+                                ? '#FFFFFF'
+                                : colors.text,
+                          },
+                        ]}
+                      >
+                        {category.name}
+                      </Text>
+                    </Pressable>
+                  )}
+                />
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={[styles.label, { color: colors.text }]}>Date</Text>
+            <Controller
+              control={control}
+              name={`expenses.${index}.date`}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      color: colors.text,
+                      borderColor: error ? colors.error : colors.border,
+                      backgroundColor: colors.card,
+                    },
+                  ]}
+                  placeholderTextColor={colors.textSecondary}
+                  placeholder="YYYY-MM-DD"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+          </View>
+
+          <Pressable
+            style={[
+              styles.descriptionToggle,
+              { backgroundColor: colors.secondary },
+            ]}
+            onPress={() => toggleDescription(index)}
+          >
+            <AlignLeft size={16} color={colors.text} />
+            <Text
+              style={[
+                styles.descriptionToggleText,
+                { color: colors.text },
+              ]}
+            >
+              {showDescriptions[index] ? 'Hide' : 'Add'} Description
+            </Text>
+            {showDescriptions[index] ? (
+              <ChevronUp size={16} color={colors.text} />
+            ) : (
+              <ChevronDown size={16} color={colors.text} />
+            )}
+          </Pressable>
+
+          {showDescriptions[index] && (
+            <View style={[styles.formGroup, { marginTop: spacing.sm }]}>
+              <Controller
+                control={control}
+                name={`expenses.${index}.description`}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    style={[
+                      styles.input,
+                      styles.descriptionInput,
+                      {
+                        color: colors.text,
+                        borderColor: colors.border,
+                        backgroundColor: colors.card,
+                      },
+                    ]}
+                    placeholderTextColor={colors.textSecondary}
+                    placeholder="What was this expense for?"
+                    onChangeText={onChange}
+                    value={value}
+                    multiline
+                  />
+                )}
               />
             </View>
           )}
-        />
-        {errors.amount && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.amount.message}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Description</Text>
-        <Controller
-          control={control}
-          name="description"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  color: colors.text,
-                  borderColor: errors.description ? colors.error : colors.border,
-                  backgroundColor: colors.card,
-                },
-              ]}
-              placeholderTextColor={colors.textSecondary}
-              placeholder="What was this expense for?"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        {errors.description && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.description.message}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-        <View style={styles.categoriesContainer}>
-          {mockCategories.map((category) => (
-            <Pressable
-              key={category.id}
-              style={[
-                styles.categoryChip,
-                {
-                  backgroundColor:
-                    selectedCategory === category.name
-                      ? colors.primary
-                      : colors.secondary,
-                  borderRadius: borderRadius.md,
-                },
-              ]}
-              onPress={() => setValue('category', category.name)}
-            >
-              <Text
-                style={[
-                  styles.categoryChipText,
-                  {
-                    color:
-                      selectedCategory === category.name
-                        ? 'white'
-                        : colors.text,
-                  },
-                ]}
-              >
-                {category.name}
-              </Text>
-            </Pressable>
-          ))}
         </View>
-        {errors.category && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.category.message}
-          </Text>
-        )}
-      </View>
+      ))}
 
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Date</Text>
-        <Controller
-          control={control}
-          name="date"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  color: colors.text,
-                  borderColor: errors.date ? colors.error : colors.border,
-                  backgroundColor: colors.card,
-                },
-              ]}
-              placeholderTextColor={colors.textSecondary}
-              placeholder="YYYY-MM-DD"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        {errors.date && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.date.message}
-          </Text>
-        )}
-      </View>
+      {mode === 'multiple' && (
+        <Button
+          variant="outline"
+          onPress={addExpense}
+          style={{ marginTop: spacing.md }}
+          leftIcon={<Plus size={20} color={colors.primary} />}
+        >
+          Add Another Expense
+        </Button>
+      )}
 
       <Button
         variant="primary"
         fullWidth
         onPress={handleSubmit(onSubmit)}
-        style={{ marginTop: spacing.lg }}
+        style={{ marginTop: spacing.xl }}
       >
-        Save Expense
+        Save {mode === 'multiple' ? 'Expenses' : 'Expense'}
       </Button>
     </ScrollView>
   );
@@ -203,6 +321,32 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 16,
+  },
+  modeSelector: {
+    flexDirection: 'row',
+    marginBottom: 24,
+  },
+  modeButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  modeButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  expenseContainer: {
+    marginBottom: 24,
+  },
+  expenseHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  expenseTitle: {
+    fontSize: 18,
+    fontWeight: '600',
   },
   formGroup: {
     marginBottom: 16,
@@ -219,6 +363,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
   },
+  descriptionInput: {
+    height: 80,
+    paddingTop: 12,
+    paddingBottom: 12,
+    textAlignVertical: 'top',
+  },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -233,10 +383,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 20,
   },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4,
-  },
   categoriesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -250,5 +396,17 @@ const styles = StyleSheet.create({
   categoryChipText: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  descriptionToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    borderRadius: 8,
+    gap: 8,
+  },
+  descriptionToggleText: {
+    fontSize: 14,
+    fontWeight: '500',
+    flex: 1,
   },
 });
