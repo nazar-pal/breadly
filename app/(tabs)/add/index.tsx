@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,11 +24,6 @@ export default function AddExpenseScreen() {
   
   const translateX = useSharedValue(0);
   const context = useSharedValue({ x: 0 });
-
-  const handleSubmitExpense = (expenseData: any) => {
-    console.log('Submitting expense:', expenseData);
-    router.back();
-  };
 
   const handleModeChange = (newMode: InputMode) => {
     if (newMode === 'photo') {
@@ -60,9 +55,9 @@ export default function AddExpenseScreen() {
 
       if (Math.abs(velocity) > threshold) {
         if (velocity > 0) {
-          runOnJS(updateMode)(-1);
+          runOnJS(updateMode)(-1); // Swipe right = previous mode
         } else {
-          runOnJS(updateMode)(1);
+          runOnJS(updateMode)(1); // Swipe left = next mode
         }
       }
       translateX.value = withSpring(0);
@@ -76,9 +71,15 @@ export default function AddExpenseScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.background, paddingTop: insets.top },
       ]}
     >
+      <View style={styles.header}>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>
+          Add Expense
+        </Text>
+      </View>
+
       <View style={styles.modeSelectorContainer}>
         <TouchableOpacity
           style={[
@@ -177,6 +178,14 @@ export default function AddExpenseScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  screenTitle: {
+    fontSize: 28,
+    fontWeight: '700',
   },
   modeSelectorContainer: {
     flexDirection: 'row',

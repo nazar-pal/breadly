@@ -7,30 +7,27 @@ export default function AddLayout() {
       <Stack
         screenOptions={{
           headerShown: true,
-          animation: 'none',
-          headerTitleStyle: {
-            fontSize: 28,
-            fontWeight: '700',
-          },
+          animation: 'none', // Disable default navigation animation
         }}>
         <Stack.Screen
           name="index"
           options={{
             title: 'Add Expense',
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="photo"
           options={{
             title: 'Receipt Photo',
-            headerBackTitle: 'Back',
+            presentation: 'modal',
           }}
         />
         <Stack.Screen
           name="voice"
           options={{
             title: 'Voice Entry',
-            headerBackTitle: 'Back',
+            presentation: 'modal',
           }}
         />
       </Stack>
