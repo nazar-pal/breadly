@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
