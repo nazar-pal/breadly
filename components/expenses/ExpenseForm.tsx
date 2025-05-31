@@ -97,14 +97,14 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.row}>
+      <View style={[styles.row, styles.topAlignedRow]}>
         <View style={[styles.formGroup, styles.amountContainer]}>
-          <View style={styles.inputWrapper}>
-            <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
-            <Controller
-              control={control}
-              name="amount"
-              render={({ field: { onChange, onBlur, value } }) => (
+          <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
+          <Controller
+            control={control}
+            name="amount"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
                 <TextInput
                   style={[
                     styles.input,
@@ -122,19 +122,19 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                   onChangeText={onChange}
                   value={value}
                 />
-              )}
-            />
-            {errors.amount && (
-              <Text style={[styles.errorText, { color: colors.error }]}>
-                {errors.amount.message}
-              </Text>
+                {errors.amount && (
+                  <Text style={[styles.errorText, { color: colors.error }]}>
+                    {errors.amount.message}
+                  </Text>
+                )}
+              </View>
             )}
-          </View>
+          />
         </View>
 
         <View style={[styles.formGroup, styles.categoryContainer]}>
-          <View style={styles.inputWrapper}>
-            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+          <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+          <View>
             <Pressable
               onPress={() => setShowCategoryPicker(true)}
               style={[
@@ -164,7 +164,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
         </View>
       </View>
 
-      <View style={styles.row}>
+      <View style={[styles.row, styles.bottomAlignedRow]}>
         <View style={[styles.formGroup, { flex: 1 }]}>
           <Text style={[styles.label, { color: colors.text }]}>Date</Text>
           <Pressable
@@ -431,13 +431,15 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     marginBottom: 16,
+  },
+  topAlignedRow: {
     alignItems: 'flex-start',
+  },
+  bottomAlignedRow: {
+    alignItems: 'flex-end',
   },
   formGroup: {
     flex: 1,
-  },
-  inputWrapper: {
-    minHeight: 90,
   },
   amountContainer: {
     marginRight: 12,
@@ -581,3 +583,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default ExpenseForm
