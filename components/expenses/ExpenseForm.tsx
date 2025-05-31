@@ -14,7 +14,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import { Plus, ChevronDown, Calendar, AlignLeft, ChevronRight } from 'lucide-react-native';
+import { Plus, ChevronDown, Calendar, AlignLeft, ChevronRight, Pencil, Trash2 } from 'lucide-react-native';
+import IconButton from '../ui/IconButton';
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
@@ -31,7 +32,7 @@ interface ExpenseFormProps {
 }
 
 export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
-  const { colors, spacing, borderRadius } = useTheme();
+  const { colors, spacing } = useTheme();
   const [showDescription, setShowDescription] = useState(false);
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -81,7 +82,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
-      month: 'short',
+      month: 'long',
       day: 'numeric',
       year: 'numeric',
     });
@@ -89,6 +90,18 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
 
   const toggleExpenseDetails = (index: number) => {
     setExpandedExpenseIndex(expandedExpenseIndex === index ? null : index);
+  };
+
+  const handleEditExpense = (index: number) => {
+    const expense = expenses[index];
+    reset(expense);
+    setExpenses(expenses.filter((_, i) => i !== index));
+    setExpandedExpenseIndex(null);
+  };
+
+  const handleDeleteExpense = (index: number) => {
+    setExpenses(expenses.filter((_, i) => i !== index));
+    setExpandedExpenseIndex(null);
   };
 
   return (
@@ -232,7 +245,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
               onPress={() => toggleExpenseDetails(index)}
               style={[
                 styles.expenseItem,
-                { 
+                {
                   borderBottomColor: colors.border,
                   backgroundColor: expandedExpenseIndex === index ? colors.card : 'transparent',
                   borderRadius: expandedExpenseIndex === index ? 8 : 0,
@@ -245,37 +258,50 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                   <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
                     ${parseFloat(expense.amount).toFixed(2)}
                   </Text>
-                  <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
-                    <Text style={[styles.categoryBadgeText, { color: colors.text }]}>
-                      {expense.category}
+                  <View style={styles.expenseItemMeta}>
+                    <Text style={[styles.dateText, { color: colors.textSecondary }]}>
+                      {formatDate(expense.date)}
                     </Text>
-                  </View>
-                </View>
-                <ChevronRight
-                  size={20}
-                  color={colors.textSecondary}
-                  style={[
-                    styles.expandIcon,
-                    expandedExpenseIndex === index && styles.expandIconRotated,
-                  ]}
-                />
-              </View>
-              
-              {expandedExpenseIndex === index && (
-                <View style={styles.expenseItemDetails}>
-                  <View style={styles.detailsContainer}>
-                    <View style={styles.dateContainer}>
-                      <Calendar size={14} color={colors.textSecondary} />
-                      <Text style={[styles.dateText, { color: colors.text }]}>
-                        {expense.date === today ? 'Today' : formatDate(expense.date)}
+                    <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
+                      <Text style={[styles.categoryBadgeText, { color: colors.text }]}>
+                        {expense.category}
                       </Text>
                     </View>
-                    {expense.description && (
-                      <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
-                        {expense.description}
-                      </Text>
-                    )}
                   </View>
+                </View>
+                {expandedExpenseIndex === index ? (
+                  <View style={styles.actionButtons}>
+                    <IconButton
+                      icon={<Pencil size={16} />}
+                      variant="ghost"
+                      size="sm"
+                      onPress={() => handleEditExpense(index)}
+                      style={{ marginRight: spacing.xs }}
+                    />
+                    <IconButton
+                      icon={<Trash2 size={16} />}
+                      variant="ghost"
+                      size="sm"
+                      onPress={() => handleDeleteExpense(index)}
+                    />
+                  </View>
+                ) : (
+                  <ChevronRight
+                    size={20}
+                    color={colors.textSecondary}
+                    style={[
+                      styles.expandIcon,
+                      expandedExpenseIndex === index && styles.expandIconRotated,
+                    ]}
+                  />
+                )}
+              </View>
+              
+              {expandedExpenseIndex === index && expense.description && (
+                <View style={styles.expenseItemDetails}>
+                  <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+                    {expense.description}
+                  </Text>
                 </View>
               )}
             </Pressable>
@@ -290,13 +316,11 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
           style={{ flex: 1, marginRight: spacing.sm }}
           leftIcon={<Plus size={20} color={colors.text} />}
         >
-          <Text>Add Another</Text>
+          Add Another
         </Button>
         <Button variant="primary" onPress={handleFinalSubmit} style={{ flex: 1 }}>
-          <Text>
-            Save {expenses.length > 0 ? 'All' : ''} Expense
-            {expenses.length !== 0 ? 's' : ''}
-          </Text>
+          Save {expenses.length > 0 ? 'All' : ''} Expense
+          {expenses.length !== 0 ? 's' : ''}
         </Button>
       </View>
 
@@ -467,7 +491,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     marginTop: 4,
-    color: 'red',
   },
   descriptionToggle: {
     width: 48,
@@ -544,14 +567,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   expenseItemMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
     flex: 1,
+    marginRight: 12,
   },
   expenseItemAmount: {
     fontSize: 16,
     fontWeight: '600',
-    marginRight: 12,
+    marginBottom: 4,
+  },
+  expenseItemMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   categoryBadge: {
     paddingHorizontal: 8,
@@ -562,6 +590,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
+  dateText: {
+    fontSize: 12,
+  },
   expandIcon: {
     transform: [{ rotate: '0deg' }],
   },
@@ -570,24 +601,14 @@ const styles = StyleSheet.create({
   },
   expenseItemDetails: {
     marginTop: 8,
-  },
-  detailsContainer: {
     paddingLeft: 4,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  dateText: {
-    fontSize: 13,
-    marginLeft: 6,
   },
   descriptionText: {
     fontSize: 13,
     lineHeight: 18,
-    marginTop: 4,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
-
-export default ExpenseForm
