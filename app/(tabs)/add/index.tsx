@@ -5,20 +5,25 @@ import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Pencil, Camera, Mic } from 'lucide-react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+  useSharedValue,
+  runOnJS,
+} from 'react-native-reanimated';
 
 type InputMode = 'manual' | 'photo' | 'voice';
+
+const MODES: InputMode[] = ['manual', 'photo', 'voice'];
 
 export default function AddExpenseScreen() {
   const { colors, spacing } = useTheme();
   const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<InputMode>('manual');
-
-  const handleSubmitExpense = (data: any) => {
-    // In a real app, this would save the expense to a database
-    // For this MVP, we'll just navigate back to the dashboard
-    alert('Expense saved successfully!');
-    router.push('/');
-  };
+  
+  const translateX = useSharedValue(0);
+  const context = useSharedValue({ x: 0 });
 
   const handleModeChange = (newMode: InputMode) => {
     if (newMode === 'photo') {
@@ -29,6 +34,38 @@ export default function AddExpenseScreen() {
       setMode(newMode);
     }
   };
+
+  const updateMode = (direction: number) => {
+    const currentIndex = MODES.indexOf(mode);
+    const newIndex = Math.max(0, Math.min(MODES.length - 1, currentIndex + direction));
+    const newMode = MODES[newIndex];
+    handleModeChange(newMode);
+  };
+
+  const gesture = Gesture.Pan()
+    .onStart(() => {
+      context.value = { x: translateX.value };
+    })
+    .onUpdate((event) => {
+      translateX.value = event.translationX + context.value.x;
+    })
+    .onEnd((event) => {
+      const velocity = event.velocityX;
+      const threshold = 100;
+
+      if (Math.abs(velocity) > threshold) {
+        if (velocity > 0) {
+          runOnJS(updateMode)(-1); // Swipe right = previous mode
+        } else {
+          runOnJS(updateMode)(1); // Swipe left = next mode
+        }
+      }
+      translateX.value = withSpring(0);
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   return (
     <View
@@ -129,7 +166,11 @@ export default function AddExpenseScreen() {
         </TouchableOpacity>
       </View>
 
-      <ExpenseForm onSubmit={handleSubmitExpense} />
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={[styles.formContainer, animatedStyle]}>
+          <ExpenseForm onSubmit={handleSubmitExpense} />
+        </Animated.View>
+      </GestureDetector>
     </View>
   );
 }
@@ -160,5 +201,8 @@ const styles = StyleSheet.create({
   },
   modeText: {
     fontSize: 16,
+  },
+  formContainer: {
+    flex: 1,
   },
 });
