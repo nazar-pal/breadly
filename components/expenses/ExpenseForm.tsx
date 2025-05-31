@@ -99,64 +99,68 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
     >
       <View style={styles.row}>
         <View style={[styles.formGroup, styles.amountContainer]}>
-          <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
-          <Controller
-            control={control}
-            name="amount"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[
-                  styles.input,
-                  styles.amountInput,
-                  {
-                    color: colors.text,
-                    borderColor: errors.amount ? colors.error : colors.border,
-                    backgroundColor: colors.card,
-                  },
-                ]}
-                placeholderTextColor={colors.textSecondary}
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
+          <View style={styles.inputWrapper}>
+            <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
+            <Controller
+              control={control}
+              name="amount"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[
+                    styles.input,
+                    styles.amountInput,
+                    {
+                      color: colors.text,
+                      borderColor: errors.amount ? colors.error : colors.border,
+                      backgroundColor: colors.card,
+                    },
+                  ]}
+                  placeholderTextColor={colors.textSecondary}
+                  placeholder="0.00"
+                  keyboardType="decimal-pad"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.amount && (
+              <Text style={[styles.errorText, { color: colors.error }]}>
+                {errors.amount.message}
+              </Text>
             )}
-          />
-          {errors.amount && (
-            <Text style={[styles.errorText, { color: colors.error }]}>
-              {errors.amount.message}
-            </Text>
-          )}
+          </View>
         </View>
 
         <View style={[styles.formGroup, styles.categoryContainer]}>
-          <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-          <Pressable
-            onPress={() => setShowCategoryPicker(true)}
-            style={[
-              styles.pickerButton,
-              { backgroundColor: colors.card, borderColor: colors.border },
-            ]}
-          >
-            <Text
+          <View style={styles.inputWrapper}>
+            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+            <Pressable
+              onPress={() => setShowCategoryPicker(true)}
               style={[
-                styles.pickerButtonText,
-                {
-                  color: selectedCategory ? colors.text : colors.textSecondary,
-                },
+                styles.pickerButton,
+                { backgroundColor: colors.card, borderColor: colors.border },
               ]}
-              numberOfLines={1}
             >
-              {selectedCategory || 'Select'}
-            </Text>
-            <ChevronDown size={20} color={colors.text} />
-          </Pressable>
-          {errors.category && (
-            <Text style={[styles.errorText, { color: colors.error }]}>
-              {errors.category.message}
-            </Text>
-          )}
+              <Text
+                style={[
+                  styles.pickerButtonText,
+                  {
+                    color: selectedCategory ? colors.text : colors.textSecondary,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {selectedCategory || 'Select'}
+              </Text>
+              <ChevronDown size={20} color={colors.text} />
+            </Pressable>
+            {errors.category && (
+              <Text style={[styles.errorText, { color: colors.error }]}>
+                {errors.category.message}
+              </Text>
+            )}
+          </View>
         </View>
       </View>
 
@@ -271,7 +275,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                     <View style={styles.detailRow}>
                       <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
                         Description:
-                    </Text>
+                      </Text>
                       <Text style={[styles.detailValue, { color: colors.text }]}>
                         {expense.description}
                       </Text>
@@ -427,10 +431,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     marginBottom: 16,
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   formGroup: {
     flex: 1,
+  },
+  inputWrapper: {
+    minHeight: 90,
   },
   amountContainer: {
     marginRight: 12,
@@ -463,6 +470,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     marginTop: 4,
+    color: 'red',
   },
   descriptionToggle: {
     width: 48,
@@ -573,5 +581,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-export default ExpenseForm;
