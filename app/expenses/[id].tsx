@@ -89,7 +89,7 @@ export default function ExpenseDetailsScreen() {
               Description
             </Text>
             <Text style={[styles.descriptionText, { color: colors.text }]}>
-              {expense.description}
+              {expense.description ?? ''}
             </Text>
           </View>
         </View>
