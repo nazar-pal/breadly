@@ -14,9 +14,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import { Plus, ChevronDown, Calendar, AlignLeft } from 'lucide-react-native';
+import { Plus, ChevronDown, Calendar, AlignLeft, ChevronRight } from 'lucide-react-native';
 
-// Define the validation schema
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
   description: z.string().optional(),
@@ -37,6 +36,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [expandedExpenseIndex, setExpandedExpenseIndex] = useState<number | null>(null);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -85,6 +85,10 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
       day: 'numeric',
       year: 'numeric',
     });
+  };
+
+  const toggleExpenseDetails = (index: number) => {
+    setExpandedExpenseIndex(expandedExpenseIndex === index ? null : index);
   };
 
   return (
@@ -219,22 +223,63 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
-            <View
+            <Pressable
               key={index}
+              onPress={() => toggleExpenseDetails(index)}
               style={[
                 styles.expenseItem,
-                { borderBottomColor: colors.border },
+                { 
+                  borderBottomColor: colors.border,
+                  backgroundColor: expandedExpenseIndex === index ? colors.card : 'transparent',
+                  borderRadius: expandedExpenseIndex === index ? 8 : 0,
+                  marginBottom: expandedExpenseIndex === index ? 8 : 0,
+                },
               ]}
             >
-              <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
-                {parseFloat(expense.amount).toFixed(2)}
-              </Text>
-              <Text
-                style={[styles.expenseItemCategory, { color: colors.textSecondary }]}
-              >
-                {expense.category}
-              </Text>
-            </View>
+              <View style={styles.expenseItemHeader}>
+                <View style={styles.expenseItemMain}>
+                  <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
+                    {parseFloat(expense.amount).toFixed(2)}
+                  </Text>
+                  <Text
+                    style={[styles.expenseItemCategory, { color: colors.textSecondary }]}
+                  >
+                    {expense.category}
+                  </Text>
+                </View>
+                <ChevronRight
+                  size={20}
+                  color={colors.textSecondary}
+                  style={[
+                    styles.expandIcon,
+                    expandedExpenseIndex === index && styles.expandIconRotated,
+                  ]}
+                />
+              </View>
+              
+              {expandedExpenseIndex === index && (
+                <View style={styles.expenseItemDetails}>
+                  <View style={styles.detailRow}>
+                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+                      Date:
+                    </Text>
+                    <Text style={[styles.detailValue, { color: colors.text }]}>
+                      {expense.date === today ? 'Today' : formatDate(expense.date)}
+                    </Text>
+                  </View>
+                  {expense.description && (
+                    <View style={styles.detailRow}>
+                      <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+                        Description:
+                    </Text>
+                      <Text style={[styles.detailValue, { color: colors.text }]}>
+                        {expense.description}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              )}
+            </Pressable>
           ))}
         </View>
       )}
@@ -246,15 +291,16 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
           style={{ flex: 1, marginRight: spacing.sm }}
           leftIcon={<Plus size={20} color={colors.text} />}
         >
-          Add Another
+          <Text>Add Another</Text>
         </Button>
         <Button variant="primary" onPress={handleFinalSubmit} style={{ flex: 1 }}>
-          Save {expenses.length > 0 ? 'All' : ''} Expense
-          {expenses.length !== 0 ? 's' : ''}
+          <Text>
+            Save {expenses.length > 0 ? 'All' : ''} Expense
+            {expenses.length !== 0 ? 's' : ''}
+          </Text>
         </Button>
       </View>
 
-      {/* Category Picker Modal */}
       <Modal
         visible={showCategoryPicker}
         transparent
@@ -309,7 +355,6 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
         </Pressable>
       </Modal>
 
-      {/* Date Picker Modal */}
       <Modal
         visible={showDatePicker}
         transparent
@@ -484,17 +529,49 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   expenseItem: {
+    padding: 12,
+    marginHorizontal: -8,
+  },
+  expenseItemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
+  },
+  expenseItemMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   expenseItemAmount: {
     fontSize: 16,
     fontWeight: '600',
+    marginRight: 12,
   },
   expenseItemCategory: {
     fontSize: 14,
   },
+  expandIcon: {
+    transform: [{ rotate: '0deg' }],
+  },
+  expandIconRotated: {
+    transform: [{ rotate: '90deg' }],
+  },
+  expenseItemDetails: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  detailRow: {
+    marginBottom: 8,
+  },
+  detailLabel: {
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  detailValue: {
+    fontSize: 14,
+  },
 });
+
+export default ExpenseForm;
