@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import { Plus, ChevronDown, Calendar } from 'lucide-react-native';
+import { Plus, ChevronDown, Calendar, AlignLeft } from 'lucide-react-native';
 
 // Define the validation schema
 const expenseSchema = z.object({
@@ -93,14 +93,13 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
-        <Controller
-          control={control}
-          name="amount"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={styles.amountInputContainer}>
-              <Text style={[styles.currencySymbol, { color: colors.text }]}>$</Text>
+      <View style={styles.row}>
+        <View style={[styles.formGroup, styles.amountContainer]}>
+          <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
+          <Controller
+            control={control}
+            name="amount"
+            render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 style={[
                   styles.input,
@@ -118,34 +117,72 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                 onChangeText={onChange}
                 value={value}
               />
-            </View>
+            )}
+          />
+          {errors.amount && (
+            <Text style={[styles.errorText, { color: colors.error }]}>
+              {errors.amount.message}
+            </Text>
           )}
-        />
-        {errors.amount && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.amount.message}
-          </Text>
-        )}
+        </View>
+
+        <View style={[styles.formGroup, styles.categoryContainer]}>
+          <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+          <Pressable
+            onPress={() => setShowCategoryPicker(true)}
+            style={[
+              styles.pickerButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text
+              style={[
+                styles.pickerButtonText,
+                {
+                  color: selectedCategory ? colors.text : colors.textSecondary,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {selectedCategory || 'Select'}
+            </Text>
+            <ChevronDown size={20} color={colors.text} />
+          </Pressable>
+          {errors.category && (
+            <Text style={[styles.errorText, { color: colors.error }]}>
+              {errors.category.message}
+            </Text>
+          )}
+        </View>
       </View>
 
-      <Pressable
-        onPress={() => setShowDescription(!showDescription)}
-        style={[
-          styles.descriptionToggle,
-          { backgroundColor: colors.secondary, borderRadius: borderRadius.md },
-        ]}
-      >
-        <Text style={[styles.descriptionToggleText, { color: colors.text }]}>
-          {showDescription ? 'Hide Description' : 'Add Description'}
-        </Text>
-        <ChevronDown
-          size={20}
-          color={colors.text}
-          style={{
-            transform: [{ rotate: showDescription ? '180deg' : '0deg' }],
-          }}
-        />
-      </Pressable>
+      <View style={styles.row}>
+        <View style={[styles.formGroup, { flex: 1 }]}>
+          <Text style={[styles.label, { color: colors.text }]}>Date</Text>
+          <Pressable
+            onPress={() => setShowDatePicker(true)}
+            style={[
+              styles.pickerButton,
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
+          >
+            <Text style={[styles.pickerButtonText, { color: colors.text }]}>
+              {selectedDate === today ? 'Today' : formatDate(selectedDate)}
+            </Text>
+            <Calendar size={20} color={colors.text} />
+          </Pressable>
+        </View>
+
+        <Pressable
+          onPress={() => setShowDescription(!showDescription)}
+          style={[
+            styles.descriptionToggle,
+            { backgroundColor: colors.secondary },
+          ]}
+        >
+          <AlignLeft size={20} color={colors.text} />
+        </Pressable>
+      </View>
 
       {showDescription && (
         <View style={styles.formGroup}>
@@ -176,50 +213,6 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
         </View>
       )}
 
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-        <Pressable
-          onPress={() => setShowCategoryPicker(true)}
-          style={[
-            styles.pickerButton,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <Text
-            style={[
-              styles.pickerButtonText,
-              {
-                color: selectedCategory ? colors.text : colors.textSecondary,
-              },
-            ]}
-          >
-            {selectedCategory || 'Select a category'}
-          </Text>
-          <ChevronDown size={20} color={colors.text} />
-        </Pressable>
-        {errors.category && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {errors.category.message}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Date</Text>
-        <Pressable
-          onPress={() => setShowDatePicker(true)}
-          style={[
-            styles.pickerButton,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <Text style={[styles.pickerButtonText, { color: colors.text }]}>
-            {selectedDate === today ? 'Today' : formatDate(selectedDate)}
-          </Text>
-          <Calendar size={20} color={colors.text} />
-        </Pressable>
-      </View>
-
       {expenses.length > 0 && (
         <View style={[styles.expensesList, { backgroundColor: colors.secondary }]}>
           <Text style={[styles.expensesListTitle, { color: colors.text }]}>
@@ -234,7 +227,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
               ]}
             >
               <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
-                ${parseFloat(expense.amount).toFixed(2)}
+                {parseFloat(expense.amount).toFixed(2)}
               </Text>
               <Text
                 style={[styles.expenseItemCategory, { color: colors.textSecondary }]}
@@ -386,8 +379,19 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
   },
-  formGroup: {
+  row: {
+    flexDirection: 'row',
     marginBottom: 16,
+    alignItems: 'flex-end',
+  },
+  formGroup: {
+    flex: 1,
+  },
+  amountContainer: {
+    marginRight: 12,
+  },
+  categoryContainer: {
+    flex: 1.2,
   },
   label: {
     fontSize: 14,
@@ -401,17 +405,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
   },
-  amountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  currencySymbol: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginRight: 8,
-  },
   amountInput: {
-    flex: 1,
     fontWeight: '600',
     fontSize: 20,
   },
@@ -426,15 +420,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   descriptionToggle: {
-    flexDirection: 'row',
+    width: 48,
+    height: 48,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-    marginBottom: 16,
-  },
-  descriptionToggleText: {
-    fontSize: 14,
-    fontWeight: '500',
+    justifyContent: 'center',
+    marginLeft: 12,
   },
   pickerButton: {
     flexDirection: 'row',
@@ -447,6 +438,7 @@ const styles = StyleSheet.create({
   },
   pickerButtonText: {
     fontSize: 16,
+    flex: 1,
   },
   modalOverlay: {
     flex: 1,
