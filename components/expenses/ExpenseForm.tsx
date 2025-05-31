@@ -243,13 +243,13 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
               <View style={styles.expenseItemHeader}>
                 <View style={styles.expenseItemMain}>
                   <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
-                    {parseFloat(expense.amount).toFixed(2)}
+                    ${parseFloat(expense.amount).toFixed(2)}
                   </Text>
-                  <Text
-                    style={[styles.expenseItemCategory, { color: colors.textSecondary }]}
-                  >
-                    {expense.category}
-                  </Text>
+                  <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
+                    <Text style={[styles.categoryBadgeText, { color: colors.text }]}>
+                      {expense.category}
+                    </Text>
+                  </View>
                 </View>
                 <ChevronRight
                   size={20}
@@ -263,24 +263,19 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
               
               {expandedExpenseIndex === index && (
                 <View style={styles.expenseItemDetails}>
-                  <View style={styles.detailRow}>
-                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
-                      Date:
-                    </Text>
-                    <Text style={[styles.detailValue, { color: colors.text }]}>
-                      {expense.date === today ? 'Today' : formatDate(expense.date)}
-                    </Text>
-                  </View>
-                  {expense.description && (
-                    <View style={styles.detailRow}>
-                      <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
-                        Description:
-                      </Text>
-                      <Text style={[styles.detailValue, { color: colors.text }]}>
-                        {expense.description}
+                  <View style={styles.detailsContainer}>
+                    <View style={styles.dateContainer}>
+                      <Calendar size={14} color={colors.textSecondary} />
+                      <Text style={[styles.dateText, { color: colors.text }]}>
+                        {expense.date === today ? 'Today' : formatDate(expense.date)}
                       </Text>
                     </View>
-                  )}
+                    {expense.description && (
+                      <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+                        {expense.description}
+                      </Text>
+                    )}
+                  </View>
                 </View>
               )}
             </Pressable>
@@ -541,6 +536,7 @@ const styles = StyleSheet.create({
   expenseItem: {
     padding: 12,
     marginHorizontal: -8,
+    borderBottomWidth: 1,
   },
   expenseItemHeader: {
     flexDirection: 'row',
@@ -557,8 +553,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginRight: 12,
   },
-  expenseItemCategory: {
-    fontSize: 14,
+  categoryBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  categoryBadgeText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
   expandIcon: {
     transform: [{ rotate: '0deg' }],
@@ -567,20 +569,24 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '90deg' }],
   },
   expenseItemDetails: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    marginTop: 8,
   },
-  detailRow: {
-    marginBottom: 8,
+  detailsContainer: {
+    paddingLeft: 4,
   },
-  detailLabel: {
-    fontSize: 12,
-    marginBottom: 2,
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
-  detailValue: {
-    fontSize: 14,
+  dateText: {
+    fontSize: 13,
+    marginLeft: 6,
+  },
+  descriptionText: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 4,
   },
 });
 
