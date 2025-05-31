@@ -25,6 +25,13 @@ export default function AddExpenseScreen() {
   const translateX = useSharedValue(0);
   const context = useSharedValue({ x: 0 });
 
+  const handleSubmitExpense = (expenseData: any) => {
+    // Handle the expense submission
+    console.log('Submitting expense:', expenseData);
+    // Navigate back to the main screen after submission
+    router.back();
+  };
+
   const handleModeChange = (newMode: InputMode) => {
     if (newMode === 'photo') {
       router.push('/add/photo');
