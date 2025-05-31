@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
-import Card from './Card';
 import { useTheme } from '@/context/ThemeContext';
-import { Calendar, Mic, Receipt, ArrowRight } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native';
+import React from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import Card from './Card';
 
 interface ExpenseCardProps {
   expense: {
@@ -33,31 +33,45 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
             <Text style={[styles.amount, { color: colors.text }]}>
               ${expense.amount.toFixed(2)}
             </Text>
-            <Text 
+            <Text
               style={[styles.description, { color: colors.textSecondary }]}
               numberOfLines={2}
             >
               {expense.description}
             </Text>
             <View style={styles.metaContainer}>
-              <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
+              <View
+                style={[
+                  styles.categoryBadge,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
                 <Text style={[styles.categoryText, { color: colors.text }]}>
                   {expense.category}
                 </Text>
               </View>
               <View style={[styles.dateContainer, { marginLeft: spacing.sm }]}>
                 <Calendar size={14} color={colors.textSecondary} />
-                <Text style={[styles.dateText, { color: colors.textSecondary, marginLeft: 4 }]}>
+                <Text
+                  style={[
+                    styles.dateText,
+                    { color: colors.textSecondary, marginLeft: 4 },
+                  ]}
+                >
                   {expense.date}
                 </Text>
               </View>
             </View>
           </View>
-          
+
           <View style={styles.rightContent}>
             <View style={styles.iconContainer}>
               {expense.hasPhoto && (
-                <Receipt size={16} color={colors.textSecondary} style={{ marginRight: 8 }} />
+                <Receipt
+                  size={16}
+                  color={colors.textSecondary}
+                  style={{ marginRight: 8 }}
+                />
               )}
               {expense.hasVoice && (
                 <Mic size={16} color={colors.textSecondary} />
@@ -105,7 +119,6 @@ const styles = StyleSheet.create({
   rightContent: {
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: '100%',
   },
   amount: {
     fontSize: 18,
