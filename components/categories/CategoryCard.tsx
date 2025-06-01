@@ -14,17 +14,19 @@ interface CategoryCardProps {
   };
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  type?: 'expense' | 'income';
 }
 
 export default function CategoryCard({
   category,
   onEdit,
   onDelete,
+  type = 'expense',
 }: CategoryCardProps) {
   const { colors, spacing } = useTheme();
 
   const percentage = (category.spent / category.budget) * 100;
-  const isOverBudget = percentage > 100;
+  const isOverBudget = type === 'expense' ? percentage > 100 : percentage < 100;
 
   return (
     <Card style={styles.container}>
@@ -55,7 +57,7 @@ export default function CategoryCard({
             ${category.spent.toFixed(2)}
           </Text>
           <Text style={[styles.budgetText, { color: colors.textSecondary }]}>
-            of ${category.budget.toFixed(2)}
+            {type === 'expense' ? 'of' : 'from'} ${category.budget.toFixed(2)}
           </Text>
         </View>
         <Text
