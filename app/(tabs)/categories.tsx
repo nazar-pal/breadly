@@ -12,9 +12,34 @@ import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus } from 'lucide-react-native';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  LocationEdit as Edit2, 
+  Plus,
+  Coffee,
+  UtensilsCrossed,
+  Film,
+  Bus,
+  Heart,
+  Home,
+  Users,
+  Shirt
+} from 'lucide-react-native';
 import { router } from 'expo-router';
 import IconButton from '@/components/ui/IconButton';
+
+// Map category names to icons
+const categoryIcons: { [key: string]: React.ComponentType<any> } = {
+  'Coffee': Coffee,
+  'Dining': UtensilsCrossed,
+  'Entertainment': Film,
+  'Transportation': Bus,
+  'Health': Heart,
+  'Home': Home,
+  'Family': Users,
+  'Shopping': Shirt,
+};
 
 export default function CategoriesScreen() {
   const { colors } = useTheme();
@@ -22,9 +47,9 @@ export default function CategoriesScreen() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const totalBalance = -1955; // This would come from your data
-  const totalExpenses = 110; // This would come from your data
-  const totalIncome = 0; // This would come from your data
+  const totalBalance = -1955;
+  const totalExpenses = 110;
+  const totalIncome = 0;
 
   const handleCategoryPress = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -32,13 +57,17 @@ export default function CategoriesScreen() {
   };
 
   const handleExpenseSubmit = (data: any) => {
-    // Handle the expense submission
     setModalVisible(false);
     setSelectedCategory(null);
   };
 
   const navigateToManageCategories = () => {
     router.push('/categories/manage');
+  };
+
+  const getCategoryIcon = (categoryName: string) => {
+    const IconComponent = categoryIcons[categoryName] || Home;
+    return <IconComponent size={20} color={colors.text} />;
   };
 
   return (
@@ -127,20 +156,21 @@ export default function CategoriesScreen() {
                 { backgroundColor: colors.secondary }
               ]}
             >
-              {/* You would replace this with the actual icon component */}
-              <View style={[styles.iconPlaceholder, { backgroundColor: colors.primary }]} />
+              {getCategoryIcon(category.name)}
             </View>
-            <Text style={[styles.categoryName, { color: colors.text }]}>
-              {category.name}
-            </Text>
-            <Text 
-              style={[
-                styles.categoryAmount,
-                { color: category.spent > 0 ? colors.text : colors.textSecondary }
-              ]}
-            >
-              ${category.spent.toFixed(2)}
-            </Text>
+            <View style={styles.categoryContent}>
+              <Text style={[styles.categoryName, { color: colors.text }]}>
+                {category.name}
+              </Text>
+              <Text 
+                style={[
+                  styles.categoryAmount,
+                  { color: category.spent > 0 ? colors.text : colors.textSecondary }
+                ]}
+              >
+                ${category.spent.toFixed(2)}
+              </Text>
+            </View>
           </Pressable>
         ))}
         
@@ -148,7 +178,6 @@ export default function CategoriesScreen() {
         <Pressable
           style={[
             styles.categoryCard,
-            styles.addButton,
             { 
               backgroundColor: colors.secondary,
               borderStyle: 'dashed',
@@ -158,10 +187,12 @@ export default function CategoriesScreen() {
           ]}
           onPress={navigateToManageCategories}
         >
-          <Plus size={24} color={colors.text} />
-          <Text style={[styles.addButtonText, { color: colors.text }]}>
-            Add
-          </Text>
+          <View style={styles.addButtonContent}>
+            <Plus size={20} color={colors.text} />
+            <Text style={[styles.addButtonText, { color: colors.text }]}>
+              Add
+            </Text>
+          </View>
         </Pressable>
       </ScrollView>
 
@@ -254,9 +285,10 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '47%',
-    aspectRatio: 1,
-    padding: 16,
+    padding: 12,
     borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -276,33 +308,33 @@ const styles = StyleSheet.create({
     }),
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
   },
-  iconPlaceholder: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
+  categoryContent: {
+    marginLeft: 12,
+    flex: 1,
   },
   categoryName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   categoryAmount: {
-    fontSize: 14,
+    fontSize: 13,
   },
-  addButton: {
+  addButtonContent: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
   },
   addButtonText: {
-    marginTop: 8,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
   },
   modalContainer: {
