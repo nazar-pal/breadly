@@ -32,13 +32,16 @@ export default function AddExpenseTabBar({
               key={route.key}
               accessibilityRole="button"
               accessibilityState={focused ? { selected: true } : {}}
-              style={styles.tab}
+              style={[
+                styles.tab,
+                focused && { borderBottomWidth: 2, borderBottomColor: colors.primary }
+              ]}
               onPress={onPress}
             >
               <Icon
                 size={20}
                 color={focused ? colors.primary : colors.textSecondary}
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 6 }}
               />
               <Text
                 style={[
@@ -64,12 +67,16 @@ export default function AddExpenseTabBar({
 const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: 16,
-    paddingTop: 32, // Increased from 16 to 32 for more top margin
+    paddingTop: 48, // Increased for better spacing
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32, // Increased for more prominence
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 16, // Increased spacing between title and tabs
+    letterSpacing: -0.5, // Tighter letter spacing for better typography
   },
   tabsRow: {
     flexDirection: 'row',
@@ -77,6 +84,7 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
   },
