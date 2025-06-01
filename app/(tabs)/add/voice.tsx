@@ -16,7 +16,7 @@ export default function VoiceScreen() {
             Tap the microphone and describe your expense
           </Text>
           <Text style={[styles.example, { color: colors.textSecondary }]}>
-            Example: “I spent $42.50 on groceries at Whole Foods yesterday”
+            Example: "I spent $42.50 on groceries at Whole Foods yesterday"
           </Text>
         </Card>
 
@@ -33,13 +33,25 @@ export default function VoiceScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, padding: 16 },
+  container: { 
+    flex: 1 
+  },
+  content: { 
+    flex: 1, 
+    padding: 16 
+  },
   placeholder: {
     height: 400,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  voiceHint: { fontSize: 18, fontWeight: '600', textAlign: 'center' },
-  example: { marginTop: 12, textAlign: 'center' },
+  voiceHint: { 
+    fontSize: 18, 
+    fontWeight: '600', 
+    textAlign: 'center' 
+  },
+  example: { 
+    marginTop: 12, 
+    textAlign: 'center' 
+  },
 });

@@ -54,8 +54,13 @@ export default function PhotoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, padding: 16 },
+  container: { 
+    flex: 1 
+  },
+  content: { 
+    flex: 1, 
+    padding: 16 
+  },
   cameraPlaceholder: {
     height: 400,
     alignItems: 'center',

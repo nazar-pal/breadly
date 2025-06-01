@@ -66,17 +66,17 @@ export default function AddExpenseTabBar({
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 48, // Increased for better spacing
+    paddingTop: 48,
     paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   title: {
-    fontSize: 32, // Increased for more prominence
+    fontSize: 32,
     fontWeight: '700',
-    marginBottom: 16, // Increased spacing between title and tabs
-    letterSpacing: -0.5, // Tighter letter spacing for better typography
+    marginBottom: 16,
+    letterSpacing: -0.5,
+    paddingHorizontal: 16,
   },
   tabsRow: {
     flexDirection: 'row',
