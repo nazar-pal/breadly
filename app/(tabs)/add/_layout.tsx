@@ -4,7 +4,7 @@ import AddExpenseHeader from '@/components/navigation/AddExpenseHeader';
 
 export default function AddLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack>
       <Stack.Screen
         name="index"
         options={{

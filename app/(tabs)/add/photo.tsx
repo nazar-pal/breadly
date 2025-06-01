@@ -18,30 +18,32 @@ export default function PhotoExpenseScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Card style={styles.cameraPlaceholder}>
-        <View style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}>
-          <Camera size={48} color={colors.text} />
-        </View>
-        <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
-          Take a photo of your receipt for automatic expense entry
-        </Text>
-      </Card>
+      <View style={styles.content}>
+        <Card style={styles.cameraPlaceholder}>
+          <View style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}>
+            <Camera size={48} color={colors.text} />
+          </View>
+          <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+            Take a photo of your receipt for automatic expense entry
+          </Text>
+        </Card>
 
-      <View style={styles.actionButtons}>
-        <Button
-          variant="primary"
-          onPress={handleTakePhoto}
-          leftIcon={<Camera size={20} color="#FFFFFF" />}
-          style={{ flex: 1, marginRight: 8 }}>
-          Take Photo
-        </Button>
-        <Button
-          variant="outline"
-          onPress={handleUploadPhoto}
-          leftIcon={<Upload size={20} color={colors.text} />}
-          style={{ flex: 1 }}>
-          Upload
-        </Button>
+        <View style={styles.actionButtons}>
+          <Button
+            variant="primary"
+            onPress={handleTakePhoto}
+            leftIcon={<Camera size={20} color="#FFFFFF" />}
+            style={{ flex: 1, marginRight: 8 }}>
+            Take Photo
+          </Button>
+          <Button
+            variant="outline"
+            onPress={handleUploadPhoto}
+            leftIcon={<Upload size={20} color={colors.text} />}
+            style={{ flex: 1 }}>
+            Upload
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -49,6 +51,9 @@ export default function PhotoExpenseScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
     padding: 16,
   },

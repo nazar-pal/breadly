@@ -14,40 +14,42 @@ export default function VoiceExpenseScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Card style={styles.voiceCard}>
-        <Text style={[styles.instructionText, { color: colors.text }]}>
-          {isRecording
-            ? 'Recording... Speak clearly'
-            : 'Tap the microphone and describe your expense'}
-        </Text>
+      <View style={styles.content}>
+        <Card style={styles.voiceCard}>
+          <Text style={[styles.instructionText, { color: colors.text }]}>
+            {isRecording
+              ? 'Recording... Speak clearly'
+              : 'Tap the microphone and describe your expense'}
+          </Text>
 
-        <Text style={[styles.exampleText, { color: colors.textSecondary }]}>
-          Example: "I spent $42.50 on groceries at Whole Foods yesterday"
-        </Text>
+          <Text style={[styles.exampleText, { color: colors.textSecondary }]}>
+            Example: "I spent $42.50 on groceries at Whole Foods yesterday"
+          </Text>
 
-        <View style={styles.waveformContainer}>
-          {/* Placeholder for waveform visualization */}
-          <View style={[styles.waveform, { backgroundColor: colors.secondary }]} />
-        </View>
-
-        <Text style={[styles.timer, { color: colors.textSecondary }]}>
-          {isRecording ? '00:05' : '00:00'}
-        </Text>
-      </Card>
-
-      <View style={styles.micButtonContainer}>
-        <Animated.View>
-          <View
-            style={[
-              styles.micButton,
-              {
-                backgroundColor: isRecording ? colors.error : colors.primary,
-              },
-            ]}
-            onTouchEnd={handleToggleRecording}>
-            <Mic size={32} color="#FFFFFF" />
+          <View style={styles.waveformContainer}>
+            {/* Placeholder for waveform visualization */}
+            <View style={[styles.waveform, { backgroundColor: colors.secondary }]} />
           </View>
-        </Animated.View>
+
+          <Text style={[styles.timer, { color: colors.textSecondary }]}>
+            {isRecording ? '00:05' : '00:00'}
+          </Text>
+        </Card>
+
+        <View style={styles.micButtonContainer}>
+          <Animated.View>
+            <View
+              style={[
+                styles.micButton,
+                {
+                  backgroundColor: isRecording ? colors.error : colors.primary,
+                },
+              ]}
+              onTouchEnd={handleToggleRecording}>
+              <Mic size={32} color="#FFFFFF" />
+            </View>
+          </Animated.View>
+        </View>
       </View>
     </View>
   );
@@ -55,6 +57,9 @@ export default function VoiceExpenseScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
     padding: 16,
   },
