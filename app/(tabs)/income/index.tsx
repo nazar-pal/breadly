@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,29 +7,15 @@ import { ChevronRight, Plus } from 'lucide-react-native';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { router } from 'expo-router';
-import IncomeEntryModal from '@/components/income/IncomeEntryModal';
 
 export default function IncomeScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [selectedSource, setSelectedSource] = useState<string | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const totalIncome = mockIncomeHistory.reduce((sum, item) => sum + item.amount, 0);
 
   const navigateToManage = () => {
     router.push('/income/manage');
-  };
-
-  const handleSourcePress = (sourceName: string) => {
-    setSelectedSource(sourceName);
-    setModalVisible(true);
-  };
-
-  const handleIncomeSubmit = (data: { amount: number; description?: string }) => {
-    console.log('New income:', { source: selectedSource, ...data });
-    setModalVisible(false);
-    setSelectedSource(null);
   };
 
   return (
@@ -46,7 +32,7 @@ export default function IncomeScreen() {
           onPress={navigateToManage}
           leftIcon={<Plus size={20} color="#FFFFFF" />}
         >
-          Manage Sources
+          Add Income
         </Button>
       </View>
 
@@ -61,30 +47,29 @@ export default function IncomeScreen() {
         </Card>
 
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Add New Income
+          Income Sources
         </Text>
-        <View style={styles.sourcesGrid}>
-          {mockIncomeSources.map((source) => (
-            <Pressable
-              key={source.id}
-              style={[
-                styles.sourceCard,
-                { backgroundColor: colors.card }
-              ]}
-              onPress={() => handleSourcePress(source.name)}
-            >
-              <Text style={[styles.sourceName, { color: colors.text }]}>
-                {source.name}
+        <Card>
+          <Pressable
+            style={styles.manageSourcesButton}
+            onPress={navigateToManage}
+          >
+            <View>
+              <Text style={[styles.sourcesCount, { color: colors.text }]}>
+                {mockIncomeSources.length} Sources
               </Text>
-              <Plus size={20} color={colors.text} />
-            </Pressable>
-          ))}
-        </View>
+              <Text style={[styles.sourcesHint, { color: colors.textSecondary }]}>
+                Tap to manage your income sources
+              </Text>
+            </View>
+            <ChevronRight size={20} color={colors.textSecondary} />
+          </Pressable>
+        </Card>
 
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           Recent Income
         </Text>
-        {mockIncomeHistory.map((income) => (
+        {mockIncomeHistory.map((income, index) => (
           <Card key={income.id} style={styles.incomeCard}>
             <View style={styles.incomeDetails}>
               <View>
@@ -113,18 +98,6 @@ export default function IncomeScreen() {
           </Card>
         ))}
       </ScrollView>
-
-      {selectedSource && (
-        <IncomeEntryModal
-          visible={modalVisible}
-          onClose={() => {
-            setModalVisible(false);
-            setSelectedSource(null);
-          }}
-          onSubmit={handleIncomeSubmit}
-          sourceName={selectedSource}
-        />
-      )}
     </View>
   );
 }
@@ -164,37 +137,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 12,
   },
-  sourcesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  sourceCard: {
-    width: '47%',
-    padding: 16,
-    borderRadius: 12,
+  manageSourcesButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      },
-    }),
   },
-  sourceName: {
+  sourcesCount: {
     fontSize: 16,
     fontWeight: '600',
+    marginBottom: 4,
+  },
+  sourcesHint: {
+    fontSize: 14,
   },
   incomeCard: {
     marginBottom: 12,
