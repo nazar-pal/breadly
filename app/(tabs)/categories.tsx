@@ -156,7 +156,10 @@ export default function CategoriesScreen() {
               {getCategoryIcon(category.name)}
             </View>
             <View style={styles.categoryContent}>
-              <Text style={[styles.categoryName, { color: colors.text }]}>
+              <Text 
+                numberOfLines={1} 
+                style={[styles.categoryName, { color: colors.text }]}
+              >
                 {category.name}
               </Text>
               <Text 
