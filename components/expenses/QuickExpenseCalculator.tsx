@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import Button from '../ui/Button';
@@ -22,7 +23,17 @@ import {
   Divide,
   Asterisk,
   Check,
+  DollarSign,
 } from 'lucide-react-native';
+
+// Available currencies
+const currencies = [
+  { symbol: '$', code: 'USD', name: 'US Dollar' },
+  { symbol: '€', code: 'EUR', name: 'Euro' },
+  { symbol: '£', code: 'GBP', name: 'British Pound' },
+  { symbol: '¥', code: 'JPY', name: 'Japanese Yen' },
+  { symbol: '₹', code: 'INR', name: 'Indian Rupee' },
+];
 
 interface QuickExpenseCalculatorProps {
   category: string;
@@ -40,8 +51,10 @@ export default function QuickExpenseCalculator({
   const [expression, setExpression] = useState<string[]>([]);
   const [isNewNumber, setIsNewNumber] = useState(true);
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [comment, setComment] = useState('');
   const [history, setHistory] = useState<string[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
 
   const handleNumberPress = (num: string) => {
     if (isNewNumber) {
@@ -232,7 +245,7 @@ export default function QuickExpenseCalculator({
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          ${displayValue}
+          {displayValue}
         </Text>
         {comment && (
           <Text style={[styles.commentPreview, { color: colors.textSecondary }]}>
@@ -244,23 +257,25 @@ export default function QuickExpenseCalculator({
       <View style={styles.keypad}>
         <View style={styles.row}>
           <CalcButton 
+            label="C"
+            onPress={handleClear}
+            variant="special"
+          />
+          <CalcButton 
             label={<Parentheses size={20} color={colors.text} />}
             onPress={() => handleParentheses('(')}
-            variant="default"
           />
           <CalcButton 
             label={<Text style={[styles.calcButtonText, { color: colors.text }]}>)</Text>}
             onPress={() => handleParentheses(')')}
-            variant="default"
+          />
+          <CalcButton 
+            label={<DollarSign size={20} color={colors.text} />}
+            onPress={() => setShowCurrencyModal(true)}
           />
           <CalcButton 
             label={<Divide size={20} color="#FFFFFF" />}
             onPress={() => handleOperationPress('/')}
-            variant="operation"
-          />
-          <CalcButton 
-            label={<Asterisk size={20} color="#FFFFFF" />}
-            onPress={() => handleOperationPress('*')}
             variant="operation"
           />
         </View>
@@ -268,6 +283,11 @@ export default function QuickExpenseCalculator({
           <CalcButton label="7" onPress={() => handleNumberPress('7')} />
           <CalcButton label="8" onPress={() => handleNumberPress('8')} />
           <CalcButton label="9" onPress={() => handleNumberPress('9')} />
+          <CalcButton 
+            label={<Asterisk size={20} color="#FFFFFF" />}
+            onPress={() => handleOperationPress('*')}
+            variant="operation"
+          />
           <CalcButton 
             label={<Plus size={24} color="#FFFFFF" />}
             onPress={() => handleOperationPress('+')}
@@ -278,6 +298,11 @@ export default function QuickExpenseCalculator({
           <CalcButton label="4" onPress={() => handleNumberPress('4')} />
           <CalcButton label="5" onPress={() => handleNumberPress('5')} />
           <CalcButton label="6" onPress={() => handleNumberPress('6')} />
+          <CalcButton 
+            label={<MessageSquare size={20} color="#FFFFFF" />}
+            onPress={() => setShowCommentModal(true)}
+            variant="operation"
+          />
           <CalcButton 
             label={<Minus size={24} color="#FFFFFF" />}
             onPress={() => handleOperationPress('-')}
@@ -292,11 +317,15 @@ export default function QuickExpenseCalculator({
             label={<Equal size={24} color="#FFFFFF" />}
             onPress={handleEquals}
             variant="operation"
+            size={2}
           />
         </View>
         <View style={styles.row}>
-          <CalcButton label="C" onPress={handleClear} />
-          <CalcButton label="0" onPress={() => handleNumberPress('0')} />
+          <CalcButton 
+            label="0"
+            onPress={() => handleNumberPress('0')}
+            size={2}
+          />
           <CalcButton 
             label={<Text style={[styles.calcButtonText, { color: colors.text }]}>.</Text>}
             onPress={handleDecimal}
@@ -305,10 +334,12 @@ export default function QuickExpenseCalculator({
             label={<Save size={24} color="#FFFFFF" />}
             onPress={handleSubmit}
             variant="equal"
+            size={2}
           />
         </View>
       </View>
 
+      {/* Comment Modal */}
       <Modal
         visible={showCommentModal}
         transparent
@@ -354,6 +385,84 @@ export default function QuickExpenseCalculator({
             </View>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Currency Modal */}
+      <Modal
+        visible={showCurrencyModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCurrencyModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              Select Currency
+            </Text>
+            <ScrollView style={styles.currencyList}>
+              {currencies.map((currency) => (
+                <Pressable
+                  key={currency.code}
+                  style={[
+                    styles.currencyOption,
+                    {
+                      backgroundColor:
+                        selectedCurrency.code === currency.code
+                          ? colors.primary
+                          : 'transparent',
+                    },
+                  ]}
+                  onPress={() => {
+                    setSelectedCurrency(currency);
+                    setShowCurrencyModal(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.currencySymbol,
+                      {
+                        color:
+                          selectedCurrency.code === currency.code
+                            ? '#FFFFFF'
+                            : colors.text,
+                      },
+                    ]}
+                  >
+                    {currency.symbol}
+                  </Text>
+                  <View style={styles.currencyInfo}>
+                    <Text
+                      style={[
+                        styles.currencyCode,
+                        {
+                          color:
+                            selectedCurrency.code === currency.code
+                              ? '#FFFFFF'
+                              : colors.text,
+                        },
+                      ]}
+                    >
+                      {currency.code}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.currencyName,
+                        {
+                          color:
+                            selectedCurrency.code === currency.code
+                              ? '#FFFFFF'
+                              : colors.textSecondary,
+                        },
+                      ]}
+                    >
+                      {currency.name}
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -452,6 +561,7 @@ const styles = StyleSheet.create({
   modalContent: {
     borderRadius: 16,
     padding: 16,
+    maxHeight: '80%',
   },
   modalTitle: {
     fontSize: 20,
@@ -468,5 +578,29 @@ const styles = StyleSheet.create({
   },
   modalButtons: {
     flexDirection: 'row',
+  },
+  currencyList: {
+    maxHeight: 300,
+  },
+  currencyOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 8,
+  },
+  currencySymbol: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginRight: 16,
+  },
+  currencyInfo: {
+    flex: 1,
+  },
+  currencyCode: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  currencyName: {
+    fontSize: 14,
   },
 });
