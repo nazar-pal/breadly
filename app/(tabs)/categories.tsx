@@ -99,7 +99,7 @@ export default function CategoriesScreen() {
         <View style={styles.dateSelector}>
           <ChevronLeft size={24} color={colors.text} />
           <Text style={[styles.dateRange, { color: colors.text }]}>
-            26 - 01 June 2025
+            26 Jun - 01 Jul 2025
           </Text>
           <ChevronRight size={24} color={colors.text} />
         </View>
