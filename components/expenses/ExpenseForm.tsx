@@ -24,10 +24,34 @@ import {
 } from 'lucide-react-native';
 import IconButton from '../ui/IconButton';
 
-// ... (previous imports and type definitions remain the same)
+type ExpenseFormData = {
+  amount: string;
+  category: string;
+  date: Date;
+  description?: string;
+};
+
+type ExpenseFormProps = {
+  onSubmit: (data: ExpenseFormData) => void;
+  initialData?: ExpenseFormData;
+};
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
 
 export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
-  // ... (previous state and hooks remain the same)
+  const { colors } = useTheme();
+  const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
+  const [editingExpenseIndex, setEditingExpenseIndex] = useState<number | null>(null);
+
+  const handleEditExpense = (index: number) => {
+    setEditingExpenseIndex(index === editingExpenseIndex ? null : index);
+  };
 
   return (
     <ScrollView
@@ -111,8 +135,22 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
 }
 
 const styles = StyleSheet.create({
-  // ... (previous styles remain the same)
-
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+  },
+  expensesList: {
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 12,
+  },
+  expensesListTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
   expenseItem: {
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
