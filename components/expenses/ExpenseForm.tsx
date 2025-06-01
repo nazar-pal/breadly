@@ -7,6 +7,7 @@ import {
   ScrollView,
   Pressable,
   Modal,
+  Platform,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,14 +16,16 @@ import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
 import {
-  Plus,
-  ChevronDown,
   Calendar,
-  AlignLeft,
-  ChevronRight,
+  ChevronDown,
   X,
+  Plus,
+  Minus,
+  Divide,
+  Multiply,
+  Equal,
+  Percent,
 } from 'lucide-react-native';
-import IconButton from '../ui/IconButton';
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
@@ -38,18 +41,18 @@ interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
 }
 
-export default function ExpenseForm({
-  onSubmit,
-  initialData,
-}: ExpenseFormProps) {
+type Operation = '+' | '-' | '×' | '÷' | '%' | '=';
+
+export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
   const { colors, spacing } = useTheme();
   const [showDescription, setShowDescription] = useState(false);
-  const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-  const [editingExpenseIndex, setEditingExpenseIndex] = useState<number | null>(
-    null
-  );
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [calculatorInput, setCalculatorInput] = useState('0');
+  const [previousValue, setPreviousValue] = useState<number | null>(null);
+  const [operation, setOperation] = useState<Operation | null>(null);
+  const [newNumberStarted, setNewNumberStarted] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -59,7 +62,6 @@ export default function ExpenseForm({
     formState: { errors },
     setValue,
     watch,
-    reset,
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -73,32 +75,56 @@ export default function ExpenseForm({
   const selectedCategory = watch('category');
   const selectedDate = watch('date');
 
-  const handleAddExpense = (data: ExpenseFormData) => {
-    if (editingExpenseIndex !== null) {
-      // Update existing expense
-      const updatedExpenses = [...expenses];
-      updatedExpenses[editingExpenseIndex] = data;
-      setExpenses(updatedExpenses);
-      setEditingExpenseIndex(null);
+  const handleNumberPress = (num: string) => {
+    if (newNumberStarted) {
+      setCalculatorInput(num);
+      setNewNumberStarted(false);
     } else {
-      // Add new expense
-      setExpenses([...expenses, data]);
+      setCalculatorInput(prev => 
+        prev === '0' ? num : prev + num
+      );
     }
-    
-    reset({
-      amount: '',
-      description: '',
-      category: data.category, // Keep the same category for convenience
-      date: data.date, // Keep the same date for convenience
-    });
-    setShowDescription(false);
   };
 
-  const handleFinalSubmit = () => {
-    handleSubmit((data) => {
-      const allExpenses = [...expenses, data];
-      onSubmit(allExpenses[0]); // For now, just submit the first expense
-    })();
+  const handleOperation = (op: Operation) => {
+    const currentValue = parseFloat(calculatorInput);
+
+    if (op === '=') {
+      if (previousValue !== null && operation) {
+        let result = 0;
+        switch (operation) {
+          case '+': result = previousValue + currentValue; break;
+          case '-': result = previousValue - currentValue; break;
+          case '×': result = previousValue * currentValue; break;
+          case '÷': result = previousValue / currentValue; break;
+          case '%': result = previousValue * (currentValue / 100); break;
+        }
+        setCalculatorInput(result.toString());
+        setPreviousValue(null);
+        setOperation(null);
+      }
+    } else {
+      setPreviousValue(currentValue);
+      setOperation(op);
+      setNewNumberStarted(true);
+    }
+  };
+
+  const handleDecimal = () => {
+    if (!calculatorInput.includes('.')) {
+      setCalculatorInput(prev => prev + '.');
+    }
+  };
+
+  const handleClear = () => {
+    setCalculatorInput('0');
+    setPreviousValue(null);
+    setOperation(null);
+  };
+
+  const applyCalculatorValue = () => {
+    setValue('amount', calculatorInput);
+    setShowCalculator(false);
   };
 
   const formatDate = (dateString: string) => {
@@ -110,70 +136,34 @@ export default function ExpenseForm({
     });
   };
 
-  const handleEditExpense = (index: number) => {
-    const expense = expenses[index];
-    setEditingExpenseIndex(index);
-    reset(expense);
-    setShowDescription(!!expense.description);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingExpenseIndex(null);
-    reset({
-      amount: '',
-      description: '',
-      category: '',
-      date: today,
-    });
-    setShowDescription(false);
-  };
-
-  const handleDeleteExpense = (index: number) => {
-    setExpenses(expenses.filter((_, i) => i !== index));
-    if (editingExpenseIndex === index) {
-      handleCancelEdit();
-    }
-  };
-
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="handled"
     >
-      {/* Form Section */}
       <View style={styles.formSection}>
-        <View style={[styles.row, styles.topAlignedRow]}>
+        <View style={styles.row}>
           <View style={[styles.formGroup, styles.amountContainer]}>
             <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
             <Controller
               control={control}
               name="amount"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      styles.amountInput,
-                      {
-                        color: colors.text,
-                        borderColor: errors.amount ? colors.error : colors.border,
-                        backgroundColor: colors.card,
-                      },
-                    ]}
-                    placeholderTextColor={colors.textSecondary}
-                    placeholder="0.00"
-                    keyboardType="decimal-pad"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                  {errors.amount && (
-                    <Text style={[styles.errorText, { color: colors.error }]}>
-                      {errors.amount.message}
-                    </Text>
-                  )}
-                </View>
+              render={({ field: { value } }) => (
+                <Pressable
+                  onPress={() => setShowCalculator(true)}
+                  style={[
+                    styles.calculatorButton,
+                    { backgroundColor: colors.card, borderColor: colors.border },
+                  ]}
+                >
+                  <Text style={[styles.amountText, { color: colors.text }]}>
+                    ${value || '0.00'}
+                  </Text>
+                  <Text style={[styles.calculatorHint, { color: colors.textSecondary }]}>
+                    Tap to calculate
+                  </Text>
+                </Pressable>
               )}
             />
           </View>
@@ -200,15 +190,10 @@ export default function ExpenseForm({
               </Text>
               <ChevronDown size={20} color={colors.text} />
             </Pressable>
-            {errors.category && (
-              <Text style={[styles.errorText, { color: colors.error }]}>
-                {errors.category.message}
-              </Text>
-            )}
           </View>
         </View>
 
-        <View style={[styles.row, styles.bottomAlignedRow]}>
+        <View style={styles.row}>
           <View style={[styles.formGroup, { flex: 1 }]}>
             <Text style={[styles.label, { color: colors.text }]}>Date</Text>
             <Pressable
@@ -224,16 +209,6 @@ export default function ExpenseForm({
               <Calendar size={20} color={colors.text} />
             </Pressable>
           </View>
-
-          <Pressable
-            onPress={() => setShowDescription(!showDescription)}
-            style={[
-              styles.descriptionToggle,
-              { backgroundColor: colors.secondary },
-            ]}
-          >
-            <AlignLeft size={20} color={colors.text} />
-          </Pressable>
         </View>
 
         {showDescription && (
@@ -248,9 +223,7 @@ export default function ExpenseForm({
                     styles.descriptionInput,
                     {
                       color: colors.text,
-                      borderColor: errors.description
-                        ? colors.error
-                        : colors.border,
+                      borderColor: colors.border,
                       backgroundColor: colors.card,
                     },
                   ]}
@@ -267,110 +240,112 @@ export default function ExpenseForm({
           </View>
         )}
 
-        <View style={styles.buttonContainer}>
-          {editingExpenseIndex !== null ? (
-            <>
-              <Button
-                variant="outline"
-                onPress={handleCancelEdit}
-                style={{ flex: 1, marginRight: spacing.sm }}
-                leftIcon={<X size={20} color={colors.text} />}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1 }}
-              >
-                Update Expense
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1, marginRight: spacing.sm }}
-                leftIcon={<Plus size={20} color={colors.text} />}
-              >
-                Add Another
-              </Button>
-              <Button
-                variant="primary"
-                onPress={handleFinalSubmit}
-                style={{ flex: 1 }}
-              >
-                Save {expenses.length > 0 ? 'All ' : ''}
-                Expense{expenses.length !== 0 ? 's' : ''}
-              </Button>
-            </>
-          )}
-        </View>
+        <Button
+          variant="primary"
+          onPress={handleSubmit(onSubmit)}
+          style={{ marginTop: 24 }}
+        >
+          Save Expense
+        </Button>
       </View>
 
-      {/* Added Expenses List */}
-      {expenses.length > 0 && (
-        <View
-          style={[styles.expensesList, { backgroundColor: colors.secondary }]}
-        >
-          <Text style={[styles.expensesListTitle, { color: colors.text }]}>
-            Added Expenses ({expenses.length})
-          </Text>
-          {expenses.map((expense, index) => (
-            <Pressable
-              key={index}
-              onPress={() => handleEditExpense(index)}
-              style={[
-                styles.expenseItem,
-                {
-                  backgroundColor:
-                    editingExpenseIndex === index ? colors.card : 'transparent',
-                  borderRadius: 8,
-                  marginBottom: 8,
-                },
-              ]}
-            >
-              <View style={styles.expenseItemRow}>
-                <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
-                  ${parseFloat(expense.amount).toFixed(2)}
-                </Text>
-                <View style={styles.expenseItemDetails}>
-                  <Text
-                    style={[styles.dateText, { color: colors.textSecondary }]}
-                  >
-                    {formatDate(expense.date)}
-                  </Text>
-                  <View
-                    style={[
-                      styles.categoryBadge,
-                      { backgroundColor: colors.card },
-                    ]}
-                  >
-                    <Text
-                      style={[styles.categoryBadgeText, { color: colors.text }]}
-                    >
-                      {expense.category}
-                    </Text>
-                  </View>
-                </View>
-                <ChevronRight size={20} color={colors.textSecondary} />
-              </View>
-              {expense.description && (
-                <Text
-                  style={[
-                    styles.descriptionText,
-                    { color: colors.textSecondary },
-                  ]}
-                  numberOfLines={2}
+      {/* Calculator Modal */}
+      <Modal
+        visible={showCalculator}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowCalculator(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.calculatorModal, { backgroundColor: colors.card }]}>
+            <View style={styles.calculatorHeader}>
+              <Text style={[styles.calculatorDisplay, { color: colors.text }]}>
+                ${calculatorInput}
+              </Text>
+              <Button
+                variant="outline"
+                onPress={() => setShowCalculator(false)}
+                style={{ marginLeft: 'auto' }}
+              >
+                <X size={20} />
+              </Button>
+            </View>
+
+            <View style={styles.calculatorGrid}>
+              {/* Numbers */}
+              {[7, 8, 9, 4, 5, 6, 1, 2, 3, 0].map((num) => (
+                <Pressable
+                  key={num}
+                  style={[styles.calcButton, { backgroundColor: colors.secondary }]}
+                  onPress={() => handleNumberPress(num.toString())}
                 >
-                  {expense.description}
-                </Text>
-              )}
-            </Pressable>
-          ))}
+                  <Text style={[styles.calcButtonText, { color: colors.text }]}>
+                    {num}
+                  </Text>
+                </Pressable>
+              ))}
+              
+              {/* Decimal */}
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.secondary }]}
+                onPress={handleDecimal}
+              >
+                <Text style={[styles.calcButtonText, { color: colors.text }]}>.</Text>
+              </Pressable>
+
+              {/* Operations */}
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.primary }]}
+                onPress={() => handleOperation('+')}
+              >
+                <Plus size={24} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.primary }]}
+                onPress={() => handleOperation('-')}
+              >
+                <Minus size={24} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.primary }]}
+                onPress={() => handleOperation('×')}
+              >
+                <Multiply size={24} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.primary }]}
+                onPress={() => handleOperation('÷')}
+              >
+                <Divide size={24} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.primary }]}
+                onPress={() => handleOperation('%')}
+              >
+                <Percent size={24} color="#fff" />
+              </Pressable>
+
+              {/* Clear and Apply */}
+              <Pressable
+                style={[styles.calcButton, { backgroundColor: colors.error }]}
+                onPress={handleClear}
+              >
+                <Text style={[styles.calcButtonText, { color: '#fff' }]}>C</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.calcButton,
+                  styles.equalButton,
+                  { backgroundColor: colors.success },
+                ]}
+                onPress={applyCalculatorValue}
+              >
+                <Equal size={24} color="#fff" />
+              </Pressable>
+            </View>
+          </View>
         </View>
-      )}
+      </Modal>
 
       {/* Category Picker Modal */}
       <Modal
@@ -411,7 +386,7 @@ export default function ExpenseForm({
                       {
                         color:
                           selectedCategory === category.name
-                            ? 'white'
+                            ? '#fff'
                             : colors.text,
                       },
                     ]}
@@ -469,9 +444,7 @@ export default function ExpenseForm({
                         styles.dateOptionText,
                         {
                           color:
-                            selectedDate === dateString
-                              ? 'white'
-                              : colors.text,
+                            selectedDate === dateString ? '#fff' : colors.text,
                         },
                       ]}
                     >
@@ -501,21 +474,16 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     marginBottom: 16,
-  },
-  topAlignedRow: {
-    alignItems: 'flex-start',
-  },
-  bottomAlignedRow: {
-    alignItems: 'flex-end',
+    gap: 12,
   },
   formGroup: {
     flex: 1,
   },
   amountContainer: {
-    marginRight: 12,
+    flex: 1.2,
   },
   categoryContainer: {
-    flex: 1.2,
+    flex: 1,
   },
   label: {
     fontSize: 14,
@@ -529,27 +497,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
   },
-  amountInput: {
-    fontWeight: '600',
-    fontSize: 20,
-  },
   descriptionInput: {
     height: 80,
     paddingTop: 12,
     paddingBottom: 12,
     textAlignVertical: 'top',
   },
-  errorText: {
+  calculatorButton: {
+    height: 64,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+  },
+  amountText: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  calculatorHint: {
     fontSize: 12,
     marginTop: 4,
-  },
-  descriptionToggle: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12,
   },
   pickerButton: {
     flexDirection: 'row',
@@ -593,56 +559,54 @@ const styles = StyleSheet.create({
   dateOptionText: {
     fontSize: 16,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 24,
-  },
-  expensesList: {
-    borderRadius: 8,
+  calculatorModal: {
+    borderRadius: 20,
     padding: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+      },
+    }),
   },
-  expensesListTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  expenseItem: {
-    padding: 12,
-  },
-  expenseItemRow: {
+  calculatorHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    marginBottom: 16,
   },
-  expenseItemAmount: {
-    fontSize: 16,
+  calculatorDisplay: {
+    fontSize: 36,
     fontWeight: '600',
-  },
-  expenseItemDetails: {
     flex: 1,
+  },
+  calculatorGrid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
     gap: 8,
-    marginHorizontal: 12,
   },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+  calcButton: {
+    width: '23%',
+    aspectRatio: 1,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  categoryBadgeText: {
-    fontSize: 12,
-    fontWeight: '500',
+  equalButton: {
+    width: '48%',
   },
-  dateText: {
-    fontSize: 12,
-  },
-  descriptionText: {
-    fontSize: 13,
-    marginTop: 8,
-    paddingLeft: 4,
+  calcButtonText: {
+    fontSize: 24,
+    fontWeight: '600',
   },
 });
-
-export default ExpenseForm
