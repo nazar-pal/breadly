@@ -7,6 +7,7 @@ import {
   Pressable,
   Modal,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
@@ -44,6 +45,11 @@ export default function CategoriesScreen() {
   };
 
   const handleExpenseSubmit = (data: any) => {
+    setModalVisible(false);
+    setSelectedCategory(null);
+  };
+
+  const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedCategory(null);
   };
@@ -188,9 +194,16 @@ export default function CategoriesScreen() {
         visible={modalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={handleCloseModal}
       >
-        <View style={styles.modalContainer}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalContainer}
+        >
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={handleCloseModal}
+          />
           <View 
             style={[
               styles.modalContent,
@@ -200,6 +213,7 @@ export default function CategoriesScreen() {
               }
             ]}
           >
+            <View style={styles.modalHandle} />
             <ExpenseForm
               onSubmit={handleExpenseSubmit}
               initialData={
@@ -207,7 +221,7 @@ export default function CategoriesScreen() {
               }
             />
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -327,11 +341,22 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 24,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
 });
