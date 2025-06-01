@@ -64,7 +64,7 @@ export default function AddExpenseTabBar({
 const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 32, // Increased from 16 to 32 for more top margin
   },
   title: {
     fontSize: 28,
