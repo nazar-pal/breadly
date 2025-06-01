@@ -15,6 +15,7 @@ export default function AddLayout() {
         options={{
           title: 'Receipt Photo',
           presentation: 'modal',
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -22,6 +23,7 @@ export default function AddLayout() {
         options={{
           title: 'Voice Entry',
           presentation: 'modal',
+          headerShown: false,
         }}
       />
     </Stack>
