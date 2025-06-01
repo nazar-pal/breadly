@@ -63,52 +63,6 @@ export const mockExpenses = [
   },
 ];
 
-// Mock categories
-export const mockCategories = [
-  {
-    id: '1',
-    name: 'Groceries',
-    budget: 400.0,
-    spent: 280.45,
-  },
-  {
-    id: '2',
-    name: 'Dining',
-    budget: 300.0,
-    spent: 215.65,
-  },
-  {
-    id: '3',
-    name: 'Coffee',
-    budget: 50.0,
-    spent: 62.5,
-  },
-  {
-    id: '4',
-    name: 'Entertainment',
-    budget: 100.0,
-    spent: 49.99,
-  },
-  {
-    id: '5',
-    name: 'Transportation',
-    budget: 150.0,
-    spent: 98.45,
-  },
-  {
-    id: '6',
-    name: 'Utilities',
-    budget: 200.0,
-    spent: 187.65,
-  },
-  {
-    id: '7',
-    name: 'Shopping',
-    budget: 200.0,
-    spent: 122.99,
-  },
-];
-
 // Mock income sources
 export const mockIncomeSources = [
   {
@@ -124,6 +78,34 @@ export const mockIncomeSources = [
     description: 'Main credit card account',
     balance: 3450.75,
     icon: 'credit-card',
+  },
+];
+
+// Mock income transactions
+export const mockIncomeTransactions = [
+  {
+    id: '1',
+    amount: 2500.00,
+    sourceId: '1',
+    sourceName: 'Cash',
+    date: '2025-03-01',
+    description: 'Monthly salary',
+  },
+  {
+    id: '2',
+    amount: 500.00,
+    sourceId: '2',
+    sourceName: 'Credit Card',
+    date: '2025-02-28',
+    description: 'Freelance payment',
+  },
+  {
+    id: '3',
+    amount: 100.00,
+    sourceId: '1',
+    sourceName: 'Cash',
+    date: '2025-02-27',
+    description: 'Side project revenue',
   },
 ];
 
