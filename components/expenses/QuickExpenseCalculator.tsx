@@ -249,7 +249,7 @@ export default function QuickExpenseCalculator({
             variant="default"
           />
           <CalcButton 
-            label=")"
+            label={<Text style={[styles.calcButtonText, { color: colors.text }]}>)</Text>}
             onPress={() => handleParentheses(')')}
             variant="default"
           />
@@ -297,7 +297,10 @@ export default function QuickExpenseCalculator({
         <View style={styles.row}>
           <CalcButton label="C" onPress={handleClear} />
           <CalcButton label="0" onPress={() => handleNumberPress('0')} />
-          <CalcButton label="." onPress={handleDecimal} />
+          <CalcButton 
+            label={<Text style={[styles.calcButtonText, { color: colors.text }]}>.</Text>}
+            onPress={handleDecimal}
+          />
           <CalcButton 
             label={<Save size={24} color="#FFFFFF" />}
             onPress={handleSubmit}
