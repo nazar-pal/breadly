@@ -265,43 +265,46 @@ export default function ExpenseForm({
               style={[
                 styles.expenseItem,
                 {
-                  borderBottomColor: colors.border,
                   backgroundColor:
-                    expandedExpenseIndex === index
-                      ? colors.card
-                      : 'transparent',
+                    expandedExpenseIndex === index ? colors.card : 'transparent',
                   borderRadius: expandedExpenseIndex === index ? 8 : 0,
                   marginBottom: expandedExpenseIndex === index ? 8 : 0,
+                  borderBottomColor: colors.border,
                 },
               ]}
             >
               <View style={styles.expenseItemHeader}>
                 <View style={styles.expenseItemMain}>
-                  <Text
-                    style={[styles.expenseItemAmount, { color: colors.text }]}
-                  >
-                    ${parseFloat(expense.amount).toFixed(2)}
-                  </Text>
-                  <View style={styles.expenseItemMeta}>
+                  <View style={styles.expenseItemRow}>
                     <Text
-                      style={[styles.dateText, { color: colors.textSecondary }]}
+                      style={[styles.expenseItemAmount, { color: colors.text }]}
                     >
-                      {formatDate(expense.date)}
+                      ${parseFloat(expense.amount).toFixed(2)}
                     </Text>
-                    <View
-                      style={[
-                        styles.categoryBadge,
-                        { backgroundColor: colors.secondary },
-                      ]}
-                    >
+                    <View style={styles.expenseItemDetails}>
                       <Text
                         style={[
-                          styles.categoryBadgeText,
-                          { color: colors.text },
+                          styles.dateText,
+                          { color: colors.textSecondary },
                         ]}
                       >
-                        {expense.category}
+                        {formatDate(expense.date)}
                       </Text>
+                      <View
+                        style={[
+                          styles.categoryBadge,
+                          { backgroundColor: colors.card },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.categoryBadgeText,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {expense.category}
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -335,7 +338,7 @@ export default function ExpenseForm({
               </View>
 
               {expandedExpenseIndex === index && expense.description && (
-                <View style={styles.expenseItemDetails}>
+                <View style={styles.expenseItemDescription}>
                   <Text
                     style={[
                       styles.descriptionText,
@@ -612,15 +615,18 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
+  expenseItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   expenseItemAmount: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4,
   },
-  expenseItemMeta: {
+  expenseItemDetails: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
     gap: 8,
   },
   categoryBadge: {
@@ -641,7 +647,7 @@ const styles = StyleSheet.create({
   expandIconRotated: {
     transform: [{ rotate: '90deg' }],
   },
-  expenseItemDetails: {
+  expenseItemDescription: {
     marginTop: 8,
     paddingLeft: 4,
   },
