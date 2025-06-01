@@ -1,29 +1,26 @@
 import { Stack } from 'expo-router';
+import React from 'react';
+import AddExpenseHeader from '@/components/navigation/AddExpenseHeader';
 
 export default function AddLayout() {
   return (
-    <Stack screenOptions={{ headerShown: true }}>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="index"
         options={{
-          title: 'Add Expense',
-          headerShown: false,
+          header: () => <AddExpenseHeader currentMode="manual" />,
         }}
       />
       <Stack.Screen
         name="photo"
         options={{
-          title: 'Receipt Photo',
-          presentation: 'modal',
-          headerShown: false,
+          header: () => <AddExpenseHeader currentMode="photo" />,
         }}
       />
       <Stack.Screen
         name="voice"
         options={{
-          title: 'Voice Entry',
-          presentation: 'modal',
-          headerShown: false,
+          header: () => <AddExpenseHeader currentMode="voice" />,
         }}
       />
     </Stack>
