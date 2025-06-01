@@ -91,12 +91,18 @@ export default function QuickExpenseCalculator({
     const closeCount = expression.filter(x => x === ')').length;
 
     if (paren === '(') {
-      if (!isNewNumber && currentInput !== '0') {
+      // If we only have a single number and no operations
+      if (expression.length === 0 && !isNewNumber && currentInput !== '0') {
+        setExpression(['(']);
+        setCurrentInput(currentInput);
+        setIsNewNumber(false);
+      } else if (!isNewNumber && currentInput !== '0') {
         setExpression([...expression, currentInput, '*', '(']);
+        setIsNewNumber(true);
       } else {
         setExpression([...expression, '(']);
+        setIsNewNumber(true);
       }
-      setIsNewNumber(true);
     } else if (paren === ')' && openCount > closeCount && !isNewNumber) {
       setExpression([...expression, currentInput, ')']);
       setIsNewNumber(true);
@@ -637,5 +643,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-export default QuickExpenseCalculator
