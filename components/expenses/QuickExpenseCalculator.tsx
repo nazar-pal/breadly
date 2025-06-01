@@ -26,7 +26,6 @@ import {
   DollarSign,
 } from 'lucide-react-native';
 
-// Available currencies
 const currencies = [
   { symbol: '$', code: 'USD', name: 'US Dollar' },
   { symbol: '€', code: 'EUR', name: 'Euro' },
@@ -55,9 +54,15 @@ export default function QuickExpenseCalculator({
   const [comment, setComment] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+  const [currentResult, setCurrentResult] = useState<string | null>(null);
 
   const handleNumberPress = (num: string) => {
-    if (isNewNumber) {
+    if (currentResult !== null) {
+      setDisplayValue(num);
+      setCurrentResult(null);
+      setExpression([]);
+      setHistory([]);
+    } else if (isNewNumber) {
       setDisplayValue(num);
       setIsNewNumber(false);
     } else {
@@ -66,15 +71,33 @@ export default function QuickExpenseCalculator({
   };
 
   const handleOperationPress = (op: string) => {
-    setExpression([...expression, displayValue, op]);
+    if (currentResult !== null) {
+      setExpression([currentResult, op]);
+      setHistory([currentResult, op]);
+      setCurrentResult(null);
+    } else {
+      setExpression([...expression, displayValue, op]);
+      setHistory([...history, displayValue, op]);
+    }
     setIsNewNumber(true);
-    setHistory([...history, displayValue, op]);
   };
 
   const handleParentheses = (paren: '(' | ')') => {
-    if (paren === '(' || (paren === ')' && expression.filter(x => x === '(').length > expression.filter(x => x === ')').length)) {
-      setExpression([...expression, paren]);
-      setHistory([...history, paren]);
+    const openCount = expression.filter(x => x === '(').length;
+    const closeCount = expression.filter(x => x === ')').length;
+
+    if (paren === '(') {
+      if (!isNewNumber && displayValue !== '0') {
+        setExpression([...expression, displayValue, '*', '(']);
+        setHistory([...history, displayValue, '*', '(']);
+      } else {
+        setExpression([...expression, '(']);
+        setHistory([...history, '(']);
+      }
+      setIsNewNumber(true);
+    } else if (paren === ')' && openCount > closeCount && !isNewNumber) {
+      setExpression([...expression, displayValue, ')']);
+      setHistory([...history, displayValue, ')']);
       setIsNewNumber(true);
     }
   };
@@ -136,8 +159,23 @@ export default function QuickExpenseCalculator({
   };
 
   const handleEquals = () => {
-    const finalExpression = [...expression, displayValue];
+    if (expression.length === 0 && currentResult === null) {
+      return; // Nothing to evaluate
+    }
+
+    let finalExpression = currentResult !== null 
+      ? [currentResult]
+      : [...expression, displayValue];
+
+    // Close any remaining open parentheses
+    const openCount = finalExpression.filter(x => x === '(').length;
+    const closeCount = finalExpression.filter(x => x === ')').length;
+    for (let i = 0; i < openCount - closeCount; i++) {
+      finalExpression.push(')');
+    }
+
     const result = evaluateExpression(finalExpression);
+    setCurrentResult(result.toString());
     setDisplayValue(result.toString());
     setExpression([]);
     setIsNewNumber(true);
@@ -149,6 +187,7 @@ export default function QuickExpenseCalculator({
     setExpression([]);
     setIsNewNumber(true);
     setHistory([]);
+    setCurrentResult(null);
   };
 
   const handleDecimal = () => {
@@ -339,7 +378,6 @@ export default function QuickExpenseCalculator({
         </View>
       </View>
 
-      {/* Comment Modal */}
       <Modal
         visible={showCommentModal}
         transparent
@@ -387,7 +425,6 @@ export default function QuickExpenseCalculator({
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Currency Modal */}
       <Modal
         visible={showCurrencyModal}
         transparent
@@ -526,14 +563,14 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: 8,
-    height: 60, // Fixed height for all rows
+    height: 60,
   },
   calcButton: {
     flex: 1,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%', // Take full height of row
+    height: '100%',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -605,3 +642,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default QuickExpenseCalculator
