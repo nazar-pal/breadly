@@ -11,6 +11,7 @@ import {
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
+import Calculator from '@/components/ui/Calculator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -21,20 +22,28 @@ export default function CategoriesScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [amount, setAmount] = useState('');
 
-  const totalBalance = -1955; // This would come from your data
-  const totalExpenses = 110; // This would come from your data
-  const totalIncome = 0; // This would come from your data
+  const totalBalance = -1955;
+  const totalExpenses = 110;
+  const totalIncome = 0;
 
   const handleCategoryPress = (categoryName: string) => {
     setSelectedCategory(categoryName);
+    setShowCalculator(true);
     setModalVisible(true);
   };
 
+  const handleCalculatorSubmit = (value: string) => {
+    setAmount(value);
+    setShowCalculator(false);
+  };
+
   const handleExpenseSubmit = (data: any) => {
-    // Handle the expense submission
     setModalVisible(false);
     setSelectedCategory(null);
+    setAmount('');
   };
 
   const navigateToManageCategories = () => {
@@ -182,12 +191,24 @@ export default function CategoriesScreen() {
               }
             ]}
           >
-            <ExpenseForm
-              onSubmit={handleExpenseSubmit}
-              initialData={
-                selectedCategory ? { category: selectedCategory } : undefined
-              }
-            />
+            {showCalculator ? (
+              <Calculator
+                onClose={() => setModalVisible(false)}
+                onSubmit={handleCalculatorSubmit}
+              />
+            ) : (
+              <ExpenseForm
+                onSubmit={handleExpenseSubmit}
+                initialData={
+                  selectedCategory 
+                    ? { 
+                        category: selectedCategory,
+                        amount: amount,
+                      } 
+                    : undefined
+                }
+              />
+            )}
           </View>
         </View>
       </Modal>
