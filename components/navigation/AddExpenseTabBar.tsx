@@ -14,51 +14,52 @@ export default function AddExpenseTabBar({
 
   return (
     <View style={[styles.wrapper, { backgroundColor: colors.background }]}>
-      {/* Title */}
-      <Text style={[styles.title, { color: colors.text }]}>Add Expense</Text>
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: colors.text }]}>Add Expense</Text>
+        
+        {/* Mode selector */}
+        <View style={styles.tabsRow}>
+          {state.routes.map((route, i) => {
+            const focused = state.index === i;
+            const Icon = ICONS[route.name as keyof typeof ICONS];
 
-      {/* Mode selector */}
-      <View style={styles.tabsRow}>
-        {state.routes.map((route, i) => {
-          const focused = state.index === i;
-          const Icon = ICONS[route.name as keyof typeof ICONS];
+            const onPress = () => {
+              if (!focused) navigation.navigate(route.name);
+            };
 
-          const onPress = () => {
-            if (!focused) navigation.navigate(route.name);
-          };
-
-          return (
-            <TouchableOpacity
-              key={route.key}
-              accessibilityRole="button"
-              accessibilityState={focused ? { selected: true } : {}}
-              style={[
-                styles.tab,
-                focused && { borderBottomWidth: 2, borderBottomColor: colors.primary }
-              ]}
-              onPress={onPress}
-            >
-              <Icon
-                size={20}
-                color={focused ? colors.primary : colors.textSecondary}
-                style={{ marginRight: 6 }}
-              />
-              <Text
+            return (
+              <TouchableOpacity
+                key={route.key}
+                accessibilityRole="button"
+                accessibilityState={focused ? { selected: true } : {}}
                 style={[
-                  styles.label,
-                  {
-                    color: focused ? colors.primary : colors.textSecondary,
-                    fontWeight: focused ? '600' : '400',
-                  },
+                  styles.tab,
+                  focused && { borderBottomWidth: 2, borderBottomColor: colors.primary }
                 ]}
+                onPress={onPress}
               >
-                {route.name === 'index'
-                  ? 'Manual'
-                  : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Icon
+                  size={20}
+                  color={focused ? colors.primary : colors.textSecondary}
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  style={[
+                    styles.label,
+                    {
+                      color: focused ? colors.primary : colors.textSecondary,
+                      fontWeight: focused ? '600' : '400',
+                    },
+                  ]}
+                >
+                  {route.name === 'index'
+                    ? 'Manual'
+                    : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -67,28 +68,35 @@ export default function AddExpenseTabBar({
 const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: 16,
-    paddingTop: 48, // Increased for better spacing
+    paddingTop: 48,
     paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: {
-    fontSize: 32, // Increased for more prominence
+    fontSize: 24,
     fontWeight: '700',
-    marginBottom: 16, // Increased spacing between title and tabs
-    letterSpacing: -0.5, // Tighter letter spacing for better typography
+    letterSpacing: -0.5,
   },
   tabsRow: {
     flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginLeft: 24,
   },
   tab: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginLeft: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
   },
 });
