@@ -46,38 +46,42 @@ export default function QuickExpenseCalculator({
   onClose,
 }: QuickExpenseCalculatorProps) {
   const { colors } = useTheme();
-  const [displayValue, setDisplayValue] = useState('0');
+  const [currentInput, setCurrentInput] = useState('0');
   const [expression, setExpression] = useState<string[]>([]);
   const [isNewNumber, setIsNewNumber] = useState(true);
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [comment, setComment] = useState('');
-  const [history, setHistory] = useState<string[]>([]);
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
-  const [currentResult, setCurrentResult] = useState<string | null>(null);
+  const [result, setResult] = useState<string | null>(null);
+
+  const getDisplayExpression = () => {
+    if (result !== null) {
+      return result;
+    }
+    return [...expression, isNewNumber ? '' : currentInput].join(' ').trim() || currentInput;
+  };
 
   const handleNumberPress = (num: string) => {
-    if (currentResult !== null) {
-      setDisplayValue(num);
-      setCurrentResult(null);
+    if (result !== null) {
+      setResult(null);
       setExpression([]);
-      setHistory([]);
+      setCurrentInput(num);
+      setIsNewNumber(false);
     } else if (isNewNumber) {
-      setDisplayValue(num);
+      setCurrentInput(num);
       setIsNewNumber(false);
     } else {
-      setDisplayValue(displayValue + num);
+      setCurrentInput(currentInput + num);
     }
   };
 
   const handleOperationPress = (op: string) => {
-    if (currentResult !== null) {
-      setExpression([currentResult, op]);
-      setHistory([currentResult, op]);
-      setCurrentResult(null);
+    if (result !== null) {
+      setExpression([result, op]);
+      setResult(null);
     } else {
-      setExpression([...expression, displayValue, op]);
-      setHistory([...history, displayValue, op]);
+      setExpression([...expression, currentInput, op]);
     }
     setIsNewNumber(true);
   };
@@ -87,17 +91,14 @@ export default function QuickExpenseCalculator({
     const closeCount = expression.filter(x => x === ')').length;
 
     if (paren === '(') {
-      if (!isNewNumber && displayValue !== '0') {
-        setExpression([...expression, displayValue, '*', '(']);
-        setHistory([...history, displayValue, '*', '(']);
+      if (!isNewNumber && currentInput !== '0') {
+        setExpression([...expression, currentInput, '*', '(']);
       } else {
         setExpression([...expression, '(']);
-        setHistory([...history, '(']);
       }
       setIsNewNumber(true);
     } else if (paren === ')' && openCount > closeCount && !isNewNumber) {
-      setExpression([...expression, displayValue, ')']);
-      setHistory([...history, displayValue, ')']);
+      setExpression([...expression, currentInput, ')']);
       setIsNewNumber(true);
     }
   };
@@ -159,13 +160,14 @@ export default function QuickExpenseCalculator({
   };
 
   const handleEquals = () => {
-    if (expression.length === 0 && currentResult === null) {
-      return; // Nothing to evaluate
+    if (expression.length === 0 && result === null) {
+      return;
     }
 
-    let finalExpression = currentResult !== null 
-      ? [currentResult]
-      : [...expression, displayValue];
+    let finalExpression = [...expression];
+    if (!isNewNumber) {
+      finalExpression.push(currentInput);
+    }
 
     // Close any remaining open parentheses
     const openCount = finalExpression.filter(x => x === '(').length;
@@ -174,32 +176,30 @@ export default function QuickExpenseCalculator({
       finalExpression.push(')');
     }
 
-    const result = evaluateExpression(finalExpression);
-    setCurrentResult(result.toString());
-    setDisplayValue(result.toString());
+    const calculatedResult = evaluateExpression(finalExpression);
+    setResult(calculatedResult.toString());
+    setCurrentInput(calculatedResult.toString());
     setExpression([]);
     setIsNewNumber(true);
-    setHistory([...history, displayValue, '=', result.toString()]);
   };
 
   const handleClear = () => {
-    setDisplayValue('0');
+    setCurrentInput('0');
     setExpression([]);
     setIsNewNumber(true);
-    setHistory([]);
-    setCurrentResult(null);
+    setResult(null);
   };
 
   const handleDecimal = () => {
-    if (!displayValue.includes('.')) {
-      setDisplayValue(displayValue + '.');
+    if (!currentInput.includes('.')) {
+      setCurrentInput(currentInput + '.');
       setIsNewNumber(false);
     }
   };
 
   const handleSubmit = () => {
     onSubmit({
-      amount: parseFloat(displayValue),
+      amount: parseFloat(currentInput),
       category,
       comment,
     });
@@ -274,17 +274,12 @@ export default function QuickExpenseCalculator({
       </View>
 
       <View style={[styles.display, { backgroundColor: colors.card }]}>
-        {history.length > 0 && (
-          <Text style={[styles.historyText, { color: colors.textSecondary }]}>
-            {history.join(' ')}
-          </Text>
-        )}
         <Text 
           style={[styles.displayText, { color: colors.text }]}
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          {displayValue}
+          {getDisplayExpression()}
         </Text>
         {comment && (
           <Text style={[styles.commentPreview, { color: colors.textSecondary }]}>
