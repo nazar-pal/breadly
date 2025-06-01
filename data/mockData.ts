@@ -109,6 +109,46 @@ export const mockCategories = [
   },
 ];
 
+// Mock income sources
+export const mockIncomeSources = [
+  { id: 'cash', name: 'Cash' },
+  { id: 'credit-card', name: 'Credit Card' },
+  { id: 'salary', name: 'Monthly Salary' },
+  { id: 'freelance', name: 'Freelance Work' },
+];
+
+// Mock income history
+export const mockIncomeHistory = [
+  {
+    id: '1',
+    source: 'Monthly Salary',
+    amount: 5000.00,
+    date: '2025-03-01',
+    description: 'March salary payment',
+  },
+  {
+    id: '2',
+    source: 'Freelance Work',
+    amount: 850.00,
+    date: '2025-02-28',
+    description: 'Website development project',
+  },
+  {
+    id: '3',
+    source: 'Cash',
+    amount: 200.00,
+    date: '2025-02-27',
+    description: 'Birthday gift from family',
+  },
+  {
+    id: '4',
+    source: 'Credit Card',
+    amount: 75.00,
+    date: '2025-02-26',
+    description: 'Cashback rewards',
+  },
+];
+
 // Mock summary data
 export const mockSummary = {
   today: {
