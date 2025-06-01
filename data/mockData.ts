@@ -109,6 +109,24 @@ export const mockCategories = [
   },
 ];
 
+// Mock income sources
+export const mockIncomeSources = [
+  {
+    id: '1',
+    name: 'Cash',
+    description: 'Cash payments and withdrawals',
+    balance: 1250.00,
+    icon: 'banknote',
+  },
+  {
+    id: '2',
+    name: 'Credit Card',
+    description: 'Main credit card account',
+    balance: 3450.75,
+    icon: 'credit-card',
+  },
+];
+
 // Mock summary data
 export const mockSummary = {
   today: {
