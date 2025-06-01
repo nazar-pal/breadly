@@ -8,6 +8,7 @@ import {
   Modal,
   Platform,
   KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
@@ -16,6 +17,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus, Coffee, UtensilsCrossed, Film, Bus, Heart, Chrome as Home, Users, Shirt } from 'lucide-react-native';
 import { router } from 'expo-router';
 import IconButton from '@/components/ui/IconButton';
+
+// Get screen dimensions
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Map category names to icons
 const categoryIcons: { [key: string]: React.ComponentType<any> } = {
@@ -209,17 +213,28 @@ export default function CategoriesScreen() {
               styles.modalContent,
               { 
                 backgroundColor: colors.background,
-                paddingBottom: insets.bottom
+                paddingBottom: insets.bottom,
+                maxHeight: Platform.select({
+                  ios: SCREEN_HEIGHT * 0.8,
+                  android: SCREEN_HEIGHT * 0.8,
+                  default: '80vh'
+                })
               }
             ]}
           >
             <View style={styles.modalHandle} />
-            <ExpenseForm
-              onSubmit={handleExpenseSubmit}
-              initialData={
-                selectedCategory ? { category: selectedCategory } : undefined
-              }
-            />
+            <ScrollView 
+              style={styles.modalScroll}
+              contentContainerStyle={styles.modalScrollContent}
+              keyboardShouldPersistTaps="handled"
+            >
+              <ExpenseForm
+                onSubmit={handleExpenseSubmit}
+                initialData={
+                  selectedCategory ? { category: selectedCategory } : undefined
+                }
+              />
+            </ScrollView>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -358,5 +373,11 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: 16,
+  },
+  modalScroll: {
+    width: '100%',
+  },
+  modalScrollContent: {
+    flexGrow: 1,
   },
 });
