@@ -24,10 +24,39 @@ import {
 } from 'lucide-react-native';
 import IconButton from '../ui/IconButton';
 
-// ... (schema and types remain the same)
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
+
+type ExpenseFormData = {
+  amount: string;
+  category: string;
+  date: Date;
+  description?: string;
+};
+
+type ExpenseFormProps = {
+  onSubmit: (data: ExpenseFormData) => void;
+  initialData?: ExpenseFormData;
+};
 
 export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
-  // ... (state and hooks remain the same)
+  const { colors } = useTheme();
+  const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
+  const [editingExpenseIndex, setEditingExpenseIndex] = useState<number | null>(null);
+
+  const handleEditExpense = (index: number) => {
+    setEditingExpenseIndex(index === editingExpenseIndex ? null : index);
+  };
+
+  const handleDeleteExpense = (index: number) => {
+    setExpenses(prevExpenses => prevExpenses.filter((_, i) => i !== index));
+    setEditingExpenseIndex(null);
+  };
 
   return (
     <ScrollView
@@ -107,15 +136,20 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
           ))}
         </View>
       )}
-
-      {/* ... (modals remain the same) */}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // ... (existing styles remain the same)
-
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+  },
+  formSection: {
+    gap: 16,
+  },
   expensesList: {
     borderRadius: 12,
     overflow: 'hidden',
