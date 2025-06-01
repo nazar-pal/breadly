@@ -11,7 +11,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [activeTheme, setActiveTheme] = useState<'light' | 'dark'>(
-    colorScheme || 'light'
+    colorScheme || 'light',
   );
 
   useEffect(() => {
@@ -28,22 +28,26 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <ThemeProvider theme={activeTheme} updateTheme={updateTheme} themePreference={theme}>
-      <StatusBar style={activeTheme === 'dark' ? 'light' : 'dark'} />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="expenses/[id]"
-          options={{
-            presentation: 'card',
-            headerShown: true,
-            title: 'Expense Details',
-            headerBackTitle: 'Back',
-          }}
-        />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
-      </GestureHandlerRootView>
+      <ThemeProvider
+        theme={activeTheme}
+        updateTheme={updateTheme}
+        themePreference={theme}
+      >
+        <StatusBar style={activeTheme === 'dark' ? 'light' : 'dark'} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="expenses/[id]"
+            options={{
+              presentation: 'card',
+              headerShown: true,
+              title: 'Expense Details',
+              headerBackTitle: 'Back',
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

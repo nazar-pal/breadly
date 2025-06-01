@@ -38,7 +38,7 @@ export default function Button({
 
   const getBackgroundColor = () => {
     if (disabled) return colors.secondary;
-    
+
     switch (variant) {
       case 'primary':
         return colors.primary;
@@ -56,7 +56,7 @@ export default function Button({
 
   const getTextColor = () => {
     if (disabled) return colors.textSecondary;
-    
+
     switch (variant) {
       case 'primary':
         return '#FFFFFF';
@@ -74,7 +74,7 @@ export default function Button({
 
   const getBorderColor = () => {
     if (disabled) return colors.secondary;
-    
+
     switch (variant) {
       case 'outline':
         return colors.primary;
@@ -130,18 +130,19 @@ export default function Button({
       {...props}
     >
       <View style={styles.contentContainer}>
-        {leftIcon && !loading && <View style={styles.iconLeft}>{leftIcon}</View>}
-        
+        {leftIcon && !loading && (
+          <View style={styles.iconLeft}>{leftIcon}</View>
+        )}
+
         {loading ? (
-          <ActivityIndicator 
-            size="small" 
-            color={getTextColor()} 
-          />
+          <ActivityIndicator size="small" color={getTextColor()} />
         ) : (
           <Text style={textStyles}>{children}</Text>
         )}
-        
-        {rightIcon && !loading && <View style={styles.iconRight}>{rightIcon}</View>}
+
+        {rightIcon && !loading && (
+          <View style={styles.iconRight}>{rightIcon}</View>
+        )}
       </View>
     </TouchableOpacity>
   );

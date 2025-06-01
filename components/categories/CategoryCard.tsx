@@ -16,16 +16,22 @@ interface CategoryCardProps {
   onDelete: (id: string) => void;
 }
 
-export default function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
+export default function CategoryCard({
+  category,
+  onEdit,
+  onDelete,
+}: CategoryCardProps) {
   const { colors, spacing } = useTheme();
-  
+
   const percentage = (category.spent / category.budget) * 100;
   const isOverBudget = percentage > 100;
 
   return (
     <Card style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.name, { color: colors.text }]}>{category.name}</Text>
+        <Text style={[styles.name, { color: colors.text }]}>
+          {category.name}
+        </Text>
         <View style={styles.actions}>
           <IconButton
             icon={<Edit2 size={16} />}
@@ -42,7 +48,7 @@ export default function CategoryCard({ category, onEdit, onDelete }: CategoryCar
           />
         </View>
       </View>
-      
+
       <View style={styles.budgetContainer}>
         <View style={styles.budgetInfo}>
           <Text style={[styles.spent, { color: colors.text }]}>
@@ -61,8 +67,13 @@ export default function CategoryCard({ category, onEdit, onDelete }: CategoryCar
           {percentage.toFixed(0)}%
         </Text>
       </View>
-      
-      <View style={[styles.progressBarContainer, { backgroundColor: colors.secondary }]}>
+
+      <View
+        style={[
+          styles.progressBarContainer,
+          { backgroundColor: colors.secondary },
+        ]}
+      >
         <View
           style={[
             styles.progressBar,

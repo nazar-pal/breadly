@@ -25,7 +25,7 @@ export default function IconButton({
 
   const getBackgroundColor = () => {
     if (disabled) return colors.secondary;
-    
+
     switch (variant) {
       case 'primary':
         return colors.primary;
@@ -40,7 +40,7 @@ export default function IconButton({
 
   const getIconColor = () => {
     if (disabled) return colors.textSecondary;
-    
+
     switch (variant) {
       case 'primary':
         return '#FFFFFF';
@@ -80,11 +80,7 @@ export default function IconButton({
   });
 
   return (
-    <TouchableOpacity
-      style={buttonStyles}
-      disabled={disabled}
-      {...props}
-    >
+    <TouchableOpacity style={buttonStyles} disabled={disabled} {...props}>
       <View style={styles.iconContainer}>{iconWithColor}</View>
     </TouchableOpacity>
   );

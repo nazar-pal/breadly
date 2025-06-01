@@ -20,7 +20,11 @@ interface CategoryFormProps {
   onCancel: () => void;
 }
 
-export default function CategoryForm({ onSubmit, initialData, onCancel }: CategoryFormProps) {
+export default function CategoryForm({
+  onSubmit,
+  initialData,
+  onCancel,
+}: CategoryFormProps) {
   const { colors, spacing } = useTheme();
   const {
     control,
@@ -37,7 +41,9 @@ export default function CategoryForm({ onSubmit, initialData, onCancel }: Catego
   return (
     <View style={styles.container}>
       <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Category Name</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          Category Name
+        </Text>
         <Controller
           control={control}
           name="name"
@@ -67,13 +73,17 @@ export default function CategoryForm({ onSubmit, initialData, onCancel }: Catego
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>Monthly Budget</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          Monthly Budget
+        </Text>
         <Controller
           control={control}
           name="budget"
           render={({ field: { onChange, onBlur, value } }) => (
             <View style={styles.amountInputContainer}>
-              <Text style={[styles.currencySymbol, { color: colors.text }]}>$</Text>
+              <Text style={[styles.currencySymbol, { color: colors.text }]}>
+                $
+              </Text>
               <TextInput
                 style={[
                   styles.input,

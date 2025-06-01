@@ -9,12 +9,13 @@ import { Calendar, Receipt, Mic, Tag } from 'lucide-react-native';
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colors, spacing } = useTheme();
-  
+
   // Find the expense with the matching ID
-  const expense = mockExpenses.find(e => e.id === id);
-  
+  const expense = mockExpenses.find((e) => e.id === id);
+
   // Placeholder for receipt image
-  const receiptImageUrl = 'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+  const receiptImageUrl =
+    'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
 
   if (!expense) {
     return (
@@ -39,10 +40,15 @@ export default function ExpenseDetailsScreen() {
           ${expense.amount.toFixed(2)}
         </Text>
       </View>
-      
+
       <Card style={styles.detailsCard}>
         <View style={styles.detailRow}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.secondary }]}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: colors.secondary },
+            ]}
+          >
             <Calendar size={20} color={colors.text} />
           </View>
           <View>
@@ -54,16 +60,16 @@ export default function ExpenseDetailsScreen() {
             </Text>
           </View>
         </View>
-        
-        <View
-          style={[
-            styles.separator,
-            { backgroundColor: colors.border },
-          ]}
-        />
-        
+
+        <View style={[styles.separator, { backgroundColor: colors.border }]} />
+
         <View style={styles.detailRow}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.secondary }]}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: colors.secondary },
+            ]}
+          >
             <Tag size={20} color={colors.text} />
           </View>
           <View>
@@ -75,14 +81,9 @@ export default function ExpenseDetailsScreen() {
             </Text>
           </View>
         </View>
-        
-        <View
-          style={[
-            styles.separator,
-            { backgroundColor: colors.border },
-          ]}
-        />
-        
+
+        <View style={[styles.separator, { backgroundColor: colors.border }]} />
+
         <View style={styles.detailRow}>
           <View style={styles.descriptionContainer}>
             <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
@@ -94,7 +95,7 @@ export default function ExpenseDetailsScreen() {
           </View>
         </View>
       </Card>
-      
+
       {expense.hasPhoto && (
         <Card style={styles.attachmentCard}>
           <Text style={[styles.attachmentTitle, { color: colors.text }]}>
@@ -109,13 +110,18 @@ export default function ExpenseDetailsScreen() {
           </View>
         </Card>
       )}
-      
+
       {expense.hasVoice && (
         <Card style={styles.attachmentCard}>
           <Text style={[styles.attachmentTitle, { color: colors.text }]}>
             Voice Memo
           </Text>
-          <View style={[styles.voiceMemoContainer, { backgroundColor: colors.secondary }]}>
+          <View
+            style={[
+              styles.voiceMemoContainer,
+              { backgroundColor: colors.secondary },
+            ]}
+          >
             <Mic size={24} color={colors.text} style={{ marginRight: 8 }} />
             <Text style={[styles.voiceMemoText, { color: colors.text }]}>
               Voice Memo (00:12)

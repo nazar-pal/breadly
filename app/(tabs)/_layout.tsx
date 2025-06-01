@@ -1,12 +1,27 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from '@/context/ThemeContext';
-import { CirclePlus as PlusCircle, Chrome as Home, ChartBar as BarChart3, Settings } from 'lucide-react-native';
+import {
+  CirclePlus as PlusCircle,
+  Chrome as Home,
+  ChartBar as BarChart3,
+  Settings,
+} from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function TabBarIcon({ Icon, focused, color }: { Icon: any; focused: boolean; color: string }) {
+function TabBarIcon({
+  Icon,
+  focused,
+  color,
+}: {
+  Icon: any;
+  focused: boolean;
+  color: string;
+}) {
   return (
-    <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
+    <View
+      style={[styles.iconContainer, focused && styles.iconContainerFocused]}
+    >
       <Icon size={24} color={color} strokeWidth={2} />
     </View>
   );
@@ -33,7 +48,8 @@ export default function TabLayout() {
           fontSize: 12,
           fontWeight: '500',
         },
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{

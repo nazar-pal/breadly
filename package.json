@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
     "build:web": "npx expo export --platform web",
-    "lint": "npx expo lint"
+    "lint": "npx expo lint",
+    "format": "prettier . --write",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -30,10 +32,12 @@
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
     "lucide-react-native": "^0.511.0",
-    "react": "^19.1.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-hook-form": "^7.56.4",
-    "react-native": "^0.79.2",
+    "react-native": "0.79.2",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-pager-view": "^6.8.1",
     "react-native-reanimated": "~3.17.4",
     "react-native-renderer": "^15.5.3",
     "react-native-safe-area-context": "^5.4.0",
@@ -48,6 +52,9 @@
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@types/react": "~19.0.10",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~9.2.0",
+    "prettier": "^3.5.3",
     "typescript": "~5.8.3"
   }
 }

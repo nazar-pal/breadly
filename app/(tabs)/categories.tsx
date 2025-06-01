@@ -47,8 +47,8 @@ export default function CategoriesScreen() {
                 name: data.name,
                 budget: parseFloat(data.budget),
               }
-            : category
-        )
+            : category,
+        ),
       );
     } else {
       // Add new category

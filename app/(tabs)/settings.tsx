@@ -32,7 +32,12 @@ export default function SettingsScreen() {
       >
         <Card>
           <View style={styles.accountSection}>
-            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.secondary }]}>
+            <View
+              style={[
+                styles.avatarPlaceholder,
+                { backgroundColor: colors.secondary },
+              ]}
+            >
               <User size={32} color={colors.text} />
             </View>
             <View style={styles.accountInfo}>
@@ -58,13 +63,23 @@ export default function SettingsScreen() {
           </Button>
         </Card>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, marginTop: spacing.lg }]}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: colors.text, marginTop: spacing.lg },
+          ]}
+        >
           Appearance
         </Text>
         <Card>
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: colors.secondary }]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
                 <Sun size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
@@ -80,15 +95,17 @@ export default function SettingsScreen() {
           </View>
 
           <View
-            style={[
-              styles.separator,
-              { backgroundColor: colors.border },
-            ]}
+            style={[styles.separator, { backgroundColor: colors.border }]}
           />
 
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: colors.secondary }]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
                 <Moon size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
@@ -104,15 +121,17 @@ export default function SettingsScreen() {
           </View>
 
           <View
-            style={[
-              styles.separator,
-              { backgroundColor: colors.border },
-            ]}
+            style={[styles.separator, { backgroundColor: colors.border }]}
           />
 
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: colors.secondary }]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
                 <Smartphone size={20} color={colors.text} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
@@ -121,14 +140,21 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={themePreference === 'system'}
-              onValueChange={(value) => updateTheme(value ? 'system' : isDark ? 'dark' : 'light')}
+              onValueChange={(value) =>
+                updateTheme(value ? 'system' : isDark ? 'dark' : 'light')
+              }
               trackColor={{ false: colors.secondary, true: colors.primary }}
               thumbColor="#FFFFFF"
             />
           </View>
         </Card>
 
-        <Text style={[styles.versionText, { color: colors.textSecondary, marginTop: spacing.xl }]}>
+        <Text
+          style={[
+            styles.versionText,
+            { color: colors.textSecondary, marginTop: spacing.xl },
+          ]}
+        >
           Breadly v1.0.0
         </Text>
       </ScrollView>

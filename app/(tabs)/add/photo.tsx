@@ -5,27 +5,29 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Camera, Upload } from 'lucide-react-native';
 
-
-export default function PhotoExpenseScreen() {
+export default function PhotoScreen() {
   const { colors } = useTheme();
 
-  const handleTakePhoto = () => {
-    // In a real app, this would launch the camera
-  };
-
-  const handleUploadPhoto = () => {
-    // In a real app, this would launch the image picker
-  };
-
   return (
-
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Card style={styles.cameraPlaceholder}>
-          <View style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}>
+          <View
+            style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}
+          >
             <Camera size={48} color={colors.text} />
           </View>
-          <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.placeholderText,
+              {
+                color: colors.textSecondary,
+                textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 2,
+              },
+            ]}
+          >
             Take a photo of your receipt for automatic expense entry
           </Text>
         </Card>
@@ -33,33 +35,27 @@ export default function PhotoExpenseScreen() {
         <View style={styles.actionButtons}>
           <Button
             variant="primary"
-            onPress={handleTakePhoto}
-            leftIcon={<Camera size={20} color="#FFFFFF" />}
-            style={{ flex: 1, marginRight: 8 }}>
+            leftIcon={<Camera size={20} color="#fff" />}
+            style={{ flex: 1, marginRight: 8 }}
+          >
             Take Photo
           </Button>
           <Button
             variant="outline"
-            onPress={handleUploadPhoto}
             leftIcon={<Upload size={20} color={colors.text} />}
-            style={{ flex: 1 }}>
+            style={{ flex: 1 }}
+          >
             Upload
           </Button>
         </View>
       </View>
     </View>
-
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
+  container: { flex: 1 },
+  content: { flex: 1, padding: 16 },
   cameraPlaceholder: {
     height: 400,
     alignItems: 'center',
@@ -77,6 +73,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 24,
     fontSize: 16,
+    fontWeight: '500',
   },
   actionButtons: {
     flexDirection: 'row',

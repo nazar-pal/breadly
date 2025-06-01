@@ -10,9 +10,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function DashboardScreen() {
   const { colors, spacing } = useTheme();
   const insets = useSafeAreaInsets();
-  
+
   const todaysExpenses = mockExpenses.filter(
-    (expense) => expense.date === '2025-03-01'
+    (expense) => expense.date === '2025-03-01',
   );
 
   return (
@@ -61,7 +61,9 @@ export default function DashboardScreen() {
             ))
           ) : (
             <Card>
-              <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.textSecondary, textAlign: 'center' }}
+              >
                 No expenses recorded today
               </Text>
             </Card>
@@ -84,7 +86,9 @@ export default function DashboardScreen() {
           <Card style={styles.monthSummaryCard}>
             <View style={styles.monthSummaryContent}>
               <View>
-                <Text style={[styles.monthTitle, { color: colors.textSecondary }]}>
+                <Text
+                  style={[styles.monthTitle, { color: colors.textSecondary }]}
+                >
                   Total Spent
                 </Text>
                 <Text style={[styles.monthAmount, { color: colors.text }]}>
@@ -92,7 +96,9 @@ export default function DashboardScreen() {
                 </Text>
               </View>
               <View>
-                <Text style={[styles.monthTitle, { color: colors.textSecondary }]}>
+                <Text
+                  style={[styles.monthTitle, { color: colors.textSecondary }]}
+                >
                   # of Expenses
                 </Text>
                 <Text style={[styles.monthCount, { color: colors.text }]}>
@@ -100,7 +106,12 @@ export default function DashboardScreen() {
                 </Text>
               </View>
             </View>
-            <View style={[styles.monthTrendContainer, { backgroundColor: colors.secondary }]}>
+            <View
+              style={[
+                styles.monthTrendContainer,
+                { backgroundColor: colors.secondary },
+              ]}
+            >
               <Text
                 style={[
                   styles.monthTrendText,

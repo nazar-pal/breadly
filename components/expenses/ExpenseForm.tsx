@@ -14,7 +14,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import { Plus, ChevronDown, Calendar, AlignLeft, ChevronRight, Pencil, Trash2 } from 'lucide-react-native';
+import {
+  Plus,
+  ChevronDown,
+  Calendar,
+  AlignLeft,
+  ChevronRight,
+  Pencil,
+  Trash2,
+} from 'lucide-react-native';
 import IconButton from '../ui/IconButton';
 
 const expenseSchema = z.object({
@@ -31,13 +39,18 @@ interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
 }
 
-export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
+export default function ExpenseForm({
+  onSubmit,
+  initialData,
+}: ExpenseFormProps) {
   const { colors, spacing } = useTheme();
   const [showDescription, setShowDescription] = useState(false);
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-  const [expandedExpenseIndex, setExpandedExpenseIndex] = useState<number | null>(null);
+  const [expandedExpenseIndex, setExpandedExpenseIndex] = useState<
+    number | null
+  >(null);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -159,7 +172,9 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                 style={[
                   styles.pickerButtonText,
                   {
-                    color: selectedCategory ? colors.text : colors.textSecondary,
+                    color: selectedCategory
+                      ? colors.text
+                      : colors.textSecondary,
                   },
                 ]}
                 numberOfLines={1}
@@ -217,7 +232,9 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                   styles.descriptionInput,
                   {
                     color: colors.text,
-                    borderColor: errors.description ? colors.error : colors.border,
+                    borderColor: errors.description
+                      ? colors.error
+                      : colors.border,
                     backgroundColor: colors.card,
                   },
                 ]}
@@ -235,7 +252,9 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
       )}
 
       {expenses.length > 0 && (
-        <View style={[styles.expensesList, { backgroundColor: colors.secondary }]}>
+        <View
+          style={[styles.expensesList, { backgroundColor: colors.secondary }]}
+        >
           <Text style={[styles.expensesListTitle, { color: colors.text }]}>
             Added Expenses ({expenses.length})
           </Text>
@@ -247,7 +266,10 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                 styles.expenseItem,
                 {
                   borderBottomColor: colors.border,
-                  backgroundColor: expandedExpenseIndex === index ? colors.card : 'transparent',
+                  backgroundColor:
+                    expandedExpenseIndex === index
+                      ? colors.card
+                      : 'transparent',
                   borderRadius: expandedExpenseIndex === index ? 8 : 0,
                   marginBottom: expandedExpenseIndex === index ? 8 : 0,
                 },
@@ -255,15 +277,29 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
             >
               <View style={styles.expenseItemHeader}>
                 <View style={styles.expenseItemMain}>
-                  <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
+                  <Text
+                    style={[styles.expenseItemAmount, { color: colors.text }]}
+                  >
                     ${parseFloat(expense.amount).toFixed(2)}
                   </Text>
                   <View style={styles.expenseItemMeta}>
-                    <Text style={[styles.dateText, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.dateText, { color: colors.textSecondary }]}
+                    >
                       {formatDate(expense.date)}
                     </Text>
-                    <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
-                      <Text style={[styles.categoryBadgeText, { color: colors.text }]}>
+                    <View
+                      style={[
+                        styles.categoryBadge,
+                        { backgroundColor: colors.secondary },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.categoryBadgeText,
+                          { color: colors.text },
+                        ]}
+                      >
                         {expense.category}
                       </Text>
                     </View>
@@ -291,15 +327,21 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
                     color={colors.textSecondary}
                     style={[
                       styles.expandIcon,
-                      expandedExpenseIndex === index && styles.expandIconRotated,
+                      expandedExpenseIndex === index &&
+                        styles.expandIconRotated,
                     ]}
                   />
                 )}
               </View>
-              
+
               {expandedExpenseIndex === index && expense.description && (
                 <View style={styles.expenseItemDetails}>
-                  <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+                  <Text
+                    style={[
+                      styles.descriptionText,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
                     {expense.description}
                   </Text>
                 </View>
@@ -318,7 +360,11 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
         >
           Add Another
         </Button>
-        <Button variant="primary" onPress={handleFinalSubmit} style={{ flex: 1 }}>
+        <Button
+          variant="primary"
+          onPress={handleFinalSubmit}
+          style={{ flex: 1 }}
+        >
           Save {expenses.length > 0 ? 'All' : ''} Expense
           {expenses.length !== 0 ? 's' : ''}
         </Button>
@@ -334,9 +380,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
           style={styles.modalOverlay}
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View
-            style={[styles.modalContent, { backgroundColor: colors.card }]}
-          >
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               Select Category
             </Text>
@@ -388,9 +432,7 @@ export default function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps)
           style={styles.modalOverlay}
           onPress={() => setShowDatePicker(false)}
         >
-          <View
-            style={[styles.modalContent, { backgroundColor: colors.card }]}
-          >
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               Select Date
             </Text>

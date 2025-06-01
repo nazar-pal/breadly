@@ -95,7 +95,8 @@ export const ThemeProvider = ({
         borderRadius,
         themePreference,
         updateTheme,
-      }}>
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );

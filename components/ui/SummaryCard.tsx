@@ -13,12 +13,19 @@ interface SummaryCardProps {
   };
 }
 
-export default function SummaryCard({ title, amount, subtitle, trend }: SummaryCardProps) {
+export default function SummaryCard({
+  title,
+  amount,
+  subtitle,
+  trend,
+}: SummaryCardProps) {
   const { colors } = useTheme();
 
   return (
     <Card style={styles.container}>
-      <Text style={[styles.title, { color: colors.textSecondary }]}>{title}</Text>
+      <Text style={[styles.title, { color: colors.textSecondary }]}>
+        {title}
+      </Text>
       <Text style={[styles.amount, { color: colors.text }]}>
         ${amount.toFixed(2)}
       </Text>
