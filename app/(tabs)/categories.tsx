@@ -12,20 +12,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  LocationEdit as Edit2, 
-  Plus,
-  Coffee,
-  UtensilsCrossed,
-  Film,
-  Bus,
-  Heart,
-  Home,
-  Users,
-  Shirt
-} from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus, Coffee, UtensilsCrossed, Film, Bus, Heart, Chrome as Home, Users, Shirt } from 'lucide-react-native';
 import { router } from 'expo-router';
 import IconButton from '@/components/ui/IconButton';
 
