@@ -15,17 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import {
-  Calendar,
-  ChevronDown,
-  X,
-  Plus,
-  Minus,
-  Divide,
-  Multiply,
-  Equal,
-  Percent,
-} from 'lucide-react-native';
+import { Calendar, ChevronDown, X, Plus, Minus, Divide, Reply as Multiply, Equal, Percent } from 'lucide-react-native';
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
