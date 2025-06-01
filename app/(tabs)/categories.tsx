@@ -12,11 +12,11 @@ import {
 } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
-import ExpenseForm from '@/components/expenses/ExpenseForm';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus, Coffee, UtensilsCrossed, Film, Bus, Heart, Chrome as Home, Users, Shirt } from 'lucide-react-native';
 import { router } from 'expo-router';
 import IconButton from '@/components/ui/IconButton';
+import QuickExpenseCalculator from '@/components/expenses/QuickExpenseCalculator';
 
 // Get screen dimensions
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -49,6 +49,8 @@ export default function CategoriesScreen() {
   };
 
   const handleExpenseSubmit = (data: any) => {
+    // Here you would typically save the expense to your backend
+    console.log('New expense:', data);
     setModalVisible(false);
     setSelectedCategory(null);
   };
@@ -226,18 +228,13 @@ export default function CategoriesScreen() {
             ]}
           >
             <View style={styles.modalHandle} />
-            <ScrollView 
-              style={styles.modalScroll}
-              contentContainerStyle={styles.modalScrollContent}
-              keyboardShouldPersistTaps="handled"
-            >
-              <ExpenseForm
+            {selectedCategory && (
+              <QuickExpenseCalculator
+                category={selectedCategory}
                 onSubmit={handleExpenseSubmit}
-                initialData={
-                  selectedCategory ? { category: selectedCategory } : undefined
-                }
+                onClose={handleCloseModal}
               />
-            </ScrollView>
+            )}
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -376,11 +373,5 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: 16,
-  },
-  modalScroll: {
-    width: '100%',
-  },
-  modalScrollContent: {
-    flexGrow: 1,
   },
 });
