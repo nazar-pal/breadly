@@ -521,18 +521,19 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   keypad: {
-    gap: 12,
+    gap: 8,
   },
   row: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
+    height: 60, // Fixed height for all rows
   },
   calcButton: {
     flex: 1,
-    aspectRatio: 1,
-    borderRadius: 16,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%', // Take full height of row
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -549,7 +550,7 @@ const styles = StyleSheet.create({
     }),
   },
   calcButtonText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '600',
   },
   modalContainer: {
