@@ -5,7 +5,6 @@ import {
   Chrome as Home,
   ChartBar as BarChart3,
   Settings,
-  Wallet,
 } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -75,15 +74,6 @@ export default function TabLayout() {
           title: 'Add',
           tabBarIcon: ({ focused, color }) => (
             <TabBarIcon Icon={PlusCircle} focused={focused} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="income"
-        options={{
-          title: 'Income',
-          tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={Wallet} focused={focused} color={color} />
           ),
         }}
       />
