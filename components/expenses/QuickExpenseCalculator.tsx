@@ -23,7 +23,9 @@ import {
   Asterisk,
   Check,
   DollarSign,
+  Tag,
 } from 'lucide-react-native';
+import { mockCategories } from '@/data/mockData';
 
 const currencies = [
   { symbol: '$', code: 'USD', name: 'US Dollar' },
@@ -40,7 +42,7 @@ interface QuickExpenseCalculatorProps {
 }
 
 export default function QuickExpenseCalculator({
-  category,
+  category: initialCategory,
   onSubmit,
   onClose,
 }: QuickExpenseCalculatorProps) {
@@ -50,8 +52,10 @@ export default function QuickExpenseCalculator({
   const [isNewNumber, setIsNewNumber] = useState(true);
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [comment, setComment] = useState('');
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+  const [category, setCategory] = useState(initialCategory);
   const [result, setResult] = useState<string | null>(null);
 
   const getDisplayExpression = () => {
@@ -90,7 +94,6 @@ export default function QuickExpenseCalculator({
     const closeCount = expression.filter(x => x === ')').length;
 
     if (paren === '(') {
-      // If we only have a single number and no operations
       if (expression.length === 0 && !isNewNumber && currentInput !== '0') {
         setExpression(['(']);
         setCurrentInput(currentInput);
@@ -128,7 +131,7 @@ export default function QuickExpenseCalculator({
         while (operators.length && operators[operators.length - 1] !== '(') {
           output.push(operators.pop()!);
         }
-        operators.pop(); // Remove '('
+        operators.pop();
       } else {
         while (
           operators.length &&
@@ -174,7 +177,6 @@ export default function QuickExpenseCalculator({
       finalExpression.push(currentInput);
     }
 
-    // Close any remaining open parentheses
     const openCount = finalExpression.filter(x => x === '(').length;
     const closeCount = finalExpression.filter(x => x === ')').length;
     for (let i = 0; i < openCount - closeCount; i++) {
@@ -260,9 +262,15 @@ export default function QuickExpenseCalculator({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.categoryText, { color: colors.text }]}>
-          {category}
-        </Text>
+        <Pressable 
+          onPress={() => setShowCategoryModal(true)}
+          style={styles.categoryButton}
+        >
+          <Text style={[styles.categoryText, { color: colors.text }]}>
+            {category}
+          </Text>
+          <Tag size={16} color={colors.text} style={{ marginLeft: 8 }} />
+        </Pressable>
         <View style={styles.headerButtons}>
           <Button
             variant="ghost"
@@ -501,6 +509,55 @@ export default function QuickExpenseCalculator({
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={showCategoryModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCategoryModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              Select Category
+            </Text>
+            <ScrollView style={styles.categoryList}>
+              {mockCategories.map((cat) => (
+                <Pressable
+                  key={cat.id}
+                  style={[
+                    styles.categoryOption,
+                    {
+                      backgroundColor:
+                        category === cat.name
+                          ? colors.primary
+                          : 'transparent',
+                    },
+                  ]}
+                  onPress={() => {
+                    setCategory(cat.name);
+                    setShowCategoryModal(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.categoryName,
+                      {
+                        color:
+                          category === cat.name
+                            ? '#FFFFFF'
+                            : colors.text,
+                      },
+                    ]}
+                  >
+                    {cat.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -641,4 +698,24 @@ const styles = StyleSheet.create({
   currencyName: {
     fontSize: 14,
   },
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  categoryList: {
+    maxHeight: 300,
+  },
+  categoryOption: {
+    padding: 16,
+    borderRadius: 8,
+  },
+  categoryName: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
+
+export default QuickExpenseCalculator
