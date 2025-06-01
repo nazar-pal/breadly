@@ -5,22 +5,27 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Pencil, Camera, Mic } from 'lucide-react-native';
 
+type Mode = 'manual' | 'photo' | 'voice';
+
 interface AddExpenseHeaderProps {
-  currentMode: 'manual' | 'photo' | 'voice';
+  currentMode: Mode;
 }
 
 export default function AddExpenseHeader({ currentMode }: AddExpenseHeaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const tabs = [
+  const tabs: { id: Mode; label: string; icon: any; path: string }[] = [
     { id: 'manual', label: 'Manual', icon: Pencil, path: '/add' },
-    { id: 'photo', label: 'Photo', icon: Camera, path: '/add/photo' },
-    { id: 'voice', label: 'Voice', icon: Mic, path: '/add/voice' },
+    { id: 'photo',  label: 'Photo',  icon: Camera, path: '/add/photo' },
+    { id: 'voice',  label: 'Voice',  icon: Mic,    path: '/add/voice' },
   ];
 
-  const handleTabPress = (path: string) => {
-    router.replace(path);
+  /** Navigate only when the tapped tab isn’t already active. */
+  const handleTabPress = (path: string, isActive: boolean) => {
+    if (!isActive) {
+      router.navigate(path);           // stays inside the top-tab pager → animates
+    }
   };
 
   return (
@@ -28,26 +33,28 @@ export default function AddExpenseHeader({ currentMode }: AddExpenseHeaderProps)
       style={[
         styles.container,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.card,
           paddingTop: insets.top,
+          borderBottomColor: colors.border,
         },
-      ]}>
+      ]}
+    >
       <Text style={[styles.title, { color: colors.text }]}>Add Expense</Text>
+
       <View style={styles.tabs}>
-        {tabs.map((tab) => {
-          const isActive = currentMode === tab.id;
-          const Icon = tab.icon;
+        {tabs.map(({ id, label, icon: Icon, path }) => {
+          const isActive = currentMode === id;
+
           return (
             <Pressable
-              key={tab.id}
+              key={id}
               style={[
                 styles.tab,
-                isActive && {
-                  borderBottomWidth: 2,
-                  borderBottomColor: colors.primary,
-                },
+                isActive && { borderBottomColor: colors.primary, borderBottomWidth: 2 },
               ]}
-              onPress={() => handleTabPress(tab.path)}>
+              android_ripple={{ color: colors.primary + '22' }}
+              onPress={() => handleTabPress(path, isActive)}
+            >
               <Icon
                 size={20}
                 color={isActive ? colors.primary : colors.textSecondary}
@@ -60,8 +67,9 @@ export default function AddExpenseHeader({ currentMode }: AddExpenseHeaderProps)
                     color: isActive ? colors.primary : colors.textSecondary,
                     fontWeight: isActive ? '600' : '400',
                   },
-                ]}>
-                {tab.label}
+                ]}
+              >
+                {label}
               </Text>
             </Pressable>
           );
@@ -74,12 +82,13 @@ export default function AddExpenseHeader({ currentMode }: AddExpenseHeaderProps)
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   tabs: {
     flexDirection: 'row',
@@ -91,6 +100,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
   },
   icon: {
     marginRight: 8,

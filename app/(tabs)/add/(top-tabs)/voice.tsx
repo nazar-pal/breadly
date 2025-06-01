@@ -4,6 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import Card from '@/components/ui/Card';
 import { Mic } from 'lucide-react-native';
 
+
 export default function VoiceExpenseScreen() {
   const { colors } = useTheme();
   const [isRecording, setIsRecording] = useState(false);
@@ -13,6 +14,7 @@ export default function VoiceExpenseScreen() {
   };
 
   return (
+
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Card style={styles.voiceCard}>
@@ -52,6 +54,7 @@ export default function VoiceExpenseScreen() {
         </View>
       </View>
     </View>
+           
   );
 }
 

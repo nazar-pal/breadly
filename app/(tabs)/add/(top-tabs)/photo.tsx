@@ -5,6 +5,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Camera, Upload } from 'lucide-react-native';
 
+
 export default function PhotoExpenseScreen() {
   const { colors } = useTheme();
 
@@ -17,6 +18,7 @@ export default function PhotoExpenseScreen() {
   };
 
   return (
+
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Card style={styles.cameraPlaceholder}>
@@ -46,6 +48,7 @@ export default function PhotoExpenseScreen() {
         </View>
       </View>
     </View>
+
   );
 }
 
