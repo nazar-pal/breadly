@@ -19,7 +19,6 @@ import {
   Equal,
   Save,
   MessageSquare,
-  Parentheses,
   Divide,
   Asterisk,
   Check,
@@ -302,11 +301,11 @@ export default function QuickExpenseCalculator({
             variant="special"
           />
           <CalcButton 
-            label={<Parentheses size={20} color={colors.text} />}
+            label="("
             onPress={() => handleParentheses('(')}
           />
           <CalcButton 
-            label={<Text style={[styles.calcButtonText, { color: colors.text }]}>)</Text>}
+            label=")"
             onPress={() => handleParentheses(')')}
           />
           <CalcButton 
