@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import Card from '../ui/Card';
 import IconButton from '../ui/IconButton';
-import { Edit2, Trash2, CreditCard, Banknote } from 'lucide-react-native';
+import { LocationEdit as Edit2, Trash2, CreditCard, Banknote } from 'lucide-react-native';
 
 interface IncomeSourceCardProps {
   source: {
