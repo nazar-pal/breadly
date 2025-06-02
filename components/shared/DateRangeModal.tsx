@@ -185,52 +185,54 @@ export default function DateRangeModal({
               style={styles.content}
               showsVerticalScrollIndicator={false}
             >
-              {MODE_OPTIONS.map((option) => (
-                <Pressable
-                  key={option.mode}
-                  style={[
-                    styles.modeOption,
-                    {
-                      backgroundColor:
-                        currentMode === option.mode
-                          ? colors.primary + '20'
-                          : colors.card,
-                      borderColor:
-                        currentMode === option.mode
-                          ? colors.primary
-                          : colors.border,
-                    },
-                  ]}
-                  onPress={() => handleModeSelect(option.mode)}
-                >
-                  <View style={styles.modeContent}>
-                    <Text
-                      style={[
-                        styles.modeLabel,
-                        {
-                          color:
-                            currentMode === option.mode
-                              ? colors.primary
-                              : colors.text,
-                        },
-                      ]}
-                    >
-                      {option.label}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.modeDescription,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      {option.description}
-                    </Text>
-                  </View>
-                  {currentMode === option.mode && (
-                    <Check size={20} color={colors.primary} />
-                  )}
-                </Pressable>
-              ))}
+              <View style={styles.modeGrid}>
+                {MODE_OPTIONS.map((option) => (
+                  <Pressable
+                    key={option.mode}
+                    style={[
+                      styles.modeOption,
+                      {
+                        backgroundColor:
+                          currentMode === option.mode
+                            ? colors.primary + '20'
+                            : colors.card,
+                        borderColor:
+                          currentMode === option.mode
+                            ? colors.primary
+                            : colors.border,
+                      },
+                    ]}
+                    onPress={() => handleModeSelect(option.mode)}
+                  >
+                    <View style={styles.modeContent}>
+                      <Text
+                        style={[
+                          styles.modeLabel,
+                          {
+                            color:
+                              currentMode === option.mode
+                                ? colors.primary
+                                : colors.text,
+                          },
+                        ]}
+                      >
+                        {option.label}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.modeDescription,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
+                        {option.description}
+                      </Text>
+                    </View>
+                    {currentMode === option.mode && (
+                      <Check size={16} color={colors.primary} />
+                    )}
+                  </Pressable>
+                ))}
+              </View>
             </ScrollView>
           ) : (
             // Custom Date Picker
@@ -310,6 +312,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '80%',
+    minHeight: '50%',
   },
   header: {
     flexDirection: 'row',
@@ -328,28 +331,36 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  modeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   modeOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
     borderRadius: 12,
     borderWidth: 1,
     marginVertical: 4,
+    width: '48%',
   },
   modeContent: {
     flex: 1,
   },
   modeLabel: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     marginBottom: 2,
   },
   modeDescription: {
-    fontSize: 14,
+    fontSize: 12,
   },
   customActions: {
     flexDirection: 'row',
