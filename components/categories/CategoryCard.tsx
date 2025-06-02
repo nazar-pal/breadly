@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import Card from '../ui/Card';
 import { useTheme } from '@/context/ThemeContext';
 import { CreditCard as Edit2, Trash2 } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Card from '../ui/Card';
 import IconButton from '../ui/IconButton';
 
 interface CategoryCardProps {

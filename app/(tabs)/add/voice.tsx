@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { useTheme } from '@/context/ThemeContext';
 import { Mic } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function VoiceScreen() {
   const { colors } = useTheme();
@@ -16,7 +16,8 @@ export default function VoiceScreen() {
             Tap the microphone and describe your expense
           </Text>
           <Text style={[styles.example, { color: colors.textSecondary }]}>
-            Example: "I spent $42.50 on groceries at Whole Foods yesterday"
+            Example: &ldquo;I spent $42.50 on groceries at Whole Foods
+            yesterday&rdquo;
           </Text>
         </Card>
 

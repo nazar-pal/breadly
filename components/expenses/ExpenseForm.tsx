@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  Pressable,
-  Modal,
-} from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Button from '../ui/Button';
 import { useTheme } from '@/context/ThemeContext';
 import { mockCategories } from '@/data/mockData';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Plus,
-  ChevronDown,
-  Calendar,
   AlignLeft,
+  Calendar,
+  ChevronDown,
   ChevronRight,
+  Plus,
   X,
 } from 'lucide-react-native';
-import IconButton from '../ui/IconButton';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import * as z from 'zod';
+import Button from '../ui/Button';
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
@@ -126,13 +125,6 @@ export default function ExpenseForm({
       date: today,
     });
     setShowDescription(false);
-  };
-
-  const handleDeleteExpense = (index: number) => {
-    setExpenses(expenses.filter((_, i) => i !== index));
-    if (editingExpenseIndex === index) {
-      handleCancelEdit();
-    }
   };
 
   return (
@@ -648,5 +640,3 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
 });
-
-export default ExpenseForm;

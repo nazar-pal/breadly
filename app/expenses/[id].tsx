@@ -1,14 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useTheme } from '@/context/ThemeContext';
 import Card from '@/components/ui/Card';
+import { useTheme } from '@/context/ThemeContext';
 import { mockExpenses } from '@/data/mockData';
-import { Calendar, Receipt, Mic, Tag } from 'lucide-react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { Calendar, Mic, Tag } from 'lucide-react-native';
+import React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors, spacing } = useTheme();
+  const { colors } = useTheme();
 
   // Find the expense with the matching ID
   const expense = mockExpenses.find((e) => e.id === id);

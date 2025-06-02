@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
 import Card from '@/components/ui/Card';
-import SummaryCard from '@/components/ui/SummaryCard';
 import ExpenseCard from '@/components/ui/ExpenseCard';
+import SummaryCard from '@/components/ui/SummaryCard';
+import { useTheme } from '@/context/ThemeContext';
 import { mockExpenses, mockSummary } from '@/data/mockData';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function DashboardScreen() {
@@ -53,7 +53,7 @@ export default function DashboardScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Today's Expenses
+            Today&apos;s Expenses
           </Text>
           {todaysExpenses.length > 0 ? (
             todaysExpenses.map((expense) => (
