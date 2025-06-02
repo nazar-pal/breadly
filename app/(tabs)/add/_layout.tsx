@@ -1,10 +1,10 @@
-import React from 'react';
-import { withLayoutContext } from 'expo-router';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useTheme } from '@/context/ThemeContext';
 import AddExpenseTabBar from '@/components/navigation/AddExpenseTabBar';
+import { useTheme } from '@/context/ThemeContext';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { withLayoutContext } from 'expo-router';
+import React from 'react';
 
-const { Navigator, Screen } = createMaterialTopTabNavigator();
+const { Navigator } = createMaterialTopTabNavigator();
 const TopTabs = withLayoutContext(Navigator);
 
 export default function AddLayout() {
@@ -21,9 +21,9 @@ export default function AddLayout() {
         tabBarStyle: { backgroundColor: colors.card },
       }}
     >
-      <Screen name="index" options={{ title: 'Manual' }} />
-      <Screen name="photo" options={{ title: 'Photo' }} />
-      <Screen name="voice" options={{ title: 'Voice' }} />
+      <TopTabs.Screen name="index" options={{ title: 'Manual' }} />
+      <TopTabs.Screen name="photo" options={{ title: 'Photo' }} />
+      <TopTabs.Screen name="voice" options={{ title: 'Voice' }} />
     </TopTabs>
   );
 }
