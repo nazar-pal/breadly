@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LocationEdit as Edit2,
+  X,
 } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -15,6 +16,8 @@ interface FinancialHeaderProps {
   onTabChange: (tab: 'expenses' | 'incomes') => void;
   dateRange: string;
   onManagePress: () => void;
+  isEditMode?: boolean;
+  onToggleEditMode?: () => void;
   onDateNavigate?: (direction: 'prev' | 'next') => void;
 }
 
@@ -25,6 +28,8 @@ export default function FinancialHeader({
   onTabChange,
   dateRange,
   onManagePress,
+  isEditMode = false,
+  onToggleEditMode,
   onDateNavigate,
 }: FinancialHeaderProps) {
   const { colors } = useTheme();
@@ -35,37 +40,41 @@ export default function FinancialHeader({
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>
-          Net Balance
+          {isEditMode ? 'Edit Categories' : 'Net Balance'}
         </Text>
         <IconButton
-          icon={<Edit2 size={20} />}
+          icon={isEditMode ? <X size={20} /> : <Edit2 size={20} />}
           variant="ghost"
-          onPress={onManagePress}
+          onPress={onToggleEditMode || onManagePress}
         />
       </View>
-      <Text
-        style={[
-          styles.balanceAmount,
-          {
-            color: netBalance >= 0 ? colors.success : colors.error,
-          },
-        ]}
-      >
-        ${Math.abs(netBalance).toFixed(2)}
-      </Text>
-
-      {/* Date Range Selector */}
-      <View style={styles.dateSelector}>
-        <Pressable onPress={() => onDateNavigate?.('prev')}>
-          <ChevronLeft size={24} color={colors.text} />
-        </Pressable>
-        <Text style={[styles.dateRange, { color: colors.text }]}>
-          {dateRange}
+      {!isEditMode && (
+        <Text
+          style={[
+            styles.balanceAmount,
+            {
+              color: netBalance >= 0 ? colors.success : colors.error,
+            },
+          ]}
+        >
+          ${Math.abs(netBalance).toFixed(2)}
         </Text>
-        <Pressable onPress={() => onDateNavigate?.('next')}>
-          <ChevronRight size={24} color={colors.text} />
-        </Pressable>
-      </View>
+      )}
+
+      {/* Date Range Selector - Hidden in edit mode */}
+      {!isEditMode && (
+        <View style={styles.dateSelector}>
+          <Pressable onPress={() => onDateNavigate?.('prev')}>
+            <ChevronLeft size={24} color={colors.text} />
+          </Pressable>
+          <Text style={[styles.dateRange, { color: colors.text }]}>
+            {dateRange}
+          </Text>
+          <Pressable onPress={() => onDateNavigate?.('next')}>
+            <ChevronRight size={24} color={colors.text} />
+          </Pressable>
+        </View>
+      )}
 
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>

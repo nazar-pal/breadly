@@ -1,4 +1,5 @@
 import CalculatorModal from '@/components/shared/CalculatorModal';
+import CategoryEditModal from '@/components/shared/CategoryEditModal';
 import CategoryGrid from '@/components/shared/CategoryGrid';
 import FinancialHeader from '@/components/shared/FinancialHeader';
 import { useTheme } from '@/context/ThemeContext';
@@ -11,7 +12,7 @@ import {
   DollarSign,
   Film,
   Heart,
-  Chrome as Home,
+  Home,
   PiggyBank,
   Shirt,
   Target,
@@ -54,14 +55,36 @@ export default function CategoriesScreen() {
   const [activeTab, setActiveTab] = useState<'expenses' | 'incomes'>(
     'expenses',
   );
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<{
+    id: string;
+    name: string;
+    description?: string;
+  } | null>(null);
 
   // Mock data - in real app these would come from state/API
   const totalExpenses = 1845;
   const totalIncome = 6750;
 
   const handleCategoryPress = (categoryName: string) => {
-    setSelectedCategory(categoryName);
-    setModalVisible(true);
+    if (isEditMode) {
+      // Find the category to edit
+      const categories =
+        activeTab === 'expenses' ? mockCategories : mockIncomeCategories;
+      const category = categories.find((cat) => cat.name === categoryName);
+      if (category) {
+        setCategoryToEdit({
+          id: category.id,
+          name: category.name,
+          description: '', // Add description field to mock data if needed
+        });
+        setEditModalVisible(true);
+      }
+    } else {
+      setSelectedCategory(categoryName);
+      setModalVisible(true);
+    }
   };
 
   const handleSubmit = (data: any) => {
@@ -73,6 +96,27 @@ export default function CategoriesScreen() {
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedCategory(null);
+  };
+
+  const handleToggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
+
+  const handleSaveCategory = (data: {
+    id: string;
+    name: string;
+    description: string;
+    iconName: string;
+  }) => {
+    console.log('Save category:', data);
+    // TODO: Update the category in your state/API
+    setEditModalVisible(false);
+    setCategoryToEdit(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalVisible(false);
+    setCategoryToEdit(null);
   };
 
   const navigateToManageCategories = () => {
@@ -106,6 +150,8 @@ export default function CategoriesScreen() {
         onTabChange={setActiveTab}
         dateRange="26 Jun - 01 Jul 2025"
         onManagePress={navigateToManageCategories}
+        isEditMode={isEditMode}
+        onToggleEditMode={handleToggleEditMode}
       />
 
       <CategoryGrid
@@ -113,8 +159,10 @@ export default function CategoriesScreen() {
         type={activeTab === 'expenses' ? 'expense' : 'income'}
         getIcon={getCategoryIcon}
         onCategoryPress={handleCategoryPress}
-        onAddCategoryPress={navigateToManageCategories}
+        onAddCategoryPress={handleToggleEditMode}
+        showAddButton={!isEditMode}
         addButtonLabel={activeTab === 'expenses' ? 'Add' : 'Add Category'}
+        isEditMode={isEditMode}
       />
 
       <CalculatorModal
@@ -123,6 +171,14 @@ export default function CategoriesScreen() {
         category={selectedCategory}
         onSubmit={handleSubmit}
         onClose={handleCloseModal}
+      />
+
+      <CategoryEditModal
+        visible={editModalVisible}
+        category={categoryToEdit}
+        type={activeTab === 'expenses' ? 'expense' : 'income'}
+        onSave={handleSaveCategory}
+        onClose={handleCloseEditModal}
       />
     </View>
   );

@@ -18,6 +18,7 @@ interface CategoryGridProps {
   onAddCategoryPress: () => void;
   showAddButton?: boolean;
   addButtonLabel?: string;
+  isEditMode?: boolean;
 }
 
 export default function CategoryGrid({
@@ -28,6 +29,7 @@ export default function CategoryGrid({
   onAddCategoryPress,
   showAddButton = true,
   addButtonLabel,
+  isEditMode = false,
 }: CategoryGridProps) {
   return (
     <ScrollView
@@ -47,6 +49,7 @@ export default function CategoryGrid({
             icon={getIcon(category.name)}
             type={type}
             onPress={onCategoryPress}
+            isEditMode={isEditMode}
           />
         );
       })}

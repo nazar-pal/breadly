@@ -9,6 +9,7 @@ interface CategoryCardProps {
   icon: React.ReactNode;
   type: 'expense' | 'income';
   onPress: (categoryName: string) => void;
+  isEditMode?: boolean;
 }
 
 export default function CategoryCard({
@@ -18,6 +19,7 @@ export default function CategoryCard({
   icon,
   type,
   onPress,
+  isEditMode = false,
 }: CategoryCardProps) {
   const { colors } = useTheme();
 
@@ -29,6 +31,9 @@ export default function CategoryCard({
   };
 
   const getIconBackgroundColor = () => {
+    if (isEditMode) {
+      return colors.primary + '20'; // Highlight in edit mode
+    }
     if (type === 'income') {
       return colors.success + '20'; // Light green for income
     }
@@ -37,7 +42,14 @@ export default function CategoryCard({
 
   return (
     <Pressable
-      style={[styles.categoryCard, { backgroundColor: colors.card }]}
+      style={[
+        styles.categoryCard,
+        {
+          backgroundColor: colors.card,
+          borderWidth: isEditMode ? 2 : 0,
+          borderColor: isEditMode ? colors.primary : 'transparent',
+        },
+      ]}
       onPress={() => onPress(name)}
     >
       <View
@@ -55,9 +67,16 @@ export default function CategoryCard({
         >
           {name}
         </Text>
-        <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
-          ${amount.toFixed(2)}
-        </Text>
+        {!isEditMode && (
+          <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
+            ${amount.toFixed(2)}
+          </Text>
+        )}
+        {isEditMode && (
+          <Text style={[styles.editHint, { color: colors.primary }]}>
+            Tap to edit
+          </Text>
+        )}
       </View>
     </Pressable>
   );
@@ -106,5 +125,9 @@ const styles = StyleSheet.create({
   },
   categoryAmount: {
     fontSize: 13,
+  },
+  editHint: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
