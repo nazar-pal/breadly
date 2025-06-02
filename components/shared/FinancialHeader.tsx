@@ -1,4 +1,5 @@
 import IconButton from '@/components/ui/IconButton';
+import { useCategoryContext } from '@/context/CategoryContext';
 import { useTheme } from '@/context/ThemeContext';
 import {
   ChevronLeft,
@@ -12,29 +13,22 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 interface FinancialHeaderProps {
   totalExpenses: number;
   totalIncome: number;
-  activeTab: 'expenses' | 'incomes';
-  onTabChange: (tab: 'expenses' | 'incomes') => void;
-  dateRange: string;
   onManagePress: () => void;
-  isEditMode?: boolean;
-  onToggleEditMode?: () => void;
   onDateNavigate?: (direction: 'prev' | 'next') => void;
 }
 
 export default function FinancialHeader({
   totalExpenses,
   totalIncome,
-  activeTab,
-  onTabChange,
-  dateRange,
   onManagePress,
-  isEditMode = false,
-  onToggleEditMode,
   onDateNavigate,
 }: FinancialHeaderProps) {
   const { colors } = useTheme();
+  const { activeTab, isEditMode, handleToggleEditMode, setActiveTab } =
+    useCategoryContext();
 
   const netBalance = totalIncome - totalExpenses;
+  const dateRange = '26 Jun - 01 Jul 2025'; // Move this to context if needed
 
   return (
     <View style={styles.header}>
@@ -45,7 +39,7 @@ export default function FinancialHeader({
         <IconButton
           icon={isEditMode ? <X size={20} /> : <Edit2 size={20} />}
           variant="ghost"
-          onPress={onToggleEditMode || onManagePress}
+          onPress={handleToggleEditMode || onManagePress}
         />
       </View>
       {!isEditMode && (
@@ -86,7 +80,7 @@ export default function FinancialHeader({
               { backgroundColor: colors.primary + '20' },
             ],
           ]}
-          onPress={() => onTabChange('expenses')}
+          onPress={() => setActiveTab('expenses')}
         >
           <Text
             style={[
@@ -124,7 +118,7 @@ export default function FinancialHeader({
               { backgroundColor: colors.primary + '20' },
             ],
           ]}
-          onPress={() => onTabChange('incomes')}
+          onPress={() => setActiveTab('incomes')}
         >
           <Text
             style={[

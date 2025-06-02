@@ -1,3 +1,4 @@
+import { useCategoryContext } from '@/context/CategoryContext';
 import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 import {
@@ -14,40 +15,29 @@ import QuickCalculator from './QuickCalculator';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-interface CalculatorModalProps {
-  visible: boolean;
-  type: 'expense' | 'income';
-  category: string | null;
-  onSubmit: (data: {
-    amount: number;
-    category: string;
-    comment?: string;
-  }) => void;
-  onClose: () => void;
-}
-
-export default function CalculatorModal({
-  visible,
-  type,
-  category,
-  onSubmit,
-  onClose,
-}: CalculatorModalProps) {
+export default function CalculatorModal() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const {
+    modalVisible,
+    currentType,
+    selectedCategory,
+    handleSubmit,
+    handleCloseModal,
+  } = useCategoryContext();
 
   return (
     <Modal
-      visible={visible}
+      visible={modalVisible}
       animationType="slide"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={handleCloseModal}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.modalContainer}
       >
-        <Pressable style={styles.modalOverlay} onPress={onClose} />
+        <Pressable style={styles.modalOverlay} onPress={handleCloseModal} />
         <View
           style={[
             styles.modalContent,
@@ -63,12 +53,12 @@ export default function CalculatorModal({
           ]}
         >
           <View style={styles.modalHandle} />
-          {category && (
+          {selectedCategory && (
             <QuickCalculator
-              type={type}
-              category={category}
-              onSubmit={onSubmit}
-              onClose={onClose}
+              type={currentType}
+              category={selectedCategory}
+              onSubmit={handleSubmit}
+              onClose={handleCloseModal}
             />
           )}
         </View>

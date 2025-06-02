@@ -1,44 +1,40 @@
+import { useCategoryContext } from '@/context/CategoryContext';
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import AddCategoryButton from './AddCategoryButton';
 import CategoryCard from './CategoryCard';
 
-interface CategoryData {
-  id: string;
-  name: string;
-  spent?: number;
-  earned?: number;
-}
-
 interface CategoryGridProps {
-  categories: CategoryData[];
-  type: 'expense' | 'income';
-  getIcon: (categoryName: string) => React.ReactNode;
-  onCategoryPress: (categoryName: string) => void;
-  onAddCategoryPress: () => void;
-  showAddButton?: boolean;
-  addButtonLabel?: string;
-  isEditMode?: boolean;
+  getIcon: (
+    categoryName: string,
+    type: 'expense' | 'income',
+  ) => React.ReactNode;
 }
 
-export default function CategoryGrid({
-  categories,
-  type,
-  getIcon,
-  onCategoryPress,
-  onAddCategoryPress,
-  showAddButton = true,
-  addButtonLabel,
-  isEditMode = false,
-}: CategoryGridProps) {
+export default function CategoryGrid({ getIcon }: CategoryGridProps) {
+  const {
+    currentCategories,
+    currentType,
+    isEditMode,
+    activeTab,
+    handleCategoryPress,
+    handleToggleEditMode,
+  } = useCategoryContext();
+
   return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.gridContainer}
     >
-      {categories.map((category) => {
+      {currentCategories.map((category) => {
         const amount =
-          type === 'expense' ? (category.spent ?? 0) : (category.earned ?? 0);
+          currentType === 'expense'
+            ? 'spent' in category
+              ? category.spent
+              : 0
+            : 'earned' in category
+              ? category.earned
+              : 0;
 
         return (
           <CategoryCard
@@ -46,18 +42,18 @@ export default function CategoryGrid({
             id={category.id}
             name={category.name}
             amount={amount}
-            icon={getIcon(category.name)}
-            type={type}
-            onPress={onCategoryPress}
+            icon={getIcon(category.name, currentType)}
+            type={currentType}
+            onPress={handleCategoryPress}
             isEditMode={isEditMode}
           />
         );
       })}
 
-      {showAddButton && (
+      {!isEditMode && (
         <AddCategoryButton
-          onPress={onAddCategoryPress}
-          label={addButtonLabel}
+          onPress={handleToggleEditMode}
+          label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
         />
       )}
     </ScrollView>

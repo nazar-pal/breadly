@@ -1,3 +1,4 @@
+import { useCategoryContext } from '@/context/CategoryContext';
 import { useTheme } from '@/context/ThemeContext';
 import {
   Briefcase,
@@ -54,32 +55,16 @@ const iconNames = Object.keys(
   availableIcons,
 ) as (keyof typeof availableIcons)[];
 
-interface CategoryEditModalProps {
-  visible: boolean;
-  category: {
-    id: string;
-    name: string;
-    description?: string;
-  } | null;
-  type: 'expense' | 'income';
-  onSave: (data: {
-    id: string;
-    name: string;
-    description: string;
-    iconName: string;
-  }) => void;
-  onClose: () => void;
-}
-
-export default function CategoryEditModal({
-  visible,
-  category,
-  type,
-  onSave,
-  onClose,
-}: CategoryEditModalProps) {
+export default function CategoryEditModal() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const {
+    editModalVisible,
+    categoryToEdit,
+    currentType,
+    handleSaveCategory,
+    handleCloseEditModal,
+  } = useCategoryContext();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -87,15 +72,15 @@ export default function CategoryEditModal({
     useState<keyof typeof availableIcons>('Home');
 
   useEffect(() => {
-    if (category) {
-      console.log('CategoryEditModal: Setting up category:', category);
-      setName(category.name);
-      setDescription(category.description || '');
+    if (categoryToEdit) {
+      console.log('CategoryEditModal: Setting up category:', categoryToEdit);
+      setName(categoryToEdit.name);
+      setDescription(categoryToEdit.description || '');
       // Try to match the category name to an icon, fallback to Home
       const matchedIcon = iconNames.find(
         (icon) =>
-          icon.toLowerCase() === category.name.toLowerCase() ||
-          category.name.toLowerCase().includes(icon.toLowerCase()),
+          icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
+          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase()),
       );
       setSelectedIcon(matchedIcon || 'Home');
       console.log('CategoryEditModal: Selected icon:', matchedIcon || 'Home');
@@ -105,48 +90,47 @@ export default function CategoryEditModal({
       setDescription('');
       setSelectedIcon('Home');
     }
-  }, [category]);
+  }, [categoryToEdit]);
 
   const handleSave = () => {
-    if (!category || !name.trim()) {
+    if (!categoryToEdit || !name.trim()) {
       console.log('CategoryEditModal: Cannot save - missing category or name');
       return;
     }
 
     console.log('CategoryEditModal: Saving category:', {
-      id: category.id,
+      id: categoryToEdit.id,
       name: name.trim(),
       description: description.trim(),
       iconName: selectedIcon,
     });
 
-    onSave({
-      id: category.id,
+    handleSaveCategory({
+      id: categoryToEdit.id,
       name: name.trim(),
       description: description.trim(),
       iconName: selectedIcon,
     });
-    onClose();
   };
 
   const getIconBackgroundColor = () => {
-    if (type === 'income') {
+    if (currentType === 'income') {
       return colors.success + '20';
     }
     return colors.secondary;
   };
 
-  if (!category) return null;
+  if (!categoryToEdit) return null;
 
   return (
     <Modal
-      visible={visible}
+      visible={editModalVisible}
       animationType="slide"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={handleCloseEditModal}
     >
       <View style={styles.modalContainer}>
-        <Pressable style={styles.modalOverlay} onPress={onClose} />
+        <Pressable style={styles.modalOverlay} onPress={handleCloseEditModal} />
         <View
           style={[
             styles.modalContent,
@@ -160,9 +144,12 @@ export default function CategoryEditModal({
           {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text }]}>
-              Edit {type === 'expense' ? 'Expense' : 'Income'} Category
+              Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable
+              onPress={handleCloseEditModal}
+              style={styles.closeButton}
+            >
               <X size={24} color={colors.text} />
             </Pressable>
           </View>
@@ -172,8 +159,8 @@ export default function CategoryEditModal({
             style={[styles.debugInfo, { backgroundColor: colors.secondary }]}
           >
             <Text style={[styles.debugText, { color: colors.textSecondary }]}>
-              Category ID: {category?.id} | Name: &ldquo;{name}&rdquo; | Icon:{' '}
-              {selectedIcon}
+              Category ID: {categoryToEdit?.id} | Name: &ldquo;{name}&rdquo; |
+              Icon: {selectedIcon}
             </Text>
           </View>
 
@@ -274,7 +261,7 @@ export default function CategoryEditModal({
                 styles.cancelButton,
                 { backgroundColor: colors.secondary },
               ]}
-              onPress={onClose}
+              onPress={handleCloseEditModal}
             >
               <Text style={[styles.buttonText, { color: colors.text }]}>
                 Cancel
