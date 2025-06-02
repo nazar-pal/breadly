@@ -1,36 +1,49 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Modal,
-  Platform,
-  KeyboardAvoidingView,
-  Dimensions,
-} from 'react-native';
+import CalculatorModal from '@/components/shared/CalculatorModal';
+import CategoryGrid from '@/components/shared/CategoryGrid';
+import FinancialHeader from '@/components/shared/FinancialHeader';
 import { useTheme } from '@/context/ThemeContext';
-import { mockCategories } from '@/data/mockData';
+import { mockCategories, mockIncomeCategories } from '@/data/mockData';
+import {
+  Briefcase,
+  Building,
+  Bus,
+  Coffee,
+  DollarSign,
+  Film,
+  Heart,
+  Chrome as Home,
+  PiggyBank,
+  Shirt,
+  Target,
+  TrendingUp,
+  Users,
+  UtensilsCrossed,
+} from 'lucide-react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronRight, LocationEdit as Edit2, Plus, Coffee, UtensilsCrossed, Film, Bus, Heart, Chrome as Home, Users, Shirt } from 'lucide-react-native';
-import { router } from 'expo-router';
-import IconButton from '@/components/ui/IconButton';
-import QuickExpenseCalculator from '@/components/expenses/QuickExpenseCalculator';
 
-// Get screen dimensions
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// Map category names to icons
+// Map category names to icons for expenses
 const categoryIcons: { [key: string]: React.ComponentType<any> } = {
-  'Coffee': Coffee,
-  'Dining': UtensilsCrossed,
-  'Entertainment': Film,
-  'Transportation': Bus,
-  'Health': Heart,
-  'Home': Home,
-  'Family': Users,
-  'Shopping': Shirt,
+  Coffee: Coffee,
+  Dining: UtensilsCrossed,
+  Entertainment: Film,
+  Transportation: Bus,
+  Health: Heart,
+  Home: Home,
+  Family: Users,
+  Shopping: Shirt,
+};
+
+// Map income category names to icons
+const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
+  Salary: Briefcase,
+  Freelance: DollarSign,
+  Investment: TrendingUp,
+  Business: Building,
+  Rental: Home,
+  'Side Hustle': Target,
+  Other: PiggyBank,
 };
 
 export default function CategoriesScreen() {
@@ -38,19 +51,21 @@ export default function CategoriesScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<'expenses' | 'incomes'>(
+    'expenses',
+  );
 
-  const totalBalance = -1955;
-  const totalExpenses = 110;
-  const totalIncome = 0;
+  // Mock data - in real app these would come from state/API
+  const totalExpenses = 1845;
+  const totalIncome = 6750;
 
   const handleCategoryPress = (categoryName: string) => {
     setSelectedCategory(categoryName);
     setModalVisible(true);
   };
 
-  const handleExpenseSubmit = (data: any) => {
-    // Here you would typically save the expense to your backend
-    console.log('New expense:', data);
+  const handleSubmit = (data: any) => {
+    console.log(`New ${activeTab.slice(0, -1)}:`, data);
     setModalVisible(false);
     setSelectedCategory(null);
   };
@@ -61,183 +76,54 @@ export default function CategoriesScreen() {
   };
 
   const navigateToManageCategories = () => {
-    router.push('/categories/manage');
+    return;
   };
 
   const getCategoryIcon = (categoryName: string) => {
-    const IconComponent = categoryIcons[categoryName] || Home;
+    const icons =
+      activeTab === 'expenses' ? categoryIcons : incomeCategoryIcons;
+    const IconComponent = icons[categoryName] || Home;
     return <IconComponent size={20} color={colors.text} />;
   };
 
+  const currentCategories =
+    activeTab === 'expenses' ? mockCategories : mockIncomeCategories;
+
   return (
-    <View 
+    <View
       style={[
-        styles.container, 
-        { 
+        styles.container,
+        {
           backgroundColor: colors.background,
-          paddingTop: insets.top 
-        }
+          paddingTop: insets.top,
+        },
       ]}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>
-            Total Balance
-          </Text>
-          <IconButton
-            icon={<Edit2 size={20} />}
-            variant="ghost"
-            onPress={navigateToManageCategories}
-          />
-        </View>
-        <Text style={[styles.balanceAmount, { color: colors.text }]}>
-          ${Math.abs(totalBalance).toFixed(2)}
-        </Text>
-        
-        {/* Date Range Selector */}
-        <View style={styles.dateSelector}>
-          <ChevronLeft size={24} color={colors.text} />
-          <Text style={[styles.dateRange, { color: colors.text }]}>
-            26 Jun - 01 Jul 2025
-          </Text>
-          <ChevronRight size={24} color={colors.text} />
-        </View>
+      <FinancialHeader
+        totalExpenses={totalExpenses}
+        totalIncome={totalIncome}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        dateRange="26 Jun - 01 Jul 2025"
+        onManagePress={navigateToManageCategories}
+      />
 
-        {/* Summary Cards */}
-        <View style={styles.summaryContainer}>
-          <View 
-            style={[
-              styles.summaryCard, 
-              { backgroundColor: colors.card }
-            ]}
-          >
-            <Text style={[styles.summaryLabel, { color: colors.error }]}>
-              Expenses
-            </Text>
-            <Text style={[styles.summaryAmount, { color: colors.error }]}>
-              ${totalExpenses.toFixed(2)}
-            </Text>
-          </View>
-          <View 
-            style={[
-              styles.summaryCard, 
-              { backgroundColor: colors.card }
-            ]}
-          >
-            <Text style={[styles.summaryLabel, { color: colors.success }]}>
-              Income
-            </Text>
-            <Text style={[styles.summaryAmount, { color: colors.success }]}>
-              ${totalIncome.toFixed(2)}
-            </Text>
-          </View>
-        </View>
-      </View>
+      <CategoryGrid
+        categories={currentCategories}
+        type={activeTab === 'expenses' ? 'expense' : 'income'}
+        getIcon={getCategoryIcon}
+        onCategoryPress={handleCategoryPress}
+        onAddCategoryPress={navigateToManageCategories}
+        addButtonLabel={activeTab === 'expenses' ? 'Add' : 'Add Category'}
+      />
 
-      {/* Categories Grid */}
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.gridContainer}
-      >
-        {mockCategories.map((category) => (
-          <Pressable
-            key={category.id}
-            style={[
-              styles.categoryCard,
-              { backgroundColor: colors.card }
-            ]}
-            onPress={() => handleCategoryPress(category.name)}
-          >
-            <View 
-              style={[
-                styles.iconContainer,
-                { backgroundColor: colors.secondary }
-              ]}
-            >
-              {getCategoryIcon(category.name)}
-            </View>
-            <View style={styles.categoryContent}>
-              <Text 
-                numberOfLines={1} 
-                style={[styles.categoryName, { color: colors.text }]}
-              >
-                {category.name}
-              </Text>
-              <Text 
-                style={[
-                  styles.categoryAmount,
-                  { color: category.spent > 0 ? colors.text : colors.textSecondary }
-                ]}
-              >
-                ${category.spent.toFixed(2)}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
-        
-        {/* Add Category Button */}
-        <Pressable
-          style={[
-            styles.categoryCard,
-            { 
-              backgroundColor: colors.secondary,
-              borderStyle: 'dashed',
-              borderWidth: 1,
-              borderColor: colors.border
-            }
-          ]}
-          onPress={navigateToManageCategories}
-        >
-          <View style={styles.addButtonContent}>
-            <Plus size={20} color={colors.text} />
-            <Text style={[styles.addButtonText, { color: colors.text }]}>
-              Add
-            </Text>
-          </View>
-        </Pressable>
-      </ScrollView>
-
-      {/* Quick Add Expense Modal */}
-      <Modal
+      <CalculatorModal
         visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={handleCloseModal}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalContainer}
-        >
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={handleCloseModal}
-          />
-          <View 
-            style={[
-              styles.modalContent,
-              { 
-                backgroundColor: colors.background,
-                paddingBottom: insets.bottom,
-                maxHeight: Platform.select({
-                  ios: SCREEN_HEIGHT * 0.8,
-                  android: SCREEN_HEIGHT * 0.8,
-                  default: '80vh'
-                })
-              }
-            ]}
-          >
-            <View style={styles.modalHandle} />
-            {selectedCategory && (
-              <QuickExpenseCalculator
-                category={selectedCategory}
-                onSubmit={handleExpenseSubmit}
-                onClose={handleCloseModal}
-              />
-            )}
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        type={activeTab === 'expenses' ? 'expense' : 'income'}
+        category={selectedCategory}
+        onSubmit={handleSubmit}
+        onClose={handleCloseModal}
+      />
     </View>
   );
 }
@@ -245,133 +131,5 @@ export default function CategoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    padding: 16,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  balanceLabel: {
-    fontSize: 16,
-  },
-  balanceAmount: {
-    fontSize: 32,
-    fontWeight: '700',
-    marginVertical: 8,
-  },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 16,
-  },
-  dateRange: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  summaryContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  summaryCard: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 12,
-  },
-  summaryLabel: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  summaryAmount: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  gridContainer: {
-    padding: 16,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  categoryCard: {
-    width: '47%',
-    padding: 12,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-    }),
-  },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryContent: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  categoryAmount: {
-    fontSize: 13,
-  },
-  addButtonContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  addButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 24,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 16,
   },
 });

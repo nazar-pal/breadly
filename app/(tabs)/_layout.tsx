@@ -1,9 +1,9 @@
-import { Tabs } from 'expo-router';
 import { useTheme } from '@/context/ThemeContext';
+import { Tabs } from 'expo-router';
 import {
-  CirclePlus as PlusCircle,
-  Chrome as Home,
   ChartBar as BarChart3,
+  Chrome as Home,
+  CirclePlus as PlusCircle,
   Settings,
 } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';

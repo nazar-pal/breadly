@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  Modal,
-  TextInput,
-  KeyboardAvoidingView,
-  ScrollView,
-} from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
-import Button from '../ui/Button';
+import { mockCategories, mockIncomeCategories } from '@/data/mockData';
 import {
-  X,
-  Plus,
-  Minus,
-  Equal,
-  Save,
-  MessageSquare,
-  Divide,
   Asterisk,
   Check,
+  Divide,
   DollarSign,
+  Equal,
+  MessageSquare,
+  Minus,
+  Plus,
+  Save,
   Tag,
+  X,
 } from 'lucide-react-native';
-import { mockCategories } from '@/data/mockData';
+import React, { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import Button from '../ui/Button';
 
 const currencies = [
   { symbol: '$', code: 'USD', name: 'US Dollar' },
@@ -35,17 +35,23 @@ const currencies = [
   { symbol: '₹', code: 'INR', name: 'Indian Rupee' },
 ];
 
-interface QuickExpenseCalculatorProps {
+interface QuickCalculatorProps {
+  type: 'expense' | 'income';
   category: string;
-  onSubmit: (data: { amount: number; category: string; comment?: string }) => void;
+  onSubmit: (data: {
+    amount: number;
+    category: string;
+    comment?: string;
+  }) => void;
   onClose: () => void;
 }
 
-export default function QuickExpenseCalculator({
+export default function QuickCalculator({
+  type,
   category: initialCategory,
   onSubmit,
   onClose,
-}: QuickExpenseCalculatorProps) {
+}: QuickCalculatorProps) {
   const { colors } = useTheme();
   const [currentInput, setCurrentInput] = useState('0');
   const [expression, setExpression] = useState<string[]>([]);
@@ -58,11 +64,19 @@ export default function QuickExpenseCalculator({
   const [category, setCategory] = useState(initialCategory);
   const [result, setResult] = useState<string | null>(null);
 
+  // Get appropriate categories based on type
+  const categories = type === 'expense' ? mockCategories : mockIncomeCategories;
+  const modalTitle =
+    type === 'expense' ? 'Select Category' : 'Select Income Category';
+
   const getDisplayExpression = () => {
     if (result !== null) {
       return result;
     }
-    return [...expression, isNewNumber ? '' : currentInput].join(' ').trim() || currentInput;
+    return (
+      [...expression, isNewNumber ? '' : currentInput].join(' ').trim() ||
+      currentInput
+    );
   };
 
   const handleNumberPress = (num: string) => {
@@ -90,8 +104,8 @@ export default function QuickExpenseCalculator({
   };
 
   const handleParentheses = (paren: '(' | ')') => {
-    const openCount = expression.filter(x => x === '(').length;
-    const closeCount = expression.filter(x => x === ')').length;
+    const openCount = expression.filter((x) => x === '(').length;
+    const closeCount = expression.filter((x) => x === ')').length;
 
     if (paren === '(') {
       if (expression.length === 0 && !isNewNumber && currentInput !== '0') {
@@ -122,7 +136,7 @@ export default function QuickExpenseCalculator({
     const output: string[] = [];
     const operators: string[] = [];
 
-    exp.forEach(token => {
+    exp.forEach((token) => {
       if (!isNaN(Number(token))) {
         output.push(token);
       } else if (token === '(') {
@@ -136,7 +150,9 @@ export default function QuickExpenseCalculator({
         while (
           operators.length &&
           operators[operators.length - 1] !== '(' &&
-          precedence[operators[operators.length - 1] as keyof typeof precedence] >= precedence[token as keyof typeof precedence]
+          precedence[
+            operators[operators.length - 1] as keyof typeof precedence
+          ] >= precedence[token as keyof typeof precedence]
         ) {
           output.push(operators.pop()!);
         }
@@ -149,17 +165,25 @@ export default function QuickExpenseCalculator({
     }
 
     const stack: number[] = [];
-    output.forEach(token => {
+    output.forEach((token) => {
       if (!isNaN(Number(token))) {
         stack.push(Number(token));
       } else {
         const b = stack.pop()!;
         const a = stack.pop()!;
         switch (token) {
-          case '+': stack.push(a + b); break;
-          case '-': stack.push(a - b); break;
-          case '*': stack.push(a * b); break;
-          case '/': stack.push(a / b); break;
+          case '+':
+            stack.push(a + b);
+            break;
+          case '-':
+            stack.push(a - b);
+            break;
+          case '*':
+            stack.push(a * b);
+            break;
+          case '/':
+            stack.push(a / b);
+            break;
         }
       }
     });
@@ -177,8 +201,8 @@ export default function QuickExpenseCalculator({
       finalExpression.push(currentInput);
     }
 
-    const openCount = finalExpression.filter(x => x === '(').length;
-    const closeCount = finalExpression.filter(x => x === ')').length;
+    const openCount = finalExpression.filter((x) => x === '(').length;
+    const closeCount = finalExpression.filter((x) => x === ')').length;
     for (let i = 0; i < openCount - closeCount; i++) {
       finalExpression.push(')');
     }
@@ -212,12 +236,12 @@ export default function QuickExpenseCalculator({
     });
   };
 
-  const CalcButton = ({ 
-    label, 
-    onPress, 
+  const CalcButton = ({
+    label,
+    onPress,
     variant = 'default',
-    size = 1 
-  }: { 
+    size = 1,
+  }: {
     label: string | React.ReactNode;
     onPress: () => void;
     variant?: 'default' | 'operation' | 'equal' | 'special';
@@ -228,25 +252,28 @@ export default function QuickExpenseCalculator({
       style={({ pressed }) => [
         styles.calcButton,
         {
-          backgroundColor: 
-            variant === 'operation' 
-              ? colors.primary 
+          backgroundColor:
+            variant === 'operation'
+              ? colors.primary
               : variant === 'equal'
-              ? colors.success
-              : variant === 'special'
-              ? colors.accent
-              : colors.secondary,
+                ? colors.success
+                : variant === 'special'
+                  ? colors.accent
+                  : colors.secondary,
           opacity: pressed ? 0.8 : 1,
           flex: size,
         },
       ]}
     >
       {typeof label === 'string' ? (
-        <Text 
+        <Text
           style={[
             styles.calcButtonText,
-            { 
-              color: variant === 'operation' || variant === 'special' ? '#FFFFFF' : colors.text,
+            {
+              color:
+                variant === 'operation' || variant === 'special'
+                  ? '#FFFFFF'
+                  : colors.text,
               fontSize: variant === 'equal' ? 20 : 24,
             },
           ]}
@@ -262,7 +289,7 @@ export default function QuickExpenseCalculator({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable 
+        <Pressable
           onPress={() => setShowCategoryModal(true)}
           style={styles.categoryButton}
         >
@@ -277,17 +304,21 @@ export default function QuickExpenseCalculator({
             onPress={() => setShowCommentModal(true)}
             leftIcon={<MessageSquare size={20} color={colors.text} />}
             style={{ marginRight: 8 }}
-          />
+          >
+            {''}
+          </Button>
           <Button
             variant="ghost"
             onPress={onClose}
             leftIcon={<X size={20} color={colors.text} />}
-          />
+          >
+            {''}
+          </Button>
         </View>
       </View>
 
       <View style={[styles.display, { backgroundColor: colors.card }]}>
-        <Text 
+        <Text
           style={[styles.displayText, { color: colors.text }]}
           numberOfLines={1}
           adjustsFontSizeToFit
@@ -295,7 +326,9 @@ export default function QuickExpenseCalculator({
           {getDisplayExpression()}
         </Text>
         {comment && (
-          <Text style={[styles.commentPreview, { color: colors.textSecondary }]}>
+          <Text
+            style={[styles.commentPreview, { color: colors.textSecondary }]}
+          >
             {comment}
           </Text>
         )}
@@ -303,24 +336,14 @@ export default function QuickExpenseCalculator({
 
       <View style={styles.keypad}>
         <View style={styles.row}>
-          <CalcButton 
-            label="C"
-            onPress={handleClear}
-            variant="special"
-          />
-          <CalcButton 
-            label="("
-            onPress={() => handleParentheses('(')}
-          />
-          <CalcButton 
-            label=")"
-            onPress={() => handleParentheses(')')}
-          />
-          <CalcButton 
+          <CalcButton label="C" onPress={handleClear} variant="special" />
+          <CalcButton label="(" onPress={() => handleParentheses('(')} />
+          <CalcButton label=")" onPress={() => handleParentheses(')')} />
+          <CalcButton
             label={<DollarSign size={20} color={colors.text} />}
             onPress={() => setShowCurrencyModal(true)}
           />
-          <CalcButton 
+          <CalcButton
             label={<Divide size={20} color="#FFFFFF" />}
             onPress={() => handleOperationPress('/')}
             variant="operation"
@@ -330,12 +353,12 @@ export default function QuickExpenseCalculator({
           <CalcButton label="7" onPress={() => handleNumberPress('7')} />
           <CalcButton label="8" onPress={() => handleNumberPress('8')} />
           <CalcButton label="9" onPress={() => handleNumberPress('9')} />
-          <CalcButton 
+          <CalcButton
             label={<Asterisk size={20} color="#FFFFFF" />}
             onPress={() => handleOperationPress('*')}
             variant="operation"
           />
-          <CalcButton 
+          <CalcButton
             label={<Plus size={24} color="#FFFFFF" />}
             onPress={() => handleOperationPress('+')}
             variant="operation"
@@ -345,12 +368,12 @@ export default function QuickExpenseCalculator({
           <CalcButton label="4" onPress={() => handleNumberPress('4')} />
           <CalcButton label="5" onPress={() => handleNumberPress('5')} />
           <CalcButton label="6" onPress={() => handleNumberPress('6')} />
-          <CalcButton 
+          <CalcButton
             label={<MessageSquare size={20} color="#FFFFFF" />}
             onPress={() => setShowCommentModal(true)}
             variant="operation"
           />
-          <CalcButton 
+          <CalcButton
             label={<Minus size={24} color="#FFFFFF" />}
             onPress={() => handleOperationPress('-')}
             variant="operation"
@@ -360,7 +383,7 @@ export default function QuickExpenseCalculator({
           <CalcButton label="1" onPress={() => handleNumberPress('1')} />
           <CalcButton label="2" onPress={() => handleNumberPress('2')} />
           <CalcButton label="3" onPress={() => handleNumberPress('3')} />
-          <CalcButton 
+          <CalcButton
             label={<Equal size={24} color="#FFFFFF" />}
             onPress={handleEquals}
             variant="operation"
@@ -368,16 +391,20 @@ export default function QuickExpenseCalculator({
           />
         </View>
         <View style={styles.row}>
-          <CalcButton 
+          <CalcButton
             label="0"
             onPress={() => handleNumberPress('0')}
             size={2}
           />
-          <CalcButton 
-            label={<Text style={[styles.calcButtonText, { color: colors.text }]}>.</Text>}
+          <CalcButton
+            label={
+              <Text style={[styles.calcButtonText, { color: colors.text }]}>
+                .
+              </Text>
+            }
             onPress={handleDecimal}
           />
-          <CalcButton 
+          <CalcButton
             label={<Save size={24} color="#FFFFFF" />}
             onPress={handleSubmit}
             variant="equal"
@@ -401,11 +428,14 @@ export default function QuickExpenseCalculator({
               Add Comment
             </Text>
             <TextInput
-              style={[styles.commentInput, { 
-                color: colors.text,
-                backgroundColor: colors.background,
-                borderColor: colors.border,
-              }]}
+              style={[
+                styles.commentInput,
+                {
+                  color: colors.text,
+                  backgroundColor: colors.background,
+                  borderColor: colors.border,
+                },
+              ]}
               placeholder="Enter comment..."
               placeholderTextColor={colors.textSecondary}
               value={comment}
@@ -519,19 +549,17 @@ export default function QuickExpenseCalculator({
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>
-              Select Category
+              {modalTitle}
             </Text>
             <ScrollView style={styles.categoryList}>
-              {mockCategories.map((cat) => (
+              {categories.map((cat) => (
                 <Pressable
                   key={cat.id}
                   style={[
                     styles.categoryOption,
                     {
                       backgroundColor:
-                        category === cat.name
-                          ? colors.primary
-                          : 'transparent',
+                        category === cat.name ? colors.primary : 'transparent',
                     },
                   ]}
                   onPress={() => {
@@ -543,10 +571,7 @@ export default function QuickExpenseCalculator({
                     style={[
                       styles.categoryName,
                       {
-                        color:
-                          category === cat.name
-                            ? '#FFFFFF'
-                            : colors.text,
+                        color: category === cat.name ? '#FFFFFF' : colors.text,
                       },
                     ]}
                   >
@@ -717,5 +742,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-export default QuickExpenseCalculator

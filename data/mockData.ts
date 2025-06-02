@@ -136,3 +136,88 @@ export const mockSummary = {
     },
   },
 };
+
+// Mock income categories
+export const mockIncomeCategories = [
+  {
+    id: '1',
+    name: 'Salary',
+    earned: 3500.0,
+  },
+  {
+    id: '2',
+    name: 'Freelance',
+    earned: 800.0,
+  },
+  {
+    id: '3',
+    name: 'Investment',
+    earned: 200.0,
+  },
+  {
+    id: '4',
+    name: 'Business',
+    earned: 1200.0,
+  },
+  {
+    id: '5',
+    name: 'Rental',
+    earned: 500.0,
+  },
+  {
+    id: '6',
+    name: 'Side Hustle',
+    earned: 300.0,
+  },
+  {
+    id: '7',
+    name: 'Other',
+    earned: 150.0,
+  },
+];
+
+// Mock income entries
+export const mockIncomes = [
+  {
+    id: '1',
+    amount: 3500.0,
+    category: 'Salary',
+    date: '2025-03-01',
+    description: 'Monthly salary from company',
+  },
+  {
+    id: '2',
+    amount: 400.0,
+    category: 'Freelance',
+    date: '2025-03-01',
+    description: 'Website design project',
+  },
+  {
+    id: '3',
+    amount: 150.0,
+    category: 'Investment',
+    date: '2025-02-28',
+    description: 'Dividend payment',
+  },
+  {
+    id: '4',
+    amount: 200.0,
+    category: 'Side Hustle',
+    date: '2025-02-27',
+    description: 'Online course sales',
+  },
+  {
+    id: '5',
+    amount: 500.0,
+    category: 'Rental',
+    date: '2025-02-25',
+    description: 'Apartment rental income',
+  },
+  {
+    id: '6',
+    amount: 1000.0,
+    category: 'Business',
+    date: '2025-02-24',
+    description: 'Client payment',
+  },
+];
