@@ -2,7 +2,10 @@ import CalculatorModal from '@/components/shared/CalculatorModal';
 import CategoryEditModal from '@/components/shared/CategoryEditModal';
 import CategoryGrid from '@/components/shared/CategoryGrid';
 import FinancialHeader from '@/components/shared/FinancialHeader';
-import { CategoryProvider } from '@/context/CategoryContext';
+import {
+  CategoryProvider,
+  useCategoryContext,
+} from '@/context/CategoryContext';
 import { useTheme } from '@/context/ThemeContext';
 import {
   Briefcase,
@@ -22,6 +25,8 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Map category names to icons for expenses
@@ -50,6 +55,8 @@ const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
 function CategoriesContent() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { isEditMode, canNavigate, navigatePrevious, navigateNext } =
+    useCategoryContext();
 
   // Mock data - in real app these would come from state/API
   const totalExpenses = 1845;
@@ -68,28 +75,52 @@ function CategoriesContent() {
     return <IconComponent size={20} color={colors.text} />;
   };
 
+  // Create pan gesture for full-screen swipe support
+  const panGesture = Gesture.Pan()
+    .minDistance(30)
+    .onEnd((event) => {
+      'worklet';
+      // Only handle swipes if navigation is enabled and we're not in edit mode
+      if (!canNavigate || isEditMode) return;
+
+      const { translationX, velocityX } = event;
+
+      // Require minimum velocity for swipe detection
+      if (Math.abs(velocityX) > 200) {
+        if (translationX > 30) {
+          // Swipe right - go to previous period
+          runOnJS(navigatePrevious)();
+        } else if (translationX < -30) {
+          // Swipe left - go to next period
+          runOnJS(navigateNext)();
+        }
+      }
+    });
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-          paddingTop: insets.top,
-        },
-      ]}
-    >
-      <FinancialHeader
-        totalExpenses={totalExpenses}
-        totalIncome={totalIncome}
-        onManagePress={navigateToManageCategories}
-      />
+    <GestureDetector gesture={panGesture}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+            paddingTop: insets.top,
+          },
+        ]}
+      >
+        <FinancialHeader
+          totalExpenses={totalExpenses}
+          totalIncome={totalIncome}
+          onManagePress={navigateToManageCategories}
+        />
 
-      <CategoryGrid getIcon={getCategoryIcon} />
+        <CategoryGrid getIcon={getCategoryIcon} />
 
-      <CalculatorModal />
+        <CalculatorModal />
 
-      <CategoryEditModal />
-    </View>
+        <CategoryEditModal />
+      </View>
+    </GestureDetector>
   );
 }
 

@@ -9,26 +9,39 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import DateRangeModal from './DateRangeModal';
 
 interface FinancialHeaderProps {
   totalExpenses: number;
   totalIncome: number;
   onManagePress: () => void;
-  onDateNavigate?: (direction: 'prev' | 'next') => void;
 }
 
 export default function FinancialHeader({
   totalExpenses,
   totalIncome,
   onManagePress,
-  onDateNavigate,
 }: FinancialHeaderProps) {
   const { colors } = useTheme();
-  const { activeTab, isEditMode, handleToggleEditMode, setActiveTab } =
-    useCategoryContext();
+  const {
+    activeTab,
+    isEditMode,
+    handleToggleEditMode,
+    setActiveTab,
+    // Date range
+    formattedRange,
+    canNavigate,
+    navigatePrevious,
+    navigateNext,
+    mode,
+    setMode,
+    getModeDisplayName,
+    dateRangeModalVisible,
+    handleDateRangePress,
+    handleDateRangeModalClose,
+  } = useCategoryContext();
 
   const netBalance = totalIncome - totalExpenses;
-  const dateRange = '26 Jun - 01 Jul 2025'; // Move this to context if needed
 
   return (
     <View style={styles.header}>
@@ -55,16 +68,36 @@ export default function FinancialHeader({
         </Text>
       )}
 
-      {/* Date Range Selector - Hidden in edit mode */}
+      {/* Date Range Selector */}
       {!isEditMode && (
         <View style={styles.dateSelector}>
-          <Pressable onPress={() => onDateNavigate?.('prev')}>
+          <Pressable
+            onPress={navigatePrevious}
+            disabled={!canNavigate}
+            style={[styles.navButton, { opacity: canNavigate ? 1 : 0.3 }]}
+          >
             <ChevronLeft size={24} color={colors.text} />
           </Pressable>
-          <Text style={[styles.dateRange, { color: colors.text }]}>
-            {dateRange}
-          </Text>
-          <Pressable onPress={() => onDateNavigate?.('next')}>
+
+          <Pressable
+            onPress={handleDateRangePress}
+            style={styles.dateRangeButton}
+          >
+            <Text style={[styles.dateRange, { color: colors.text }]}>
+              {formattedRange}
+            </Text>
+            <Text
+              style={[styles.modeIndicator, { color: colors.textSecondary }]}
+            >
+              {getModeDisplayName(mode)}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={navigateNext}
+            disabled={!canNavigate}
+            style={[styles.navButton, { opacity: canNavigate ? 1 : 0.3 }]}
+          >
             <ChevronRight size={24} color={colors.text} />
           </Pressable>
         </View>
@@ -148,6 +181,14 @@ export default function FinancialHeader({
           </Text>
         </Pressable>
       </View>
+
+      {/* Date Range Modal */}
+      <DateRangeModal
+        visible={dateRangeModalVisible}
+        currentMode={mode}
+        onSelectMode={setMode}
+        onClose={handleDateRangeModalClose}
+      />
     </View>
   );
 }
@@ -174,10 +215,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginVertical: 16,
+    paddingVertical: 8,
+  },
+  navButton: {
+    padding: 8,
+  },
+  dateRangeButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   dateRange: {
     fontSize: 16,
     fontWeight: '600',
+    marginBottom: 2,
+  },
+  modeIndicator: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   tabContainer: {
     flexDirection: 'row',

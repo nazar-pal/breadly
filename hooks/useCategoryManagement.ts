@@ -1,5 +1,6 @@
 import { mockCategories, mockIncomeCategories } from '@/data/mockData';
 import { useState } from 'react';
+import { useDateRange } from './useDateRange';
 
 export interface CategoryToEdit {
   id: string;
@@ -18,6 +19,10 @@ export function useCategoryManagement() {
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryToEdit | null>(
     null,
   );
+  const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false);
+
+  // Date range management
+  const dateRange = useDateRange();
 
   // Derived state
   const currentCategories =
@@ -77,6 +82,15 @@ export function useCategoryManagement() {
     setCategoryToEdit(null);
   };
 
+  // Date range actions
+  const handleDateRangePress = () => {
+    setDateRangeModalVisible(true);
+  };
+
+  const handleDateRangeModalClose = () => {
+    setDateRangeModalVisible(false);
+  };
+
   return {
     // State
     selectedCategory,
@@ -87,6 +101,10 @@ export function useCategoryManagement() {
     categoryToEdit,
     currentCategories,
     currentType,
+    dateRangeModalVisible,
+
+    // Date range state
+    ...dateRange,
 
     // Actions
     setActiveTab,
@@ -96,5 +114,7 @@ export function useCategoryManagement() {
     handleToggleEditMode,
     handleSaveCategory,
     handleCloseEditModal,
+    handleDateRangePress,
+    handleDateRangeModalClose,
   };
 }
