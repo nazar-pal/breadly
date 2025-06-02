@@ -1,11 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Switch,
+  Pressable,
+} from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { useCurrency, currencies } from '@/context/CurrencyContext';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Moon, Sun, Smartphone, LogOut, User, DollarSign, ChevronRight } from 'lucide-react-native';
+import {
+  Moon,
+  Sun,
+  Smartphone,
+  LogOut,
+  User,
+  DollarSign,
+  ChevronRight,
+} from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const { colors, spacing, isDark, updateTheme, themePreference } = useTheme();
@@ -93,7 +108,12 @@ export default function SettingsScreen() {
                 <Text style={[styles.settingText, { color: colors.text }]}>
                   Default Currency
                 </Text>
-                <Text style={[styles.settingSubtext, { color: colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.settingSubtext,
+                    { color: colors.textSecondary },
+                  ]}
+                >
                   {currency.name} ({currency.symbol})
                 </Text>
               </View>

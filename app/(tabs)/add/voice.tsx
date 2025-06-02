@@ -33,25 +33,25 @@ export default function VoiceScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1,
   },
-  content: { 
-    flex: 1, 
-    padding: 16 
+  content: {
+    flex: 1,
+    padding: 16,
   },
   placeholder: {
     height: 400,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  voiceHint: { 
-    fontSize: 18, 
-    fontWeight: '600', 
-    textAlign: 'center' 
+  voiceHint: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
   },
-  example: { 
-    marginTop: 12, 
-    textAlign: 'center' 
+  example: {
+    marginTop: 12,
+    textAlign: 'center',
   },
 });

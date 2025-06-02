@@ -48,7 +48,7 @@ export default function ExpenseForm({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [editingExpenseIndex, setEditingExpenseIndex] = useState<number | null>(
-    null
+    null,
   );
 
   const today = new Date().toISOString().split('T')[0];
@@ -84,7 +84,7 @@ export default function ExpenseForm({
       // Add new expense
       setExpenses([...expenses, data]);
     }
-    
+
     reset({
       amount: '',
       description: '',
@@ -157,7 +157,9 @@ export default function ExpenseForm({
                       styles.amountInput,
                       {
                         color: colors.text,
-                        borderColor: errors.amount ? colors.error : colors.border,
+                        borderColor: errors.amount
+                          ? colors.error
+                          : colors.border,
                         backgroundColor: colors.card,
                       },
                     ]}
@@ -191,7 +193,9 @@ export default function ExpenseForm({
                 style={[
                   styles.pickerButtonText,
                   {
-                    color: selectedCategory ? colors.text : colors.textSecondary,
+                    color: selectedCategory
+                      ? colors.text
+                      : colors.textSecondary,
                   },
                 ]}
                 numberOfLines={1}
@@ -332,7 +336,9 @@ export default function ExpenseForm({
               ]}
             >
               <View style={styles.expenseItemRow}>
-                <Text style={[styles.expenseItemAmount, { color: colors.text }]}>
+                <Text
+                  style={[styles.expenseItemAmount, { color: colors.text }]}
+                >
                   ${parseFloat(expense.amount).toFixed(2)}
                 </Text>
                 <View style={styles.expenseItemDetails}>
@@ -469,9 +475,7 @@ export default function ExpenseForm({
                         styles.dateOptionText,
                         {
                           color:
-                            selectedDate === dateString
-                              ? 'white'
-                              : colors.text,
+                            selectedDate === dateString ? 'white' : colors.text,
                         },
                       ]}
                     >
@@ -645,4 +649,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseForm
+export default ExpenseForm;

@@ -34,7 +34,10 @@ export default function AddExpenseTabBar({
               accessibilityState={focused ? { selected: true } : {}}
               style={[
                 styles.tab,
-                focused && { borderBottomWidth: 2, borderBottomColor: colors.primary }
+                focused && {
+                  borderBottomWidth: 2,
+                  borderBottomColor: colors.primary,
+                },
               ]}
               onPress={onPress}
             >
