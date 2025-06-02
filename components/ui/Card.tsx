@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, StyleSheet, ViewProps, Platform } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
+import React from 'react';
+import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export default function Card({
   padded = true,
   ...props
 }: CardProps) {
-  const { colors, borderRadius, spacing } = useTheme();
+  const { colors, borderRadius, spacing, isDark } = useTheme();
 
   const getCardStyle = () => {
     const baseStyle = {
@@ -33,16 +33,16 @@ export default function Card({
           },
           ios: {
             ...baseStyle,
-            shadowColor: colors.isDark ? '#000000' : '#000000',
+            shadowColor: isDark ? '#000000' : '#000000',
             shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: colors.isDark ? 0.5 : 0.1,
+            shadowOpacity: isDark ? 0.5 : 0.1,
             shadowRadius: 6,
           },
           web: {
             ...baseStyle,
-            shadowColor: colors.isDark ? '#000000' : '#000000',
+            shadowColor: isDark ? '#000000' : '#000000',
             shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: colors.isDark ? 0.5 : 0.1,
+            shadowOpacity: isDark ? 0.5 : 0.1,
             shadowRadius: 6,
           },
         });

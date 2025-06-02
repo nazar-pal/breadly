@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 import {
   StyleSheet,
@@ -5,7 +6,6 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
 
 interface IconButtonProps extends TouchableOpacityProps {
   icon: React.ReactNode;
@@ -74,10 +74,13 @@ export default function IconButton({
   ];
 
   // Clone the icon with the appropriate color
-  const iconWithColor = React.cloneElement(icon as React.ReactElement, {
-    color: getIconColor(),
-    size: size === 'sm' ? 16 : size === 'lg' ? 24 : 20,
-  });
+  const iconWithColor = React.isValidElement(icon)
+    ? React.cloneElement(icon, {
+        ...(icon.props || {}),
+        color: getIconColor(),
+        size: size === 'sm' ? 16 : size === 'lg' ? 24 : 20,
+      } as any)
+    : icon;
 
   return (
     <TouchableOpacity style={buttonStyles} disabled={disabled} {...props}>
