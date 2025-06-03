@@ -4,6 +4,24 @@ import { ChartBar as BarChart3, CircleDollarSign as Operations, CirclePlus as Pl
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+function TabBarIcon({
+  Icon,
+  focused,
+  color,
+}: {
+  Icon: any;
+  focused: boolean;
+  color: string;
+}) {
+  return (
+    <View
+      style={[styles.iconContainer, focused && styles.iconContainerFocused]}
+    >
+      <Icon size={24} color={color} strokeWidth={2} />
+    </View>
+  );
+}
+
 export default function TabLayout() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -32,9 +50,7 @@ export default function TabLayout() {
         options={{
           title: 'Operations',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-              <Operations size={24} color={color} strokeWidth={2} />
-            </View>
+            <TabBarIcon Icon={Operations} focused={focused} color={color} />
           ),
         }}
       />
@@ -43,9 +59,7 @@ export default function TabLayout() {
         options={{
           title: 'Statistics',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-              <LineChart size={24} color={color} strokeWidth={2} />
-            </View>
+            <TabBarIcon Icon={LineChart} focused={focused} color={color} />
           ),
         }}
       />
@@ -54,9 +68,7 @@ export default function TabLayout() {
         options={{
           title: 'Accounts',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-              <Wallet size={24} color={color} strokeWidth={2} />
-            </View>
+            <TabBarIcon Icon={Wallet} focused={focused} color={color} />
           ),
         }}
       />
@@ -65,9 +77,7 @@ export default function TabLayout() {
         options={{
           title: 'Add',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-              <PlusCircle size={24} color={color} strokeWidth={2} />
-            </View>
+            <TabBarIcon Icon={PlusCircle} focused={focused} color={color} />
           ),
         }}
       />
@@ -76,9 +86,7 @@ export default function TabLayout() {
         options={{
           title: 'Settings',
           tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-              <Settings size={24} color={color} strokeWidth={2} />
-            </View>
+            <TabBarIcon Icon={Settings} focused={focused} color={color} />
           ),
         }}
       />

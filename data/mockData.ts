@@ -3,7 +3,7 @@
 // Mock expenses
 export const mockExpenses = [
   {
-    id: 'e-1',
+    id: '1',
     amount: 42.99,
     category: 'Groceries',
     date: '2025-03-01',
@@ -11,14 +11,14 @@ export const mockExpenses = [
     hasPhoto: true,
   },
   {
-    id: 'e-2',
+    id: '2',
     amount: 12.5,
     category: 'Coffee',
     date: '2025-03-01',
     description: 'Morning coffee and pastry',
   },
   {
-    id: 'e-3',
+    id: '3',
     amount: 65.0,
     category: 'Dining',
     date: '2025-02-28',
@@ -26,21 +26,21 @@ export const mockExpenses = [
     hasVoice: true,
   },
   {
-    id: 'e-4',
+    id: '4',
     amount: 9.99,
     category: 'Entertainment',
     date: '2025-02-27',
     description: 'Movie streaming subscription',
   },
   {
-    id: 'e-5',
+    id: '5',
     amount: 34.5,
     category: 'Transportation',
     date: '2025-02-26',
     description: 'Uber ride to airport',
   },
   {
-    id: 'e-6',
+    id: '6',
     amount: 120.0,
     category: 'Utilities',
     date: '2025-02-25',
@@ -48,14 +48,14 @@ export const mockExpenses = [
     hasPhoto: true,
   },
   {
-    id: 'e-7',
+    id: '7',
     amount: 22.99,
     category: 'Shopping',
     date: '2025-02-24',
     description: 'New t-shirt',
   },
   {
-    id: 'e-8',
+    id: '8',
     amount: 15.0,
     category: 'Coffee',
     date: '2025-02-24',
@@ -179,42 +179,42 @@ export const mockIncomeCategories = [
 // Mock income entries
 export const mockIncomes = [
   {
-    id: 'i-1',
+    id: '1',
     amount: 3500.0,
     category: 'Salary',
     date: '2025-03-01',
     description: 'Monthly salary from company',
   },
   {
-    id: 'i-2',
+    id: '2',
     amount: 400.0,
     category: 'Freelance',
     date: '2025-03-01',
     description: 'Website design project',
   },
   {
-    id: 'i-3',
+    id: '3',
     amount: 150.0,
     category: 'Investment',
     date: '2025-02-28',
     description: 'Dividend payment',
   },
   {
-    id: 'i-4',
+    id: '4',
     amount: 200.0,
     category: 'Side Hustle',
     date: '2025-02-27',
     description: 'Online course sales',
   },
   {
-    id: 'i-5',
+    id: '5',
     amount: 500.0,
     category: 'Rental',
     date: '2025-02-25',
     description: 'Apartment rental income',
   },
   {
-    id: 'i-6',
+    id: '6',
     amount: 1000.0,
     category: 'Business',
     date: '2025-02-24',
