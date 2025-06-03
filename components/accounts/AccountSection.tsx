@@ -25,11 +25,11 @@ export default function AccountSection({
   const getAddButtonLabel = () => {
     switch (accountType) {
       case 'payment':
-        return 'Add Payment Account';
+        return 'Add Payment';
       case 'savings':
-        return 'Add Savings Account';
+        return 'Add Savings';
       case 'debt':
-        return 'Add Debt Account';
+        return 'Add Debt';
       default:
         return 'Add Account';
     }
@@ -57,16 +57,15 @@ export default function AccountSection({
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 16,
+    letterSpacing: -0.5,
   },
   accountsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+    flexDirection: 'column',
   },
 });

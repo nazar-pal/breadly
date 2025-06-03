@@ -25,11 +25,11 @@ export default function AccountsList({
 
   return (
     <ScrollView
-      style={[styles.content, { backgroundColor: colors.background }]}
+      style={styles.content}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[
         styles.scrollContent,
-        { paddingBottom: insets.bottom + 16 },
+        { paddingBottom: insets.bottom + 20 },
       ]}
     >
       <AccountSection
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
   },
 });
