@@ -1,6 +1,6 @@
 import Card from '@/components/ui/Card';
 import { useTheme } from '@/context/ThemeContext';
-import { mockCategories, mockExpenses } from '@/data/mockData';
+import { mockCategories } from '@/data/mockData';
 import { ArrowDown, ArrowUp, TrendingUp } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -57,8 +57,10 @@ function StatCard({
   const { colors } = useTheme();
 
   const getTrendColor = () => {
-    if (type === 'success') return trend && trend > 0 ? colors.success : colors.error;
-    if (type === 'error') return trend && trend > 0 ? colors.error : colors.success;
+    if (type === 'success')
+      return trend && trend > 0 ? colors.success : colors.error;
+    if (type === 'error')
+      return trend && trend > 0 ? colors.error : colors.success;
     return trend && trend > 0 ? colors.success : colors.error;
   };
 
@@ -155,7 +157,10 @@ function CategoryBreakdown() {
                   {category.name}
                 </Text>
                 <Text
-                  style={[styles.categoryAmount, { color: colors.textSecondary }]}
+                  style={[
+                    styles.categoryAmount,
+                    { color: colors.textSecondary },
+                  ]}
                 >
                   ${category.spent.toFixed(2)}
                 </Text>

@@ -21,14 +21,21 @@ export default function AddAccountButton({
         {
           backgroundColor: colors.secondary,
           borderStyle: 'dashed',
-          borderWidth: 1,
-          borderColor: colors.border,
+          borderWidth: 2,
+          borderColor: colors.primary + '40',
         },
       ]}
       onPress={onPress}
     >
       <View style={styles.content}>
-        <Plus size={20} color={colors.text} />
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: colors.primary + '20' },
+          ]}
+        >
+          <Plus size={16} color={colors.primary} />
+        </View>
         <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
       </View>
     </Pressable>
@@ -37,37 +44,45 @@ export default function AddAccountButton({
 
 const styles = StyleSheet.create({
   container: {
-    width: '48%',
-    padding: 16,
-    borderRadius: 16,
+    width: '100%',
+    padding: 12,
+    borderRadius: 12,
+    minHeight: 60, // Reduced height for single column
+    marginBottom: 8,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
       },
       android: {
-        elevation: 2,
+        elevation: 1,
       },
       web: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
       },
     }),
   },
   content: {
-    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    minHeight: 120,
+    gap: 12,
+  },
+  iconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
