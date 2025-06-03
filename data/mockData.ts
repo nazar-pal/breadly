@@ -221,3 +221,71 @@ export const mockIncomes = [
     description: 'Client payment',
   },
 ];
+
+// Mock debt operations (paid debts and received debts)
+export const mockDebtOperations = [
+  {
+    id: '1',
+    amount: 250.0,
+    category: 'Student Loan Payment',
+    date: '2025-03-01',
+    description: 'Monthly student loan payment',
+    debtType: 'paid' as const, // debt payment made by user
+    creditor: 'Department of Education',
+  },
+  {
+    id: '2',
+    amount: 150.0,
+    category: 'Friend Repayment',
+    date: '2025-02-28',
+    description: 'John repaid loan amount',
+    debtType: 'received' as const, // debt payment received by user
+    debtor: 'John Smith',
+  },
+  {
+    id: '3',
+    amount: 500.0,
+    category: 'Credit Card Payment',
+    date: '2025-02-27',
+    description: 'Credit card monthly payment',
+    debtType: 'paid' as const,
+    creditor: 'Chase Bank',
+  },
+  {
+    id: '4',
+    amount: 75.0,
+    category: 'Personal Loan',
+    date: '2025-02-26',
+    description: 'Received repayment from Sarah',
+    debtType: 'received' as const,
+    debtor: 'Sarah Johnson',
+  },
+];
+
+// Mock other transaction types
+export const mockOtherTransactions = [
+  {
+    id: '1',
+    amount: 25.0,
+    category: 'Bank Transfer',
+    date: '2025-03-01',
+    description: 'Transfer fee for international wire',
+    transactionType: 'fee' as const,
+  },
+  {
+    id: '2',
+    amount: 100.0,
+    category: 'Refund',
+    date: '2025-02-28',
+    description: 'Product return refund',
+    transactionType: 'refund' as const,
+  },
+  {
+    id: '3',
+    amount: 50.0,
+    category: 'Currency Exchange',
+    date: '2025-02-27',
+    description: 'USD to EUR exchange',
+    transactionType: 'exchange' as const,
+  },
+];

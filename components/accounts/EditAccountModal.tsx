@@ -1,7 +1,7 @@
 import Button from '@/components/ui/Button';
-import { useTheme } from '@/context/ThemeContext';
 import { useCurrency } from '@/context/CurrencyContext';
-import { Check, ChevronDown, X } from 'lucide-react-native';
+import { useTheme } from '@/context/ThemeContext';
+import { Check, X } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
@@ -71,9 +71,15 @@ export default function EditAccountModal({
       ...account,
       ...formData,
       balance: parseFloat(formData.balance),
-      targetAmount: formData.targetAmount ? parseFloat(formData.targetAmount) : undefined,
-      initialAmount: formData.initialAmount ? parseFloat(formData.initialAmount) : undefined,
-      interestRate: formData.interestRate ? parseFloat(formData.interestRate) : undefined,
+      targetAmount: formData.targetAmount
+        ? parseFloat(formData.targetAmount)
+        : undefined,
+      initialAmount: formData.initialAmount
+        ? parseFloat(formData.initialAmount)
+        : undefined,
+      interestRate: formData.interestRate
+        ? parseFloat(formData.interestRate)
+        : undefined,
     };
     onSave(updatedAccount);
   };
@@ -95,7 +101,9 @@ export default function EditAccountModal({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.modalContainer}
       >
-        <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+        <View
+          style={[styles.modalContent, { backgroundColor: colors.background }]}
+        >
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text }]}>
               {getTitle()}
@@ -161,10 +169,15 @@ export default function EditAccountModal({
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>Balance</Text>
+              <Text style={[styles.label, { color: colors.text }]}>
+                Balance
+              </Text>
               <View style={styles.currencyInput}>
                 <Text
-                  style={[styles.currencySymbol, { color: colors.textSecondary }]}
+                  style={[
+                    styles.currencySymbol,
+                    { color: colors.textSecondary },
+                  ]}
                 >
                   {currency.symbol}
                 </Text>
@@ -316,7 +329,10 @@ export default function EditAccountModal({
                       ]}
                       value={formData.initialAmount}
                       onChangeText={(text) =>
-                        setFormData((prev) => ({ ...prev, initialAmount: text }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          initialAmount: text,
+                        }))
                       }
                       keyboardType="decimal-pad"
                       placeholder="0.00"
