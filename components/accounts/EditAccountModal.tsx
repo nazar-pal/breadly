@@ -436,9 +436,7 @@ export default function EditAccountModal({
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justify
-
-Content: 'flex-end',
+    justifyContent: 'flex-end',
   },
   modalContent: {
     borderTopLeftRadius: 24,

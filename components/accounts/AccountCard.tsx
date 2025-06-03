@@ -1,10 +1,5 @@
 import { useTheme } from '@/context/ThemeContext';
-import {
-  BanknoteIcon,
-  CreditCard,
-  PiggyBank,
-  Wallet,
-} from 'lucide-react-native';
+import { Banknote as BanknoteIcon, CreditCard, PiggyBank, Wallet } from 'lucide-react-native';
 import React from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
