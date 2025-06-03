@@ -3,11 +3,8 @@ import type { Account } from '@/hooks/useAccountManagement';
 import { CreditCard, PiggyBank, Receipt } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import {
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
-  State,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AccountSection from './AccountSection';
 
@@ -43,26 +40,33 @@ export default function AccountsTabView({
     setActiveTab(tabKey);
   };
 
-  const onSwipeGesture = (event: PanGestureHandlerGestureEvent) => {
-    if (event.nativeEvent.state === State.END) {
-      const { translationX, velocityX } = event.nativeEvent;
-      const currentTabIndex = tabs.findIndex((tab) => tab.key === activeTab);
+  const navigateToTab = (direction: 'previous' | 'next') => {
+    const currentTabIndex = tabs.findIndex((tab) => tab.key === activeTab);
 
-      // Determine swipe direction and threshold
-      const isSignificantSwipe =
-        Math.abs(translationX) > 50 || Math.abs(velocityX) > 500;
-
-      if (isSignificantSwipe) {
-        if (translationX > 0 && currentTabIndex > 0) {
-          // Swipe right - go to previous tab
-          setActiveTab(tabs[currentTabIndex - 1].key);
-        } else if (translationX < 0 && currentTabIndex < tabs.length - 1) {
-          // Swipe left - go to next tab
-          setActiveTab(tabs[currentTabIndex + 1].key);
-        }
-      }
+    if (direction === 'previous' && currentTabIndex > 0) {
+      setActiveTab(tabs[currentTabIndex - 1].key);
+    } else if (direction === 'next' && currentTabIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentTabIndex + 1].key);
     }
   };
+
+  const panGesture = Gesture.Pan()
+    .minDistance(30)
+    .onEnd((event) => {
+      'worklet';
+      const { translationX, velocityX } = event;
+
+      // Require minimum velocity for swipe detection
+      if (Math.abs(velocityX) > 200) {
+        if (translationX > 30) {
+          // Swipe right - go to previous tab
+          runOnJS(navigateToTab)('previous');
+        } else if (translationX < -30) {
+          // Swipe left - go to next tab
+          runOnJS(navigateToTab)('next');
+        }
+      }
+    });
 
   const renderTabContent = () => {
     const tabAccounts = accounts[activeTab];
@@ -130,14 +134,9 @@ export default function AccountsTabView({
       </View>
 
       {/* Tab Content with Swipe Gesture */}
-      <PanGestureHandler
-        onHandlerStateChange={onSwipeGesture}
-        activeOffsetX={[-20, 20]}
-        minPointers={1}
-        maxPointers={1}
-      >
+      <GestureDetector gesture={panGesture}>
         <View style={styles.contentContainer}>{renderTabContent()}</View>
-      </PanGestureHandler>
+      </GestureDetector>
     </View>
   );
 }
