@@ -1,5 +1,5 @@
 import AccountsHeader from '@/components/accounts/AccountsHeader';
-import AccountsList from '@/components/accounts/AccountsList';
+import AccountsTabView from '@/components/accounts/AccountsTabView';
 import EditAccountModal from '@/components/accounts/EditAccountModal';
 import { useTheme } from '@/context/ThemeContext';
 import { mockAccounts } from '@/data/mockAccounts';
@@ -29,7 +29,7 @@ export default function AccountsScreen() {
     >
       <AccountsHeader />
 
-      <AccountsList
+      <AccountsTabView
         accounts={mockAccounts}
         onEditAccount={handleEditAccount}
         onAddAccount={handleAddAccount}
