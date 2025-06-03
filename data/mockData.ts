@@ -289,3 +289,104 @@ export const mockOtherTransactions = [
     transactionType: 'exchange' as const,
   },
 ];
+
+// Mock account operations (operations tied to specific accounts)
+export const mockAccountOperations = [
+  // Main Checking Account (id: '1') operations
+  {
+    id: 'op-1',
+    accountId: '1',
+    amount: -42.99,
+    category: 'Groceries',
+    date: '2025-03-01',
+    description: 'Weekly groceries at Whole Foods',
+    type: 'expense' as const,
+  },
+  {
+    id: 'op-2',
+    accountId: '1',
+    amount: 3500.0,
+    category: 'Salary',
+    date: '2025-03-01',
+    description: 'Monthly salary deposit',
+    type: 'income' as const,
+  },
+  {
+    id: 'op-3',
+    accountId: '1',
+    amount: -120.0,
+    category: 'Utilities',
+    date: '2025-02-28',
+    description: 'Electricity bill payment',
+    type: 'expense' as const,
+  },
+
+  // Credit Card Account (id: '2') operations
+  {
+    id: 'op-4',
+    accountId: '2',
+    amount: -65.0,
+    category: 'Dining',
+    date: '2025-03-01',
+    description: 'Dinner with friends',
+    type: 'expense' as const,
+  },
+  {
+    id: 'op-5',
+    accountId: '2',
+    amount: -22.99,
+    category: 'Shopping',
+    date: '2025-02-28',
+    description: 'Online purchase',
+    type: 'expense' as const,
+  },
+  {
+    id: 'op-6',
+    accountId: '2',
+    amount: 500.0,
+    category: 'Payment',
+    date: '2025-02-27',
+    description: 'Credit card payment from checking',
+    type: 'payment' as const,
+  },
+
+  // Emergency Fund (id: '3') operations
+  {
+    id: 'op-7',
+    accountId: '3',
+    amount: 200.0,
+    category: 'Transfer',
+    date: '2025-02-26',
+    description: 'Monthly savings transfer',
+    type: 'transfer' as const,
+  },
+  {
+    id: 'op-8',
+    accountId: '3',
+    amount: 15.5,
+    category: 'Interest',
+    date: '2025-02-25',
+    description: 'Monthly interest earned',
+    type: 'income' as const,
+  },
+
+  // Student Loan (id: '5') operations
+  {
+    id: 'op-9',
+    accountId: '5',
+    amount: -250.0,
+    category: 'Loan Payment',
+    date: '2025-03-01',
+    description: 'Monthly loan payment',
+    type: 'payment' as const,
+  },
+  {
+    id: 'op-10',
+    accountId: '5',
+    amount: -250.0,
+    category: 'Loan Payment',
+    date: '2025-02-01',
+    description: 'Monthly loan payment',
+    type: 'payment' as const,
+  },
+];

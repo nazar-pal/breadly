@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/ThemeContext';
+import { useRouter } from 'expo-router';
 import {
   Banknote as BanknoteIcon,
   Calendar,
@@ -28,11 +29,16 @@ interface AccountCardProps {
     person?: string;
     debtType?: 'owed' | 'owedTo';
   };
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export default function AccountCard({ account, onPress }: AccountCardProps) {
   const { colors } = useTheme();
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(`/accounts/${account.id}` as any);
+  };
 
   const getIcon = () => {
     switch (account.type) {
@@ -128,7 +134,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           borderLeftColor: typeColor,
         },
       ]}
-      onPress={onPress}
+      onPress={handlePress}
     >
       {/* Header Row */}
       <View style={styles.header}>

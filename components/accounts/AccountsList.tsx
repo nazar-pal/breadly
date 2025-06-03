@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext';
 import type { Account } from '@/hooks/useAccountManagement';
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -20,7 +19,6 @@ export default function AccountsList({
   onEditAccount,
   onAddAccount,
 }: AccountsListProps) {
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
