@@ -1,13 +1,6 @@
 import { useTheme } from '@/context/ThemeContext';
 import { Tabs } from 'expo-router';
-import {
-  ChartBar as BarChart3,
-  Chrome as Home,
-  CirclePlus as PlusCircle,
-  Settings,
-  Wallet,
-  LineChart,
-} from 'lucide-react-native';
+import { ChartBar as BarChart3, Chrome as Home, CirclePlus as PlusCircle, Settings, Wallet, ChartLine as LineChart } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
