@@ -6,6 +6,7 @@ import {
   CirclePlus as PlusCircle,
   Settings,
   Wallet,
+  LineChart,
 } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -66,6 +67,15 @@ export default function TabLayout() {
           title: 'Categories',
           tabBarIcon: ({ focused, color }) => (
             <TabBarIcon Icon={BarChart3} focused={focused} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="statistics"
+        options={{
+          title: 'Statistics',
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon Icon={LineChart} focused={focused} color={color} />
           ),
         }}
       />
