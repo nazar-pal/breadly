@@ -2,8 +2,8 @@ import { useTheme } from '@/context/ThemeContext';
 import { Tabs } from 'expo-router';
 import {
   ChartBar as BarChart3,
-  Chrome as Home,
   ChartLine as LineChart,
+  List as ListIcon,
   CirclePlus as PlusCircle,
   Settings,
   Wallet,
@@ -57,7 +57,7 @@ export default function TabLayout() {
         options={{
           title: 'Operations',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={Home} focused={focused} color={color} />
+            <TabBarIcon Icon={ListIcon} focused={focused} color={color} />
           ),
         }}
       />
