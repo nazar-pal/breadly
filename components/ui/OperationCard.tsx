@@ -137,7 +137,7 @@ const getOperationSubtext = (operation: Operation) => {
 };
 
 export default function OperationCard({ operation }: OperationCardProps) {
-  const { colors, spacing } = useTheme();
+  const { colors } = useTheme();
   const router = useRouter();
 
   const IconComponent = getOperationIcon(operation);
@@ -170,23 +170,77 @@ export default function OperationCard({ operation }: OperationCardProps) {
     <Pressable onPress={handlePress}>
       <Card style={styles.container}>
         <View style={styles.content}>
-          <View style={styles.leftContent}>
-            <View style={styles.amountContainer}>
+          {/* Left: Icon */}
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: operationColor + '20' },
+            ]}
+          >
+            <IconComponent size={16} color={operationColor} />
+          </View>
+
+          {/* Middle: Info */}
+          <View style={styles.infoContainer}>
+            <View style={styles.topRow}>
+              <Text
+                style={[styles.description, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {operation.description}
+              </Text>
               <Text style={[styles.amount, { color: operationColor }]}>
                 {amountPrefix}${operation.amount.toFixed(2)}
               </Text>
-              <IconComponent
-                size={16}
-                color={operationColor}
-                style={{ marginLeft: 6 }}
-              />
             </View>
-            <Text
-              style={[styles.description, { color: colors.textSecondary }]}
-              numberOfLines={2}
-            >
-              {operation.description}
-            </Text>
+
+            <View style={styles.bottomRow}>
+              <View style={styles.metaInfo}>
+                <View
+                  style={[
+                    styles.categoryBadge,
+                    { backgroundColor: colors.secondary },
+                  ]}
+                >
+                  <Text
+                    style={[styles.categoryText, { color: colors.text }]}
+                    numberOfLines={1}
+                  >
+                    {operation.category}
+                  </Text>
+                </View>
+                <View style={styles.dateContainer}>
+                  <Calendar size={12} color={colors.textSecondary} />
+                  <Text
+                    style={[styles.dateText, { color: colors.textSecondary }]}
+                  >
+                    {new Date(operation.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.attachments}>
+                {operation.hasPhoto && (
+                  <Receipt size={14} color={colors.textSecondary} />
+                )}
+                {operation.hasVoice && (
+                  <Mic
+                    size={14}
+                    color={colors.textSecondary}
+                    style={{ marginLeft: 4 }}
+                  />
+                )}
+                <ArrowRight
+                  size={14}
+                  color={colors.textSecondary}
+                  style={{ marginLeft: 4 }}
+                />
+              </View>
+            </View>
+
             {subtext && (
               <Text
                 style={[styles.subtext, { color: colors.textSecondary }]}
@@ -195,45 +249,6 @@ export default function OperationCard({ operation }: OperationCardProps) {
                 {subtext}
               </Text>
             )}
-            <View style={styles.metaContainer}>
-              <View
-                style={[
-                  styles.categoryBadge,
-                  { backgroundColor: colors.secondary },
-                ]}
-              >
-                <Text style={[styles.categoryText, { color: colors.text }]}>
-                  {operation.category}
-                </Text>
-              </View>
-              <View style={[styles.dateContainer, { marginLeft: spacing.sm }]}>
-                <Calendar size={14} color={colors.textSecondary} />
-                <Text
-                  style={[
-                    styles.dateText,
-                    { color: colors.textSecondary, marginLeft: 4 },
-                  ]}
-                >
-                  {operation.date}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.rightContent}>
-            <View style={styles.iconContainer}>
-              {operation.hasPhoto && (
-                <Receipt
-                  size={16}
-                  color={colors.textSecondary}
-                  style={{ marginRight: 8 }}
-                />
-              )}
-              {operation.hasVoice && (
-                <Mic size={16} color={colors.textSecondary} />
-              )}
-            </View>
-            <ArrowRight size={20} color={colors.primary} />
           </View>
         </View>
       </Card>
@@ -243,81 +258,91 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 8,
+    padding: 12,
     ...Platform.select({
       android: {
-        elevation: 2,
+        elevation: 1,
       },
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 2,
       },
       web: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 2,
       },
     }),
   },
   content: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    minHeight: 80,
-  },
-  leftContent: {
-    flex: 1,
-    marginRight: 16,
-  },
-  rightContent: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  amountContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
   },
-  amount: {
-    fontSize: 18,
-    fontWeight: '600',
+  iconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  infoContainer: {
+    flex: 1,
+    gap: 4,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   description: {
     fontSize: 14,
-    marginBottom: 4,
-    flexWrap: 'wrap',
+    fontWeight: '500',
+    flex: 1,
+    marginRight: 8,
   },
-  subtext: {
-    fontSize: 12,
-    fontStyle: 'italic',
-    marginBottom: 8,
+  amount: {
+    fontSize: 15,
+    fontWeight: '600',
   },
-  metaContainer: {
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  metaInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    gap: 8,
+    flex: 1,
   },
   categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
   categoryText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 11,
   },
-  iconContainer: {
+  attachments: {
     flexDirection: 'row',
-    marginBottom: 12,
+    alignItems: 'center',
+  },
+  subtext: {
+    fontSize: 11,
+    fontStyle: 'italic',
   },
 });
