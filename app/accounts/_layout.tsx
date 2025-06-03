@@ -1,7 +1,7 @@
 import { useTheme } from '@/context/ThemeContext';
 import { Stack } from 'expo-router';
 
-export default function ExpensesLayout() {
+export default function AccountsLayout() {
   const { colors } = useTheme();
 
   return (
@@ -9,7 +9,7 @@ export default function ExpensesLayout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: 'Expense Details',
+          title: 'Account Details',
           headerBackTitle: 'Back',
           headerStyle: {
             backgroundColor: colors.background,

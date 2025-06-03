@@ -2,9 +2,11 @@ import { useTheme } from '@/context/ThemeContext';
 import { Tabs } from 'expo-router';
 import {
   ChartBar as BarChart3,
-  Chrome as Home,
+  ChartLine as LineChart,
+  List as ListIcon,
   CirclePlus as PlusCircle,
   Settings,
+  Wallet,
 } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -53,9 +55,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
+          title: 'Operations',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={Home} focused={focused} color={color} />
+            <TabBarIcon Icon={ListIcon} focused={focused} color={color} />
           ),
         }}
       />
@@ -65,6 +67,24 @@ export default function TabLayout() {
           title: 'Categories',
           tabBarIcon: ({ focused, color }) => (
             <TabBarIcon Icon={BarChart3} focused={focused} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="statistics"
+        options={{
+          title: 'Statistics',
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon Icon={LineChart} focused={focused} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="accounts"
+        options={{
+          title: 'Accounts',
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon Icon={Wallet} focused={focused} color={color} />
           ),
         }}
       />
