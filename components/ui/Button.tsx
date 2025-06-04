@@ -1,18 +1,28 @@
+import {
+  useThemedStyles,
+  type ThemedStylesProps,
+} from '@/context/ThemeContext';
 import React from 'react';
 import {
+  ActivityIndicator,
+  Pressable,
+  PressableProps,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  ActivityIndicator,
+  TextStyle,
   View,
+  ViewStyle,
 } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'destructive';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps extends Omit<PressableProps, 'style'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -20,7 +30,126 @@ interface ButtonProps extends TouchableOpacityProps {
   rightIcon?: React.ReactNode;
   children: React.ReactNode;
   fullWidth?: boolean;
+  style?: ViewStyle | ViewStyle[];
 }
+
+const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
+  StyleSheet.create({
+    button: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: borderRadius.md,
+    } as ViewStyle,
+
+    // Size variants
+    sizeSmall: {
+      height: 32,
+      paddingHorizontal: spacing.md,
+    } as ViewStyle,
+
+    sizeMedium: {
+      height: 40,
+      paddingHorizontal: spacing.md,
+    } as ViewStyle,
+
+    sizeLarge: {
+      height: 48,
+      paddingHorizontal: spacing.lg,
+    } as ViewStyle,
+
+    // Background variants
+    primaryButton: {
+      backgroundColor: colors.button.primaryBg,
+    } as ViewStyle,
+
+    secondaryButton: {
+      backgroundColor: colors.button.secondaryBg,
+      borderWidth: 1,
+      borderColor: colors.button.secondaryBorder,
+    } as ViewStyle,
+
+    outlineButton: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.primary,
+    } as ViewStyle,
+
+    ghostButton: {
+      backgroundColor: 'transparent',
+    } as ViewStyle,
+
+    destructiveButton: {
+      backgroundColor: colors.button.destructiveBg,
+    } as ViewStyle,
+
+    disabledButton: {
+      backgroundColor: colors.button.primaryBgDisabled,
+      borderColor: colors.button.primaryBgDisabled,
+    } as ViewStyle,
+
+    // Text variants
+    textSmall: {
+      fontSize: 12,
+      fontWeight: '600',
+      textAlign: 'center',
+    } as TextStyle,
+
+    textMedium: {
+      fontSize: 14,
+      fontWeight: '600',
+      textAlign: 'center',
+    } as TextStyle,
+
+    textLarge: {
+      fontSize: 16,
+      fontWeight: '600',
+      textAlign: 'center',
+    } as TextStyle,
+
+    primaryText: {
+      color: colors.button.primaryText,
+    } as TextStyle,
+
+    secondaryText: {
+      color: colors.button.secondaryText,
+    } as TextStyle,
+
+    outlineText: {
+      color: colors.primary,
+    } as TextStyle,
+
+    ghostText: {
+      color: colors.text,
+    } as TextStyle,
+
+    destructiveText: {
+      color: colors.button.destructiveText,
+    } as TextStyle,
+
+    disabledText: {
+      color: colors.button.primaryTextDisabled,
+    } as TextStyle,
+
+    // Layout helpers
+    fullWidth: {
+      width: '100%',
+    } as ViewStyle,
+
+    contentContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    } as ViewStyle,
+
+    iconLeft: {
+      marginRight: spacing.xs,
+    } as ViewStyle,
+
+    iconRight: {
+      marginLeft: spacing.xs,
+    } as ViewStyle,
+  });
 
 export default function Button({
   variant = 'primary',
@@ -34,98 +163,103 @@ export default function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const { colors, borderRadius, spacing } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
-  const getBackgroundColor = () => {
-    if (disabled) return colors.secondary;
+  const getSizeStyle = () => {
+    switch (size) {
+      case 'sm':
+        return styles.sizeSmall;
+      case 'lg':
+        return styles.sizeLarge;
+      default:
+        return styles.sizeMedium;
+    }
+  };
+
+  const getVariantStyle = () => {
+    if (disabled) return styles.disabledButton;
 
     switch (variant) {
       case 'primary':
-        return colors.primary;
+        return styles.primaryButton;
       case 'secondary':
-        return colors.secondary;
-      case 'danger':
-        return colors.error;
+        return styles.secondaryButton;
       case 'outline':
+        return styles.outlineButton;
       case 'ghost':
-        return 'transparent';
+        return styles.ghostButton;
+      case 'destructive':
+        return styles.destructiveButton;
       default:
-        return colors.primary;
+        return styles.primaryButton;
     }
   };
 
-  const getTextColor = () => {
-    if (disabled) return colors.textSecondary;
+  const getTextSizeStyle = () => {
+    switch (size) {
+      case 'sm':
+        return styles.textSmall;
+      case 'lg':
+        return styles.textLarge;
+      default:
+        return styles.textMedium;
+    }
+  };
+
+  const getTextVariantStyle = () => {
+    if (disabled) return styles.disabledText;
 
     switch (variant) {
       case 'primary':
-        return '#FFFFFF';
+        return styles.primaryText;
       case 'secondary':
-        return colors.text;
-      case 'danger':
-        return '#FFFFFF';
+        return styles.secondaryText;
       case 'outline':
+        return styles.outlineText;
       case 'ghost':
-        return variant === 'outline' ? colors.primary : colors.text;
+        return styles.ghostText;
+      case 'destructive':
+        return styles.destructiveText;
       default:
-        return '#FFFFFF';
+        return styles.primaryText;
     }
   };
 
-  const getBorderColor = () => {
-    if (disabled) return colors.secondary;
+  const getLoadingColor = () => {
+    if (disabled) return styles.disabledText.color;
 
     switch (variant) {
+      case 'primary':
+        return styles.primaryText.color;
+      case 'secondary':
+        return styles.secondaryText.color;
       case 'outline':
-        return colors.primary;
+        return styles.outlineText.color;
+      case 'ghost':
+        return styles.ghostText.color;
+      case 'destructive':
+        return styles.destructiveText.color;
       default:
-        return 'transparent';
-    }
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm':
-        return { height: 32, paddingHorizontal: spacing.md };
-      case 'lg':
-        return { height: 48, paddingHorizontal: spacing.lg };
-      default:
-        return { height: 40, paddingHorizontal: spacing.md };
-    }
-  };
-
-  const getTextSize = () => {
-    switch (size) {
-      case 'sm':
-        return 12;
-      case 'lg':
-        return 16;
-      default:
-        return 14;
+        return styles.primaryText.color;
     }
   };
 
   const buttonStyles = [
     styles.button,
-    {
-      backgroundColor: getBackgroundColor(),
-      borderColor: getBorderColor(),
-      borderWidth: variant === 'outline' ? 1 : 0,
-      borderRadius: borderRadius.md,
-      ...getSizeStyles(),
-    },
+    getSizeStyle(),
+    getVariantStyle(),
     fullWidth && styles.fullWidth,
     style,
   ];
 
-  const textStyles = [
-    styles.text,
-    { color: getTextColor(), fontSize: getTextSize() },
-  ];
+  const textStyles = [getTextSizeStyle(), getTextVariantStyle()];
 
   return (
-    <TouchableOpacity
-      style={buttonStyles}
+    <Pressable
+      style={({ pressed }) => [
+        ...buttonStyles,
+        pressed && !disabled && { opacity: 0.8 },
+      ]}
       disabled={disabled || loading}
       {...props}
     >
@@ -135,7 +269,7 @@ export default function Button({
         )}
 
         {loading ? (
-          <ActivityIndicator size="small" color={getTextColor()} />
+          <ActivityIndicator size="small" color={getLoadingColor()} />
         ) : (
           <Text style={textStyles}>{children}</Text>
         )}
@@ -144,32 +278,6 @@ export default function Button({
           <View style={styles.iconRight}>{rightIcon}</View>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  iconLeft: {
-    marginRight: 8,
-  },
-  iconRight: {
-    marginLeft: 8,
-  },
-});

@@ -2,7 +2,12 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { currencies, useCurrency } from '@/context/CurrencyContext';
-import { useTheme } from '@/context/ThemeContext';
+import {
+  useTheme,
+  useThemedStyles,
+  type ThemePreference,
+  type ThemedStylesProps,
+} from '@/context/ThemeContext';
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import {
@@ -15,6 +20,7 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -24,31 +30,98 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Create themed styles using the new useThemedStyles hook
+const createThemedStyles = ({
+  colors,
+  spacing,
+  borderRadius,
+}: ThemedStylesProps) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    loadingContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    header: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+    },
+    screenTitle: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    scrollContent: {
+      paddingHorizontal: spacing.md,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginVertical: spacing.md,
+      color: colors.text,
+    },
+    separator: {
+      height: 1,
+      width: '100%',
+      backgroundColor: colors.border,
+    },
+    authButtons: {
+      gap: spacing.sm,
+    },
+  });
+
 export default function SettingsScreen() {
-  const { colors, spacing, isDark, updateTheme, themePreference } = useTheme();
+  const { colors, spacing, preference, setThemePreference, isLoading } =
+    useTheme();
   const { currency, setCurrency } = useCurrency();
   const { user } = useUser();
   const insets = useSafeAreaInsets();
+  const themedStyles = useThemedStyles(createThemedStyles);
 
   const [showCurrencyModal, setShowCurrencyModal] = React.useState(false);
+
+  // Handle theme preference change
+  const handleThemeChange = async (newPreference: ThemePreference) => {
+    try {
+      await setThemePreference(newPreference);
+    } catch (error) {
+      console.error('Failed to update theme:', error);
+      // You might want to show an error toast here
+    }
+  };
+
+  // Show loading indicator while theme is loading
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          themedStyles.container,
+          themedStyles.loadingContainer,
+          { backgroundColor: colors.background, paddingTop: insets.top },
+        ]}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View
       style={[
-        styles.container,
+        themedStyles.container,
         { backgroundColor: colors.background, paddingTop: insets.top },
       ]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.screenTitle, { color: colors.text }]}>
-          Settings
-        </Text>
+      <View style={themedStyles.header}>
+        <Text style={themedStyles.screenTitle}>Settings</Text>
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          styles.scrollContent,
+          themedStyles.scrollContent,
           { paddingBottom: insets.bottom + spacing.xl },
         ]}
       >
@@ -77,10 +150,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <View
-              style={[
-                styles.separator,
-                { backgroundColor: colors.border, marginVertical: spacing.md },
-              ]}
+              style={[themedStyles.separator, { marginVertical: spacing.md }]}
             />
             <SignOutButton />
           </Card>
@@ -97,28 +167,19 @@ export default function SettingsScreen() {
               >
                 Sign in or create an account to sync your data across devices
               </Text>
-              <View style={styles.authButtons}>
+              <View style={themedStyles.authButtons}>
                 <Link href="/sign-in" asChild>
-                  <Button variant="primary" style={styles.authButton}>
-                    Sign In
-                  </Button>
+                  <Button>Sign In</Button>
                 </Link>
                 <Link href="/sign-up" asChild>
-                  <Button variant="outline" style={styles.authButton}>
-                    Sign Up
-                  </Button>
+                  <Button variant="secondary">Sign Up</Button>
                 </Link>
               </View>
             </View>
           </Card>
         </SignedOut>
 
-        <Text
-          style={[
-            styles.sectionTitle,
-            { color: colors.text, marginTop: spacing.lg },
-          ]}
-        >
+        <Text style={[themedStyles.sectionTitle, { marginTop: spacing.lg }]}>
           Preferences
         </Text>
         <Card>
@@ -171,8 +232,10 @@ export default function SettingsScreen() {
               </Text>
             </View>
             <Switch
-              value={themePreference === 'light'}
-              onValueChange={(value) => updateTheme(value ? 'light' : 'dark')}
+              value={preference === 'light'}
+              onValueChange={(value) =>
+                handleThemeChange(value ? 'light' : 'system')
+              }
               trackColor={{ false: colors.secondary, true: colors.primary }}
               thumbColor="#FFFFFF"
             />
@@ -197,8 +260,10 @@ export default function SettingsScreen() {
               </Text>
             </View>
             <Switch
-              value={themePreference === 'dark'}
-              onValueChange={(value) => updateTheme(value ? 'dark' : 'light')}
+              value={preference === 'dark'}
+              onValueChange={(value) =>
+                handleThemeChange(value ? 'dark' : 'system')
+              }
               trackColor={{ false: colors.secondary, true: colors.primary }}
               thumbColor="#FFFFFF"
             />
@@ -223,9 +288,9 @@ export default function SettingsScreen() {
               </Text>
             </View>
             <Switch
-              value={themePreference === 'system'}
+              value={preference === 'system'}
               onValueChange={(value) =>
-                updateTheme(value ? 'system' : isDark ? 'dark' : 'light')
+                handleThemeChange(value ? 'system' : 'light')
               }
               trackColor={{ false: colors.secondary, true: colors.primary }}
               thumbColor="#FFFFFF"
@@ -292,6 +357,10 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     paddingHorizontal: 16,
