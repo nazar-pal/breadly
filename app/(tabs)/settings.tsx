@@ -1,30 +1,33 @@
+import { SignOutButton } from '@/components/auth/SignOutButton';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { currencies, useCurrency } from '@/context/CurrencyContext';
+import { useTheme } from '@/context/ThemeContext';
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo';
+import { Link } from 'expo-router';
+import {
+  ChevronRight,
+  DollarSign,
+  Moon,
+  Smartphone,
+  Sun,
+  User,
+} from 'lucide-react-native';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
   Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
 } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
-import { useCurrency, currencies } from '@/context/CurrencyContext';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  Moon,
-  Sun,
-  Smartphone,
-  LogOut,
-  User,
-  DollarSign,
-  ChevronRight,
-} from 'lucide-react-native';
 
 export default function SettingsScreen() {
   const { colors, spacing, isDark, updateTheme, themePreference } = useTheme();
   const { currency, setCurrency } = useCurrency();
+  const { user } = useUser();
   const insets = useSafeAreaInsets();
 
   const [showCurrencyModal, setShowCurrencyModal] = React.useState(false);
@@ -49,38 +52,66 @@ export default function SettingsScreen() {
           { paddingBottom: insets.bottom + spacing.xl },
         ]}
       >
-        <Card>
-          <View style={styles.accountSection}>
+        <SignedIn>
+          <Card>
+            <View style={styles.accountSection}>
+              <View
+                style={[
+                  styles.avatarPlaceholder,
+                  { backgroundColor: colors.secondary },
+                ]}
+              >
+                <User size={32} color={colors.text} />
+              </View>
+              <View style={styles.accountInfo}>
+                <Text style={[styles.userName, { color: colors.text }]}>
+                  {user?.firstName && user?.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.username || 'User'}
+                </Text>
+                <Text
+                  style={[styles.userEmail, { color: colors.textSecondary }]}
+                >
+                  {user?.emailAddresses[0]?.emailAddress || 'No email'}
+                </Text>
+              </View>
+            </View>
             <View
               style={[
-                styles.avatarPlaceholder,
-                { backgroundColor: colors.secondary },
+                styles.separator,
+                { backgroundColor: colors.border, marginVertical: spacing.md },
               ]}
-            >
-              <User size={32} color={colors.text} />
-            </View>
-            <View style={styles.accountInfo}>
-              <Text style={[styles.userName, { color: colors.text }]}>
-                John Doe
+            />
+            <SignOutButton />
+          </Card>
+        </SignedIn>
+
+        <SignedOut>
+          <Card>
+            <View style={styles.authSection}>
+              <Text style={[styles.authTitle, { color: colors.text }]}>
+                Sign in to access your account
               </Text>
-              <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
-                john.doe@example.com
+              <Text
+                style={[styles.authSubtitle, { color: colors.textSecondary }]}
+              >
+                Sign in or create an account to sync your data across devices
               </Text>
+              <View style={styles.authButtons}>
+                <Link href="/sign-in" asChild>
+                  <Button variant="primary" style={styles.authButton}>
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/sign-up" asChild>
+                  <Button variant="outline" style={styles.authButton}>
+                    Sign Up
+                  </Button>
+                </Link>
+              </View>
             </View>
-          </View>
-          <View
-            style={[
-              styles.separator,
-              { backgroundColor: colors.border, marginVertical: spacing.md },
-            ]}
-          />
-          <Button
-            variant="outline"
-            leftIcon={<LogOut size={18} color={colors.text} />}
-          >
-            Sign Out
-          </Button>
-        </Card>
+          </Card>
+        </SignedOut>
 
         <Text
           style={[
@@ -295,6 +326,25 @@ const styles = StyleSheet.create({
   },
   userEmail: {
     fontSize: 14,
+  },
+  authSection: {
+    paddingVertical: 8,
+  },
+  authTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  authSubtitle: {
+    fontSize: 14,
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  authButtons: {
+    gap: 12,
+  },
+  authButton: {
+    marginBottom: 0,
   },
   separator: {
     height: 1,

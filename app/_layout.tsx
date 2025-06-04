@@ -1,6 +1,8 @@
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -28,22 +30,24 @@ export default function RootLayout() {
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <CurrencyProvider>
-        <ThemeProvider
-          theme={activeTheme}
-          updateTheme={updateTheme}
-          themePreference={theme}
-        >
-          <StatusBar style={activeTheme === 'dark' ? 'light' : 'dark'} />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="expenses" options={{ headerShown: false }} />
-            <Stack.Screen name="accounts" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </CurrencyProvider>
-    </GestureHandlerRootView>
+    <ClerkProvider tokenCache={tokenCache}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <CurrencyProvider>
+          <ThemeProvider
+            theme={activeTheme}
+            updateTheme={updateTheme}
+            themePreference={theme}
+          >
+            <StatusBar style={activeTheme === 'dark' ? 'light' : 'dark'} />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="expenses" options={{ headerShown: false }} />
+              <Stack.Screen name="accounts" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </CurrencyProvider>
+      </GestureHandlerRootView>
+    </ClerkProvider>
   );
 }
