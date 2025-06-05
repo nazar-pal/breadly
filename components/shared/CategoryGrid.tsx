@@ -19,6 +19,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
     isEditMode,
     activeTab,
     handleCategoryPress,
+    handleCategoryLongPress,
     handleToggleEditMode,
   } = useCategoryContext();
 
@@ -58,6 +59,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
             icon={getIcon(category.name, currentType)}
             type={currentType}
             onPress={handleCategoryPress}
+            onLongPress={handleCategoryLongPress}
             isEditMode={isEditMode}
           />
         );

@@ -82,6 +82,21 @@ export function useCategoryManagement() {
     setCategoryToEdit(null);
   };
 
+  const handleCategoryLongPress = (
+    categoryId: string,
+    categoryName: string,
+  ) => {
+    const category = currentCategories.find((cat) => cat.id === categoryId);
+    if (category) {
+      setCategoryToEdit({
+        id: category.id,
+        name: category.name,
+        description: '',
+      });
+      setEditModalVisible(true);
+    }
+  };
+
   // Date range actions
   const handleDateRangePress = () => {
     setDateRangeModalVisible(true);
@@ -109,6 +124,7 @@ export function useCategoryManagement() {
     // Actions
     setActiveTab,
     handleCategoryPress,
+    handleCategoryLongPress,
     handleSubmit,
     handleCloseModal,
     handleToggleEditMode,

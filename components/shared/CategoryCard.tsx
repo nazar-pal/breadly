@@ -1,5 +1,5 @@
 import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import React from 'react';
+import React, { useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 
 interface CategoryCardProps {
@@ -9,6 +9,7 @@ interface CategoryCardProps {
   icon: React.ReactNode;
   type: 'expense' | 'income';
   onPress: (categoryName: string) => void;
+  onLongPress?: (categoryId: string, categoryName: string) => void;
   isEditMode?: boolean;
 }
 
@@ -19,9 +20,11 @@ export default function CategoryCard({
   icon,
   type,
   onPress,
+  onLongPress,
   isEditMode = false,
 }: CategoryCardProps) {
   const { colors } = useTheme();
+  const [isPressed, setIsPressed] = useState(false);
 
   const styles = useThemedStyles((theme) => ({
     categoryCard: {
@@ -33,21 +36,23 @@ export default function CategoryCard({
       backgroundColor: theme.colors.card,
       borderWidth: isEditMode ? 2 : 0,
       borderColor: isEditMode ? theme.colors.primary : 'transparent',
+      opacity: isPressed ? 0.7 : 1,
+      transform: [{ scale: isPressed ? 0.98 : 1 }],
       ...Platform.select({
         ios: {
           shadowColor: theme.colors.shadow,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4,
+          shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
+          shadowOpacity: isPressed ? 0.5 : 1,
+          shadowRadius: isPressed ? 2 : 4,
         },
         android: {
-          elevation: 2,
+          elevation: isPressed ? 1 : 2,
         },
         web: {
           shadowColor: theme.colors.shadow,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4,
+          shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
+          shadowOpacity: isPressed ? 0.5 : 1,
+          shadowRadius: isPressed ? 2 : 4,
         },
       }),
     },
@@ -95,8 +100,29 @@ export default function CategoryCard({
     return colors.iconBackground.neutral;
   };
 
+  const handleLongPress = () => {
+    if (onLongPress) {
+      onLongPress(id, name);
+    }
+  };
+
+  const handlePressIn = () => {
+    setIsPressed(true);
+  };
+
+  const handlePressOut = () => {
+    setIsPressed(false);
+  };
+
   return (
-    <Pressable style={styles.categoryCard} onPress={() => onPress(name)}>
+    <Pressable
+      style={styles.categoryCard}
+      onPress={() => onPress(name)}
+      onLongPress={handleLongPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      delayLongPress={500}
+    >
       <View
         style={[
           styles.iconContainer,
