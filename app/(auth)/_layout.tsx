@@ -18,11 +18,12 @@ export default function AuthRoutesLayout() {
           headerShown: true,
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface,
           },
-          headerTintColor: colors.text,
+          headerTintColor: colors.primary,
           headerTitleStyle: {
             color: colors.text,
+            fontWeight: '600',
           },
           contentStyle: { backgroundColor: colors.background },
         }}

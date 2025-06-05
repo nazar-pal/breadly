@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router';
 import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native';
 import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Card from './Card';
 
 interface ExpenseCardProps {
@@ -27,7 +27,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card style={styles.container}>
+      <Card variant="elevated" size="md" style={styles.container}>
         <View style={styles.content}>
           <View style={styles.leftContent}>
             <Text style={[styles.amount, { color: colors.text }]}>
@@ -43,7 +43,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
               <View
                 style={[
                   styles.categoryBadge,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.surfaceSecondary },
                 ]}
               >
                 <Text style={[styles.categoryText, { color: colors.text }]}>
@@ -88,23 +88,6 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
-    ...Platform.select({
-      android: {
-        elevation: 2,
-      },
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-    }),
   },
   content: {
     flexDirection: 'row',

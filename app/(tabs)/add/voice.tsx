@@ -12,7 +12,15 @@ export default function VoiceScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Card style={styles.placeholder}>
-          <Text style={[styles.voiceHint, { color: colors.textSecondary }]}>
+          <View
+            style={[
+              styles.micIcon,
+              { backgroundColor: colors.iconBackground.warning },
+            ]}
+          >
+            <Mic size={48} color={colors.warning} />
+          </View>
+          <Text style={[styles.voiceHint, { color: colors.text }]}>
             Tap the microphone and describe your expense
           </Text>
           <Text style={[styles.example, { color: colors.textSecondary }]}>
@@ -23,7 +31,7 @@ export default function VoiceScreen() {
 
         <Button
           variant="primary"
-          leftIcon={<Mic size={20} color="#fff" />}
+          leftIcon={<Mic size={20} color={colors.textInverse} />}
           style={{ alignSelf: 'center', marginTop: 24 }}
         >
           Start Recording
@@ -46,13 +54,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  micIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+  },
   voiceHint: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+    marginBottom: 8,
   },
   example: {
     marginTop: 12,
     textAlign: 'center',
+    fontStyle: 'italic',
   },
 });

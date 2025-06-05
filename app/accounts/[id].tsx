@@ -127,7 +127,14 @@ export default function AccountDetailsScreen() {
             <View
               style={[
                 styles.iconContainer,
-                { backgroundColor: typeColor + '20' },
+                {
+                  backgroundColor:
+                    account.type === 'savings'
+                      ? colors.iconBackground.success
+                      : account.type === 'debt'
+                        ? colors.iconBackground.error
+                        : colors.iconBackground.primary,
+                },
               ]}
             >
               <Icon size={24} color={typeColor} />
@@ -199,7 +206,7 @@ export default function AccountDetailsScreen() {
               <View
                 style={[
                   styles.progressBar,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.borderLight },
                 ]}
               >
                 <View

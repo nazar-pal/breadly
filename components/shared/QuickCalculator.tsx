@@ -1,4 +1,4 @@
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext';
 import { mockCategories, mockIncomeCategories } from '@/data/mockData';
 import {
   Asterisk,
@@ -20,7 +20,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
@@ -68,6 +67,172 @@ export default function QuickCalculator({
   const categories = type === 'expense' ? mockCategories : mockIncomeCategories;
   const modalTitle =
     type === 'expense' ? 'Select Category' : 'Select Income Category';
+
+  const styles = useThemedStyles((theme) => ({
+    container: {
+      padding: theme.spacing.md,
+    },
+    header: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing.xl - 8,
+    },
+    headerButtons: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+    },
+    categoryButton: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm * 1.5,
+      borderRadius: theme.borderRadius.sm,
+    },
+    categoryText: {
+      fontSize: 24,
+      fontWeight: '600' as const,
+      color: theme.colors.text,
+    },
+    display: {
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.md * 1.5,
+      marginBottom: theme.spacing.xl - 8,
+      backgroundColor: theme.colors.card,
+      ...Platform.select({
+        ios: {
+          shadowColor: theme.colors.shadow,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 2,
+        },
+        web: {
+          shadowColor: theme.colors.shadow,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 1,
+          shadowRadius: 4,
+        },
+      }),
+    },
+    displayText: {
+      fontSize: 36,
+      fontWeight: '700' as const,
+      textAlign: 'right' as const,
+      color: theme.colors.text,
+    },
+    commentPreview: {
+      fontSize: 12,
+      marginTop: theme.spacing.sm,
+      textAlign: 'right' as const,
+      color: theme.colors.textSecondary,
+    },
+    keypad: {
+      gap: theme.spacing.sm,
+    },
+    row: {
+      flexDirection: 'row' as const,
+      gap: theme.spacing.sm,
+      height: 60,
+    },
+    calcButton: {
+      flex: 1,
+      borderRadius: theme.borderRadius.md * 1.5,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      height: '100%' as const,
+      ...Platform.select({
+        ios: {
+          shadowColor: theme.colors.shadowLight,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 2,
+        },
+        web: {
+          shadowColor: theme.colors.shadowLight,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 1,
+          shadowRadius: 4,
+        },
+      }),
+    },
+    calcButtonText: {
+      fontSize: 20,
+      fontWeight: '600' as const,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center' as const,
+      backgroundColor: theme.colors.shadow,
+      padding: theme.spacing.md,
+    },
+    modalContent: {
+      borderRadius: theme.borderRadius.md * 2,
+      padding: theme.spacing.md,
+      maxHeight: '80%' as const,
+      backgroundColor: theme.colors.card,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: '600' as const,
+      marginBottom: theme.spacing.md,
+      color: theme.colors.text,
+    },
+    commentInput: {
+      borderWidth: 1,
+      borderRadius: theme.borderRadius.sm,
+      padding: theme.spacing.sm * 1.5,
+      minHeight: 100,
+      textAlignVertical: 'top' as const,
+      marginBottom: theme.spacing.md,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.background,
+      borderColor: theme.colors.border,
+    },
+    modalButtons: {
+      flexDirection: 'row' as const,
+    },
+    currencyList: {
+      maxHeight: 300,
+    },
+    currencyOption: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.sm,
+    },
+    currencySymbol: {
+      fontSize: 24,
+      fontWeight: '600' as const,
+      marginRight: theme.spacing.md,
+    },
+    currencyInfo: {
+      flex: 1,
+    },
+    currencyCode: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+    },
+    currencyName: {
+      fontSize: 14,
+    },
+    categoryList: {
+      maxHeight: 300,
+    },
+    categoryOption: {
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.sm,
+    },
+    categoryName: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+    },
+  }));
 
   const getDisplayExpression = () => {
     if (result !== null) {
@@ -258,8 +423,8 @@ export default function QuickCalculator({
               : variant === 'equal'
                 ? colors.success
                 : variant === 'special'
-                  ? colors.accent
-                  : colors.secondary,
+                  ? colors.warning
+                  : colors.surfaceSecondary,
           opacity: pressed ? 0.8 : 1,
           flex: size,
         },
@@ -271,9 +436,11 @@ export default function QuickCalculator({
             styles.calcButtonText,
             {
               color:
-                variant === 'operation' || variant === 'special'
-                  ? '#FFFFFF'
-                  : colors.text,
+                variant === 'operation' || variant === 'equal'
+                  ? colors.button.primaryText
+                  : variant === 'special'
+                    ? colors.button.primaryText
+                    : colors.text,
               fontSize: variant === 'equal' ? 20 : 24,
             },
           ]}
@@ -293,9 +460,7 @@ export default function QuickCalculator({
           onPress={() => setShowCategoryModal(true)}
           style={styles.categoryButton}
         >
-          <Text style={[styles.categoryText, { color: colors.text }]}>
-            {category}
-          </Text>
+          <Text style={styles.categoryText}>{category}</Text>
           <Tag size={16} color={colors.text} style={{ marginLeft: 8 }} />
         </Pressable>
         <View style={styles.headerButtons}>
@@ -317,21 +482,11 @@ export default function QuickCalculator({
         </View>
       </View>
 
-      <View style={[styles.display, { backgroundColor: colors.card }]}>
-        <Text
-          style={[styles.displayText, { color: colors.text }]}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-        >
+      <View style={styles.display}>
+        <Text style={styles.displayText} numberOfLines={1} adjustsFontSizeToFit>
           {getDisplayExpression()}
         </Text>
-        {comment && (
-          <Text
-            style={[styles.commentPreview, { color: colors.textSecondary }]}
-          >
-            {comment}
-          </Text>
-        )}
+        {comment && <Text style={styles.commentPreview}>{comment}</Text>}
       </View>
 
       <View style={styles.keypad}>
@@ -344,7 +499,7 @@ export default function QuickCalculator({
             onPress={() => setShowCurrencyModal(true)}
           />
           <CalcButton
-            label={<Divide size={20} color="#FFFFFF" />}
+            label={<Divide size={20} color={colors.button.primaryText} />}
             onPress={() => handleOperationPress('/')}
             variant="operation"
           />
@@ -354,12 +509,12 @@ export default function QuickCalculator({
           <CalcButton label="8" onPress={() => handleNumberPress('8')} />
           <CalcButton label="9" onPress={() => handleNumberPress('9')} />
           <CalcButton
-            label={<Asterisk size={20} color="#FFFFFF" />}
+            label={<Asterisk size={20} color={colors.button.primaryText} />}
             onPress={() => handleOperationPress('*')}
             variant="operation"
           />
           <CalcButton
-            label={<Plus size={24} color="#FFFFFF" />}
+            label={<Plus size={24} color={colors.button.primaryText} />}
             onPress={() => handleOperationPress('+')}
             variant="operation"
           />
@@ -369,12 +524,14 @@ export default function QuickCalculator({
           <CalcButton label="5" onPress={() => handleNumberPress('5')} />
           <CalcButton label="6" onPress={() => handleNumberPress('6')} />
           <CalcButton
-            label={<MessageSquare size={20} color="#FFFFFF" />}
+            label={
+              <MessageSquare size={20} color={colors.button.primaryText} />
+            }
             onPress={() => setShowCommentModal(true)}
             variant="operation"
           />
           <CalcButton
-            label={<Minus size={24} color="#FFFFFF" />}
+            label={<Minus size={24} color={colors.button.primaryText} />}
             onPress={() => handleOperationPress('-')}
             variant="operation"
           />
@@ -384,7 +541,7 @@ export default function QuickCalculator({
           <CalcButton label="2" onPress={() => handleNumberPress('2')} />
           <CalcButton label="3" onPress={() => handleNumberPress('3')} />
           <CalcButton
-            label={<Equal size={24} color="#FFFFFF" />}
+            label={<Equal size={24} color={colors.button.primaryText} />}
             onPress={handleEquals}
             variant="operation"
             size={2}
@@ -405,7 +562,7 @@ export default function QuickCalculator({
             onPress={handleDecimal}
           />
           <CalcButton
-            label={<Save size={24} color="#FFFFFF" />}
+            label={<Save size={24} color={colors.button.primaryText} />}
             onPress={handleSubmit}
             variant="equal"
             size={2}
@@ -423,19 +580,10 @@ export default function QuickCalculator({
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalContainer}
         >
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
-              Add Comment
-            </Text>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Comment</Text>
             <TextInput
-              style={[
-                styles.commentInput,
-                {
-                  color: colors.text,
-                  backgroundColor: colors.background,
-                  borderColor: colors.border,
-                },
-              ]}
+              style={styles.commentInput}
               placeholder="Enter comment..."
               placeholderTextColor={colors.textSecondary}
               value={comment}
@@ -454,7 +602,7 @@ export default function QuickCalculator({
                 variant="primary"
                 onPress={() => setShowCommentModal(false)}
                 style={{ flex: 1 }}
-                leftIcon={<Check size={20} color="#FFFFFF" />}
+                leftIcon={<Check size={20} color={colors.button.primaryText} />}
               >
                 Done
               </Button>
@@ -470,10 +618,8 @@ export default function QuickCalculator({
         onRequestClose={() => setShowCurrencyModal(false)}
       >
         <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
-              Select Currency
-            </Text>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Currency</Text>
             <ScrollView style={styles.currencyList}>
               {currencies.map((currency) => (
                 <Pressable
@@ -498,7 +644,7 @@ export default function QuickCalculator({
                       {
                         color:
                           selectedCurrency.code === currency.code
-                            ? '#FFFFFF'
+                            ? colors.button.primaryText
                             : colors.text,
                       },
                     ]}
@@ -512,7 +658,7 @@ export default function QuickCalculator({
                         {
                           color:
                             selectedCurrency.code === currency.code
-                              ? '#FFFFFF'
+                              ? colors.button.primaryText
                               : colors.text,
                         },
                       ]}
@@ -525,7 +671,7 @@ export default function QuickCalculator({
                         {
                           color:
                             selectedCurrency.code === currency.code
-                              ? '#FFFFFF'
+                              ? colors.button.primaryText
                               : colors.textSecondary,
                         },
                       ]}
@@ -547,10 +693,8 @@ export default function QuickCalculator({
         onRequestClose={() => setShowCategoryModal(false)}
       >
         <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
-              {modalTitle}
-            </Text>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
             <ScrollView style={styles.categoryList}>
               {categories.map((cat) => (
                 <Pressable
@@ -571,7 +715,10 @@ export default function QuickCalculator({
                     style={[
                       styles.categoryName,
                       {
-                        color: category === cat.name ? '#FFFFFF' : colors.text,
+                        color:
+                          category === cat.name
+                            ? colors.button.primaryText
+                            : colors.text,
                       },
                     ]}
                   >
@@ -586,159 +733,3 @@ export default function QuickCalculator({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  headerButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  categoryText: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  display: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      },
-    }),
-  },
-  historyText: {
-    fontSize: 14,
-    textAlign: 'right',
-    marginBottom: 4,
-  },
-  displayText: {
-    fontSize: 36,
-    fontWeight: '700',
-    textAlign: 'right',
-  },
-  commentPreview: {
-    fontSize: 12,
-    marginTop: 8,
-    textAlign: 'right',
-  },
-  keypad: {
-    gap: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-    height: 60,
-  },
-  calcButton: {
-    flex: 1,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      },
-    }),
-  },
-  calcButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 16,
-  },
-  modalContent: {
-    borderRadius: 16,
-    padding: 16,
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  commentInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    minHeight: 100,
-    textAlignVertical: 'top',
-    marginBottom: 16,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-  },
-  currencyList: {
-    maxHeight: 300,
-  },
-  currencyOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 8,
-  },
-  currencySymbol: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginRight: 16,
-  },
-  currencyInfo: {
-    flex: 1,
-  },
-  currencyCode: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  currencyName: {
-    fontSize: 14,
-  },
-  categoryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  categoryList: {
-    maxHeight: 300,
-  },
-  categoryOption: {
-    padding: 16,
-    borderRadius: 8,
-  },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Card from './Card';
 import { useTheme } from '@/context/ThemeContext';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Card from './Card';
 
 interface SummaryCardProps {
   title: string;
@@ -22,7 +22,7 @@ export default function SummaryCard({
   const { colors } = useTheme();
 
   return (
-    <Card style={styles.container}>
+    <Card variant="elevated" size="md" style={styles.container}>
       <Text style={[styles.title, { color: colors.textSecondary }]}>
         {title}
       </Text>

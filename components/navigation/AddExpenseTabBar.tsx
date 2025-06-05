@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-import { Pencil, Camera, Mic } from 'lucide-react-native';
 import { useTheme } from '@/context/ThemeContext';
+import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
+import { Camera, Mic, Pencil } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const ICONS = { index: Pencil, photo: Camera, voice: Mic };
 
@@ -13,7 +13,15 @@ export default function AddExpenseTabBar({
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.wrapper, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.wrapper,
+        {
+          backgroundColor: colors.background,
+          borderBottomColor: colors.borderLight,
+        },
+      ]}
+    >
       {/* Title */}
       <Text style={[styles.title, { color: colors.text }]}>Add Expense</Text>
 
@@ -72,7 +80,6 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontSize: 32,

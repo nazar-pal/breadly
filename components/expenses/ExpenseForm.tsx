@@ -225,7 +225,7 @@ export default function ExpenseForm({
             onPress={() => setShowDescription(!showDescription)}
             style={[
               styles.descriptionToggle,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.iconBackground.neutral },
             ]}
           >
             <AlignLeft size={20} color={colors.text} />
@@ -308,7 +308,10 @@ export default function ExpenseForm({
       {/* Added Expenses List */}
       {expenses.length > 0 && (
         <View
-          style={[styles.expensesList, { backgroundColor: colors.secondary }]}
+          style={[
+            styles.expensesList,
+            { backgroundColor: colors.surfaceSecondary },
+          ]}
         >
           <Text style={[styles.expensesListTitle, { color: colors.text }]}>
             Added Expenses ({expenses.length})
@@ -378,11 +381,18 @@ export default function ExpenseForm({
         onRequestClose={() => setShowCategoryPicker(false)}
       >
         <Pressable
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+          <View
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
+            <Text
+              style={[
+                styles.modalTitle,
+                { color: colors.text, borderBottomColor: colors.borderLight },
+              ]}
+            >
               Select Category
             </Text>
             <ScrollView>
@@ -409,7 +419,7 @@ export default function ExpenseForm({
                       {
                         color:
                           selectedCategory === category.name
-                            ? 'white'
+                            ? colors.textInverse
                             : colors.text,
                       },
                     ]}
@@ -431,11 +441,18 @@ export default function ExpenseForm({
         onRequestClose={() => setShowDatePicker(false)}
       >
         <Pressable
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
           onPress={() => setShowDatePicker(false)}
         >
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+          <View
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
+            <Text
+              style={[
+                styles.modalTitle,
+                { color: colors.text, borderBottomColor: colors.borderLight },
+              ]}
+            >
               Select Date
             </Text>
             <ScrollView>
@@ -467,7 +484,9 @@ export default function ExpenseForm({
                         styles.dateOptionText,
                         {
                           color:
-                            selectedDate === dateString ? 'white' : colors.text,
+                            selectedDate === dateString
+                              ? colors.textInverse
+                              : colors.text,
                         },
                       ]}
                     >
@@ -562,7 +581,6 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     padding: 16,
   },
@@ -575,7 +593,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   categoryOption: {
     padding: 16,

@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from 'lucide-react-native';
 import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Card from './Card';
 
 export type OperationType = 'expense' | 'income' | 'debt' | 'other';
@@ -168,13 +168,28 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card style={styles.container}>
+      <Card variant="elevated" size="sm" style={styles.container}>
         <View style={styles.content}>
           {/* Left: Icon */}
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: operationColor + '20' },
+              {
+                backgroundColor:
+                  colors.iconBackground[
+                    operation.type === 'income'
+                      ? 'success'
+                      : operation.type === 'debt'
+                        ? operation.debtType === 'paid'
+                          ? 'error'
+                          : 'success'
+                        : operation.type === 'other'
+                          ? operation.transactionType === 'refund'
+                            ? 'success'
+                            : 'primary'
+                          : 'error' // expenses
+                  ],
+              },
             ]}
           >
             <IconComponent size={16} color={operationColor} />
@@ -199,7 +214,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
                 <View
                   style={[
                     styles.categoryBadge,
-                    { backgroundColor: colors.secondary },
+                    { backgroundColor: colors.surfaceSecondary },
                   ]}
                 >
                   <Text
@@ -260,23 +275,6 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
     padding: 12,
-    ...Platform.select({
-      android: {
-        elevation: 1,
-      },
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-      },
-      web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-      },
-    }),
   },
   content: {
     flexDirection: 'row',

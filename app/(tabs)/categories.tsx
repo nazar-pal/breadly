@@ -72,7 +72,11 @@ function CategoriesContent() {
   ) => {
     const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons;
     const IconComponent = icons[categoryName] || Home;
-    return <IconComponent size={20} color={colors.text} />;
+
+    // Use semantic colors based on category type
+    const iconColor = type === 'expense' ? colors.expense : colors.income;
+
+    return <IconComponent size={20} color={iconColor} />;
   };
 
   // Create pan gesture for full-screen swipe support

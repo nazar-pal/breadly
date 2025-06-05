@@ -36,7 +36,7 @@ export default function ExpenseDetailsScreen() {
         <Text style={[styles.amountLabel, { color: colors.textSecondary }]}>
           Amount
         </Text>
-        <Text style={[styles.amount, { color: colors.text }]}>
+        <Text style={[styles.amount, { color: colors.expense }]}>
           ${expense.amount.toFixed(2)}
         </Text>
       </View>
@@ -46,10 +46,10 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.iconBackground.info },
             ]}
           >
-            <Calendar size={20} color={colors.text} />
+            <Calendar size={20} color={colors.info} />
           </View>
           <View>
             <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
@@ -67,10 +67,10 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.iconBackground.primary },
             ]}
           >
-            <Tag size={20} color={colors.text} />
+            <Tag size={20} color={colors.primary} />
           </View>
           <View>
             <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
@@ -90,7 +90,7 @@ export default function ExpenseDetailsScreen() {
               Description
             </Text>
             <Text style={[styles.descriptionText, { color: colors.text }]}>
-              {expense.description ?? ''}
+              {expense.description ?? 'No description provided'}
             </Text>
           </View>
         </View>
@@ -101,7 +101,12 @@ export default function ExpenseDetailsScreen() {
           <Text style={[styles.attachmentTitle, { color: colors.text }]}>
             Receipt Photo
           </Text>
-          <View style={styles.receiptContainer}>
+          <View
+            style={[
+              styles.receiptContainer,
+              { backgroundColor: colors.surfaceSecondary },
+            ]}
+          >
             <Image
               source={{ uri: receiptImageUrl }}
               style={styles.receiptImage}
@@ -119,10 +124,10 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.voiceMemoContainer,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.iconBackground.warning },
             ]}
           >
-            <Mic size={24} color={colors.text} style={{ marginRight: 8 }} />
+            <Mic size={24} color={colors.warning} style={{ marginRight: 8 }} />
             <Text style={[styles.voiceMemoText, { color: colors.text }]}>
               Voice Memo (00:12)
             </Text>

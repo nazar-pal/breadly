@@ -109,6 +109,25 @@ const lightColors = {
     inactiveLabel: '#718096',
     focusBackground: 'rgba(99, 102, 241, 0.1)',
   },
+
+  // Icon background colors for better semantic meaning
+  iconBackground: {
+    neutral: '#F1F5F9',
+    primary: 'rgba(99, 102, 241, 0.1)',
+    success: 'rgba(16, 185, 129, 0.1)',
+    warning: 'rgba(245, 158, 11, 0.1)',
+    error: 'rgba(239, 68, 68, 0.1)',
+    info: 'rgba(59, 130, 246, 0.1)',
+  },
+
+  // Status colors for different states
+  status: {
+    pending: '#F59E0B',
+    processing: '#3B82F6',
+    completed: '#10B981',
+    cancelled: '#6B7280',
+    failed: '#EF4444',
+  },
 } as const;
 
 const darkColors = {
@@ -209,6 +228,25 @@ const darkColors = {
     activeLabel: '#818CF8',
     inactiveLabel: '#94A3B8',
     focusBackground: 'rgba(129, 140, 248, 0.15)',
+  },
+
+  // Icon background colors for better semantic meaning
+  iconBackground: {
+    neutral: '#334155',
+    primary: 'rgba(129, 140, 248, 0.15)',
+    success: 'rgba(52, 211, 153, 0.15)',
+    warning: 'rgba(251, 191, 36, 0.15)',
+    error: 'rgba(248, 113, 113, 0.15)',
+    info: 'rgba(96, 165, 250, 0.15)',
+  },
+
+  // Status colors for different states
+  status: {
+    pending: '#FBBF24',
+    processing: '#60A5FA',
+    completed: '#34D399',
+    cancelled: '#9CA3AF',
+    failed: '#F87171',
   },
 } as const;
 

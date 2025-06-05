@@ -1,5 +1,5 @@
 import { useCategoryContext } from '@/context/CategoryContext';
-import { useTheme } from '@/context/ThemeContext';
+import { useThemedStyles } from '@/context/ThemeContext';
 import React from 'react';
 import {
   Dimensions,
@@ -16,7 +16,6 @@ import QuickCalculator from './QuickCalculator';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function CalculatorModal() {
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const {
     modalVisible,
@@ -25,6 +24,35 @@ export default function CalculatorModal() {
     handleSubmit,
     handleCloseModal,
   } = useCategoryContext();
+
+  const styles = useThemedStyles((theme) => ({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end' as const,
+    },
+    modalOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.shadow,
+    },
+    modalContent: {
+      borderTopLeftRadius: theme.borderRadius.xl,
+      borderTopRightRadius: theme.borderRadius.xl,
+      backgroundColor: theme.colors.background,
+      maxHeight: Platform.select({
+        ios: SCREEN_HEIGHT * 0.8,
+        android: SCREEN_HEIGHT * 0.8,
+        web: SCREEN_HEIGHT * 0.8,
+      }),
+    },
+    modalHandle: {
+      width: 40,
+      height: 4,
+      backgroundColor: theme.colors.borderStrong,
+      borderRadius: 2,
+      alignSelf: 'center' as const,
+      marginBottom: theme.spacing.md,
+    },
+  }));
 
   return (
     <Modal
@@ -42,13 +70,8 @@ export default function CalculatorModal() {
           style={[
             styles.modalContent,
             {
-              backgroundColor: colors.background,
+              paddingTop: 24,
               paddingBottom: insets.bottom,
-              maxHeight: Platform.select({
-                ios: SCREEN_HEIGHT * 0.8,
-                android: SCREEN_HEIGHT * 0.8,
-                web: SCREEN_HEIGHT * 0.8,
-              }),
             },
           ]}
         >
@@ -66,27 +89,3 @@ export default function CalculatorModal() {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 24,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-});

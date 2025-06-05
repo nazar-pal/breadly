@@ -73,7 +73,7 @@ export default function CategoryCard({
       <View
         style={[
           styles.progressBarContainer,
-          { backgroundColor: colors.secondary },
+          { backgroundColor: colors.surfaceSecondary },
         ]}
       >
         <View

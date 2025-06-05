@@ -75,7 +75,7 @@ export default function SignInScreen() {
           <View
             style={[styles.iconContainer, { backgroundColor: colors.primary }]}
           >
-            <LogIn size={32} color="#FFFFFF" />
+            <LogIn size={32} color={colors.textInverse} />
           </View>
           <Text style={[styles.title, { color: colors.text }]}>
             Welcome Back
@@ -91,7 +91,13 @@ export default function SignInScreen() {
               Email Address
             </Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background,
+                },
+              ]}
             >
               <Mail
                 size={20}
@@ -105,7 +111,7 @@ export default function SignInScreen() {
                 keyboardType="email-address"
                 value={emailAddress}
                 placeholder="Enter your email"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 onChangeText={setEmailAddress}
               />
             </View>
@@ -114,7 +120,13 @@ export default function SignInScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: colors.text }]}>Password</Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background,
+                },
+              ]}
             >
               <Lock
                 size={20}
@@ -125,7 +137,7 @@ export default function SignInScreen() {
                 style={[styles.input, { color: colors.text }]}
                 value={password}
                 placeholder="Enter your password"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 secureTextEntry={true}
                 onChangeText={setPassword}
               />

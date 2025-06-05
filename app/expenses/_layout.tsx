@@ -12,11 +12,12 @@ export default function ExpensesLayout() {
           title: 'Expense Details',
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface,
           },
-          headerTintColor: colors.text,
+          headerTintColor: colors.primary,
           headerTitleStyle: {
             color: colors.text,
+            fontWeight: '600',
           },
         }}
       />

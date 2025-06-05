@@ -1,4 +1,4 @@
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext';
 import { DateRange, DateRangeMode } from '@/hooks/useDateRange';
 import { Check, X } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -61,6 +61,99 @@ export default function DateRangeModal({
     start?: string;
     end?: string;
   }>({});
+
+  const styles = useThemedStyles((theme) => ({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end' as const,
+    },
+    modalOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.shadow,
+    },
+    modalContent: {
+      borderTopLeftRadius: theme.borderRadius.xl,
+      borderTopRightRadius: theme.borderRadius.xl,
+      maxHeight: '80%' as const,
+      minHeight: '50%' as const,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
+      paddingHorizontal: theme.spacing.lg - 4,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '600' as const,
+      color: theme.colors.text,
+    },
+    closeButton: {
+      padding: theme.spacing.xs,
+    },
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.lg - 4,
+      paddingTop: theme.spacing.md - 6,
+      paddingBottom: theme.spacing.lg - 4,
+    },
+    modeGrid: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      justifyContent: 'space-between' as const,
+    },
+    modeOption: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      paddingVertical: theme.spacing.sm + 6,
+      paddingHorizontal: theme.spacing.sm * 1.5,
+      borderRadius: theme.borderRadius.md * 1.5,
+      borderWidth: 1,
+      marginVertical: theme.spacing.xs,
+      width: '48%' as const,
+    },
+    modeContent: {
+      flex: 1,
+    },
+    modeLabel: {
+      fontSize: 15,
+      fontWeight: '600' as const,
+      marginBottom: 2,
+    },
+    modeDescription: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+    },
+    customActions: {
+      flexDirection: 'row' as const,
+      gap: theme.spacing.sm * 1.5,
+      paddingTop: theme.spacing.lg - 4,
+    },
+    customButton: {
+      flex: 1,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      paddingVertical: theme.spacing.sm + 6,
+      borderRadius: theme.borderRadius.md * 1.5,
+      gap: theme.spacing.xs + 2,
+    },
+    cancelButton: {
+      flex: 0.4,
+      backgroundColor: theme.colors.secondary,
+    },
+    confirmButton: {
+      flex: 0.6,
+    },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+    },
+  }));
 
   const handleModeSelect = (mode: DateRangeMode) => {
     if (mode === 'custom') {
@@ -161,14 +254,13 @@ export default function DateRangeModal({
           style={[
             styles.modalContent,
             {
-              backgroundColor: colors.background,
               paddingBottom: insets.bottom + 16,
             },
           ]}
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text style={styles.title}>
               {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
             </Text>
             <Pressable
@@ -194,7 +286,7 @@ export default function DateRangeModal({
                       {
                         backgroundColor:
                           currentMode === option.mode
-                            ? colors.primary + '20'
+                            ? colors.iconBackground.primary
                             : colors.card,
                         borderColor:
                           currentMode === option.mode
@@ -218,12 +310,7 @@ export default function DateRangeModal({
                       >
                         {option.label}
                       </Text>
-                      <Text
-                        style={[
-                          styles.modeDescription,
-                          { color: colors.textSecondary },
-                        ]}
-                      >
+                      <Text style={styles.modeDescription}>
                         {option.description}
                       </Text>
                     </View>
@@ -259,11 +346,7 @@ export default function DateRangeModal({
               {/* Custom Range Actions */}
               <View style={styles.customActions}>
                 <Pressable
-                  style={[
-                    styles.customButton,
-                    styles.cancelButton,
-                    { backgroundColor: colors.secondary },
-                  ]}
+                  style={[styles.customButton, styles.cancelButton]}
                   onPress={handleCustomRangeCancel}
                 >
                   <Text style={[styles.buttonText, { color: colors.text }]}>
@@ -279,14 +362,19 @@ export default function DateRangeModal({
                       backgroundColor:
                         customRange.start && customRange.end
                           ? colors.primary
-                          : colors.secondary,
+                          : colors.button.primaryBgDisabled,
                     },
                   ]}
                   onPress={handleCustomRangeConfirm}
                   disabled={!customRange.start || !customRange.end}
                 >
-                  <Check size={16} color="white" />
-                  <Text style={[styles.buttonText, { color: 'white' }]}>
+                  <Check size={16} color={colors.button.primaryText} />
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      { color: colors.button.primaryText },
+                    ]}
+                  >
                     Confirm
                   </Text>
                 </Pressable>
@@ -298,92 +386,3 @@ export default function DateRangeModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '80%',
-    minHeight: '50%',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  modeGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  modeOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginVertical: 4,
-    width: '48%',
-  },
-  modeContent: {
-    flex: 1,
-  },
-  modeLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  modeDescription: {
-    fontSize: 12,
-  },
-  customActions: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingTop: 20,
-  },
-  customButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 6,
-  },
-  cancelButton: {
-    flex: 0.4,
-  },
-  confirmButton: {
-    flex: 0.6,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

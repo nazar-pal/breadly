@@ -19,10 +19,10 @@ export default function AddAccountButton({
       style={[
         styles.container,
         {
-          backgroundColor: colors.secondary,
+          backgroundColor: colors.surfaceSecondary,
           borderStyle: 'dashed',
           borderWidth: 2,
-          borderColor: colors.primary + '40',
+          borderColor: colors.iconBackground.primary,
         },
       ]}
       onPress={onPress}
@@ -31,7 +31,7 @@ export default function AddAccountButton({
         <View
           style={[
             styles.iconContainer,
-            { backgroundColor: colors.primary + '20' },
+            { backgroundColor: colors.iconBackground.primary },
           ]}
         >
           <Plus size={16} color={colors.primary} />
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -60,7 +59,6 @@ const styles = StyleSheet.create({
         elevation: 1,
       },
       web: {
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,

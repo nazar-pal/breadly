@@ -104,7 +104,9 @@ export default function EditAccountModal({
         <View
           style={[styles.modalContent, { backgroundColor: colors.background }]}
         >
-          <View style={styles.header}>
+          <View
+            style={[styles.header, { borderBottomColor: colors.borderLight }]}
+          >
             <Text style={[styles.title, { color: colors.text }]}>
               {getTitle()}
             </Text>
@@ -252,7 +254,12 @@ export default function EditAccountModal({
                           backgroundColor:
                             formData.debtType === 'owed'
                               ? colors.primary
-                              : colors.card,
+                              : colors.surface,
+                          borderWidth: 1,
+                          borderColor:
+                            formData.debtType === 'owed'
+                              ? colors.primary
+                              : colors.border,
                         },
                       ]}
                       onPress={() =>
@@ -265,7 +272,7 @@ export default function EditAccountModal({
                           {
                             color:
                               formData.debtType === 'owed'
-                                ? '#FFFFFF'
+                                ? colors.textInverse
                                 : colors.text,
                           },
                         ]}
@@ -280,7 +287,12 @@ export default function EditAccountModal({
                           backgroundColor:
                             formData.debtType === 'owedTo'
                               ? colors.primary
-                              : colors.card,
+                              : colors.surface,
+                          borderWidth: 1,
+                          borderColor:
+                            formData.debtType === 'owedTo'
+                              ? colors.primary
+                              : colors.border,
                         },
                       ]}
                       onPress={() =>
@@ -293,7 +305,7 @@ export default function EditAccountModal({
                           {
                             color:
                               formData.debtType === 'owedTo'
-                                ? '#FFFFFF'
+                                ? colors.textInverse
                                 : colors.text,
                           },
                         ]}
@@ -426,7 +438,7 @@ export default function EditAccountModal({
             )}
           </ScrollView>
 
-          <View style={styles.footer}>
+          <View style={[styles.footer, { borderTopColor: colors.borderLight }]}>
             <Button
               variant="outline"
               onPress={onClose}
@@ -438,7 +450,7 @@ export default function EditAccountModal({
               variant="primary"
               onPress={handleSave}
               style={{ flex: 1 }}
-              leftIcon={<Check size={20} color="#FFFFFF" />}
+              leftIcon={<Check size={20} color={colors.textInverse} />}
             >
               Save
             </Button>
@@ -465,7 +477,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontSize: 20,
@@ -529,6 +540,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
   },
 });

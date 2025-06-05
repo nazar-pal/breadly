@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { useTheme } from '@/context/ThemeContext';
 import { Camera, Upload } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function PhotoScreen() {
   const { colors } = useTheme();
@@ -13,18 +13,18 @@ export default function PhotoScreen() {
       <View style={styles.content}>
         <Card style={styles.cameraPlaceholder}>
           <View
-            style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}
+            style={[
+              styles.cameraIcon,
+              { backgroundColor: colors.iconBackground.info },
+            ]}
           >
-            <Camera size={48} color={colors.text} />
+            <Camera size={48} color={colors.info} />
           </View>
           <Text
             style={[
               styles.placeholderText,
               {
                 color: colors.textSecondary,
-                textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 2,
               },
             ]}
           >
@@ -35,7 +35,7 @@ export default function PhotoScreen() {
         <View style={styles.actionButtons}>
           <Button
             variant="primary"
-            leftIcon={<Camera size={20} color="#fff" />}
+            leftIcon={<Camera size={20} color={colors.textInverse} />}
             style={{ flex: 1, marginRight: 8 }}
           >
             Take Photo

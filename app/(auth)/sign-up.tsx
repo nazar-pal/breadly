@@ -104,7 +104,7 @@ export default function SignUpScreen() {
                 { backgroundColor: colors.primary },
               ]}
             >
-              <Shield size={32} color="#FFFFFF" />
+              <Shield size={32} color={colors.textInverse} />
             </View>
             <Text style={[styles.title, { color: colors.text }]}>
               Verify Your Email
@@ -120,7 +120,13 @@ export default function SignUpScreen() {
                 Verification Code
               </Text>
               <View
-                style={[styles.inputContainer, { borderColor: colors.border }]}
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: colors.input.border,
+                    backgroundColor: colors.input.background,
+                  },
+                ]}
               >
                 <Shield
                   size={20}
@@ -131,7 +137,7 @@ export default function SignUpScreen() {
                   style={[styles.input, { color: colors.text }]}
                   value={code}
                   placeholder="Enter verification code"
-                  placeholderTextColor={colors.textSecondary}
+                  placeholderTextColor={colors.input.placeholder}
                   keyboardType="number-pad"
                   onChangeText={setCode}
                 />
@@ -172,7 +178,7 @@ export default function SignUpScreen() {
           <View
             style={[styles.iconContainer, { backgroundColor: colors.primary }]}
           >
-            <UserPlus size={32} color="#FFFFFF" />
+            <UserPlus size={32} color={colors.textInverse} />
           </View>
           <Text style={[styles.title, { color: colors.text }]}>
             Create Account
@@ -188,7 +194,13 @@ export default function SignUpScreen() {
               Email Address
             </Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background,
+                },
+              ]}
             >
               <Mail
                 size={20}
@@ -202,7 +214,7 @@ export default function SignUpScreen() {
                 keyboardType="email-address"
                 value={emailAddress}
                 placeholder="Enter your email"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 onChangeText={setEmailAddress}
               />
             </View>
@@ -211,7 +223,13 @@ export default function SignUpScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: colors.text }]}>Password</Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background,
+                },
+              ]}
             >
               <Lock
                 size={20}
@@ -222,7 +240,7 @@ export default function SignUpScreen() {
                 style={[styles.input, { color: colors.text }]}
                 value={password}
                 placeholder="Create a password"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 secureTextEntry={true}
                 onChangeText={setPassword}
               />

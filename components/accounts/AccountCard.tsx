@@ -139,7 +139,19 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       {/* Header Row */}
       <View style={styles.header}>
         <View
-          style={[styles.iconContainer, { backgroundColor: typeColor + '20' }]}
+          style={[
+            styles.iconContainer,
+            {
+              backgroundColor:
+                colors.iconBackground[
+                  account.type === 'payment'
+                    ? 'primary'
+                    : account.type === 'savings'
+                      ? 'success'
+                      : 'error'
+                ],
+            },
+          ]}
         >
           <Icon size={16} color={typeColor} />
         </View>
@@ -178,7 +190,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           <View
             style={[
               styles.progressContainer,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.surfaceSecondary },
             ]}
           >
             <View
@@ -228,7 +240,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
         shadowRadius: 3,
@@ -237,7 +248,6 @@ const styles = StyleSheet.create({
         elevation: 1,
       },
       web: {
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
         shadowRadius: 3,

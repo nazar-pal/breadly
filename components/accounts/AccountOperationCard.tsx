@@ -81,7 +81,18 @@ export default function AccountOperationCard({
         <View
           style={[
             styles.iconContainer,
-            { backgroundColor: operationColor + '20' },
+            {
+              backgroundColor:
+                colors.iconBackground[
+                  operation.type === 'income'
+                    ? 'success'
+                    : operation.type === 'expense'
+                      ? 'error'
+                      : operation.type === 'payment'
+                        ? 'primary'
+                        : 'info'
+                ],
+            },
           ]}
         >
           <IconComponent size={16} color={operationColor} />
@@ -95,7 +106,12 @@ export default function AccountOperationCard({
             {operation.description}
           </Text>
           <View style={styles.metaInfo}>
-            <View style={styles.categoryContainer}>
+            <View
+              style={[
+                styles.categoryContainer,
+                { backgroundColor: colors.surfaceSecondary },
+              ]}
+            >
               <Text style={[styles.category, { color: colors.textSecondary }]}>
                 {operation.category}
               </Text>
@@ -154,7 +170,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   categoryContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

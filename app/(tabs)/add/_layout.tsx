@@ -18,7 +18,7 @@ export default function AddLayout() {
       screenOptions={{
         swipeEnabled: true,
         tabBarIndicatorStyle: { backgroundColor: colors.primary, height: 2 },
-        tabBarStyle: { backgroundColor: colors.card },
+        tabBarStyle: { backgroundColor: colors.surface },
       }}
     >
       <TopTabs.Screen name="index" options={{ title: 'Manual' }} />

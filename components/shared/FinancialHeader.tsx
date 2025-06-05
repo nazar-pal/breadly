@@ -1,6 +1,6 @@
 import IconButton from '@/components/ui/IconButton';
 import { useCategoryContext } from '@/context/CategoryContext';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext';
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,7 +8,7 @@ import {
   X,
 } from 'lucide-react-native';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import DateRangeModal from './DateRangeModal';
 
 interface FinancialHeaderProps {
@@ -41,12 +41,85 @@ export default function FinancialHeader({
     handleDateRangeModalClose,
   } = useCategoryContext();
 
+  const styles = useThemedStyles((theme) => ({
+    header: {
+      padding: theme.spacing.md,
+    },
+    headerTop: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
+    },
+    balanceLabel: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+    },
+    balanceAmount: {
+      fontSize: 32,
+      fontWeight: '700' as const,
+      marginVertical: theme.spacing.sm,
+    },
+    dateSelector: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
+      marginVertical: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+    },
+    navButton: {
+      padding: theme.spacing.sm,
+    },
+    dateRangeButton: {
+      flex: 1,
+      alignItems: 'center' as const,
+      paddingVertical: theme.spacing.sm,
+    },
+    dateRange: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      marginBottom: 2,
+      color: theme.colors.text,
+    },
+    modeIndicator: {
+      fontSize: 12,
+      textTransform: 'uppercase' as const,
+      letterSpacing: 0.5,
+      color: theme.colors.textSecondary,
+    },
+    tabContainer: {
+      flexDirection: 'row' as const,
+      gap: theme.spacing.sm * 1.5,
+      marginTop: theme.spacing.sm,
+    },
+    tab: {
+      flex: 1,
+      padding: theme.spacing.sm * 1.5,
+      borderRadius: theme.borderRadius.md * 1.5,
+      alignItems: 'center' as const,
+      backgroundColor: 'transparent',
+    },
+    activeTab: {
+      backgroundColor: theme.colors.iconBackground.primary,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+    },
+    tabText: {
+      fontSize: 14,
+      fontWeight: '600' as const,
+      marginBottom: 2,
+    },
+    tabAmount: {
+      fontSize: 13,
+      fontWeight: '500' as const,
+    },
+  }));
+
   const netBalance = totalIncome - totalExpenses;
 
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
-        <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>
+        <Text style={styles.balanceLabel}>
           {isEditMode ? 'Edit Categories' : 'Net Balance'}
         </Text>
         <IconButton
@@ -83,14 +156,8 @@ export default function FinancialHeader({
             onPress={handleDateRangePress}
             style={styles.dateRangeButton}
           >
-            <Text style={[styles.dateRange, { color: colors.text }]}>
-              {formattedRange}
-            </Text>
-            <Text
-              style={[styles.modeIndicator, { color: colors.textSecondary }]}
-            >
-              {getModeDisplayName(mode)}
-            </Text>
+            <Text style={styles.dateRange}>{formattedRange}</Text>
+            <Text style={styles.modeIndicator}>{getModeDisplayName(mode)}</Text>
           </Pressable>
 
           <Pressable
@@ -106,13 +173,7 @@ export default function FinancialHeader({
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
         <Pressable
-          style={[
-            styles.tab,
-            activeTab === 'expenses' && [
-              styles.activeTab,
-              { backgroundColor: colors.primary + '20' },
-            ],
-          ]}
+          style={[styles.tab, activeTab === 'expenses' && styles.activeTab]}
           onPress={() => setActiveTab('expenses')}
         >
           <Text
@@ -144,13 +205,7 @@ export default function FinancialHeader({
         </Pressable>
 
         <Pressable
-          style={[
-            styles.tab,
-            activeTab === 'incomes' && [
-              styles.activeTab,
-              { backgroundColor: colors.primary + '20' },
-            ],
-          ]}
+          style={[styles.tab, activeTab === 'incomes' && styles.activeTab]}
           onPress={() => setActiveTab('incomes')}
         >
           <Text
@@ -192,71 +247,3 @@ export default function FinancialHeader({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    padding: 16,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  balanceLabel: {
-    fontSize: 16,
-  },
-  balanceAmount: {
-    fontSize: 32,
-    fontWeight: '700',
-    marginVertical: 8,
-  },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 16,
-    paddingVertical: 8,
-  },
-  navButton: {
-    padding: 8,
-  },
-  dateRangeButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  dateRange: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  modeIndicator: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  tab: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  activeTab: {
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  tabAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

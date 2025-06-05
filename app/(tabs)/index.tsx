@@ -97,7 +97,7 @@ export default function OperationsScreen() {
                   backgroundColor:
                     activeFilter === filter.key
                       ? colors.primary
-                      : colors.secondary,
+                      : colors.surfaceSecondary,
                 },
               ]}
               onPress={() => setActiveFilter(filter.key as FilterType)}
@@ -107,7 +107,9 @@ export default function OperationsScreen() {
                   styles.filterButtonText,
                   {
                     color:
-                      activeFilter === filter.key ? '#FFFFFF' : colors.text,
+                      activeFilter === filter.key
+                        ? colors.textInverse
+                        : colors.text,
                   },
                 ]}
               >

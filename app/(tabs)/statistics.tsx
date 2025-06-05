@@ -104,13 +104,13 @@ function TopTransactions() {
       {mockStats.topTransactions.map((transaction) => (
         <Card key={transaction.id} style={styles.transactionCard}>
           <View style={styles.transactionHeader}>
-            <Text style={[styles.transactionAmount, { color: colors.text }]}>
+            <Text style={[styles.transactionAmount, { color: colors.expense }]}>
               ${transaction.amount.toFixed(2)}
             </Text>
             <View
               style={[
                 styles.categoryBadge,
-                { backgroundColor: colors.secondary },
+                { backgroundColor: colors.iconBackground.neutral },
               ]}
             >
               <Text
@@ -151,7 +151,13 @@ function CategoryBreakdown() {
         {topCategories.map((category, index) => {
           const percentage = (category.spent / totalSpent) * 100;
           return (
-            <View key={category.id} style={styles.categoryRow}>
+            <View
+              key={category.id}
+              style={[
+                styles.categoryRow,
+                { borderBottomColor: colors.borderLight },
+              ]}
+            >
               <View style={styles.categoryInfo}>
                 <Text style={[styles.categoryName, { color: colors.text }]}>
                   {category.name}
@@ -168,7 +174,7 @@ function CategoryBreakdown() {
               <View
                 style={[
                   styles.percentageBar,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.borderLight },
                 ]}
               >
                 <View
@@ -249,7 +255,7 @@ export default function StatisticsScreen() {
             <View
               style={[
                 styles.savingsRateContainer,
-                { backgroundColor: colors.secondary },
+                { backgroundColor: colors.iconBackground.success },
               ]}
             >
               <TrendingUp size={16} color={colors.success} />
@@ -261,7 +267,7 @@ export default function StatisticsScreen() {
           <View
             style={[
               styles.savingsProgress,
-              { backgroundColor: colors.secondary },
+              { backgroundColor: colors.borderLight },
             ]}
           >
             <View
@@ -394,7 +400,7 @@ const styles = StyleSheet.create({
   categoryRow: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomColor: 'transparent', // Will be set dynamically
   },
   categoryInfo: {
     flexDirection: 'row',

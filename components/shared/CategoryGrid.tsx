@@ -1,6 +1,7 @@
 import { useCategoryContext } from '@/context/CategoryContext';
+import { useThemedStyles } from '@/context/ThemeContext';
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native';
 import AddCategoryButton from './AddCategoryButton';
 import CategoryCard from './CategoryCard';
 
@@ -20,6 +21,18 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
     handleCategoryPress,
     handleToggleEditMode,
   } = useCategoryContext();
+
+  const styles = useThemedStyles((theme) => ({
+    scrollView: {
+      flex: 1,
+    },
+    gridContainer: {
+      padding: theme.spacing.md,
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: theme.spacing.sm * 1.5,
+    },
+  }));
 
   return (
     <ScrollView
@@ -59,15 +72,3 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  gridContainer: {
-    padding: 16,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-});

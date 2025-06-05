@@ -99,16 +99,22 @@ export default function AccountsTabView({
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab.key;
-          const iconColor = isActive ? colors.background : colors.textSecondary;
+          const iconColor = isActive
+            ? colors.textInverse
+            : colors.textSecondary;
 
           return (
             <Pressable
               key={tab.key}
               style={[
                 styles.tab,
+                { backgroundColor: colors.surfaceSecondary },
                 isActive && [
                   styles.activeTab,
-                  { backgroundColor: colors.primary },
+                  {
+                    backgroundColor: colors.primary,
+                    shadowColor: colors.shadow,
+                  },
                 ],
               ]}
               onPress={() => handleTabPress(tab.key)}
@@ -121,7 +127,7 @@ export default function AccountsTabView({
                     { color: colors.textSecondary },
                     isActive && [
                       styles.activeTabText,
-                      { color: colors.background },
+                      { color: colors.textInverse },
                     ],
                   ]}
                 >
@@ -158,11 +164,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
     minHeight: 40,
   },
   activeTab: {
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

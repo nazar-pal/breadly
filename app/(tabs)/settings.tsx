@@ -131,7 +131,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.avatarPlaceholder,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.iconBackground.neutral },
                 ]}
               >
                 <User size={32} color={colors.text} />
@@ -191,10 +191,10 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.iconBackground.warning },
                 ]}
               >
-                <DollarSign size={20} color={colors.text} />
+                <DollarSign size={20} color={colors.warning} />
               </View>
               <View>
                 <Text style={[styles.settingText, { color: colors.text }]}>
@@ -222,10 +222,10 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.iconBackground.warning },
                 ]}
               >
-                <Sun size={20} color={colors.text} />
+                <Sun size={20} color={colors.warning} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
                 Light Mode
@@ -250,10 +250,10 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.iconBackground.info },
                 ]}
               >
-                <Moon size={20} color={colors.text} />
+                <Moon size={20} color={colors.info} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
                 Dark Mode
@@ -278,10 +278,10 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.iconBackground.primary },
                 ]}
               >
-                <Smartphone size={20} color={colors.text} />
+                <Smartphone size={20} color={colors.primary} />
               </View>
               <Text style={[styles.settingText, { color: colors.text }]}>
                 Use System Settings
