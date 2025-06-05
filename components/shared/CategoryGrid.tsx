@@ -1,15 +1,12 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import { useThemedStyles } from '@/context/ThemeContext';
-import React from 'react';
-import { ScrollView } from 'react-native';
-import AddCategoryButton from './AddCategoryButton';
-import CategoryCard from './CategoryCard';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useThemedStyles } from '@/context/ThemeContext'
+import React from 'react'
+import { ScrollView } from 'react-native'
+import AddCategoryButton from './AddCategoryButton'
+import CategoryCard from './CategoryCard'
 
 interface CategoryGridProps {
-  getIcon: (
-    categoryName: string,
-    type: 'expense' | 'income',
-  ) => React.ReactNode;
+  getIcon: (categoryName: string, type: 'expense' | 'income') => React.ReactNode
 }
 
 export default function CategoryGrid({ getIcon }: CategoryGridProps) {
@@ -18,27 +15,27 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
     currentType,
     activeTab,
     handleCategoryPress,
-    handleCategoryLongPress,
-  } = useCategoryContext();
+    handleCategoryLongPress
+  } = useCategoryContext()
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     scrollView: {
-      flex: 1,
+      flex: 1
     },
     gridContainer: {
       padding: theme.spacing.md,
       flexDirection: 'row' as const,
       flexWrap: 'wrap' as const,
-      gap: theme.spacing.sm * 1.5,
-    },
-  }));
+      gap: theme.spacing.sm * 1.5
+    }
+  }))
 
   return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.gridContainer}
     >
-      {currentCategories.map((category) => {
+      {currentCategories.map(category => {
         const amount =
           currentType === 'expense'
             ? 'spent' in category
@@ -46,7 +43,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
               : 0
             : 'earned' in category
               ? category.earned
-              : 0;
+              : 0
 
         return (
           <CategoryCard
@@ -59,7 +56,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
             onPress={handleCategoryPress}
             onLongPress={handleCategoryLongPress}
           />
-        );
+        )
       })}
 
       <AddCategoryButton
@@ -67,5 +64,5 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
         label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
       />
     </ScrollView>
-  );
+  )
 }

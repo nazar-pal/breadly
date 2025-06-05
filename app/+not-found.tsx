@@ -1,10 +1,10 @@
-import { useTheme } from '@/context/ThemeContext';
-import { Link, Stack } from 'expo-router';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/context/ThemeContext'
+import { Link, Stack } from 'expo-router'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 export default function NotFoundScreen() {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function NotFoundScreen() {
         </Link>
       </View>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -31,22 +31,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 20
   },
   text: {
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   link: {
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 8
   },
   linkText: {
     fontSize: 16,
     fontWeight: '600',
-    textAlign: 'center',
-  },
-});
+    textAlign: 'center'
+  }
+})

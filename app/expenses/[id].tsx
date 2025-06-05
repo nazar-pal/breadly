@@ -1,21 +1,21 @@
-import Card from '@/components/ui/Card';
-import { useTheme } from '@/context/ThemeContext';
-import { mockExpenses } from '@/data/mockData';
-import { useLocalSearchParams } from 'expo-router';
-import { Calendar, Mic, Tag } from 'lucide-react-native';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { mockExpenses } from '@/data/mockData'
+import { useLocalSearchParams } from 'expo-router'
+import { Calendar, Mic, Tag } from 'lucide-react-native'
+import React from 'react'
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 export default function ExpenseDetailsScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors } = useTheme();
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const { colors } = useTheme()
 
   // Find the expense with the matching ID
-  const expense = mockExpenses.find((e) => e.id === id);
+  const expense = mockExpenses.find(e => e.id === id)
 
   // Placeholder for receipt image
   const receiptImageUrl =
-    'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+    'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 
   if (!expense) {
     return (
@@ -24,7 +24,7 @@ export default function ExpenseDetailsScreen() {
           Expense not found
         </Text>
       </View>
-    );
+    )
   }
 
   return (
@@ -46,7 +46,7 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: colors.iconBackground.info },
+              { backgroundColor: colors.iconBackground.info }
             ]}
           >
             <Calendar size={20} color={colors.info} />
@@ -67,7 +67,7 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: colors.iconBackground.primary },
+              { backgroundColor: colors.iconBackground.primary }
             ]}
           >
             <Tag size={20} color={colors.primary} />
@@ -104,7 +104,7 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.receiptContainer,
-              { backgroundColor: colors.surfaceSecondary },
+              { backgroundColor: colors.surfaceSecondary }
             ]}
           >
             <Image
@@ -124,7 +124,7 @@ export default function ExpenseDetailsScreen() {
           <View
             style={[
               styles.voiceMemoContainer,
-              { backgroundColor: colors.iconBackground.warning },
+              { backgroundColor: colors.iconBackground.warning }
             ]}
           >
             <Mic size={24} color={colors.warning} style={{ marginRight: 8 }} />
@@ -135,40 +135,40 @@ export default function ExpenseDetailsScreen() {
         </Card>
       )}
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   contentContainer: {
-    padding: 16,
+    padding: 16
   },
   errorText: {
     fontSize: 18,
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: 40
   },
   amountContainer: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   amountLabel: {
     fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 8
   },
   amount: {
     fontSize: 48,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   detailsCard: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   iconContainer: {
     width: 40,
@@ -176,51 +176,51 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 12
   },
   detailLabel: {
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 4
   },
   detailValue: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   separator: {
     height: 1,
-    width: '100%',
+    width: '100%'
   },
   descriptionContainer: {
-    flex: 1,
+    flex: 1
   },
   descriptionText: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 24
   },
   attachmentCard: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   attachmentTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 12
   },
   receiptContainer: {
     height: 200,
     overflow: 'hidden',
-    borderRadius: 8,
+    borderRadius: 8
   },
   receiptImage: {
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   voiceMemoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 8
   },
   voiceMemoText: {
-    fontSize: 16,
-  },
-});
+    fontSize: 16
+  }
+})

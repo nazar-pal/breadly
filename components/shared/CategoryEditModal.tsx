@@ -1,5 +1,5 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import {
   Briefcase,
   Building,
@@ -16,9 +16,9 @@ import {
   TrendingUp,
   Users,
   UtensilsCrossed,
-  X,
-} from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+  X
+} from 'lucide-react-native'
+import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Modal,
@@ -27,11 +27,11 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 // Available icons for both expense and income categories
 const availableIcons = {
@@ -48,44 +48,42 @@ const availableIcons = {
   TrendingUp,
   Building,
   Target,
-  PiggyBank,
-};
+  PiggyBank
+}
 
-const iconNames = Object.keys(
-  availableIcons,
-) as (keyof typeof availableIcons)[];
+const iconNames = Object.keys(availableIcons) as (keyof typeof availableIcons)[]
 
 export default function CategoryEditModal() {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
   const {
     editModalVisible,
     categoryToEdit,
     currentType,
     handleSaveCategory,
-    handleCloseEditModal,
-  } = useCategoryContext();
+    handleCloseEditModal
+  } = useCategoryContext()
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [selectedIcon, setSelectedIcon] =
-    useState<keyof typeof availableIcons>('Home');
+    useState<keyof typeof availableIcons>('Home')
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     modalContainer: {
       flex: 1,
-      justifyContent: 'flex-end' as const,
+      justifyContent: 'flex-end' as const
     },
     modalOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow,
+      backgroundColor: theme.colors.shadow
     },
     modalContent: {
       borderTopLeftRadius: theme.borderRadius.xl,
       borderTopRightRadius: theme.borderRadius.xl,
       paddingTop: theme.spacing.sm,
       minHeight: SCREEN_HEIGHT * 0.6,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background
     },
     header: {
       flexDirection: 'row' as const,
@@ -94,31 +92,31 @@ export default function CategoryEditModal() {
       paddingHorizontal: theme.spacing.lg - 4,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.border
     },
     title: {
       fontSize: 20,
       fontWeight: '600' as const,
-      color: theme.colors.text,
+      color: theme.colors.text
     },
     closeButton: {
-      padding: theme.spacing.xs,
+      padding: theme.spacing.xs
     },
     content: {
       flex: 1,
-      paddingHorizontal: theme.spacing.lg - 4,
+      paddingHorizontal: theme.spacing.lg - 4
     },
     scrollContent: {
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm
     },
     formGroup: {
-      marginBottom: theme.spacing.xl - 8,
+      marginBottom: theme.spacing.xl - 8
     },
     label: {
       fontSize: 16,
       fontWeight: '600' as const,
       marginBottom: theme.spacing.sm,
-      color: theme.colors.text,
+      color: theme.colors.text
     },
     input: {
       borderWidth: 1,
@@ -129,18 +127,18 @@ export default function CategoryEditModal() {
       minHeight: 48,
       color: theme.colors.text,
       backgroundColor: theme.colors.card,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.border
     },
     textArea: {
       height: 100,
       paddingTop: theme.spacing.sm * 1.5,
-      textAlignVertical: 'top' as const,
+      textAlignVertical: 'top' as const
     },
     iconGrid: {
       flexDirection: 'row' as const,
       flexWrap: 'wrap' as const,
       gap: theme.spacing.sm * 1.5,
-      paddingTop: theme.spacing.sm,
+      paddingTop: theme.spacing.sm
     },
     iconOption: {
       width: 56,
@@ -148,7 +146,7 @@ export default function CategoryEditModal() {
       borderRadius: theme.borderRadius.md * 1.5,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
-      borderWidth: 2,
+      borderWidth: 2
     },
     footer: {
       flexDirection: 'row' as const,
@@ -157,7 +155,7 @@ export default function CategoryEditModal() {
       paddingBottom: theme.spacing.sm,
       gap: theme.spacing.sm * 1.5,
       borderTopWidth: 1,
-      borderTopColor: theme.colors.borderLight,
+      borderTopColor: theme.colors.borderLight
     },
     button: {
       flex: 1,
@@ -167,64 +165,64 @@ export default function CategoryEditModal() {
       paddingVertical: theme.spacing.sm + 6,
       borderRadius: theme.borderRadius.md * 1.5,
       gap: theme.spacing.sm,
-      minHeight: 48,
+      minHeight: 48
     },
     cancelButton: {
       flex: 0.4,
       backgroundColor: theme.colors.button.secondaryBg,
       borderWidth: 1,
-      borderColor: theme.colors.button.secondaryBorder,
+      borderColor: theme.colors.button.secondaryBorder
     },
     saveButton: {
       flex: 0.6,
-      backgroundColor: theme.colors.button.primaryBg,
+      backgroundColor: theme.colors.button.primaryBg
     },
     buttonText: {
       fontSize: 16,
-      fontWeight: '600' as const,
-    },
-  }));
+      fontWeight: '600' as const
+    }
+  }))
 
   useEffect(() => {
     if (categoryToEdit) {
-      setName(categoryToEdit.name);
-      setDescription(categoryToEdit.description || '');
+      setName(categoryToEdit.name)
+      setDescription(categoryToEdit.description || '')
       // Try to match the category name to an icon, fallback to Home
       const matchedIcon = iconNames.find(
-        (icon) =>
+        icon =>
           icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
-          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase()),
-      );
-      setSelectedIcon(matchedIcon || 'Home');
+          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
+      )
+      setSelectedIcon(matchedIcon || 'Home')
     } else {
       // Reset form when no category
-      setName('');
-      setDescription('');
-      setSelectedIcon('Home');
+      setName('')
+      setDescription('')
+      setSelectedIcon('Home')
     }
-  }, [categoryToEdit]);
+  }, [categoryToEdit])
 
   const handleSave = () => {
     if (!categoryToEdit || !name.trim()) {
-      return;
+      return
     }
 
     handleSaveCategory({
       id: categoryToEdit.id,
       name: name.trim(),
       description: description.trim(),
-      iconName: selectedIcon,
-    });
-  };
+      iconName: selectedIcon
+    })
+  }
 
   const getIconBackgroundColor = () => {
     if (currentType === 'income') {
-      return colors.iconBackground.success;
+      return colors.iconBackground.success
     }
-    return colors.iconBackground.neutral;
-  };
+    return colors.iconBackground.neutral
+  }
 
-  if (!categoryToEdit) return null;
+  if (!categoryToEdit) return null
 
   return (
     <Modal
@@ -240,8 +238,8 @@ export default function CategoryEditModal() {
             styles.modalContent,
             {
               paddingBottom: insets.bottom + 16,
-              maxHeight: SCREEN_HEIGHT * 0.8,
-            },
+              maxHeight: SCREEN_HEIGHT * 0.8
+            }
           ]}
         >
           {/* Header */}
@@ -294,9 +292,9 @@ export default function CategoryEditModal() {
             <View style={styles.formGroup}>
               <Text style={styles.label}>Choose Icon</Text>
               <View style={styles.iconGrid}>
-                {iconNames.map((iconName) => {
-                  const IconComponent = availableIcons[iconName];
-                  const isSelected = selectedIcon === iconName;
+                {iconNames.map(iconName => {
+                  const IconComponent = availableIcons[iconName]
+                  const isSelected = selectedIcon === iconName
 
                   return (
                     <Pressable
@@ -309,8 +307,8 @@ export default function CategoryEditModal() {
                             : getIconBackgroundColor(),
                           borderColor: isSelected
                             ? colors.primary
-                            : 'transparent',
-                        },
+                            : 'transparent'
+                        }
                       ]}
                       onPress={() => setSelectedIcon(iconName)}
                     >
@@ -319,7 +317,7 @@ export default function CategoryEditModal() {
                         color={isSelected ? colors.primary : colors.text}
                       />
                     </Pressable>
-                  );
+                  )
                 })}
               </View>
             </View>
@@ -334,7 +332,7 @@ export default function CategoryEditModal() {
               <Text
                 style={[
                   styles.buttonText,
-                  { color: colors.button.secondaryText },
+                  { color: colors.button.secondaryText }
                 ]}
               >
                 Cancel
@@ -350,7 +348,7 @@ export default function CategoryEditModal() {
               <Text
                 style={[
                   styles.buttonText,
-                  { color: colors.button.primaryText },
+                  { color: colors.button.primaryText }
                 ]}
               >
                 Save Changes
@@ -360,5 +358,5 @@ export default function CategoryEditModal() {
         </View>
       </View>
     </Modal>
-  );
+  )
 }

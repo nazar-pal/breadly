@@ -1,16 +1,16 @@
-import { useTheme } from '@/context/ThemeContext';
-import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
-import { Camera, Mic, Pencil } from 'lucide-react-native';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '@/context/ThemeContext'
+import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
+import { Camera, Mic, Pencil } from 'lucide-react-native'
+import React from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-const ICONS = { index: Pencil, photo: Camera, voice: Mic };
+const ICONS = { index: Pencil, photo: Camera, voice: Mic }
 
 export default function AddExpenseTabBar({
   state,
-  navigation,
+  navigation
 }: MaterialTopTabBarProps) {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <View
@@ -18,8 +18,8 @@ export default function AddExpenseTabBar({
         styles.wrapper,
         {
           backgroundColor: colors.background,
-          borderBottomColor: colors.borderLight,
-        },
+          borderBottomColor: colors.borderLight
+        }
       ]}
     >
       {/* Title */}
@@ -28,12 +28,12 @@ export default function AddExpenseTabBar({
       {/* Mode selector */}
       <View style={styles.tabsRow}>
         {state.routes.map((route, i) => {
-          const focused = state.index === i;
-          const Icon = ICONS[route.name as keyof typeof ICONS];
+          const focused = state.index === i
+          const Icon = ICONS[route.name as keyof typeof ICONS]
 
           const onPress = () => {
-            if (!focused) navigation.navigate(route.name);
-          };
+            if (!focused) navigation.navigate(route.name)
+          }
 
           return (
             <TouchableOpacity
@@ -44,8 +44,8 @@ export default function AddExpenseTabBar({
                 styles.tab,
                 focused && {
                   borderBottomWidth: 2,
-                  borderBottomColor: colors.primary,
-                },
+                  borderBottomColor: colors.primary
+                }
               ]}
               onPress={onPress}
             >
@@ -59,8 +59,8 @@ export default function AddExpenseTabBar({
                   styles.label,
                   {
                     color: focused ? colors.primary : colors.textSecondary,
-                    fontWeight: focused ? '600' : '400',
-                  },
+                    fontWeight: focused ? '600' : '400'
+                  }
                 ]}
               >
                 {route.name === 'index'
@@ -68,37 +68,37 @@ export default function AddExpenseTabBar({
                   : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
               </Text>
             </TouchableOpacity>
-          );
+          )
         })}
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   wrapper: {
     paddingTop: 48,
     paddingBottom: 8,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
     marginBottom: 16,
     letterSpacing: -0.5,
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   tabsRow: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   tab: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   label: {
-    fontSize: 16,
-  },
-});
+    fontSize: 16
+  }
+})

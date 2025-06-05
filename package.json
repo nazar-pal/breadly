@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
     "build:web": "npx expo export --platform web",
-    "lint": "npx expo lint",
-    "format": "prettier . --write",
-    "typecheck": "tsc --noEmit"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --write"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.12.0",

@@ -1,10 +1,10 @@
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { useTheme } from '@/context/ThemeContext';
-import { useSignIn } from '@clerk/clerk-expo';
-import { Link, useRouter } from 'expo-router';
-import { Lock, LogIn, Mail } from 'lucide-react-native';
-import React from 'react';
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { useSignIn } from '@clerk/clerk-expo'
+import { Link, useRouter } from 'expo-router'
+import { Lock, LogIn, Mail } from 'lucide-react-native'
+import React from 'react'
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,47 +13,47 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SignInScreen() {
-  const { signIn, setActive, isLoaded } = useSignIn();
-  const router = useRouter();
-  const { colors, spacing } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { signIn, setActive, isLoaded } = useSignIn()
+  const router = useRouter()
+  const { colors, spacing } = useTheme()
+  const insets = useSafeAreaInsets()
 
-  const [emailAddress, setEmailAddress] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [emailAddress, setEmailAddress] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const onSignInPress = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded) return
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
-        password,
-      });
+        password
+      })
 
       if (signInAttempt.status === 'complete') {
-        await setActive({ session: signInAttempt.createdSessionId });
-        router.replace('/');
+        await setActive({ session: signInAttempt.createdSessionId })
+        router.replace('/')
       } else {
-        console.error(JSON.stringify(signInAttempt, null, 2));
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        console.error(JSON.stringify(signInAttempt, null, 2))
+        Alert.alert('Error', 'Something went wrong. Please try again.')
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2))
       Alert.alert(
         'Error',
-        err.errors?.[0]?.message || 'Failed to sign in. Please try again.',
-      );
+        err.errors?.[0]?.message || 'Failed to sign in. Please try again.'
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <KeyboardAvoidingView
@@ -66,8 +66,8 @@ export default function SignInScreen() {
           {
             paddingTop: insets.top + spacing.xl,
             paddingBottom: insets.bottom + spacing.xl,
-            paddingHorizontal: spacing.md,
-          },
+            paddingHorizontal: spacing.md
+          }
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -95,8 +95,8 @@ export default function SignInScreen() {
                 styles.inputContainer,
                 {
                   borderColor: colors.input.border,
-                  backgroundColor: colors.input.background,
-                },
+                  backgroundColor: colors.input.background
+                }
               ]}
             >
               <Mail
@@ -124,8 +124,8 @@ export default function SignInScreen() {
                 styles.inputContainer,
                 {
                   borderColor: colors.input.border,
-                  backgroundColor: colors.input.background,
-                },
+                  backgroundColor: colors.input.background
+                }
               ]}
             >
               <Lock
@@ -168,20 +168,20 @@ export default function SignInScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 32
   },
   iconContainer: {
     width: 80,
@@ -189,28 +189,28 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 8
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 24
   },
   formCard: {
-    marginBottom: 24,
+    marginBottom: 24
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 8
   },
   inputContainer: {
     flexDirection: 'row',
@@ -218,33 +218,33 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 16,
-    height: 56,
+    height: 56
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: 12
   },
   input: {
     flex: 1,
     fontSize: 16,
-    height: '100%',
+    height: '100%'
   },
   signInButton: {
-    marginTop: 8,
+    marginTop: 8
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 16
   },
   linkButton: {
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 8
   },
   linkText: {
     fontSize: 16,
-    fontWeight: '600',
-  },
-});
+    fontWeight: '600'
+  }
+})

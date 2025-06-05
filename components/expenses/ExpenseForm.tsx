@@ -1,16 +1,16 @@
-import { useTheme } from '@/context/ThemeContext';
-import { mockCategories } from '@/data/mockData';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useTheme } from '@/context/ThemeContext'
+import { mockCategories } from '@/data/mockData'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   AlignLeft,
   Calendar,
   ChevronDown,
   ChevronRight,
   Plus,
-  X,
-} from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+  X
+} from 'lucide-react-native'
+import React, { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   Modal,
   Pressable,
@@ -18,39 +18,39 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import * as z from 'zod';
-import Button from '../ui/Button';
+  View
+} from 'react-native'
+import * as z from 'zod'
+import Button from '../ui/Button'
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
   description: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
-  date: z.string().min(1, 'Date is required'),
-});
+  date: z.string().min(1, 'Date is required')
+})
 
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+type ExpenseFormData = z.infer<typeof expenseSchema>
 
 interface ExpenseFormProps {
-  onSubmit: (data: ExpenseFormData) => void;
-  initialData?: Partial<ExpenseFormData>;
+  onSubmit: (data: ExpenseFormData) => void
+  initialData?: Partial<ExpenseFormData>
 }
 
 export default function ExpenseForm({
   onSubmit,
-  initialData,
+  initialData
 }: ExpenseFormProps) {
-  const { colors, spacing } = useTheme();
-  const [showDescription, setShowDescription] = useState(false);
-  const [expenses, setExpenses] = useState<ExpenseFormData[]>([]);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const { colors, spacing } = useTheme()
+  const [showDescription, setShowDescription] = useState(false)
+  const [expenses, setExpenses] = useState<ExpenseFormData[]>([])
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false)
   const [editingExpenseIndex, setEditingExpenseIndex] = useState<number | null>(
-    null,
-  );
+    null
+  )
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0]
 
   const {
     control,
@@ -58,74 +58,74 @@ export default function ExpenseForm({
     formState: { errors },
     setValue,
     watch,
-    reset,
+    reset
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       amount: initialData?.amount || '',
       description: initialData?.description || '',
       category: initialData?.category || '',
-      date: initialData?.date || today,
-    },
-  });
+      date: initialData?.date || today
+    }
+  })
 
-  const selectedCategory = watch('category');
-  const selectedDate = watch('date');
+  const selectedCategory = watch('category')
+  const selectedDate = watch('date')
 
   const handleAddExpense = (data: ExpenseFormData) => {
     if (editingExpenseIndex !== null) {
       // Update existing expense
-      const updatedExpenses = [...expenses];
-      updatedExpenses[editingExpenseIndex] = data;
-      setExpenses(updatedExpenses);
-      setEditingExpenseIndex(null);
+      const updatedExpenses = [...expenses]
+      updatedExpenses[editingExpenseIndex] = data
+      setExpenses(updatedExpenses)
+      setEditingExpenseIndex(null)
     } else {
       // Add new expense
-      setExpenses([...expenses, data]);
+      setExpenses([...expenses, data])
     }
 
     reset({
       amount: '',
       description: '',
       category: data.category, // Keep the same category for convenience
-      date: data.date, // Keep the same date for convenience
-    });
-    setShowDescription(false);
-  };
+      date: data.date // Keep the same date for convenience
+    })
+    setShowDescription(false)
+  }
 
   const handleFinalSubmit = () => {
-    handleSubmit((data) => {
-      const allExpenses = [...expenses, data];
-      onSubmit(allExpenses[0]); // For now, just submit the first expense
-    })();
-  };
+    handleSubmit(data => {
+      const allExpenses = [...expenses, data]
+      onSubmit(allExpenses[0]) // For now, just submit the first expense
+    })()
+  }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
-      year: 'numeric',
-    });
-  };
+      year: 'numeric'
+    })
+  }
 
   const handleEditExpense = (index: number) => {
-    const expense = expenses[index];
-    setEditingExpenseIndex(index);
-    reset(expense);
-    setShowDescription(!!expense.description);
-  };
+    const expense = expenses[index]
+    setEditingExpenseIndex(index)
+    reset(expense)
+    setShowDescription(!!expense.description)
+  }
 
   const handleCancelEdit = () => {
-    setEditingExpenseIndex(null);
+    setEditingExpenseIndex(null)
     reset({
       amount: '',
       description: '',
       category: '',
-      date: today,
-    });
-    setShowDescription(false);
-  };
+      date: today
+    })
+    setShowDescription(false)
+  }
 
   return (
     <ScrollView
@@ -152,8 +152,8 @@ export default function ExpenseForm({
                         borderColor: errors.amount
                           ? colors.error
                           : colors.border,
-                        backgroundColor: colors.card,
-                      },
+                        backgroundColor: colors.card
+                      }
                     ]}
                     placeholderTextColor={colors.textSecondary}
                     placeholder="0.00"
@@ -178,17 +178,15 @@ export default function ExpenseForm({
               onPress={() => setShowCategoryPicker(true)}
               style={[
                 styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border },
+                { backgroundColor: colors.card, borderColor: colors.border }
               ]}
             >
               <Text
                 style={[
                   styles.pickerButtonText,
                   {
-                    color: selectedCategory
-                      ? colors.text
-                      : colors.textSecondary,
-                  },
+                    color: selectedCategory ? colors.text : colors.textSecondary
+                  }
                 ]}
                 numberOfLines={1}
               >
@@ -211,7 +209,7 @@ export default function ExpenseForm({
               onPress={() => setShowDatePicker(true)}
               style={[
                 styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border },
+                { backgroundColor: colors.card, borderColor: colors.border }
               ]}
             >
               <Text style={[styles.pickerButtonText, { color: colors.text }]}>
@@ -225,7 +223,7 @@ export default function ExpenseForm({
             onPress={() => setShowDescription(!showDescription)}
             style={[
               styles.descriptionToggle,
-              { backgroundColor: colors.iconBackground.neutral },
+              { backgroundColor: colors.iconBackground.neutral }
             ]}
           >
             <AlignLeft size={20} color={colors.text} />
@@ -247,8 +245,8 @@ export default function ExpenseForm({
                       borderColor: errors.description
                         ? colors.error
                         : colors.border,
-                      backgroundColor: colors.card,
-                    },
+                      backgroundColor: colors.card
+                    }
                   ]}
                   placeholderTextColor={colors.textSecondary}
                   placeholder="What was this expense for?"
@@ -310,7 +308,7 @@ export default function ExpenseForm({
         <View
           style={[
             styles.expensesList,
-            { backgroundColor: colors.surfaceSecondary },
+            { backgroundColor: colors.surfaceSecondary }
           ]}
         >
           <Text style={[styles.expensesListTitle, { color: colors.text }]}>
@@ -326,8 +324,8 @@ export default function ExpenseForm({
                   backgroundColor:
                     editingExpenseIndex === index ? colors.card : 'transparent',
                   borderRadius: 8,
-                  marginBottom: 8,
-                },
+                  marginBottom: 8
+                }
               ]}
             >
               <View style={styles.expenseItemRow}>
@@ -345,7 +343,7 @@ export default function ExpenseForm({
                   <View
                     style={[
                       styles.categoryBadge,
-                      { backgroundColor: colors.card },
+                      { backgroundColor: colors.card }
                     ]}
                   >
                     <Text
@@ -361,7 +359,7 @@ export default function ExpenseForm({
                 <Text
                   style={[
                     styles.descriptionText,
-                    { color: colors.textSecondary },
+                    { color: colors.textSecondary }
                   ]}
                   numberOfLines={2}
                 >
@@ -390,13 +388,13 @@ export default function ExpenseForm({
             <Text
               style={[
                 styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight },
+                { color: colors.text, borderBottomColor: colors.borderLight }
               ]}
             >
               Select Category
             </Text>
             <ScrollView>
-              {mockCategories.map((category) => (
+              {mockCategories.map(category => (
                 <Pressable
                   key={category.id}
                   style={[
@@ -405,12 +403,12 @@ export default function ExpenseForm({
                       backgroundColor:
                         selectedCategory === category.name
                           ? colors.primary
-                          : 'transparent',
-                    },
+                          : 'transparent'
+                    }
                   ]}
                   onPress={() => {
-                    setValue('category', category.name);
-                    setShowCategoryPicker(false);
+                    setValue('category', category.name)
+                    setShowCategoryPicker(false)
                   }}
                 >
                   <Text
@@ -420,8 +418,8 @@ export default function ExpenseForm({
                         color:
                           selectedCategory === category.name
                             ? colors.textInverse
-                            : colors.text,
-                      },
+                            : colors.text
+                      }
                     ]}
                   >
                     {category.name}
@@ -450,17 +448,17 @@ export default function ExpenseForm({
             <Text
               style={[
                 styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight },
+                { color: colors.text, borderBottomColor: colors.borderLight }
               ]}
             >
               Select Date
             </Text>
             <ScrollView>
               {[...Array(7)].map((_, index) => {
-                const date = new Date();
-                date.setDate(date.getDate() - index);
-                const dateString = date.toISOString().split('T')[0];
-                const isToday = index === 0;
+                const date = new Date()
+                date.setDate(date.getDate() - index)
+                const dateString = date.toISOString().split('T')[0]
+                const isToday = index === 0
 
                 return (
                   <Pressable
@@ -471,12 +469,12 @@ export default function ExpenseForm({
                         backgroundColor:
                           selectedDate === dateString
                             ? colors.primary
-                            : 'transparent',
-                      },
+                            : 'transparent'
+                      }
                     ]}
                     onPress={() => {
-                      setValue('date', dateString);
-                      setShowDatePicker(false);
+                      setValue('date', dateString)
+                      setShowDatePicker(false)
                     }}
                   >
                     <Text
@@ -486,77 +484,77 @@ export default function ExpenseForm({
                           color:
                             selectedDate === dateString
                               ? colors.textInverse
-                              : colors.text,
-                        },
+                              : colors.text
+                        }
                       ]}
                     >
                       {isToday ? 'Today' : formatDate(dateString)}
                     </Text>
                   </Pressable>
-                );
+                )
               })}
             </ScrollView>
           </View>
         </Pressable>
       </Modal>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   contentContainer: {
-    padding: 16,
+    padding: 16
   },
   formSection: {
-    marginBottom: 24,
+    marginBottom: 24
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 16
   },
   topAlignedRow: {
-    alignItems: 'flex-start',
+    alignItems: 'flex-start'
   },
   bottomAlignedRow: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-end'
   },
   formGroup: {
-    flex: 1,
+    flex: 1
   },
   amountContainer: {
-    marginRight: 12,
+    marginRight: 12
   },
   categoryContainer: {
-    flex: 1.2,
+    flex: 1.2
   },
   label: {
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 8,
+    marginBottom: 8
   },
   input: {
     height: 48,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
-    fontSize: 16,
+    fontSize: 16
   },
   amountInput: {
     fontWeight: '600',
-    fontSize: 20,
+    fontSize: 20
   },
   descriptionInput: {
     height: 80,
     paddingTop: 12,
     paddingBottom: 12,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
   errorText: {
     fontSize: 12,
-    marginTop: 4,
+    marginTop: 4
   },
   descriptionToggle: {
     width: 48,
@@ -564,7 +562,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 12,
+    marginLeft: 12
   },
   pickerButton: {
     flexDirection: 'row',
@@ -573,63 +571,63 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   pickerButtonText: {
     fontSize: 16,
-    flex: 1,
+    flex: 1
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
+    padding: 16
   },
   modalContent: {
     borderRadius: 12,
-    maxHeight: '80%',
+    maxHeight: '80%'
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
     padding: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   categoryOption: {
-    padding: 16,
+    padding: 16
   },
   categoryOptionText: {
-    fontSize: 16,
+    fontSize: 16
   },
   dateOption: {
-    padding: 16,
+    padding: 16
   },
   dateOptionText: {
-    fontSize: 16,
+    fontSize: 16
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 24,
+    marginTop: 24
   },
   expensesList: {
     borderRadius: 8,
-    padding: 16,
+    padding: 16
   },
   expensesListTitle: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 12
   },
   expenseItem: {
-    padding: 12,
+    padding: 12
   },
   expenseItemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   expenseItemAmount: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   expenseItemDetails: {
     flex: 1,
@@ -637,23 +635,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 8,
-    marginHorizontal: 12,
+    marginHorizontal: 12
   },
   categoryBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 4
   },
   categoryBadgeText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 12
   },
   descriptionText: {
     fontSize: 13,
     marginTop: 8,
-    paddingLeft: 4,
-  },
-});
+    paddingLeft: 4
+  }
+})

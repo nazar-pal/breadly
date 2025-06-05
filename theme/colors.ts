@@ -53,7 +53,7 @@ export const lightColors = {
     borderFocus: '#6366F1',
     borderError: '#EF4444',
     placeholder: '#A0ADB8',
-    disabled: '#F7FAFC',
+    disabled: '#F7FAFC'
   },
 
   // Button states
@@ -74,7 +74,7 @@ export const lightColors = {
     destructiveBg: '#EF4444',
     destructiveBgHover: '#DC2626',
     destructiveBgPressed: '#B91C1C',
-    destructiveText: '#FFFFFF',
+    destructiveText: '#FFFFFF'
   },
 
   // Border & Divider colors
@@ -96,7 +96,7 @@ export const lightColors = {
     inactiveIcon: '#718096',
     activeLabel: '#6366F1',
     inactiveLabel: '#718096',
-    focusBackground: 'rgba(99, 102, 241, 0.1)',
+    focusBackground: 'rgba(99, 102, 241, 0.1)'
   },
 
   // Icon background colors for better semantic meaning
@@ -106,7 +106,7 @@ export const lightColors = {
     success: 'rgba(16, 185, 129, 0.1)',
     warning: 'rgba(245, 158, 11, 0.1)',
     error: 'rgba(239, 68, 68, 0.1)',
-    info: 'rgba(59, 130, 246, 0.1)',
+    info: 'rgba(59, 130, 246, 0.1)'
   },
 
   // Status colors for different states
@@ -115,9 +115,9 @@ export const lightColors = {
     processing: '#3B82F6',
     completed: '#10B981',
     cancelled: '#6B7280',
-    failed: '#EF4444',
-  },
-} as const;
+    failed: '#EF4444'
+  }
+} as const
 
 // Dark theme color palette
 export const darkColors = {
@@ -174,7 +174,7 @@ export const darkColors = {
     borderFocus: '#818CF8',
     borderError: '#F87171',
     placeholder: '#64748B',
-    disabled: '#1E293B',
+    disabled: '#1E293B'
   },
 
   // Button states
@@ -195,7 +195,7 @@ export const darkColors = {
     destructiveBg: '#F87171',
     destructiveBgHover: '#FCA5A5',
     destructiveBgPressed: '#EF4444',
-    destructiveText: '#0F172A',
+    destructiveText: '#0F172A'
   },
 
   // Border & Divider colors
@@ -217,7 +217,7 @@ export const darkColors = {
     inactiveIcon: '#94A3B8',
     activeLabel: '#818CF8',
     inactiveLabel: '#94A3B8',
-    focusBackground: 'rgba(129, 140, 248, 0.15)',
+    focusBackground: 'rgba(129, 140, 248, 0.15)'
   },
 
   // Icon background colors for better semantic meaning
@@ -227,7 +227,7 @@ export const darkColors = {
     success: 'rgba(52, 211, 153, 0.15)',
     warning: 'rgba(251, 191, 36, 0.15)',
     error: 'rgba(248, 113, 113, 0.15)',
-    info: 'rgba(96, 165, 250, 0.15)',
+    info: 'rgba(96, 165, 250, 0.15)'
   },
 
   // Status colors for different states
@@ -236,6 +236,6 @@ export const darkColors = {
     processing: '#60A5FA',
     completed: '#34D399',
     cancelled: '#9CA3AF',
-    failed: '#F87171',
-  },
-} as const;
+    failed: '#F87171'
+  }
+} as const

@@ -1,19 +1,19 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
-import DateRangeModal from './DateRangeModal';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
+import React from 'react'
+import { Pressable, Text, View } from 'react-native'
+import DateRangeModal from './DateRangeModal'
 
 interface FinancialHeaderProps {
-  totalExpenses: number;
-  totalIncome: number;
+  totalExpenses: number
+  totalIncome: number
 }
 
 export default function FinancialHeader({
   totalExpenses,
-  totalIncome,
+  totalIncome
 }: FinancialHeaderProps) {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
   const {
     activeTab,
     setActiveTab,
@@ -27,52 +27,52 @@ export default function FinancialHeader({
     getModeDisplayName,
     dateRangeModalVisible,
     handleDateRangePress,
-    handleDateRangeModalClose,
-  } = useCategoryContext();
+    handleDateRangeModalClose
+  } = useCategoryContext()
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     header: {
       paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm
     },
     topRow: {
       flexDirection: 'row' as const,
       justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
-      marginBottom: theme.spacing.sm,
+      marginBottom: theme.spacing.sm
     },
     leftSection: {
-      flex: 1,
+      flex: 1
     },
     balanceLabel: {
       fontSize: 12,
       color: theme.colors.textSecondary,
-      marginBottom: 2,
+      marginBottom: 2
     },
     balanceAmount: {
       fontSize: 24,
-      fontWeight: '700' as const,
+      fontWeight: '700' as const
     },
     rightSection: {
-      alignItems: 'flex-end' as const,
+      alignItems: 'flex-end' as const
     },
     dateRange: {
       fontSize: 14,
       fontWeight: '600' as const,
       color: theme.colors.text,
-      textAlign: 'right' as const,
+      textAlign: 'right' as const
     },
     modeIndicator: {
       fontSize: 10,
       color: theme.colors.textSecondary,
       textTransform: 'uppercase' as const,
       letterSpacing: 0.5,
-      marginTop: 1,
+      marginTop: 1
     },
     tabContainer: {
       flexDirection: 'row' as const,
       gap: theme.spacing.sm,
-      marginTop: theme.spacing.xs,
+      marginTop: theme.spacing.xs
     },
     tab: {
       flex: 1,
@@ -82,25 +82,25 @@ export default function FinancialHeader({
       alignItems: 'center' as const,
       backgroundColor: 'transparent',
       marginBottom: theme.spacing.xs,
-      marginTop: theme.spacing.sm,
+      marginTop: theme.spacing.sm
     },
     activeTab: {
       backgroundColor: theme.colors.iconBackground.primary,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: theme.colors.primary
     },
     tabText: {
       fontSize: 16,
       fontWeight: '600' as const,
-      marginBottom: 1,
+      marginBottom: 1
     },
     tabAmount: {
       fontSize: 14,
-      fontWeight: '500' as const,
-    },
-  }));
+      fontWeight: '500' as const
+    }
+  }))
 
-  const netBalance = totalIncome - totalExpenses;
+  const netBalance = totalIncome - totalExpenses
 
   return (
     <View style={styles.header}>
@@ -112,8 +112,8 @@ export default function FinancialHeader({
             style={[
               styles.balanceAmount,
               {
-                color: netBalance >= 0 ? colors.success : colors.error,
-              },
+                color: netBalance >= 0 ? colors.success : colors.error
+              }
             ]}
           >
             ${Math.abs(netBalance).toFixed(2)}
@@ -139,8 +139,8 @@ export default function FinancialHeader({
                 color:
                   activeTab === 'expenses'
                     ? colors.primary
-                    : colors.textSecondary,
-              },
+                    : colors.textSecondary
+              }
             ]}
           >
             Expenses
@@ -150,10 +150,8 @@ export default function FinancialHeader({
               styles.tabAmount,
               {
                 color:
-                  activeTab === 'expenses'
-                    ? colors.error
-                    : colors.textSecondary,
-              },
+                  activeTab === 'expenses' ? colors.error : colors.textSecondary
+              }
             ]}
           >
             ${totalExpenses.toFixed(2)}
@@ -171,8 +169,8 @@ export default function FinancialHeader({
                 color:
                   activeTab === 'incomes'
                     ? colors.primary
-                    : colors.textSecondary,
-              },
+                    : colors.textSecondary
+              }
             ]}
           >
             Income
@@ -184,8 +182,8 @@ export default function FinancialHeader({
                 color:
                   activeTab === 'incomes'
                     ? colors.success
-                    : colors.textSecondary,
-              },
+                    : colors.textSecondary
+              }
             ]}
           >
             ${totalIncome.toFixed(2)}
@@ -205,5 +203,5 @@ export default function FinancialHeader({
         formattedRange={formattedRange}
       />
     </View>
-  );
+  )
 }

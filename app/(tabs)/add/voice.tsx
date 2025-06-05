@@ -1,12 +1,12 @@
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { useTheme } from '@/context/ThemeContext';
-import { Mic } from 'lucide-react-native';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { Mic } from 'lucide-react-native'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 export default function VoiceScreen() {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -15,7 +15,7 @@ export default function VoiceScreen() {
           <View
             style={[
               styles.micIcon,
-              { backgroundColor: colors.iconBackground.warning },
+              { backgroundColor: colors.iconBackground.warning }
             ]}
           >
             <Mic size={48} color={colors.warning} />
@@ -38,21 +38,21 @@ export default function VoiceScreen() {
         </Button>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 16
   },
   placeholder: {
     height: 400,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   micIcon: {
     width: 80,
@@ -60,17 +60,17 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   voiceHint: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 8
   },
   example: {
     marginTop: 12,
     textAlign: 'center',
-    fontStyle: 'italic',
-  },
-});
+    fontStyle: 'italic'
+  }
+})

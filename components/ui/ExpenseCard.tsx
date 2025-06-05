@@ -1,29 +1,29 @@
-import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'expo-router';
-import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Card from './Card';
+import { useTheme } from '@/context/ThemeContext'
+import { useRouter } from 'expo-router'
+import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native'
+import React from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Card from './Card'
 
 interface ExpenseCardProps {
   expense: {
-    id: string;
-    amount: number;
-    category: string;
-    date: string;
-    description: string;
-    hasPhoto?: boolean;
-    hasVoice?: boolean;
-  };
+    id: string
+    amount: number
+    category: string
+    date: string
+    description: string
+    hasPhoto?: boolean
+    hasVoice?: boolean
+  }
 }
 
 export default function ExpenseCard({ expense }: ExpenseCardProps) {
-  const { colors, spacing } = useTheme();
-  const router = useRouter();
+  const { colors, spacing } = useTheme()
+  const router = useRouter()
 
   const handlePress = () => {
-    router.push(`/expenses/${expense.id}`);
-  };
+    router.push(`/expenses/${expense.id}`)
+  }
 
   return (
     <Pressable onPress={handlePress}>
@@ -43,7 +43,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
               <View
                 style={[
                   styles.categoryBadge,
-                  { backgroundColor: colors.surfaceSecondary },
+                  { backgroundColor: colors.surfaceSecondary }
                 ]}
               >
                 <Text style={[styles.categoryText, { color: colors.text }]}>
@@ -55,7 +55,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
                 <Text
                   style={[
                     styles.dateText,
-                    { color: colors.textSecondary, marginLeft: 4 },
+                    { color: colors.textSecondary, marginLeft: 4 }
                   ]}
                 >
                   {expense.date}
@@ -82,60 +82,60 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
         </View>
       </Card>
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 12
   },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    minHeight: 80,
+    minHeight: 80
   },
   leftContent: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 16
   },
   rightContent: {
     alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   amount: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 4
   },
   description: {
     fontSize: 14,
     marginBottom: 8,
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   metaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   categoryBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 4
   },
   categoryText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   dateContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 12
   },
   iconContainer: {
     flexDirection: 'row',
-    marginBottom: 12,
-  },
-});
+    marginBottom: 12
+  }
+})

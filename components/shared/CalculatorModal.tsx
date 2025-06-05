@@ -1,6 +1,6 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import { useThemedStyles } from '@/context/ThemeContext';
-import React from 'react';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useThemedStyles } from '@/context/ThemeContext'
+import React from 'react'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -8,31 +8,31 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import QuickCalculator from './QuickCalculator';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import QuickCalculator from './QuickCalculator'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export default function CalculatorModal() {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets()
   const {
     modalVisible,
     currentType,
     selectedCategory,
     handleSubmit,
-    handleCloseModal,
-  } = useCategoryContext();
+    handleCloseModal
+  } = useCategoryContext()
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     modalContainer: {
       flex: 1,
-      justifyContent: 'flex-end' as const,
+      justifyContent: 'flex-end' as const
     },
     modalOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow,
+      backgroundColor: theme.colors.shadow
     },
     modalContent: {
       borderTopLeftRadius: theme.borderRadius.xl,
@@ -41,8 +41,8 @@ export default function CalculatorModal() {
       maxHeight: Platform.select({
         ios: SCREEN_HEIGHT * 0.8,
         android: SCREEN_HEIGHT * 0.8,
-        web: SCREEN_HEIGHT * 0.8,
-      }),
+        web: SCREEN_HEIGHT * 0.8
+      })
     },
     modalHandle: {
       width: 40,
@@ -50,9 +50,9 @@ export default function CalculatorModal() {
       backgroundColor: theme.colors.borderStrong,
       borderRadius: 2,
       alignSelf: 'center' as const,
-      marginBottom: theme.spacing.md,
-    },
-  }));
+      marginBottom: theme.spacing.md
+    }
+  }))
 
   return (
     <Modal
@@ -71,8 +71,8 @@ export default function CalculatorModal() {
             styles.modalContent,
             {
               paddingTop: 24,
-              paddingBottom: insets.bottom,
-            },
+              paddingBottom: insets.bottom
+            }
           ]}
         >
           <View style={styles.modalHandle} />
@@ -87,5 +87,5 @@ export default function CalculatorModal() {
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  );
+  )
 }

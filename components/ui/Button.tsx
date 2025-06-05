@@ -1,8 +1,5 @@
-import {
-  useThemedStyles,
-  type ThemedStylesProps,
-} from '@/context/ThemeContext';
-import React from 'react';
+import { useThemedStyles, type ThemedStylesProps } from '@/context/ThemeContext'
+import React from 'react'
 import {
   ActivityIndicator,
   Pressable,
@@ -11,26 +8,26 @@ import {
   Text,
   TextStyle,
   View,
-  ViewStyle,
-} from 'react-native';
+  ViewStyle
+} from 'react-native'
 
 type ButtonVariant =
   | 'primary'
   | 'secondary'
   | 'outline'
   | 'ghost'
-  | 'destructive';
-type ButtonSize = 'sm' | 'md' | 'lg';
+  | 'destructive'
+type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends Omit<PressableProps, 'style'> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  children: React.ReactNode;
-  fullWidth?: boolean;
-  style?: ViewStyle | ViewStyle[];
+  variant?: ButtonVariant
+  size?: ButtonSize
+  loading?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+  children: React.ReactNode
+  fullWidth?: boolean
+  style?: ViewStyle | ViewStyle[]
 }
 
 const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
@@ -39,117 +36,117 @@ const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: borderRadius.md,
+      borderRadius: borderRadius.md
     } as ViewStyle,
 
     // Size variants
     sizeSmall: {
       height: 32,
-      paddingHorizontal: spacing.md,
+      paddingHorizontal: spacing.md
     } as ViewStyle,
 
     sizeMedium: {
       height: 40,
-      paddingHorizontal: spacing.md,
+      paddingHorizontal: spacing.md
     } as ViewStyle,
 
     sizeLarge: {
       height: 48,
-      paddingHorizontal: spacing.lg,
+      paddingHorizontal: spacing.lg
     } as ViewStyle,
 
     // Background variants
     primaryButton: {
-      backgroundColor: colors.button.primaryBg,
+      backgroundColor: colors.button.primaryBg
     } as ViewStyle,
 
     secondaryButton: {
       backgroundColor: colors.button.secondaryBg,
       borderWidth: 1,
-      borderColor: colors.button.secondaryBorder,
+      borderColor: colors.button.secondaryBorder
     } as ViewStyle,
 
     outlineButton: {
       backgroundColor: 'transparent',
       borderWidth: 1,
-      borderColor: colors.primary,
+      borderColor: colors.primary
     } as ViewStyle,
 
     ghostButton: {
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     } as ViewStyle,
 
     destructiveButton: {
-      backgroundColor: colors.button.destructiveBg,
+      backgroundColor: colors.button.destructiveBg
     } as ViewStyle,
 
     disabledButton: {
       backgroundColor: colors.button.primaryBgDisabled,
-      borderColor: colors.button.primaryBgDisabled,
+      borderColor: colors.button.primaryBgDisabled
     } as ViewStyle,
 
     // Text variants
     textSmall: {
       fontSize: 12,
       fontWeight: '600',
-      textAlign: 'center',
+      textAlign: 'center'
     } as TextStyle,
 
     textMedium: {
       fontSize: 14,
       fontWeight: '600',
-      textAlign: 'center',
+      textAlign: 'center'
     } as TextStyle,
 
     textLarge: {
       fontSize: 16,
       fontWeight: '600',
-      textAlign: 'center',
+      textAlign: 'center'
     } as TextStyle,
 
     primaryText: {
-      color: colors.button.primaryText,
+      color: colors.button.primaryText
     } as TextStyle,
 
     secondaryText: {
-      color: colors.button.secondaryText,
+      color: colors.button.secondaryText
     } as TextStyle,
 
     outlineText: {
-      color: colors.primary,
+      color: colors.primary
     } as TextStyle,
 
     ghostText: {
-      color: colors.text,
+      color: colors.text
     } as TextStyle,
 
     destructiveText: {
-      color: colors.button.destructiveText,
+      color: colors.button.destructiveText
     } as TextStyle,
 
     disabledText: {
-      color: colors.button.primaryTextDisabled,
+      color: colors.button.primaryTextDisabled
     } as TextStyle,
 
     // Layout helpers
     fullWidth: {
-      width: '100%',
+      width: '100%'
     } as ViewStyle,
 
     contentContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     } as ViewStyle,
 
     iconLeft: {
-      marginRight: spacing.xs,
+      marginRight: spacing.xs
     } as ViewStyle,
 
     iconRight: {
-      marginLeft: spacing.xs,
-    } as ViewStyle,
-  });
+      marginLeft: spacing.xs
+    } as ViewStyle
+  })
 
 export default function Button({
   variant = 'primary',
@@ -163,102 +160,102 @@ export default function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const styles = useThemedStyles(createStyles);
+  const styles = useThemedStyles(createStyles)
 
   const getSizeStyle = () => {
     switch (size) {
       case 'sm':
-        return styles.sizeSmall;
+        return styles.sizeSmall
       case 'lg':
-        return styles.sizeLarge;
+        return styles.sizeLarge
       default:
-        return styles.sizeMedium;
+        return styles.sizeMedium
     }
-  };
+  }
 
   const getVariantStyle = () => {
-    if (disabled) return styles.disabledButton;
+    if (disabled) return styles.disabledButton
 
     switch (variant) {
       case 'primary':
-        return styles.primaryButton;
+        return styles.primaryButton
       case 'secondary':
-        return styles.secondaryButton;
+        return styles.secondaryButton
       case 'outline':
-        return styles.outlineButton;
+        return styles.outlineButton
       case 'ghost':
-        return styles.ghostButton;
+        return styles.ghostButton
       case 'destructive':
-        return styles.destructiveButton;
+        return styles.destructiveButton
       default:
-        return styles.primaryButton;
+        return styles.primaryButton
     }
-  };
+  }
 
   const getTextSizeStyle = () => {
     switch (size) {
       case 'sm':
-        return styles.textSmall;
+        return styles.textSmall
       case 'lg':
-        return styles.textLarge;
+        return styles.textLarge
       default:
-        return styles.textMedium;
+        return styles.textMedium
     }
-  };
+  }
 
   const getTextVariantStyle = () => {
-    if (disabled) return styles.disabledText;
+    if (disabled) return styles.disabledText
 
     switch (variant) {
       case 'primary':
-        return styles.primaryText;
+        return styles.primaryText
       case 'secondary':
-        return styles.secondaryText;
+        return styles.secondaryText
       case 'outline':
-        return styles.outlineText;
+        return styles.outlineText
       case 'ghost':
-        return styles.ghostText;
+        return styles.ghostText
       case 'destructive':
-        return styles.destructiveText;
+        return styles.destructiveText
       default:
-        return styles.primaryText;
+        return styles.primaryText
     }
-  };
+  }
 
   const getLoadingColor = () => {
-    if (disabled) return styles.disabledText.color;
+    if (disabled) return styles.disabledText.color
 
     switch (variant) {
       case 'primary':
-        return styles.primaryText.color;
+        return styles.primaryText.color
       case 'secondary':
-        return styles.secondaryText.color;
+        return styles.secondaryText.color
       case 'outline':
-        return styles.outlineText.color;
+        return styles.outlineText.color
       case 'ghost':
-        return styles.ghostText.color;
+        return styles.ghostText.color
       case 'destructive':
-        return styles.destructiveText.color;
+        return styles.destructiveText.color
       default:
-        return styles.primaryText.color;
+        return styles.primaryText.color
     }
-  };
+  }
 
   const buttonStyles = [
     styles.button,
     getSizeStyle(),
     getVariantStyle(),
     fullWidth && styles.fullWidth,
-    style,
-  ];
+    style
+  ]
 
-  const textStyles = [getTextSizeStyle(), getTextVariantStyle()];
+  const textStyles = [getTextSizeStyle(), getTextVariantStyle()]
 
   return (
     <Pressable
       style={({ pressed }) => [
         ...buttonStyles,
-        pressed && !disabled && { opacity: 0.8 },
+        pressed && !disabled && { opacity: 0.8 }
       ]}
       disabled={disabled || loading}
       {...props}
@@ -279,5 +276,5 @@ export default function Button({
         )}
       </View>
     </Pressable>
-  );
+  )
 }

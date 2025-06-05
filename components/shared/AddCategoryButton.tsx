@@ -1,20 +1,20 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import { Plus } from 'lucide-react-native';
-import React from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
+import { Plus } from 'lucide-react-native'
+import React from 'react'
+import { Platform, Pressable, Text, View } from 'react-native'
 
 interface AddCategoryButtonProps {
-  onPress: () => void;
-  label?: string;
+  onPress: () => void
+  label?: string
 }
 
 export default function AddCategoryButton({
   onPress,
-  label = 'Add Category',
+  label = 'Add Category'
 }: AddCategoryButtonProps) {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     categoryCard: {
       width: '47%' as const,
       padding: theme.spacing.sm * 1.5,
@@ -30,32 +30,32 @@ export default function AddCategoryButton({
           shadowColor: theme.colors.shadowLight,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 1,
-          shadowRadius: 4,
+          shadowRadius: 4
         },
         android: {
-          elevation: 1,
+          elevation: 1
         },
         web: {
           shadowColor: theme.colors.shadowLight,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 1,
-          shadowRadius: 4,
-        },
-      }),
+          shadowRadius: 4
+        }
+      })
     },
     addButtonContent: {
       flex: 1,
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
-      gap: theme.spacing.sm,
+      gap: theme.spacing.sm
     },
     addButtonText: {
       fontSize: 14,
       fontWeight: '500' as const,
-      color: theme.colors.textSecondary,
-    },
-  }));
+      color: theme.colors.textSecondary
+    }
+  }))
 
   return (
     <Pressable style={styles.categoryCard} onPress={onPress}>
@@ -64,5 +64,5 @@ export default function AddCategoryButton({
         <Text style={styles.addButtonText}>{label}</Text>
       </View>
     </Pressable>
-  );
+  )
 }

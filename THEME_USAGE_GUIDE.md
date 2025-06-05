@@ -14,7 +14,7 @@
 ## Import Pattern
 
 ```typescript
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 ```
 
 ## Usage Patterns
@@ -22,24 +22,24 @@ import { useTheme, useThemedStyles } from '@/context/ThemeContext';
 ### 1. For Styled Components (Recommended)
 
 ```typescript
-const styles = useThemedStyles((theme) => ({
+const styles = useThemedStyles(theme => ({
   container: {
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.md
   },
   text: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: theme.colors.text,
-  },
-}));
+    color: theme.colors.text
+  }
+}))
 ```
 
 ### 2. For Direct Color Access
 
 ```typescript
-const { colors } = useTheme();
+const { colors } = useTheme()
 // Use: colors.primary, colors.text, colors.background, etc.
 ```
 

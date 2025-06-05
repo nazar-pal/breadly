@@ -1,25 +1,25 @@
-import { useTheme } from '@/context/ThemeContext';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Card from './Card';
+import { useTheme } from '@/context/ThemeContext'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import Card from './Card'
 
 interface SummaryCardProps {
-  title: string;
-  amount: number;
-  subtitle?: string;
+  title: string
+  amount: number
+  subtitle?: string
   trend?: {
-    percentage: number;
-    isPositive: boolean;
-  };
+    percentage: number
+    isPositive: boolean
+  }
 }
 
 export default function SummaryCard({
   title,
   amount,
   subtitle,
-  trend,
+  trend
 }: SummaryCardProps) {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <Card variant="elevated" size="md" style={styles.container}>
@@ -40,8 +40,8 @@ export default function SummaryCard({
             style={[
               styles.trendText,
               {
-                color: trend.isPositive ? colors.success : colors.error,
-              },
+                color: trend.isPositive ? colors.success : colors.error
+              }
             ]}
           >
             {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.percentage)}%
@@ -52,37 +52,37 @@ export default function SummaryCard({
         </View>
       )}
     </Card>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    flex: 1,
+    flex: 1
   },
   title: {
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 4
   },
   amount: {
     fontSize: 24,
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: 4
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 12
   },
   trendContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 8
   },
   trendText: {
     fontSize: 14,
     fontWeight: '600',
-    marginRight: 4,
+    marginRight: 4
   },
   trendLabel: {
-    fontSize: 12,
-  },
-});
+    fontSize: 12
+  }
+})

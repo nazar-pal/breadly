@@ -1,15 +1,15 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import React, { useState } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
+import React, { useState } from 'react'
+import { Platform, Pressable, Text, View } from 'react-native'
 
 interface CategoryCardProps {
-  id: string;
-  name: string;
-  amount: number;
-  icon: React.ReactNode;
-  type: 'expense' | 'income';
-  onPress: (categoryName: string) => void;
-  onLongPress?: (categoryId: string, categoryName: string) => void;
+  id: string
+  name: string
+  amount: number
+  icon: React.ReactNode
+  type: 'expense' | 'income'
+  onPress: (categoryName: string) => void
+  onLongPress?: (categoryId: string, categoryName: string) => void
 }
 
 export default function CategoryCard({
@@ -19,12 +19,12 @@ export default function CategoryCard({
   icon,
   type,
   onPress,
-  onLongPress,
+  onLongPress
 }: CategoryCardProps) {
-  const { colors } = useTheme();
-  const [isPressed, setIsPressed] = useState(false);
+  const { colors } = useTheme()
+  const [isPressed, setIsPressed] = useState(false)
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     categoryCard: {
       width: '47%' as const,
       padding: theme.spacing.sm * 1.5,
@@ -39,68 +39,68 @@ export default function CategoryCard({
           shadowColor: theme.colors.shadow,
           shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
           shadowOpacity: isPressed ? 0.5 : 1,
-          shadowRadius: isPressed ? 2 : 4,
+          shadowRadius: isPressed ? 2 : 4
         },
         android: {
-          elevation: isPressed ? 1 : 2,
+          elevation: isPressed ? 1 : 2
         },
         web: {
           shadowColor: theme.colors.shadow,
           shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
           shadowOpacity: isPressed ? 0.5 : 1,
-          shadowRadius: isPressed ? 2 : 4,
-        },
-      }),
+          shadowRadius: isPressed ? 2 : 4
+        }
+      })
     },
     iconContainer: {
       width: 36,
       height: 36,
       borderRadius: theme.borderRadius.md + 2,
       alignItems: 'center' as const,
-      justifyContent: 'center' as const,
+      justifyContent: 'center' as const
     },
     categoryContent: {
       marginLeft: theme.spacing.sm * 1.5,
-      flex: 1,
+      flex: 1
     },
     categoryName: {
       fontSize: 14,
       fontWeight: '600' as const,
       marginBottom: 2,
-      color: theme.colors.text,
+      color: theme.colors.text
     },
     categoryAmount: {
-      fontSize: 13,
-    },
-  }));
+      fontSize: 13
+    }
+  }))
 
   const getAmountColor = () => {
     if (type === 'income') {
-      return amount > 0 ? colors.success : colors.textSecondary;
+      return amount > 0 ? colors.success : colors.textSecondary
     }
-    return amount > 0 ? colors.text : colors.textSecondary;
-  };
+    return amount > 0 ? colors.text : colors.textSecondary
+  }
 
   const getIconBackgroundColor = () => {
     if (type === 'income') {
-      return colors.iconBackground.success;
+      return colors.iconBackground.success
     }
-    return colors.iconBackground.neutral;
-  };
+    return colors.iconBackground.neutral
+  }
 
   const handleLongPress = () => {
     if (onLongPress) {
-      onLongPress(id, name);
+      onLongPress(id, name)
     }
-  };
+  }
 
   const handlePressIn = () => {
-    setIsPressed(true);
-  };
+    setIsPressed(true)
+  }
 
   const handlePressOut = () => {
-    setIsPressed(false);
-  };
+    setIsPressed(false)
+  }
 
   return (
     <Pressable
@@ -114,7 +114,7 @@ export default function CategoryCard({
       <View
         style={[
           styles.iconContainer,
-          { backgroundColor: getIconBackgroundColor() },
+          { backgroundColor: getIconBackgroundColor() }
         ]}
       >
         {icon}
@@ -128,5 +128,5 @@ export default function CategoryCard({
         </Text>
       </View>
     </Pressable>
-  );
+  )
 }

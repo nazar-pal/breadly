@@ -1,34 +1,34 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import { DateRange, DateRangeMode } from '@/hooks/useDateRange';
-import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react-native';
-import React, { useState } from 'react';
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
+import { DateRange, DateRangeMode } from '@/hooks/useDateRange'
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react-native'
+import React, { useState } from 'react'
 import {
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-} from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { Calendar } from 'react-native-calendars'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface DateRangeModalProps {
-  visible: boolean;
-  currentMode: DateRangeMode;
-  onSelectMode: (mode: DateRangeMode, customRange?: DateRange) => void;
-  onClose: () => void;
+  visible: boolean
+  currentMode: DateRangeMode
+  onSelectMode: (mode: DateRangeMode, customRange?: DateRange) => void
+  onClose: () => void
   // Navigation props
-  canNavigate?: boolean;
-  navigatePrevious?: () => void;
-  navigateNext?: () => void;
-  formattedRange?: string;
+  canNavigate?: boolean
+  navigatePrevious?: () => void
+  navigateNext?: () => void
+  formattedRange?: string
 }
 
 const MODE_OPTIONS: {
-  mode: DateRangeMode;
-  label: string;
-  description: string;
+  mode: DateRangeMode
+  label: string
+  description: string
 }[] = [
   { mode: 'day', label: 'Day', description: 'Single day view' },
   { mode: '7days', label: '7 Days', description: 'Last 7 days' },
@@ -41,9 +41,9 @@ const MODE_OPTIONS: {
   {
     mode: 'custom',
     label: 'Custom Range',
-    description: 'Choose specific dates',
-  },
-];
+    description: 'Choose specific dates'
+  }
+]
 
 export default function DateRangeModal({
   visible,
@@ -53,39 +53,39 @@ export default function DateRangeModal({
   canNavigate = false,
   navigatePrevious,
   navigateNext,
-  formattedRange,
+  formattedRange
 }: DateRangeModalProps) {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
-  const [showCustomPicker, setShowCustomPicker] = useState(false);
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
+  const [showCustomPicker, setShowCustomPicker] = useState(false)
   const [selectedDates, setSelectedDates] = useState<{
     [key: string]: {
-      selected: boolean;
-      startingDay?: boolean;
-      endingDay?: boolean;
-      color?: string;
-    };
-  }>({});
+      selected: boolean
+      startingDay?: boolean
+      endingDay?: boolean
+      color?: string
+    }
+  }>({})
   const [customRange, setCustomRange] = useState<{
-    start?: string;
-    end?: string;
-  }>({});
+    start?: string
+    end?: string
+  }>({})
 
-  const styles = useThemedStyles((theme) => ({
+  const styles = useThemedStyles(theme => ({
     modalContainer: {
       flex: 1,
-      justifyContent: 'flex-end' as const,
+      justifyContent: 'flex-end' as const
     },
     modalOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow,
+      backgroundColor: theme.colors.shadow
     },
     modalContent: {
       borderTopLeftRadius: theme.borderRadius.xl,
       borderTopRightRadius: theme.borderRadius.xl,
       maxHeight: '80%' as const,
       minHeight: '50%' as const,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background
     },
     header: {
       flexDirection: 'row' as const,
@@ -94,43 +94,43 @@ export default function DateRangeModal({
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
-      minHeight: 60,
+      minHeight: 60
     },
     navButton: {
       padding: theme.spacing.sm,
       borderRadius: theme.borderRadius.sm,
-      backgroundColor: theme.colors.surfaceSecondary,
+      backgroundColor: theme.colors.surfaceSecondary
     },
     titleContainer: {
       flex: 1,
       alignItems: 'center' as const,
-      marginHorizontal: theme.spacing.md,
+      marginHorizontal: theme.spacing.md
     },
     title: {
       fontSize: 18,
       fontWeight: '600' as const,
       color: theme.colors.text,
-      textAlign: 'center' as const,
+      textAlign: 'center' as const
     },
     subtitle: {
       fontSize: 11,
       color: theme.colors.textSecondary,
       textAlign: 'center' as const,
-      marginTop: 2,
+      marginTop: 2
     },
     closeButton: {
-      padding: theme.spacing.sm,
+      padding: theme.spacing.sm
     },
     content: {
       flexGrow: 1,
       paddingHorizontal: theme.spacing.lg - 4,
       paddingTop: theme.spacing.md - 6,
-      paddingBottom: theme.spacing.lg - 4,
+      paddingBottom: theme.spacing.lg - 4
     },
     modeGrid: {
       flexDirection: 'row' as const,
       flexWrap: 'wrap' as const,
-      justifyContent: 'space-between' as const,
+      justifyContent: 'space-between' as const
     },
     modeOption: {
       flexDirection: 'row' as const,
@@ -140,24 +140,24 @@ export default function DateRangeModal({
       borderRadius: theme.borderRadius.md * 1.5,
       borderWidth: 1,
       marginVertical: theme.spacing.xs,
-      width: '48%' as const,
+      width: '48%' as const
     },
     modeContent: {
-      flex: 1,
+      flex: 1
     },
     modeLabel: {
       fontSize: 15,
       fontWeight: '600' as const,
-      marginBottom: 2,
+      marginBottom: 2
     },
     modeDescription: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: theme.colors.textSecondary
     },
     customActions: {
       flexDirection: 'row' as const,
       gap: theme.spacing.sm * 1.5,
-      paddingTop: theme.spacing.lg - 4,
+      paddingTop: theme.spacing.lg - 4
     },
     customButton: {
       flex: 1,
@@ -166,106 +166,106 @@ export default function DateRangeModal({
       justifyContent: 'center' as const,
       paddingVertical: theme.spacing.sm + 6,
       borderRadius: theme.borderRadius.md * 1.5,
-      gap: theme.spacing.xs + 2,
+      gap: theme.spacing.xs + 2
     },
     cancelButton: {
       flex: 0.4,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.secondary
     },
     confirmButton: {
-      flex: 0.6,
+      flex: 0.6
     },
     buttonText: {
       fontSize: 16,
-      fontWeight: '600' as const,
-    },
-  }));
+      fontWeight: '600' as const
+    }
+  }))
 
   const handleModeSelect = (mode: DateRangeMode) => {
     if (mode === 'custom') {
-      setShowCustomPicker(true);
+      setShowCustomPicker(true)
     } else {
-      onSelectMode(mode);
-      onClose();
+      onSelectMode(mode)
+      onClose()
     }
-  };
+  }
 
   const handleDayPress = (day: any) => {
-    const dateString = day.dateString;
+    const dateString = day.dateString
 
     if (!customRange.start || (customRange.start && customRange.end)) {
       // Start new selection
-      setCustomRange({ start: dateString });
+      setCustomRange({ start: dateString })
       setSelectedDates({
         [dateString]: {
           selected: true,
           startingDay: true,
-          color: colors.primary,
-        },
-      });
+          color: colors.primary
+        }
+      })
     } else if (customRange.start && !customRange.end) {
       // Complete the range
-      const startDate = new Date(customRange.start);
-      const endDate = new Date(dateString);
+      const startDate = new Date(customRange.start)
+      const endDate = new Date(dateString)
 
       if (endDate < startDate) {
         // If end is before start, swap them
-        setCustomRange({ start: dateString, end: customRange.start });
+        setCustomRange({ start: dateString, end: customRange.start })
         setSelectedDates({
           [dateString]: {
             selected: true,
             startingDay: true,
-            color: colors.primary,
+            color: colors.primary
           },
           [customRange.start]: {
             selected: true,
             endingDay: true,
-            color: colors.primary,
-          },
-        });
+            color: colors.primary
+          }
+        })
       } else {
-        setCustomRange({ ...customRange, end: dateString });
+        setCustomRange({ ...customRange, end: dateString })
 
         // Mark all dates in range
-        const newSelectedDates: typeof selectedDates = {};
-        const currentDate = new Date(customRange.start);
-        const finalDate = new Date(dateString);
+        const newSelectedDates: typeof selectedDates = {}
+        const currentDate = new Date(customRange.start)
+        const finalDate = new Date(dateString)
 
         while (currentDate <= finalDate) {
-          const current = currentDate.toISOString().split('T')[0];
+          const current = currentDate.toISOString().split('T')[0]
           newSelectedDates[current] = {
             selected: true,
             startingDay: current === customRange.start,
             endingDay: current === dateString,
-            color: colors.primary,
-          };
-          currentDate.setDate(currentDate.getDate() + 1);
+            color: colors.primary
+          }
+          currentDate.setDate(currentDate.getDate() + 1)
         }
 
-        setSelectedDates(newSelectedDates);
+        setSelectedDates(newSelectedDates)
       }
     }
-  };
+  }
 
   const handleCustomRangeConfirm = () => {
     if (customRange.start && customRange.end) {
       const dateRange: DateRange = {
         start: new Date(customRange.start),
-        end: new Date(customRange.end),
-      };
-      onSelectMode('custom', dateRange);
-      setShowCustomPicker(false);
-      setCustomRange({});
-      setSelectedDates({});
-      onClose();
+        end: new Date(customRange.end)
+      }
+      onSelectMode('custom', dateRange)
+      setShowCustomPicker(false)
+      setCustomRange({})
+      setSelectedDates({})
+      onClose()
     }
-  };
+  }
 
   const handleCustomRangeCancel = () => {
-    setShowCustomPicker(false);
-    setCustomRange({});
-    setSelectedDates({});
-  };
+    setShowCustomPicker(false)
+    setCustomRange({})
+    setSelectedDates({})
+  }
 
   return (
     <Modal
@@ -280,8 +280,8 @@ export default function DateRangeModal({
           style={[
             styles.modalContent,
             {
-              paddingBottom: insets.bottom + 16,
-            },
+              paddingBottom: insets.bottom + 16
+            }
           ]}
         >
           {/* Header with Navigation */}
@@ -322,7 +322,7 @@ export default function DateRangeModal({
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.modeGrid}>
-                {MODE_OPTIONS.map((option) => (
+                {MODE_OPTIONS.map(option => (
                   <Pressable
                     key={option.mode}
                     style={[
@@ -335,8 +335,8 @@ export default function DateRangeModal({
                         borderColor:
                           currentMode === option.mode
                             ? colors.primary
-                            : colors.border,
-                      },
+                            : colors.border
+                      }
                     ]}
                     onPress={() => handleModeSelect(option.mode)}
                   >
@@ -348,8 +348,8 @@ export default function DateRangeModal({
                             color:
                               currentMode === option.mode
                                 ? colors.primary
-                                : colors.text,
-                          },
+                                : colors.text
+                          }
                         ]}
                       >
                         {option.label}
@@ -383,7 +383,7 @@ export default function DateRangeModal({
                   textDisabledColor: colors.textSecondary,
                   arrowColor: colors.primary,
                   monthTextColor: colors.text,
-                  indicatorColor: colors.primary,
+                  indicatorColor: colors.primary
                 }}
               />
 
@@ -406,8 +406,8 @@ export default function DateRangeModal({
                       backgroundColor:
                         customRange.start && customRange.end
                           ? colors.primary
-                          : colors.button.primaryBgDisabled,
-                    },
+                          : colors.button.primaryBgDisabled
+                    }
                   ]}
                   onPress={handleCustomRangeConfirm}
                   disabled={!customRange.start || !customRange.end}
@@ -416,7 +416,7 @@ export default function DateRangeModal({
                   <Text
                     style={[
                       styles.buttonText,
-                      { color: colors.button.primaryText },
+                      { color: colors.button.primaryText }
                     ]}
                   >
                     Confirm
@@ -428,5 +428,5 @@ export default function DateRangeModal({
         </View>
       </View>
     </Modal>
-  );
+  )
 }

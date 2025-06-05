@@ -1,24 +1,24 @@
-import { SignOutButton } from '@/components/auth/SignOutButton';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { currencies, useCurrency } from '@/context/CurrencyContext';
+import { SignOutButton } from '@/components/auth/SignOutButton'
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { currencies, useCurrency } from '@/context/CurrencyContext'
 import {
   useTheme,
   useThemedStyles,
   type ThemePreference,
-  type ThemedStylesProps,
-} from '@/context/ThemeContext';
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
+  type ThemedStylesProps
+} from '@/context/ThemeContext'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
+import { Link } from 'expo-router'
 import {
   ChevronRight,
   DollarSign,
   Moon,
   Smartphone,
   Sun,
-  User,
-} from 'lucide-react-native';
-import React from 'react';
+  User
+} from 'lucide-react-native'
+import React from 'react'
 import {
   ActivityIndicator,
   Pressable,
@@ -26,71 +26,71 @@ import {
   StyleSheet,
   Switch,
   Text,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Create themed styles using the new useThemedStyles hook
 const createThemedStyles = ({
   colors,
   spacing,
-  borderRadius,
+  borderRadius
 }: ThemedStylesProps) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1
     },
     loadingContainer: {
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'center'
     },
     header: {
       paddingHorizontal: spacing.md,
-      paddingVertical: spacing.md,
+      paddingVertical: spacing.md
     },
     screenTitle: {
       fontSize: 28,
       fontWeight: '700',
-      color: colors.text,
+      color: colors.text
     },
     scrollContent: {
-      paddingHorizontal: spacing.md,
+      paddingHorizontal: spacing.md
     },
     sectionTitle: {
       fontSize: 18,
       fontWeight: '600',
       marginVertical: spacing.md,
-      color: colors.text,
+      color: colors.text
     },
     separator: {
       height: 1,
       width: '100%',
-      backgroundColor: colors.border,
+      backgroundColor: colors.border
     },
     authButtons: {
-      gap: spacing.sm,
-    },
-  });
+      gap: spacing.sm
+    }
+  })
 
 export default function SettingsScreen() {
   const { colors, spacing, preference, setThemePreference, isLoading } =
-    useTheme();
-  const { currency, setCurrency } = useCurrency();
-  const { user } = useUser();
-  const insets = useSafeAreaInsets();
-  const themedStyles = useThemedStyles(createThemedStyles);
+    useTheme()
+  const { currency, setCurrency } = useCurrency()
+  const { user } = useUser()
+  const insets = useSafeAreaInsets()
+  const themedStyles = useThemedStyles(createThemedStyles)
 
-  const [showCurrencyModal, setShowCurrencyModal] = React.useState(false);
+  const [showCurrencyModal, setShowCurrencyModal] = React.useState(false)
 
   // Handle theme preference change
   const handleThemeChange = async (newPreference: ThemePreference) => {
     try {
-      await setThemePreference(newPreference);
+      await setThemePreference(newPreference)
     } catch (error) {
-      console.error('Failed to update theme:', error);
+      console.error('Failed to update theme:', error)
       // You might want to show an error toast here
     }
-  };
+  }
 
   // Show loading indicator while theme is loading
   if (isLoading) {
@@ -99,19 +99,19 @@ export default function SettingsScreen() {
         style={[
           themedStyles.container,
           themedStyles.loadingContainer,
-          { backgroundColor: colors.background, paddingTop: insets.top },
+          { backgroundColor: colors.background, paddingTop: insets.top }
         ]}
       >
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
-    );
+    )
   }
 
   return (
     <View
       style={[
         themedStyles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top },
+        { backgroundColor: colors.background, paddingTop: insets.top }
       ]}
     >
       <View style={themedStyles.header}>
@@ -122,7 +122,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           themedStyles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl },
+          { paddingBottom: insets.bottom + spacing.xl }
         ]}
       >
         <SignedIn>
@@ -131,7 +131,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.avatarPlaceholder,
-                  { backgroundColor: colors.iconBackground.neutral },
+                  { backgroundColor: colors.iconBackground.neutral }
                 ]}
               >
                 <User size={32} color={colors.text} />
@@ -191,7 +191,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.warning },
+                  { backgroundColor: colors.iconBackground.warning }
                 ]}
               >
                 <DollarSign size={20} color={colors.warning} />
@@ -203,7 +203,7 @@ export default function SettingsScreen() {
                 <Text
                   style={[
                     styles.settingSubtext,
-                    { color: colors.textSecondary },
+                    { color: colors.textSecondary }
                   ]}
                 >
                   {currency.name} ({currency.symbol})
@@ -222,7 +222,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.warning },
+                  { backgroundColor: colors.iconBackground.warning }
                 ]}
               >
                 <Sun size={20} color={colors.warning} />
@@ -233,7 +233,7 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={preference === 'light'}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 handleThemeChange(value ? 'light' : 'system')
               }
               trackColor={{ false: colors.secondary, true: colors.primary }}
@@ -250,7 +250,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.info },
+                  { backgroundColor: colors.iconBackground.info }
                 ]}
               >
                 <Moon size={20} color={colors.info} />
@@ -261,7 +261,7 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={preference === 'dark'}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 handleThemeChange(value ? 'dark' : 'system')
               }
               trackColor={{ false: colors.secondary, true: colors.primary }}
@@ -278,7 +278,7 @@ export default function SettingsScreen() {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.primary },
+                  { backgroundColor: colors.iconBackground.primary }
                 ]}
               >
                 <Smartphone size={20} color={colors.primary} />
@@ -289,7 +289,7 @@ export default function SettingsScreen() {
             </View>
             <Switch
               value={preference === 'system'}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 handleThemeChange(value ? 'system' : 'light')
               }
               trackColor={{ false: colors.secondary, true: colors.primary }}
@@ -303,18 +303,18 @@ export default function SettingsScreen() {
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               Select Currency
             </Text>
-            {currencies.map((curr) => (
+            {currencies.map(curr => (
               <Pressable
                 key={curr.code}
                 style={[
                   styles.currencyOption,
                   curr.code === currency.code && {
-                    backgroundColor: colors.primary,
-                  },
+                    backgroundColor: colors.primary
+                  }
                 ]}
                 onPress={() => {
-                  setCurrency(curr);
-                  setShowCurrencyModal(false);
+                  setCurrency(curr)
+                  setShowCurrencyModal(false)
                 }}
               >
                 <Text
@@ -322,8 +322,8 @@ export default function SettingsScreen() {
                     styles.currencyText,
                     {
                       color:
-                        curr.code === currency.code ? '#FFFFFF' : colors.text,
-                    },
+                        curr.code === currency.code ? '#FFFFFF' : colors.text
+                    }
                   ]}
                 >
                   {curr.symbol} - {curr.name}
@@ -332,7 +332,7 @@ export default function SettingsScreen() {
                   <View
                     style={[
                       styles.selectedIndicator,
-                      { backgroundColor: '#FFFFFF' },
+                      { backgroundColor: '#FFFFFF' }
                     ]}
                   />
                 )}
@@ -344,96 +344,96 @@ export default function SettingsScreen() {
         <Text
           style={[
             styles.versionText,
-            { color: colors.textSecondary, marginTop: spacing.xl },
+            { color: colors.textSecondary, marginTop: spacing.xl }
           ]}
         >
           Breadly v1.0.0
         </Text>
       </ScrollView>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   loadingContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 16
   },
   screenTitle: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   accountSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 16
   },
   avatarPlaceholder: {
     width: 60,
     height: 60,
     borderRadius: 30,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   accountInfo: {
-    marginLeft: 16,
+    marginLeft: 16
   },
   userName: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 4
   },
   userEmail: {
-    fontSize: 14,
+    fontSize: 14
   },
   authSection: {
-    paddingVertical: 8,
+    paddingVertical: 8
   },
   authTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 8
   },
   authSubtitle: {
     fontSize: 14,
     marginBottom: 16,
-    lineHeight: 20,
+    lineHeight: 20
   },
   authButtons: {
-    gap: 12,
+    gap: 12
   },
   authButton: {
-    marginBottom: 0,
+    marginBottom: 0
   },
   separator: {
     height: 1,
-    width: '100%',
+    width: '100%'
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginVertical: 16,
+    marginVertical: 16
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   settingLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    flex: 1
   },
   iconContainer: {
     width: 40,
@@ -441,26 +441,26 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 12
   },
   settingText: {
-    fontSize: 16,
+    fontSize: 16
   },
   settingSubtext: {
     fontSize: 14,
-    marginTop: 2,
+    marginTop: 2
   },
   versionText: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 14
   },
   currencyModal: {
-    marginTop: 8,
+    marginTop: 8
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 12
   },
   currencyOption: {
     flexDirection: 'row',
@@ -468,14 +468,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 12,
     borderRadius: 8,
-    marginBottom: 4,
+    marginBottom: 4
   },
   currencyText: {
-    fontSize: 16,
+    fontSize: 16
   },
   selectedIndicator: {
     width: 8,
     height: 8,
-    borderRadius: 4,
-  },
-});
+    borderRadius: 4
+  }
+})

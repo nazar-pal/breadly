@@ -1,5 +1,5 @@
-import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext'
+import { useRouter } from 'expo-router'
 import {
   Banknote as BanknoteIcon,
   Calendar,
@@ -8,122 +8,122 @@ import {
   Target,
   TrendingDown,
   TrendingUp,
-  Wallet,
-} from 'lucide-react-native';
-import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+  Wallet
+} from 'lucide-react-native'
+import React from 'react'
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 
 interface AccountCardProps {
   account: {
-    id: string;
-    name: string;
-    description: string;
-    balance: number;
-    type: 'payment' | 'savings' | 'debt';
-    currency: string;
-    targetAmount?: number;
-    initialAmount?: number;
-    dueDate?: string;
-    interestRate?: number;
-    institution?: string;
-    person?: string;
-    debtType?: 'owed' | 'owedTo';
-  };
-  onPress?: () => void;
+    id: string
+    name: string
+    description: string
+    balance: number
+    type: 'payment' | 'savings' | 'debt'
+    currency: string
+    targetAmount?: number
+    initialAmount?: number
+    dueDate?: string
+    interestRate?: number
+    institution?: string
+    person?: string
+    debtType?: 'owed' | 'owedTo'
+  }
+  onPress?: () => void
 }
 
 export default function AccountCard({ account, onPress }: AccountCardProps) {
-  const { colors } = useTheme();
-  const router = useRouter();
+  const { colors } = useTheme()
+  const router = useRouter()
 
   const handlePress = () => {
-    router.push(`/accounts/${account.id}` as any);
-  };
+    router.push(`/accounts/${account.id}` as any)
+  }
 
   const getIcon = () => {
     switch (account.type) {
       case 'payment':
         return account.name.toLowerCase().includes('credit')
           ? CreditCard
-          : Wallet;
+          : Wallet
       case 'savings':
-        return PiggyBank;
+        return PiggyBank
       case 'debt':
-        return BanknoteIcon;
+        return BanknoteIcon
       default:
-        return Wallet;
+        return Wallet
     }
-  };
+  }
 
   const getTypeColor = () => {
     switch (account.type) {
       case 'payment':
-        return colors.primary;
+        return colors.primary
       case 'savings':
-        return colors.success;
+        return colors.success
       case 'debt':
-        return colors.error;
+        return colors.error
       default:
-        return colors.primary;
+        return colors.primary
     }
-  };
+  }
 
-  const Icon = getIcon();
-  const typeColor = getTypeColor();
+  const Icon = getIcon()
+  const typeColor = getTypeColor()
 
   const getProgressPercentage = () => {
     if (account.type === 'savings' && account.targetAmount) {
-      return (account.balance / account.targetAmount) * 100;
+      return (account.balance / account.targetAmount) * 100
     }
     if (account.type === 'debt' && account.initialAmount) {
       return (
         ((account.initialAmount - account.balance) / account.initialAmount) *
         100
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
-  const progress = getProgressPercentage();
+  const progress = getProgressPercentage()
 
   const getBalanceColor = () => {
     if (account.type === 'debt') {
-      return account.debtType === 'owed' ? colors.error : colors.success;
+      return account.debtType === 'owed' ? colors.error : colors.success
     }
-    return account.balance >= 0 ? colors.text : colors.error;
-  };
+    return account.balance >= 0 ? colors.text : colors.error
+  }
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: account.currency,
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(Math.abs(amount));
-  };
+      maximumFractionDigits: 2
+    }).format(Math.abs(amount))
+  }
 
   const getSecondaryInfo = () => {
     if (account.type === 'savings' && account.targetAmount) {
       return {
         icon: Target,
         text: formatBalance(account.targetAmount),
-        label: 'Target',
-      };
+        label: 'Target'
+      }
     }
     if (account.type === 'debt' && account.dueDate) {
       return {
         icon: Calendar,
         text: new Date(account.dueDate).toLocaleDateString('en-US', {
           month: 'short',
-          day: 'numeric',
+          day: 'numeric'
         }),
-        label: 'Due',
-      };
+        label: 'Due'
+      }
     }
-    return null;
-  };
+    return null
+  }
 
-  const secondaryInfo = getSecondaryInfo();
+  const secondaryInfo = getSecondaryInfo()
 
   return (
     <Pressable
@@ -131,8 +131,8 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         styles.container,
         {
           backgroundColor: colors.card,
-          borderLeftColor: typeColor,
-        },
+          borderLeftColor: typeColor
+        }
       ]}
       onPress={handlePress}
     >
@@ -149,8 +149,8 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
                     : account.type === 'savings'
                       ? 'success'
                       : 'error'
-                ],
-            },
+                ]
+            }
           ]}
         >
           <Icon size={16} color={typeColor} />
@@ -190,7 +190,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           <View
             style={[
               styles.progressContainer,
-              { backgroundColor: colors.surfaceSecondary },
+              { backgroundColor: colors.surfaceSecondary }
             ]}
           >
             <View
@@ -198,8 +198,8 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
                 styles.progressBar,
                 {
                   width: `${Math.min(progress, 100)}%`,
-                  backgroundColor: typeColor,
-                },
+                  backgroundColor: typeColor
+                }
               ]}
             />
           </View>
@@ -228,7 +228,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         </View>
       )}
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -242,22 +242,22 @@ const styles = StyleSheet.create({
       ios: {
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
-        shadowRadius: 3,
+        shadowRadius: 3
       },
       android: {
-        elevation: 1,
+        elevation: 1
       },
       web: {
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
-        shadowRadius: 3,
-      },
-    }),
+        shadowRadius: 3
+      }
+    })
   },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 8
   },
   iconContainer: {
     width: 28,
@@ -265,68 +265,68 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 12
   },
   headerText: {
     flex: 1,
-    minWidth: 0, // Ensures text truncation works
+    minWidth: 0 // Ensures text truncation works
   },
   name: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 1,
+    marginBottom: 1
   },
   type: {
     fontSize: 12,
-    textTransform: 'capitalize',
+    textTransform: 'capitalize'
   },
   balanceContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   trendIcon: {
-    marginRight: 2,
+    marginRight: 2
   },
   balance: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   progressSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 6
   },
   progressContainer: {
     flex: 1,
     height: 3,
     borderRadius: 1.5,
     overflow: 'hidden',
-    marginRight: 8,
+    marginRight: 8
   },
   progressBar: {
-    height: '100%',
+    height: '100%'
   },
   progressText: {
     fontSize: 10,
     fontWeight: '500',
     minWidth: 30,
-    textAlign: 'right',
+    textAlign: 'right'
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   secondaryInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   secondaryLabel: {
     fontSize: 11,
-    marginLeft: 3,
+    marginLeft: 3
   },
   secondaryValue: {
     fontSize: 11,
-    fontWeight: '500',
-  },
-});
+    fontWeight: '500'
+  }
+})
