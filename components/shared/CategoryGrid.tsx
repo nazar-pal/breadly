@@ -16,11 +16,9 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
   const {
     currentCategories,
     currentType,
-    isEditMode,
     activeTab,
     handleCategoryPress,
     handleCategoryLongPress,
-    handleToggleEditMode,
   } = useCategoryContext();
 
   const styles = useThemedStyles((theme) => ({
@@ -60,17 +58,14 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
             type={currentType}
             onPress={handleCategoryPress}
             onLongPress={handleCategoryLongPress}
-            isEditMode={isEditMode}
           />
         );
       })}
 
-      {!isEditMode && (
-        <AddCategoryButton
-          onPress={handleToggleEditMode}
-          label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
-        />
-      )}
+      <AddCategoryButton
+        onPress={() => {}} // TODO: Implement add category functionality
+        label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
+      />
     </ScrollView>
   );
 }

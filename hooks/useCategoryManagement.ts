@@ -14,7 +14,6 @@ export function useCategoryManagement() {
   const [activeTab, setActiveTab] = useState<'expenses' | 'incomes'>(
     'expenses',
   );
-  const [isEditMode, setIsEditMode] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryToEdit | null>(
     null,
@@ -32,22 +31,9 @@ export function useCategoryManagement() {
 
   // Actions
   const handleCategoryPress = (categoryName: string) => {
-    if (isEditMode) {
-      const category = currentCategories.find(
-        (cat) => cat.name === categoryName,
-      );
-      if (category) {
-        setCategoryToEdit({
-          id: category.id,
-          name: category.name,
-          description: '',
-        });
-        setEditModalVisible(true);
-      }
-    } else {
-      setSelectedCategory(categoryName);
-      setModalVisible(true);
-    }
+    // Simply open the category transactions/details
+    setSelectedCategory(categoryName);
+    setModalVisible(true);
   };
 
   const handleSubmit = (data: any) => {
@@ -59,10 +45,6 @@ export function useCategoryManagement() {
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedCategory(null);
-  };
-
-  const handleToggleEditMode = () => {
-    setIsEditMode(!isEditMode);
   };
 
   const handleSaveCategory = (data: {
@@ -111,7 +93,6 @@ export function useCategoryManagement() {
     selectedCategory,
     modalVisible,
     activeTab,
-    isEditMode,
     editModalVisible,
     categoryToEdit,
     currentCategories,
@@ -127,7 +108,6 @@ export function useCategoryManagement() {
     handleCategoryLongPress,
     handleSubmit,
     handleCloseModal,
-    handleToggleEditMode,
     handleSaveCategory,
     handleCloseEditModal,
     handleDateRangePress,

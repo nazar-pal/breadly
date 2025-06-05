@@ -1,6 +1,5 @@
 import { useCategoryContext } from '@/context/CategoryContext';
 import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import { LocationEdit as Edit2, X } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import DateRangeModal from './DateRangeModal';
@@ -8,19 +7,15 @@ import DateRangeModal from './DateRangeModal';
 interface FinancialHeaderProps {
   totalExpenses: number;
   totalIncome: number;
-  onManagePress: () => void;
 }
 
 export default function FinancialHeader({
   totalExpenses,
   totalIncome,
-  onManagePress,
 }: FinancialHeaderProps) {
   const { colors } = useTheme();
   const {
     activeTab,
-    isEditMode,
-    handleToggleEditMode,
     setActiveTab,
     // Date range
     formattedRange,
@@ -44,7 +39,7 @@ export default function FinancialHeader({
       flexDirection: 'row' as const,
       justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
-      marginBottom: theme.spacing.xs,
+      marginBottom: theme.spacing.sm,
     },
     leftSection: {
       flex: 1,
@@ -74,14 +69,6 @@ export default function FinancialHeader({
       letterSpacing: 0.5,
       marginTop: 1,
     },
-    editButtonRow: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      marginVertical: theme.spacing.xs,
-    },
-    editButton: {
-      padding: theme.spacing.xs,
-    },
     tabContainer: {
       flexDirection: 'row' as const,
       gap: theme.spacing.sm,
@@ -94,6 +81,8 @@ export default function FinancialHeader({
       borderRadius: theme.borderRadius.md,
       alignItems: 'center' as const,
       backgroundColor: 'transparent',
+      marginBottom: theme.spacing.xs,
+      marginTop: theme.spacing.sm,
     },
     activeTab: {
       backgroundColor: theme.colors.iconBackground.primary,
@@ -115,46 +104,25 @@ export default function FinancialHeader({
 
   return (
     <View style={styles.header}>
-      {/* Top Row: Balance and Date Range in one row */}
+      {/* Top Row: Balance and Date Range */}
       <View style={styles.topRow}>
         <View style={styles.leftSection}>
-          <Text style={styles.balanceLabel}>
-            {isEditMode ? 'Edit Categories' : 'Net Balance'}
+          <Text style={styles.balanceLabel}>Net Balance</Text>
+          <Text
+            style={[
+              styles.balanceAmount,
+              {
+                color: netBalance >= 0 ? colors.success : colors.error,
+              },
+            ]}
+          >
+            ${Math.abs(netBalance).toFixed(2)}
           </Text>
-          {!isEditMode && (
-            <Text
-              style={[
-                styles.balanceAmount,
-                {
-                  color: netBalance >= 0 ? colors.success : colors.error,
-                },
-              ]}
-            >
-              ${Math.abs(netBalance).toFixed(2)}
-            </Text>
-          )}
         </View>
 
-        {!isEditMode && (
-          <Pressable onPress={handleDateRangePress} style={styles.rightSection}>
-            <Text style={styles.dateRange}>{formattedRange}</Text>
-            <Text style={styles.modeIndicator}>{getModeDisplayName(mode)}</Text>
-          </Pressable>
-        )}
-      </View>
-
-      {/* Edit Button Row */}
-      <View style={styles.editButtonRow}>
-        <View style={{ flex: 1 }} />
-        <Pressable
-          onPress={handleToggleEditMode || onManagePress}
-          style={styles.editButton}
-        >
-          {isEditMode ? (
-            <X size={18} color={colors.text} />
-          ) : (
-            <Edit2 size={18} color={colors.text} />
-          )}
+        <Pressable onPress={handleDateRangePress} style={styles.rightSection}>
+          <Text style={styles.dateRange}>{formattedRange}</Text>
+          <Text style={styles.modeIndicator}>{getModeDisplayName(mode)}</Text>
         </Pressable>
       </View>
 

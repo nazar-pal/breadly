@@ -55,16 +55,11 @@ const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
 function CategoriesContent() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { isEditMode, canNavigate, navigatePrevious, navigateNext } =
-    useCategoryContext();
+  const { canNavigate, navigatePrevious, navigateNext } = useCategoryContext();
 
   // Mock data - in real app these would come from state/API
   const totalExpenses = 1845;
   const totalIncome = 6750;
-
-  const navigateToManageCategories = () => {
-    return;
-  };
 
   const getCategoryIcon = (
     categoryName: string,
@@ -84,8 +79,8 @@ function CategoriesContent() {
     .minDistance(30)
     .onEnd((event) => {
       'worklet';
-      // Only handle swipes if navigation is enabled and we're not in edit mode
-      if (!canNavigate || isEditMode) return;
+      // Only handle swipes if navigation is enabled
+      if (!canNavigate) return;
 
       const { translationX, velocityX } = event;
 
@@ -115,7 +110,6 @@ function CategoriesContent() {
         <FinancialHeader
           totalExpenses={totalExpenses}
           totalIncome={totalIncome}
-          onManagePress={navigateToManageCategories}
         />
 
         <CategoryGrid getIcon={getCategoryIcon} />

@@ -10,7 +10,6 @@ interface CategoryCardProps {
   type: 'expense' | 'income';
   onPress: (categoryName: string) => void;
   onLongPress?: (categoryId: string, categoryName: string) => void;
-  isEditMode?: boolean;
 }
 
 export default function CategoryCard({
@@ -21,7 +20,6 @@ export default function CategoryCard({
   type,
   onPress,
   onLongPress,
-  isEditMode = false,
 }: CategoryCardProps) {
   const { colors } = useTheme();
   const [isPressed, setIsPressed] = useState(false);
@@ -34,8 +32,6 @@ export default function CategoryCard({
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       backgroundColor: theme.colors.card,
-      borderWidth: isEditMode ? 2 : 0,
-      borderColor: isEditMode ? theme.colors.primary : 'transparent',
       opacity: isPressed ? 0.7 : 1,
       transform: [{ scale: isPressed ? 0.98 : 1 }],
       ...Platform.select({
@@ -76,11 +72,6 @@ export default function CategoryCard({
     categoryAmount: {
       fontSize: 13,
     },
-    editHint: {
-      fontSize: 12,
-      fontWeight: '600' as const,
-      color: theme.colors.primary,
-    },
   }));
 
   const getAmountColor = () => {
@@ -91,9 +82,6 @@ export default function CategoryCard({
   };
 
   const getIconBackgroundColor = () => {
-    if (isEditMode) {
-      return colors.iconBackground.primary;
-    }
     if (type === 'income') {
       return colors.iconBackground.success;
     }
@@ -135,12 +123,9 @@ export default function CategoryCard({
         <Text numberOfLines={1} style={styles.categoryName}>
           {name}
         </Text>
-        {!isEditMode && (
-          <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
-            ${amount.toFixed(2)}
-          </Text>
-        )}
-        {isEditMode && <Text style={styles.editHint}>Tap to edit</Text>}
+        <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
+          ${amount.toFixed(2)}
+        </Text>
       </View>
     </Pressable>
   );
