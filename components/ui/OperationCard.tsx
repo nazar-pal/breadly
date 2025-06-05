@@ -1,5 +1,5 @@
-import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext'
+import { useRouter } from 'expo-router'
 import {
   ArrowRight,
   Calendar,
@@ -8,105 +8,105 @@ import {
   Receipt,
   RefreshCw,
   TrendingDown,
-  TrendingUp,
-} from 'lucide-react-native';
-import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import Card from './Card';
+  TrendingUp
+} from 'lucide-react-native'
+import React from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Card from './Card'
 
-export type OperationType = 'expense' | 'income' | 'debt' | 'other';
+export type OperationType = 'expense' | 'income' | 'debt' | 'other'
 
 interface BaseOperation {
-  id: string;
-  amount: number;
-  category: string;
-  date: string;
-  description: string;
-  hasPhoto?: boolean;
-  hasVoice?: boolean;
+  id: string
+  amount: number
+  category: string
+  date: string
+  description: string
+  hasPhoto?: boolean
+  hasVoice?: boolean
 }
 
 interface ExpenseOperation extends BaseOperation {
-  type: 'expense';
+  type: 'expense'
 }
 
 interface IncomeOperation extends BaseOperation {
-  type: 'income';
+  type: 'income'
 }
 
 interface DebtOperation extends BaseOperation {
-  type: 'debt';
-  debtType: 'paid' | 'received';
-  creditor?: string;
-  debtor?: string;
+  type: 'debt'
+  debtType: 'paid' | 'received'
+  creditor?: string
+  debtor?: string
 }
 
 interface OtherOperation extends BaseOperation {
-  type: 'other';
-  transactionType: 'fee' | 'refund' | 'exchange';
+  type: 'other'
+  transactionType: 'fee' | 'refund' | 'exchange'
 }
 
 type Operation =
   | ExpenseOperation
   | IncomeOperation
   | DebtOperation
-  | OtherOperation;
+  | OtherOperation
 
-export type { Operation };
+export type { Operation }
 
 interface OperationCardProps {
-  operation: Operation;
+  operation: Operation
 }
 
 const getOperationIcon = (operation: Operation) => {
   switch (operation.type) {
     case 'income':
-      return TrendingUp;
+      return TrendingUp
     case 'debt':
-      return operation.debtType === 'paid' ? TrendingDown : TrendingUp;
+      return operation.debtType === 'paid' ? TrendingDown : TrendingUp
     case 'other':
       switch (operation.transactionType) {
         case 'fee':
-          return CreditCard;
+          return CreditCard
         case 'refund':
-          return TrendingUp;
+          return TrendingUp
         case 'exchange':
-          return RefreshCw;
+          return RefreshCw
         default:
-          return CreditCard;
+          return CreditCard
       }
     default:
-      return TrendingDown; // expenses
+      return TrendingDown // expenses
   }
-};
+}
 
 const getOperationColor = (operation: Operation, colors: any) => {
   switch (operation.type) {
     case 'income':
-      return colors.success;
+      return colors.success
     case 'debt':
-      return operation.debtType === 'paid' ? colors.error : colors.success;
+      return operation.debtType === 'paid' ? colors.error : colors.success
     case 'other':
       return operation.transactionType === 'refund'
         ? colors.success
-        : colors.primary;
+        : colors.primary
     default:
-      return colors.error; // expenses
+      return colors.error // expenses
   }
-};
+}
 
 const getAmountPrefix = (operation: Operation) => {
   switch (operation.type) {
     case 'income':
-      return '+';
+      return '+'
     case 'debt':
-      return operation.debtType === 'paid' ? '-' : '+';
+      return operation.debtType === 'paid' ? '-' : '+'
     case 'other':
-      return operation.transactionType === 'refund' ? '+' : '-';
+      return operation.transactionType === 'refund' ? '+' : '-'
     default:
-      return '-'; // expenses
+      return '-' // expenses
   }
-};
+}
 
 const getOperationSubtext = (operation: Operation) => {
   switch (operation.type) {
@@ -114,67 +114,82 @@ const getOperationSubtext = (operation: Operation) => {
       if (operation.debtType === 'paid') {
         return operation.creditor
           ? `Paid to ${operation.creditor}`
-          : 'Debt Payment';
+          : 'Debt Payment'
       } else {
         return operation.debtor
           ? `Received from ${operation.debtor}`
-          : 'Debt Received';
+          : 'Debt Received'
       }
     case 'other':
       switch (operation.transactionType) {
         case 'fee':
-          return 'Transaction Fee';
+          return 'Transaction Fee'
         case 'refund':
-          return 'Refund Received';
+          return 'Refund Received'
         case 'exchange':
-          return 'Currency Exchange';
+          return 'Currency Exchange'
         default:
-          return 'Other Transaction';
+          return 'Other Transaction'
       }
     default:
-      return null;
+      return null
   }
-};
+}
 
 export default function OperationCard({ operation }: OperationCardProps) {
-  const { colors } = useTheme();
-  const router = useRouter();
+  const { colors } = useTheme()
+  const router = useRouter()
 
-  const IconComponent = getOperationIcon(operation);
-  const operationColor = getOperationColor(operation, colors);
-  const amountPrefix = getAmountPrefix(operation);
-  const subtext = getOperationSubtext(operation);
+  const IconComponent = getOperationIcon(operation)
+  const operationColor = getOperationColor(operation, colors)
+  const amountPrefix = getAmountPrefix(operation)
+  const subtext = getOperationSubtext(operation)
 
   const handlePress = () => {
     // Route based on operation type
     switch (operation.type) {
       case 'expense':
-        router.push(`/expenses/${operation.id}`);
-        break;
+        router.push(`/expenses/${operation.id}`)
+        break
       case 'income':
         // TODO: Add income detail screen
-        console.log('Income operation clicked:', operation.id);
-        break;
+        console.log('Income operation clicked:', operation.id)
+        break
       case 'debt':
         // TODO: Add debt detail screen
-        console.log('Debt operation clicked:', operation.id);
-        break;
+        console.log('Debt operation clicked:', operation.id)
+        break
       case 'other':
         // TODO: Add other transaction detail screen
-        console.log('Other operation clicked:', operation.id);
-        break;
+        console.log('Other operation clicked:', operation.id)
+        break
     }
-  };
+  }
 
   return (
     <Pressable onPress={handlePress}>
-      <Card style={styles.container}>
+      <Card variant="elevated" size="sm" style={styles.container}>
         <View style={styles.content}>
           {/* Left: Icon */}
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: operationColor + '20' },
+              {
+                backgroundColor:
+                  colors.iconBackground[
+                    operation.type === 'income'
+                      ? 'success'
+                      : operation.type === 'debt'
+                        ? operation.debtType === 'paid'
+                          ? 'error'
+                          : 'success'
+                        : operation.type === 'other'
+                          ? operation.transactionType === 'refund'
+                            ? 'success'
+                            : 'primary'
+                          : 'error' // expenses
+                  ]
+              }
             ]}
           >
             <IconComponent size={16} color={operationColor} />
@@ -199,7 +214,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
                 <View
                   style={[
                     styles.categoryBadge,
-                    { backgroundColor: colors.secondary },
+                    { backgroundColor: colors.surfaceSecondary }
                   ]}
                 >
                   <Text
@@ -216,7 +231,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
                   >
                     {new Date(operation.date).toLocaleDateString('en-US', {
                       month: 'short',
-                      day: 'numeric',
+                      day: 'numeric'
                     })}
                   </Text>
                 </View>
@@ -253,34 +268,17 @@ export default function OperationCard({ operation }: OperationCardProps) {
         </View>
       </Card>
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
-    padding: 12,
-    ...Platform.select({
-      android: {
-        elevation: 1,
-      },
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-      },
-      web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-      },
-    }),
+    padding: 12
   },
   content: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   iconContainer: {
     width: 32,
@@ -288,61 +286,61 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 12
   },
   infoContainer: {
     flex: 1,
-    gap: 4,
+    gap: 4
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   description: {
     fontSize: 14,
     fontWeight: '500',
     flex: 1,
-    marginRight: 8,
+    marginRight: 8
   },
   amount: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   bottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   metaInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    flex: 1,
+    flex: 1
   },
   categoryBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 4
   },
   categoryText: {
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 4
   },
   dateText: {
-    fontSize: 11,
+    fontSize: 11
   },
   attachments: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   subtext: {
     fontSize: 11,
-    fontStyle: 'italic',
-  },
-});
+    fontStyle: 'italic'
+  }
+})

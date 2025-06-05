@@ -1,10 +1,10 @@
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { useTheme } from '@/context/ThemeContext';
-import { useSignUp } from '@clerk/clerk-expo';
-import { Link, useRouter } from 'expo-router';
-import { Lock, Mail, Shield, UserPlus } from 'lucide-react-native';
-import * as React from 'react';
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { useSignUp } from '@clerk/clerk-expo'
+import { Link, useRouter } from 'expo-router'
+import { Lock, Mail, Shield, UserPlus } from 'lucide-react-native'
+import * as React from 'react'
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,72 +13,72 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SignUpScreen() {
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const router = useRouter();
-  const { colors, spacing } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { isLoaded, signUp, setActive } = useSignUp()
+  const router = useRouter()
+  const { colors, spacing } = useTheme()
+  const insets = useSafeAreaInsets()
 
-  const [emailAddress, setEmailAddress] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [pendingVerification, setPendingVerification] = React.useState(false);
-  const [code, setCode] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [emailAddress, setEmailAddress] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [pendingVerification, setPendingVerification] = React.useState(false)
+  const [code, setCode] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const onSignUpPress = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded) return
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       await signUp.create({
         emailAddress,
-        password,
-      });
+        password
+      })
 
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-      setPendingVerification(true);
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      setPendingVerification(true)
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2))
       Alert.alert(
         'Error',
         err.errors?.[0]?.message ||
-          'Failed to create account. Please try again.',
-      );
+          'Failed to create account. Please try again.'
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const onVerifyPress = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded) return
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
-        code,
-      });
+        code
+      })
 
       if (signUpAttempt.status === 'complete') {
-        await setActive({ session: signUpAttempt.createdSessionId });
-        router.replace('/');
+        await setActive({ session: signUpAttempt.createdSessionId })
+        router.replace('/')
       } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
-        Alert.alert('Error', 'Verification failed. Please try again.');
+        console.error(JSON.stringify(signUpAttempt, null, 2))
+        Alert.alert('Error', 'Verification failed. Please try again.')
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2))
       Alert.alert(
         'Error',
-        err.errors?.[0]?.message || 'Verification failed. Please try again.',
-      );
+        err.errors?.[0]?.message || 'Verification failed. Please try again.'
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   if (pendingVerification) {
     return (
@@ -92,8 +92,8 @@ export default function SignUpScreen() {
             {
               paddingTop: insets.top + spacing.xl,
               paddingBottom: insets.bottom + spacing.xl,
-              paddingHorizontal: spacing.md,
-            },
+              paddingHorizontal: spacing.md
+            }
           ]}
           showsVerticalScrollIndicator={false}
         >
@@ -101,10 +101,10 @@ export default function SignUpScreen() {
             <View
               style={[
                 styles.iconContainer,
-                { backgroundColor: colors.primary },
+                { backgroundColor: colors.primary }
               ]}
             >
-              <Shield size={32} color="#FFFFFF" />
+              <Shield size={32} color={colors.textInverse} />
             </View>
             <Text style={[styles.title, { color: colors.text }]}>
               Verify Your Email
@@ -120,7 +120,13 @@ export default function SignUpScreen() {
                 Verification Code
               </Text>
               <View
-                style={[styles.inputContainer, { borderColor: colors.border }]}
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: colors.input.border,
+                    backgroundColor: colors.input.background
+                  }
+                ]}
               >
                 <Shield
                   size={20}
@@ -131,7 +137,7 @@ export default function SignUpScreen() {
                   style={[styles.input, { color: colors.text }]}
                   value={code}
                   placeholder="Enter verification code"
-                  placeholderTextColor={colors.textSecondary}
+                  placeholderTextColor={colors.input.placeholder}
                   keyboardType="number-pad"
                   onChangeText={setCode}
                 />
@@ -149,7 +155,7 @@ export default function SignUpScreen() {
           </Card>
         </ScrollView>
       </KeyboardAvoidingView>
-    );
+    )
   }
 
   return (
@@ -163,8 +169,8 @@ export default function SignUpScreen() {
           {
             paddingTop: insets.top + spacing.xl,
             paddingBottom: insets.bottom + spacing.xl,
-            paddingHorizontal: spacing.md,
-          },
+            paddingHorizontal: spacing.md
+          }
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -172,7 +178,7 @@ export default function SignUpScreen() {
           <View
             style={[styles.iconContainer, { backgroundColor: colors.primary }]}
           >
-            <UserPlus size={32} color="#FFFFFF" />
+            <UserPlus size={32} color={colors.textInverse} />
           </View>
           <Text style={[styles.title, { color: colors.text }]}>
             Create Account
@@ -188,7 +194,13 @@ export default function SignUpScreen() {
               Email Address
             </Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background
+                }
+              ]}
             >
               <Mail
                 size={20}
@@ -202,7 +214,7 @@ export default function SignUpScreen() {
                 keyboardType="email-address"
                 value={emailAddress}
                 placeholder="Enter your email"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 onChangeText={setEmailAddress}
               />
             </View>
@@ -211,7 +223,13 @@ export default function SignUpScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: colors.text }]}>Password</Text>
             <View
-              style={[styles.inputContainer, { borderColor: colors.border }]}
+              style={[
+                styles.inputContainer,
+                {
+                  borderColor: colors.input.border,
+                  backgroundColor: colors.input.background
+                }
+              ]}
             >
               <Lock
                 size={20}
@@ -222,7 +240,7 @@ export default function SignUpScreen() {
                 style={[styles.input, { color: colors.text }]}
                 value={password}
                 placeholder="Create a password"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.input.placeholder}
                 secureTextEntry={true}
                 onChangeText={setPassword}
               />
@@ -253,20 +271,20 @@ export default function SignUpScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 32
   },
   iconContainer: {
     width: 80,
@@ -274,28 +292,28 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 8
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 24
   },
   formCard: {
-    marginBottom: 24,
+    marginBottom: 24
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 8
   },
   inputContainer: {
     flexDirection: 'row',
@@ -303,36 +321,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 16,
-    height: 56,
+    height: 56
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: 12
   },
   input: {
     flex: 1,
     fontSize: 16,
-    height: '100%',
+    height: '100%'
   },
   signUpButton: {
-    marginTop: 8,
+    marginTop: 8
   },
   verifyButton: {
-    marginTop: 8,
+    marginTop: 8
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 16
   },
   linkButton: {
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 8
   },
   linkText: {
     fontSize: 16,
-    fontWeight: '600',
-  },
-});
+    fontWeight: '600'
+  }
+})

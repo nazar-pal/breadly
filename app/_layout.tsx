@@ -1,33 +1,33 @@
-import { CurrencyProvider } from '@/context/CurrencyContext';
-import { ThemeProvider, useTheme } from '@/context/ThemeContext';
-import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import { ClerkProvider } from '@clerk/clerk-expo';
-import { tokenCache } from '@clerk/clerk-expo/token-cache';
-import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { CurrencyProvider } from '@/context/CurrencyContext'
+import { ThemeProvider, useTheme } from '@/context/ThemeContext'
+import { useFrameworkReady } from '@/hooks/useFrameworkReady'
+import { ClerkProvider } from '@clerk/clerk-expo'
+import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
+import { Stack } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import React from 'react'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 // Layout component that needs access to theme
 function AppLayout() {
-  const { isDark, navigationTheme } = useTheme();
+  const { isDark, navigationTheme } = useTheme()
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="expenses" options={{ headerShown: false }} />
-        <Stack.Screen name="accounts" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="expenses" />
+        <Stack.Screen name="accounts" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </NavigationThemeProvider>
-  );
+  )
 }
 
 export default function RootLayout() {
-  useFrameworkReady();
+  useFrameworkReady()
 
   return (
     <ClerkProvider tokenCache={tokenCache}>
@@ -39,5 +39,5 @@ export default function RootLayout() {
         </CurrencyProvider>
       </GestureHandlerRootView>
     </ClerkProvider>
-  );
+  )
 }

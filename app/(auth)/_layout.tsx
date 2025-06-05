@@ -1,14 +1,14 @@
-import { useTheme } from '@/context/ThemeContext';
-import { useAuth } from '@clerk/clerk-expo';
-import { Redirect, Stack } from 'expo-router';
-import { View } from 'react-native';
+import { useTheme } from '@/context/ThemeContext'
+import { useAuth } from '@clerk/clerk-expo'
+import { Redirect, Stack } from 'expo-router'
+import { View } from 'react-native'
 
 export default function AuthRoutesLayout() {
-  const { isSignedIn } = useAuth();
-  const { colors } = useTheme();
+  const { isSignedIn } = useAuth()
+  const { colors } = useTheme()
 
   if (isSignedIn) {
-    return <Redirect href={'/'} />;
+    return <Redirect href={'/'} />
   }
 
   return (
@@ -18,15 +18,16 @@ export default function AuthRoutesLayout() {
           headerShown: true,
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface
           },
-          headerTintColor: colors.text,
+          headerTintColor: colors.primary,
           headerTitleStyle: {
             color: colors.text,
+            fontWeight: '600'
           },
-          contentStyle: { backgroundColor: colors.background },
+          contentStyle: { backgroundColor: colors.background }
         }}
       />
     </View>
-  );
+  )
 }

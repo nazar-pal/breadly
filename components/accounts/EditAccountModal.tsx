@@ -1,8 +1,8 @@
-import Button from '@/components/ui/Button';
-import { useCurrency } from '@/context/CurrencyContext';
-import { useTheme } from '@/context/ThemeContext';
-import { Check, X } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import Button from '@/components/ui/Button'
+import { useCurrency } from '@/context/CurrencyContext'
+import { useTheme } from '@/context/ThemeContext'
+import { Check, X } from 'lucide-react-native'
+import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -13,28 +13,28 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 interface EditAccountModalProps {
-  visible: boolean;
-  account: any;
-  onSave: (account: any) => void;
-  onClose: () => void;
+  visible: boolean
+  account: any
+  onSave: (account: any) => void
+  onClose: () => void
 }
 
 export default function EditAccountModal({
   visible,
   account,
   onSave,
-  onClose,
+  onClose
 }: EditAccountModalProps) {
-  const { colors } = useTheme();
-  const { currency } = useCurrency();
-  const insets = useSafeAreaInsets();
+  const { colors } = useTheme()
+  const { currency } = useCurrency()
+  const insets = useSafeAreaInsets()
 
   const [formData, setFormData] = useState({
     name: '',
@@ -46,8 +46,8 @@ export default function EditAccountModal({
     interestRate: '',
     institution: '',
     person: '',
-    debtType: 'owed',
-  });
+    debtType: 'owed'
+  })
 
   useEffect(() => {
     if (account) {
@@ -61,10 +61,10 @@ export default function EditAccountModal({
         interestRate: account.interestRate?.toString() || '',
         institution: account.institution || '',
         person: account.person || '',
-        debtType: account.debtType || 'owed',
-      });
+        debtType: account.debtType || 'owed'
+      })
     }
-  }, [account]);
+  }, [account])
 
   const handleSave = () => {
     const updatedAccount = {
@@ -79,16 +79,16 @@ export default function EditAccountModal({
         : undefined,
       interestRate: formData.interestRate
         ? parseFloat(formData.interestRate)
-        : undefined,
-    };
-    onSave(updatedAccount);
-  };
+        : undefined
+    }
+    onSave(updatedAccount)
+  }
 
   const getTitle = () => {
-    if (!account) return 'Add Account';
-    if (!account.id) return `Add ${account.type} Account`;
-    return `Edit ${account.type} Account`;
-  };
+    if (!account) return 'Add Account'
+    if (!account.id) return `Add ${account.type} Account`
+    return `Edit ${account.type} Account`
+  }
 
   return (
     <Modal
@@ -104,7 +104,9 @@ export default function EditAccountModal({
         <View
           style={[styles.modalContent, { backgroundColor: colors.background }]}
         >
-          <View style={styles.header}>
+          <View
+            style={[styles.header, { borderBottomColor: colors.borderLight }]}
+          >
             <Text style={[styles.title, { color: colors.text }]}>
               {getTitle()}
             </Text>
@@ -118,7 +120,7 @@ export default function EditAccountModal({
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.formContent,
-              { paddingBottom: insets.bottom + 16 },
+              { paddingBottom: insets.bottom + 16 }
             ]}
           >
             <View style={styles.formGroup}>
@@ -131,12 +133,12 @@ export default function EditAccountModal({
                   {
                     color: colors.text,
                     backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
+                    borderColor: colors.border
+                  }
                 ]}
                 value={formData.name}
-                onChangeText={(text) =>
-                  setFormData((prev) => ({ ...prev, name: text }))
+                onChangeText={text =>
+                  setFormData(prev => ({ ...prev, name: text }))
                 }
                 placeholder="Enter account name"
                 placeholderTextColor={colors.textSecondary}
@@ -154,12 +156,12 @@ export default function EditAccountModal({
                   {
                     color: colors.text,
                     backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
+                    borderColor: colors.border
+                  }
                 ]}
                 value={formData.description}
-                onChangeText={(text) =>
-                  setFormData((prev) => ({ ...prev, description: text }))
+                onChangeText={text =>
+                  setFormData(prev => ({ ...prev, description: text }))
                 }
                 placeholder="Enter description"
                 placeholderTextColor={colors.textSecondary}
@@ -176,7 +178,7 @@ export default function EditAccountModal({
                 <Text
                   style={[
                     styles.currencySymbol,
-                    { color: colors.textSecondary },
+                    { color: colors.textSecondary }
                   ]}
                 >
                   {currency.symbol}
@@ -188,12 +190,12 @@ export default function EditAccountModal({
                       color: colors.text,
                       backgroundColor: colors.card,
                       borderColor: colors.border,
-                      flex: 1,
-                    },
+                      flex: 1
+                    }
                   ]}
                   value={formData.balance}
-                  onChangeText={(text) =>
-                    setFormData((prev) => ({ ...prev, balance: text }))
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, balance: text }))
                   }
                   keyboardType="decimal-pad"
                   placeholder="0.00"
@@ -211,7 +213,7 @@ export default function EditAccountModal({
                   <Text
                     style={[
                       styles.currencySymbol,
-                      { color: colors.textSecondary },
+                      { color: colors.textSecondary }
                     ]}
                   >
                     {currency.symbol}
@@ -223,12 +225,12 @@ export default function EditAccountModal({
                         color: colors.text,
                         backgroundColor: colors.card,
                         borderColor: colors.border,
-                        flex: 1,
-                      },
+                        flex: 1
+                      }
                     ]}
                     value={formData.targetAmount}
-                    onChangeText={(text) =>
-                      setFormData((prev) => ({ ...prev, targetAmount: text }))
+                    onChangeText={text =>
+                      setFormData(prev => ({ ...prev, targetAmount: text }))
                     }
                     keyboardType="decimal-pad"
                     placeholder="0.00"
@@ -252,11 +254,16 @@ export default function EditAccountModal({
                           backgroundColor:
                             formData.debtType === 'owed'
                               ? colors.primary
-                              : colors.card,
-                        },
+                              : colors.surface,
+                          borderWidth: 1,
+                          borderColor:
+                            formData.debtType === 'owed'
+                              ? colors.primary
+                              : colors.border
+                        }
                       ]}
                       onPress={() =>
-                        setFormData((prev) => ({ ...prev, debtType: 'owed' }))
+                        setFormData(prev => ({ ...prev, debtType: 'owed' }))
                       }
                     >
                       <Text
@@ -265,9 +272,9 @@ export default function EditAccountModal({
                           {
                             color:
                               formData.debtType === 'owed'
-                                ? '#FFFFFF'
-                                : colors.text,
-                          },
+                                ? colors.textInverse
+                                : colors.text
+                          }
                         ]}
                       >
                         I Owe
@@ -280,11 +287,16 @@ export default function EditAccountModal({
                           backgroundColor:
                             formData.debtType === 'owedTo'
                               ? colors.primary
-                              : colors.card,
-                        },
+                              : colors.surface,
+                          borderWidth: 1,
+                          borderColor:
+                            formData.debtType === 'owedTo'
+                              ? colors.primary
+                              : colors.border
+                        }
                       ]}
                       onPress={() =>
-                        setFormData((prev) => ({ ...prev, debtType: 'owedTo' }))
+                        setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
                       }
                     >
                       <Text
@@ -293,9 +305,9 @@ export default function EditAccountModal({
                           {
                             color:
                               formData.debtType === 'owedTo'
-                                ? '#FFFFFF'
-                                : colors.text,
-                          },
+                                ? colors.textInverse
+                                : colors.text
+                          }
                         ]}
                       >
                         Owed to Me
@@ -312,7 +324,7 @@ export default function EditAccountModal({
                     <Text
                       style={[
                         styles.currencySymbol,
-                        { color: colors.textSecondary },
+                        { color: colors.textSecondary }
                       ]}
                     >
                       {currency.symbol}
@@ -324,14 +336,14 @@ export default function EditAccountModal({
                           color: colors.text,
                           backgroundColor: colors.card,
                           borderColor: colors.border,
-                          flex: 1,
-                        },
+                          flex: 1
+                        }
                       ]}
                       value={formData.initialAmount}
-                      onChangeText={(text) =>
-                        setFormData((prev) => ({
+                      onChangeText={text =>
+                        setFormData(prev => ({
                           ...prev,
-                          initialAmount: text,
+                          initialAmount: text
                         }))
                       }
                       keyboardType="decimal-pad"
@@ -351,12 +363,12 @@ export default function EditAccountModal({
                       {
                         color: colors.text,
                         backgroundColor: colors.card,
-                        borderColor: colors.border,
-                      },
+                        borderColor: colors.border
+                      }
                     ]}
                     value={formData.dueDate}
-                    onChangeText={(text) =>
-                      setFormData((prev) => ({ ...prev, dueDate: text }))
+                    onChangeText={text =>
+                      setFormData(prev => ({ ...prev, dueDate: text }))
                     }
                     placeholder="YYYY-MM-DD"
                     placeholderTextColor={colors.textSecondary}
@@ -373,12 +385,12 @@ export default function EditAccountModal({
                       {
                         color: colors.text,
                         backgroundColor: colors.card,
-                        borderColor: colors.border,
-                      },
+                        borderColor: colors.border
+                      }
                     ]}
                     value={formData.interestRate}
-                    onChangeText={(text) =>
-                      setFormData((prev) => ({ ...prev, interestRate: text }))
+                    onChangeText={text =>
+                      setFormData(prev => ({ ...prev, interestRate: text }))
                     }
                     keyboardType="decimal-pad"
                     placeholder="0.00"
@@ -398,20 +410,20 @@ export default function EditAccountModal({
                       {
                         color: colors.text,
                         backgroundColor: colors.card,
-                        borderColor: colors.border,
-                      },
+                        borderColor: colors.border
+                      }
                     ]}
                     value={
                       formData.debtType === 'owed'
                         ? formData.institution || formData.person
                         : formData.person
                     }
-                    onChangeText={(text) =>
-                      setFormData((prev) => ({
+                    onChangeText={text =>
+                      setFormData(prev => ({
                         ...prev,
                         [formData.debtType === 'owed'
                           ? 'institution'
-                          : 'person']: text,
+                          : 'person']: text
                       }))
                     }
                     placeholder={
@@ -426,7 +438,7 @@ export default function EditAccountModal({
             )}
           </ScrollView>
 
-          <View style={styles.footer}>
+          <View style={[styles.footer, { borderTopColor: colors.borderLight }]}>
             <Button
               variant="outline"
               onPress={onClose}
@@ -438,7 +450,7 @@ export default function EditAccountModal({
               variant="primary"
               onPress={handleSave}
               style={{ flex: 1 }}
-              leftIcon={<Check size={20} color="#FFFFFF" />}
+              leftIcon={<Check size={20} color={colors.textInverse} />}
             >
               Save
             </Button>
@@ -446,89 +458,87 @@ export default function EditAccountModal({
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   modalContent: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: SCREEN_HEIGHT * 0.9,
+    maxHeight: SCREEN_HEIGHT * 0.9
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomWidth: 1
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   closeButton: {
-    padding: 4,
+    padding: 4
   },
   form: {
-    flex: 1,
+    flex: 1
   },
   formContent: {
-    padding: 16,
+    padding: 16
   },
   formGroup: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   label: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 8,
+    marginBottom: 8
   },
   input: {
     height: 48,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
-    fontSize: 16,
+    fontSize: 16
   },
   textArea: {
     height: 100,
     paddingTop: 12,
     paddingBottom: 12,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
   currencyInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8
   },
   currencySymbol: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   debtTypeContainer: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 8
   },
   debtTypeButton: {
     flex: 1,
     height: 48,
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   debtTypeText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   footer: {
     flexDirection: 'row',
     padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
-  },
-});
+    borderTopWidth: 1
+  }
+})

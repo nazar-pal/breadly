@@ -1,9 +1,9 @@
-import type { Account } from '@/hooks/useAccountManagement';
+import type { Account } from '@/hooks/useAccountManagement'
 
 export const mockAccounts: {
-  payment: Account[];
-  savings: Account[];
-  debt: Account[];
+  payment: Account[]
+  savings: Account[]
+  debt: Account[]
 } = {
   payment: [
     {
@@ -12,7 +12,7 @@ export const mockAccounts: {
       description: 'Primary bank account',
       balance: 5420.5,
       currency: 'USD',
-      type: 'payment' as const,
+      type: 'payment' as const
     },
     {
       id: '2',
@@ -20,8 +20,8 @@ export const mockAccounts: {
       description: 'Personal credit card',
       balance: -1250.75,
       currency: 'USD',
-      type: 'payment' as const,
-    },
+      type: 'payment' as const
+    }
   ],
   savings: [
     {
@@ -31,7 +31,7 @@ export const mockAccounts: {
       balance: 10000,
       targetAmount: 15000,
       currency: 'USD',
-      type: 'savings' as const,
+      type: 'savings' as const
     },
     {
       id: '4',
@@ -40,8 +40,8 @@ export const mockAccounts: {
       balance: 2500,
       targetAmount: 5000,
       currency: 'USD',
-      type: 'savings' as const,
-    },
+      type: 'savings' as const
+    }
   ],
   debt: [
     {
@@ -55,7 +55,7 @@ export const mockAccounts: {
       institution: 'Department of Education',
       currency: 'USD',
       type: 'debt' as const,
-      debtType: 'owed' as const,
+      debtType: 'owed' as const
     },
     {
       id: '6',
@@ -67,7 +67,7 @@ export const mockAccounts: {
       currency: 'USD',
       type: 'debt' as const,
       debtType: 'owedTo' as const,
-      person: 'John Smith',
-    },
-  ],
-};
+      person: 'John Smith'
+    }
+  ]
+}

@@ -1,5 +1,5 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import { useTheme } from '@/context/ThemeContext';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import {
   Briefcase,
   Building,
@@ -16,9 +16,9 @@ import {
   TrendingUp,
   Users,
   UtensilsCrossed,
-  X,
-} from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+  X
+} from 'lucide-react-native'
+import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Modal,
@@ -27,11 +27,11 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 // Available icons for both expense and income categories
 const availableIcons = {
@@ -48,79 +48,181 @@ const availableIcons = {
   TrendingUp,
   Building,
   Target,
-  PiggyBank,
-};
+  PiggyBank
+}
 
-const iconNames = Object.keys(
-  availableIcons,
-) as (keyof typeof availableIcons)[];
+const iconNames = Object.keys(availableIcons) as (keyof typeof availableIcons)[]
 
 export default function CategoryEditModal() {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
   const {
     editModalVisible,
     categoryToEdit,
     currentType,
     handleSaveCategory,
-    handleCloseEditModal,
-  } = useCategoryContext();
+    handleCloseEditModal
+  } = useCategoryContext()
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [selectedIcon, setSelectedIcon] =
-    useState<keyof typeof availableIcons>('Home');
+    useState<keyof typeof availableIcons>('Home')
+
+  const styles = useThemedStyles(theme => ({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end' as const
+    },
+    modalOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.shadow
+    },
+    modalContent: {
+      borderTopLeftRadius: theme.borderRadius.xl,
+      borderTopRightRadius: theme.borderRadius.xl,
+      paddingTop: theme.spacing.sm,
+      minHeight: SCREEN_HEIGHT * 0.6,
+      backgroundColor: theme.colors.background
+    },
+    header: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
+      paddingHorizontal: theme.spacing.lg - 4,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '600' as const,
+      color: theme.colors.text
+    },
+    closeButton: {
+      padding: theme.spacing.xs
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.lg - 4
+    },
+    scrollContent: {
+      paddingVertical: theme.spacing.sm
+    },
+    formGroup: {
+      marginBottom: theme.spacing.xl - 8
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      marginBottom: theme.spacing.sm,
+      color: theme.colors.text
+    },
+    input: {
+      borderWidth: 1,
+      borderRadius: theme.borderRadius.md * 1.5,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm * 1.5,
+      fontSize: 16,
+      minHeight: 48,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.card,
+      borderColor: theme.colors.border
+    },
+    textArea: {
+      height: 100,
+      paddingTop: theme.spacing.sm * 1.5,
+      textAlignVertical: 'top' as const
+    },
+    iconGrid: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: theme.spacing.sm * 1.5,
+      paddingTop: theme.spacing.sm
+    },
+    iconOption: {
+      width: 56,
+      height: 56,
+      borderRadius: theme.borderRadius.md * 1.5,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      borderWidth: 2
+    },
+    footer: {
+      flexDirection: 'row' as const,
+      paddingHorizontal: theme.spacing.lg - 4,
+      paddingTop: theme.spacing.md,
+      paddingBottom: theme.spacing.sm,
+      gap: theme.spacing.sm * 1.5,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.borderLight
+    },
+    button: {
+      flex: 1,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      paddingVertical: theme.spacing.sm + 6,
+      borderRadius: theme.borderRadius.md * 1.5,
+      gap: theme.spacing.sm,
+      minHeight: 48
+    },
+    cancelButton: {
+      flex: 0.4,
+      backgroundColor: theme.colors.button.secondaryBg,
+      borderWidth: 1,
+      borderColor: theme.colors.button.secondaryBorder
+    },
+    saveButton: {
+      flex: 0.6,
+      backgroundColor: theme.colors.button.primaryBg
+    },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: '600' as const
+    }
+  }))
 
   useEffect(() => {
     if (categoryToEdit) {
-      console.log('CategoryEditModal: Setting up category:', categoryToEdit);
-      setName(categoryToEdit.name);
-      setDescription(categoryToEdit.description || '');
+      setName(categoryToEdit.name)
+      setDescription(categoryToEdit.description || '')
       // Try to match the category name to an icon, fallback to Home
       const matchedIcon = iconNames.find(
-        (icon) =>
+        icon =>
           icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
-          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase()),
-      );
-      setSelectedIcon(matchedIcon || 'Home');
-      console.log('CategoryEditModal: Selected icon:', matchedIcon || 'Home');
+          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
+      )
+      setSelectedIcon(matchedIcon || 'Home')
     } else {
       // Reset form when no category
-      setName('');
-      setDescription('');
-      setSelectedIcon('Home');
+      setName('')
+      setDescription('')
+      setSelectedIcon('Home')
     }
-  }, [categoryToEdit]);
+  }, [categoryToEdit])
 
   const handleSave = () => {
     if (!categoryToEdit || !name.trim()) {
-      console.log('CategoryEditModal: Cannot save - missing category or name');
-      return;
+      return
     }
-
-    console.log('CategoryEditModal: Saving category:', {
-      id: categoryToEdit.id,
-      name: name.trim(),
-      description: description.trim(),
-      iconName: selectedIcon,
-    });
 
     handleSaveCategory({
       id: categoryToEdit.id,
       name: name.trim(),
       description: description.trim(),
-      iconName: selectedIcon,
-    });
-  };
+      iconName: selectedIcon
+    })
+  }
 
   const getIconBackgroundColor = () => {
     if (currentType === 'income') {
-      return colors.success + '20';
+      return colors.iconBackground.success
     }
-    return colors.secondary;
-  };
+    return colors.iconBackground.neutral
+  }
 
-  if (!categoryToEdit) return null;
+  if (!categoryToEdit) return null
 
   return (
     <Modal
@@ -135,15 +237,14 @@ export default function CategoryEditModal() {
           style={[
             styles.modalContent,
             {
-              backgroundColor: colors.background,
               paddingBottom: insets.bottom + 16,
-              maxHeight: SCREEN_HEIGHT * 0.8,
-            },
+              maxHeight: SCREEN_HEIGHT * 0.8
+            }
           ]}
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text style={styles.title}>
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
             <Pressable
@@ -154,16 +255,6 @@ export default function CategoryEditModal() {
             </Pressable>
           </View>
 
-          {/* Debug Info - Remove this in production */}
-          <View
-            style={[styles.debugInfo, { backgroundColor: colors.secondary }]}
-          >
-            <Text style={[styles.debugText, { color: colors.textSecondary }]}>
-              Category ID: {categoryToEdit?.id} | Name: &ldquo;{name}&rdquo; |
-              Icon: {selectedIcon}
-            </Text>
-          </View>
-
           <ScrollView
             style={styles.content}
             showsVerticalScrollIndicator={false}
@@ -171,18 +262,9 @@ export default function CategoryEditModal() {
           >
             {/* Category Name */}
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Category Name
-              </Text>
+              <Text style={styles.label}>Category Name</Text>
               <TextInput
-                style={[
-                  styles.input,
-                  {
-                    color: colors.text,
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
-                ]}
+                style={styles.input}
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter category name"
@@ -193,19 +275,9 @@ export default function CategoryEditModal() {
 
             {/* Category Description */}
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Description (Optional)
-              </Text>
+              <Text style={styles.label}>Description (Optional)</Text>
               <TextInput
-                style={[
-                  styles.input,
-                  styles.textArea,
-                  {
-                    color: colors.text,
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
-                ]}
+                style={[styles.input, styles.textArea]}
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Add a description for this category"
@@ -218,13 +290,11 @@ export default function CategoryEditModal() {
 
             {/* Icon Selection */}
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Choose Icon
-              </Text>
+              <Text style={styles.label}>Choose Icon</Text>
               <View style={styles.iconGrid}>
-                {iconNames.map((iconName) => {
-                  const IconComponent = availableIcons[iconName];
-                  const isSelected = selectedIcon === iconName;
+                {iconNames.map(iconName => {
+                  const IconComponent = availableIcons[iconName]
+                  const isSelected = selectedIcon === iconName
 
                   return (
                     <Pressable
@@ -233,12 +303,12 @@ export default function CategoryEditModal() {
                         styles.iconOption,
                         {
                           backgroundColor: isSelected
-                            ? colors.primary + '20'
+                            ? colors.iconBackground.primary
                             : getIconBackgroundColor(),
                           borderColor: isSelected
                             ? colors.primary
-                            : 'transparent',
-                        },
+                            : 'transparent'
+                        }
                       ]}
                       onPress={() => setSelectedIcon(iconName)}
                     >
@@ -247,7 +317,7 @@ export default function CategoryEditModal() {
                         color={isSelected ? colors.primary : colors.text}
                       />
                     </Pressable>
-                  );
+                  )
                 })}
               </View>
             </View>
@@ -256,29 +326,31 @@ export default function CategoryEditModal() {
           {/* Footer */}
           <View style={styles.footer}>
             <Pressable
-              style={[
-                styles.button,
-                styles.cancelButton,
-                { backgroundColor: colors.secondary },
-              ]}
+              style={styles.cancelButton}
               onPress={handleCloseEditModal}
             >
-              <Text style={[styles.buttonText, { color: colors.text }]}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: colors.button.secondaryText }
+                ]}
+              >
                 Cancel
               </Text>
             </Pressable>
 
             <Pressable
-              style={[
-                styles.button,
-                styles.saveButton,
-                { backgroundColor: colors.primary },
-              ]}
+              style={styles.saveButton}
               onPress={handleSave}
               disabled={!name.trim()}
             >
-              <Check size={20} color="white" />
-              <Text style={[styles.buttonText, { color: 'white' }]}>
+              <Check size={20} color={colors.button.primaryText} />
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: colors.button.primaryText }
+                ]}
+              >
                 Save Changes
               </Text>
             </Pressable>
@@ -286,119 +358,5 @@ export default function CategoryEditModal() {
         </View>
       </View>
     </Modal>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 8,
-    minHeight: SCREEN_HEIGHT * 0.6,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  scrollContent: {
-    paddingVertical: 8,
-  },
-  formGroup: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    minHeight: 48,
-  },
-  textArea: {
-    height: 100,
-    paddingTop: 12,
-    textAlignVertical: 'top',
-  },
-  iconGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    paddingTop: 8,
-  },
-  iconOption: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-  },
-  footer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 8,
-    gap: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  button: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 8,
-    minHeight: 48,
-  },
-  cancelButton: {
-    flex: 0.4,
-  },
-  saveButton: {
-    flex: 0.6,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  debugInfo: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  debugText: {
-    fontSize: 12,
-    fontFamily: 'monospace',
-  },
-});

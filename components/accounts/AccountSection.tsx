@@ -1,16 +1,16 @@
-import { useTheme } from '@/context/ThemeContext';
-import type { Account } from '@/hooks/useAccountManagement';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import AccountCard from './AccountCard';
-import AddAccountButton from './AddAccountButton';
+import { useTheme } from '@/context/ThemeContext'
+import type { Account } from '@/hooks/useAccountManagement'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import AccountCard from './AccountCard'
+import AddAccountButton from './AddAccountButton'
 
 interface AccountSectionProps {
-  title: string;
-  accounts: Account[];
-  accountType: 'payment' | 'savings' | 'debt';
-  onEditAccount: (account: Account) => void;
-  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void;
+  title: string
+  accounts: Account[]
+  accountType: 'payment' | 'savings' | 'debt'
+  onEditAccount: (account: Account) => void
+  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
 }
 
 export default function AccountSection({
@@ -18,28 +18,28 @@ export default function AccountSection({
   accounts,
   accountType,
   onEditAccount,
-  onAddAccount,
+  onAddAccount
 }: AccountSectionProps) {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   const getAddButtonLabel = () => {
     switch (accountType) {
       case 'payment':
-        return 'Add Payment';
+        return 'Add Payment'
       case 'savings':
-        return 'Add Savings';
+        return 'Add Savings'
       case 'debt':
-        return 'Add Debt';
+        return 'Add Debt'
       default:
-        return 'Add Account';
+        return 'Add Account'
     }
-  };
+  }
 
   return (
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: colors.text }]}>{title}</Text>
       <View style={styles.accountsGrid}>
-        {accounts.map((account) => (
+        {accounts.map(account => (
           <AccountCard
             key={account.id}
             account={account}
@@ -52,20 +52,20 @@ export default function AccountSection({
         />
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 32,
+    marginBottom: 32
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 16,
-    letterSpacing: -0.5,
+    letterSpacing: -0.5
   },
   accountsGrid: {
-    flexDirection: 'column',
-  },
-});
+    flexDirection: 'column'
+  }
+})
