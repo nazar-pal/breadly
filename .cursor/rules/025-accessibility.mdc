@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: "Core accessibility (a11y) considerations for MVP."
+globs: ["**/*.tsx"]
+alwaysApply: true
+version: 1.0.0
+---
+
+# Accessibility (a11y) Core (MVP)
+
+1.  **Interactive Elements**: Ensure `TouchableOpacity`, `Button`, etc., are clearly identifiable.
+    -   Use `accessibilityLabel` for icon-only buttons or when text is unclear:
+        `<TouchableOpacity accessibilityLabel="Open settings"><Icon name="settings" /></TouchableOpacity>`
+2.  **Color Contrast**: Text should have sufficient contrast with its background (aim for WCAG AA). Manage this via `theme/colors.ts`.
+3.  **Minimum Touch Target**: Ensure touch targets are adequately sized (e.g., ~44x44dp).
