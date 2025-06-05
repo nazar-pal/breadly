@@ -17,9 +17,9 @@ function AppLayout() {
     <NavigationThemeProvider value={navigationTheme}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="expenses" options={{ headerShown: false }} />
-        <Stack.Screen name="accounts" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="expenses" />
+        <Stack.Screen name="accounts" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </NavigationThemeProvider>
