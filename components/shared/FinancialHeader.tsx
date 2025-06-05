@@ -1,12 +1,6 @@
-import IconButton from '@/components/ui/IconButton';
 import { useCategoryContext } from '@/context/CategoryContext';
 import { useTheme, useThemedStyles } from '@/context/ThemeContext';
-import {
-  ChevronLeft,
-  ChevronRight,
-  LocationEdit as Edit2,
-  X,
-} from 'lucide-react-native';
+import { LocationEdit as Edit2, X } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import DateRangeModal from './DateRangeModal';
@@ -43,58 +37,61 @@ export default function FinancialHeader({
 
   const styles = useThemedStyles((theme) => ({
     header: {
-      padding: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
     },
-    headerTop: {
+    topRow: {
       flexDirection: 'row' as const,
       justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
+      marginBottom: theme.spacing.xs,
+    },
+    leftSection: {
+      flex: 1,
     },
     balanceLabel: {
-      fontSize: 16,
+      fontSize: 12,
       color: theme.colors.textSecondary,
+      marginBottom: 2,
     },
     balanceAmount: {
-      fontSize: 32,
+      fontSize: 24,
       fontWeight: '700' as const,
-      marginVertical: theme.spacing.sm,
     },
-    dateSelector: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'space-between' as const,
-      marginVertical: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-    },
-    navButton: {
-      padding: theme.spacing.sm,
-    },
-    dateRangeButton: {
-      flex: 1,
-      alignItems: 'center' as const,
-      paddingVertical: theme.spacing.sm,
+    rightSection: {
+      alignItems: 'flex-end' as const,
     },
     dateRange: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: '600' as const,
-      marginBottom: 2,
       color: theme.colors.text,
+      textAlign: 'right' as const,
     },
     modeIndicator: {
-      fontSize: 12,
+      fontSize: 10,
+      color: theme.colors.textSecondary,
       textTransform: 'uppercase' as const,
       letterSpacing: 0.5,
-      color: theme.colors.textSecondary,
+      marginTop: 1,
+    },
+    editButtonRow: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      marginVertical: theme.spacing.xs,
+    },
+    editButton: {
+      padding: theme.spacing.xs,
     },
     tabContainer: {
       flexDirection: 'row' as const,
-      gap: theme.spacing.sm * 1.5,
-      marginTop: theme.spacing.sm,
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.xs,
     },
     tab: {
       flex: 1,
-      padding: theme.spacing.sm * 1.5,
-      borderRadius: theme.borderRadius.md * 1.5,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm,
+      borderRadius: theme.borderRadius.md,
       alignItems: 'center' as const,
       backgroundColor: 'transparent',
     },
@@ -104,12 +101,12 @@ export default function FinancialHeader({
       borderColor: theme.colors.primary,
     },
     tabText: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: '600' as const,
-      marginBottom: 2,
+      marginBottom: 1,
     },
     tabAmount: {
-      fontSize: 13,
+      fontSize: 14,
       fontWeight: '500' as const,
     },
   }));
@@ -118,57 +115,48 @@ export default function FinancialHeader({
 
   return (
     <View style={styles.header}>
-      <View style={styles.headerTop}>
-        <Text style={styles.balanceLabel}>
-          {isEditMode ? 'Edit Categories' : 'Net Balance'}
-        </Text>
-        <IconButton
-          icon={isEditMode ? <X size={20} /> : <Edit2 size={20} />}
-          variant="ghost"
-          onPress={handleToggleEditMode || onManagePress}
-        />
-      </View>
-      {!isEditMode && (
-        <Text
-          style={[
-            styles.balanceAmount,
-            {
-              color: netBalance >= 0 ? colors.success : colors.error,
-            },
-          ]}
-        >
-          ${Math.abs(netBalance).toFixed(2)}
-        </Text>
-      )}
+      {/* Top Row: Balance and Date Range in one row */}
+      <View style={styles.topRow}>
+        <View style={styles.leftSection}>
+          <Text style={styles.balanceLabel}>
+            {isEditMode ? 'Edit Categories' : 'Net Balance'}
+          </Text>
+          {!isEditMode && (
+            <Text
+              style={[
+                styles.balanceAmount,
+                {
+                  color: netBalance >= 0 ? colors.success : colors.error,
+                },
+              ]}
+            >
+              ${Math.abs(netBalance).toFixed(2)}
+            </Text>
+          )}
+        </View>
 
-      {/* Date Range Selector */}
-      {!isEditMode && (
-        <View style={styles.dateSelector}>
-          <Pressable
-            onPress={navigatePrevious}
-            disabled={!canNavigate}
-            style={[styles.navButton, { opacity: canNavigate ? 1 : 0.3 }]}
-          >
-            <ChevronLeft size={24} color={colors.text} />
-          </Pressable>
-
-          <Pressable
-            onPress={handleDateRangePress}
-            style={styles.dateRangeButton}
-          >
+        {!isEditMode && (
+          <Pressable onPress={handleDateRangePress} style={styles.rightSection}>
             <Text style={styles.dateRange}>{formattedRange}</Text>
             <Text style={styles.modeIndicator}>{getModeDisplayName(mode)}</Text>
           </Pressable>
+        )}
+      </View>
 
-          <Pressable
-            onPress={navigateNext}
-            disabled={!canNavigate}
-            style={[styles.navButton, { opacity: canNavigate ? 1 : 0.3 }]}
-          >
-            <ChevronRight size={24} color={colors.text} />
-          </Pressable>
-        </View>
-      )}
+      {/* Edit Button Row */}
+      <View style={styles.editButtonRow}>
+        <View style={{ flex: 1 }} />
+        <Pressable
+          onPress={handleToggleEditMode || onManagePress}
+          style={styles.editButton}
+        >
+          {isEditMode ? (
+            <X size={18} color={colors.text} />
+          ) : (
+            <Edit2 size={18} color={colors.text} />
+          )}
+        </Pressable>
+      </View>
 
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
@@ -243,6 +231,10 @@ export default function FinancialHeader({
         currentMode={mode}
         onSelectMode={setMode}
         onClose={handleDateRangeModalClose}
+        canNavigate={canNavigate}
+        navigatePrevious={navigatePrevious}
+        navigateNext={navigateNext}
+        formattedRange={formattedRange}
       />
     </View>
   );

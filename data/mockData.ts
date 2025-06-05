@@ -93,7 +93,7 @@ export const mockCategories = [
     id: '5',
     name: 'Transportation',
     budget: 150.0,
-    spent: 98.45,
+    spent: 0,
   },
   {
     id: '6',

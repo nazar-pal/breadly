@@ -1,6 +1,6 @@
 import { useTheme, useThemedStyles } from '@/context/ThemeContext';
 import { DateRange, DateRangeMode } from '@/hooks/useDateRange';
-import { Check, X } from 'lucide-react-native';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   Modal,
@@ -18,6 +18,11 @@ interface DateRangeModalProps {
   currentMode: DateRangeMode;
   onSelectMode: (mode: DateRangeMode, customRange?: DateRange) => void;
   onClose: () => void;
+  // Navigation props
+  canNavigate?: boolean;
+  navigatePrevious?: () => void;
+  navigateNext?: () => void;
+  formattedRange?: string;
 }
 
 const MODE_OPTIONS: {
@@ -45,6 +50,10 @@ export default function DateRangeModal({
   currentMode,
   onSelectMode,
   onClose,
+  canNavigate = false,
+  navigatePrevious,
+  navigateNext,
+  formattedRange,
 }: DateRangeModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -80,20 +89,37 @@ export default function DateRangeModal({
     },
     header: {
       flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
       alignItems: 'center' as const,
-      paddingHorizontal: theme.spacing.lg - 4,
+      paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
+      minHeight: 60,
+    },
+    navButton: {
+      padding: theme.spacing.sm,
+      borderRadius: theme.borderRadius.sm,
+      backgroundColor: theme.colors.surfaceSecondary,
+    },
+    titleContainer: {
+      flex: 1,
+      alignItems: 'center' as const,
+      marginHorizontal: theme.spacing.md,
     },
     title: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: '600' as const,
       color: theme.colors.text,
+      textAlign: 'center' as const,
+    },
+    subtitle: {
+      fontSize: 11,
+      color: theme.colors.textSecondary,
+      textAlign: 'center' as const,
+      marginTop: 2,
     },
     closeButton: {
-      padding: theme.spacing.xs,
+      padding: theme.spacing.sm,
     },
     content: {
       flexGrow: 1,
@@ -258,16 +284,34 @@ export default function DateRangeModal({
             },
           ]}
         >
-          {/* Header */}
+          {/* Header with Navigation */}
           <View style={styles.header}>
-            <Text style={styles.title}>
-              {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
-            </Text>
+            {!showCustomPicker && canNavigate && navigatePrevious && (
+              <Pressable onPress={navigatePrevious} style={styles.navButton}>
+                <ChevronLeft size={18} color={colors.text} />
+              </Pressable>
+            )}
+
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>
+                {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
+              </Text>
+              {!showCustomPicker && formattedRange && (
+                <Text style={styles.subtitle}>{formattedRange}</Text>
+              )}
+            </View>
+
+            {!showCustomPicker && canNavigate && navigateNext && (
+              <Pressable onPress={navigateNext} style={styles.navButton}>
+                <ChevronRight size={18} color={colors.text} />
+              </Pressable>
+            )}
+
             <Pressable
               onPress={showCustomPicker ? handleCustomRangeCancel : onClose}
               style={styles.closeButton}
             >
-              <X size={24} color={colors.text} />
+              <X size={20} color={colors.text} />
             </Pressable>
           </View>
 
