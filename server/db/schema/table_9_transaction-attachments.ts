@@ -23,7 +23,7 @@ import { attachments, transactions } from '.'
 import { createdAtColumn } from './utils'
 
 // ============================================================================
-// TRANSACTION ATTACHMENTS JUNCTION TABLE
+// Transaction attachments table - Many-to-many transaction ↔ attachment links
 // ============================================================================
 
 /**

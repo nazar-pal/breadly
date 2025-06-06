@@ -39,7 +39,7 @@ import {
 } from './utils'
 
 // ============================================================================
-// CATEGORY TYPE DEFINITIONS
+// Categories table - Hierarchical transaction classification
 // ============================================================================
 
 /**
@@ -48,10 +48,6 @@ import {
  * - income: Money coming in (salary, freelance, investments, gifts)
  */
 export const categoryType = pgEnum('category_type', ['expense', 'income'])
-
-// ============================================================================
-// CATEGORIES TABLE
-// ============================================================================
 
 /**
  * Hierarchical transaction categories (income/expense classification)
@@ -123,7 +119,7 @@ export const categories = pgTable(
  * Category relationship mappings
  * Defines hierarchical relationships and connections to other entities
  */
-export const categoriesRelations = relations(categories, ({ many, one }) => ({
+export const categoriesRelations = relations(categories, ({ one, many }) => ({
   parent: one(categories, {
     fields: [categories.parentId],
     references: [categories.id]

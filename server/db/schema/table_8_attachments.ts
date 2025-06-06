@@ -32,7 +32,7 @@ import { transactionAttachments, transactions } from '.'
 import { createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
-// ATTACHMENT TYPE DEFINITIONS
+// Attachments table - File metadata (receipts, voice notes)
 // ============================================================================
 
 /**
@@ -105,7 +105,7 @@ export const attachments = pgTable(
  * Defines connections to transactions through junction table
  */
 export const attachmentsRelations = relations(attachments, ({ many }) => ({
-  transactionAttachments: many(transactionAttachments) // Many-to-many with transactions
+  transactions: many(transactions, { relationName: 'transactionAttachments' })
 }))
 /**
  * Transaction-attachment junction relationship mappings

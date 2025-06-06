@@ -28,7 +28,7 @@ import { currencies } from '.'
 import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
-// EXCHANGE RATES TABLE
+// Exchange rates table - Historical currency conversion rates
 // ============================================================================
 
 /**
@@ -57,7 +57,7 @@ export const exchangeRates = pgTable(
     rateDate: date().notNull() // Date this rate was valid (for historical tracking)
   },
   table => [
-    // Ensure unique rates per currency pair per date
+    // One rate per currency pair per date
     uniqueIndex('exchange_rates_base_quote_date_unq').on(
       table.baseCurrency,
       table.quoteCurrency,

@@ -35,7 +35,7 @@ import {
 } from './utils'
 
 // ============================================================================
-// BUDGET PERIOD DEFINITIONS
+// Budgets table - Category-based spending limits
 // ============================================================================
 
 /**
@@ -53,10 +53,6 @@ export const budgetPeriod = pgEnum('budget_period', [
   'quarterly',
   'yearly'
 ])
-
-// ============================================================================
-// BUDGETS TABLE
-// ============================================================================
 
 /**
  * Budget tracking for categories

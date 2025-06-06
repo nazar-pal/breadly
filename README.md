@@ -70,56 +70,55 @@ Breadly is a cross-platform **React Native** application that helps users track 
 
 ## 🗄 Database Schema
 
-### Core Tables
+Breadly uses a **PostgreSQL database** on Neon with a sophisticated multi-tenant architecture designed for financial data management. The database enforces strict business rules, maintains data integrity through triggers, and provides row-level security for user isolation.
 
-| Table                     | Purpose                                         |
-| :------------------------ | :---------------------------------------------- |
-| `currencies`              | Supported currencies (USD, EUR, etc.)           |
-| `exchange_rates`          | Historical currency exchange rates              |
-| `accounts`                | User financial accounts with running balances   |
-| `categories`              | Hierarchical income/expense classification      |
-| `transactions`            | All money movements (income, expense, transfer) |
-| `attachments`             | File storage metadata (receipts, voice notes)   |
-| `transaction_attachments` | Many-to-many link between transactions & files  |
-| `budgets`                 | Per-category spending limits with periods       |
-| `user_preferences`        | User settings (default currency, locale, etc.)  |
+### **Core Architecture**
+
+- **9 core tables** supporting accounts, transactions, categories, budgets, and multi-currency operations
+- **Multi-tenant isolation** using Clerk authentication with Row-Level Security (RLS)
+- **Automatic balance management** via PostgreSQL triggers
+- **Currency consistency** enforced through database constraints and triggers
+
+### **Key Tables**
+
+- `accounts` - User financial accounts with auto-updated balances
+- `transactions` - All money movements (income, expense, transfer)
+- `categories` - Hierarchical transaction classification
+- `budgets` - Per-category spending limits with configurable periods
+- `currencies` & `exchange_rates` - Multi-currency support with historical tracking
+
+### **Advanced Features**
+
+- **Custom triggers** for automatic account balance updates
+- **Multi-tenant security** validation at the database level
+- **Currency validation** ensuring transaction-account currency consistency
+- **Hierarchical categories** with parent-child relationships
+
+> 📖 **For complete database documentation** including detailed table specifications, migration strategy, business rules, and security implementation, see [`server/db/DATABASE_DOCUMENTATION.md`](server/db/DATABASE_DOCUMENTATION.md)
 
 ---
 
 ## 🔒 Database Business Rules
 
-The following business rules are **enforced at the database level** through constraints, triggers, and RLS policies:
+The database enforces **comprehensive business rules** at the database level through constraints, triggers, and RLS policies:
 
-### Data Integrity Rules
+### **Key Validations**
 
-- **Positive amounts**: All transaction amounts must be > 0
-- **Currency consistency**: Transaction currency must match account currency
-- **Transfer validation**: Transfers require different source/destination accounts
-- **Date validation**: Transaction dates cannot be in the future
-- **Category hierarchy**: Categories cannot be their own parent
-- **Unique budgets**: No duplicate budgets per category+period+date
+- ✅ **Multi-tenant security** - Users can only access their own data
+- ✅ **Automatic balance updates** - Account balances maintained via triggers
+- ✅ **Currency consistency** - Transaction currency must match account currency
+- ✅ **Transfer validation** - Transfers require different source/destination accounts
+- ✅ **Data integrity** - Positive amounts, valid dates, referential consistency
 
-### Account Balance Management
+### **Custom SQL Migrations**
 
-- **Automatic updates**: Account balances updated via PostgreSQL triggers
-- **Income transactions**: Add amount to account balance
-- **Expense transactions**: Subtract amount from account balance
-- **Transfer transactions**: Move money between accounts atomically
-- **Update handling**: Balance correctly maintained on transaction modifications
+Breadly uses **4 manual SQL migrations** for advanced PostgreSQL features that Drizzle ORM doesn't support:
 
-### Multi-Tenant Security
+- **Balance triggers** for automatic account balance management
+- **Security validation** for multi-tenant data isolation
+- **Currency validation** for transaction-account consistency
 
-- **Row-Level Security**: Implemented using Drizzle's `crudPolicy` with `authUid()` helper and Neon's `auth.user_id()` function
-- **Account ownership**: Users can only use accounts they own in transactions
-- **Category ownership**: Users can only reference categories they own
-- **Attachment access**: Users can only access attachments via their transactions
-- **Cross-user prevention**: No data leakage between users
-
-### Exchange Rate Integrity
-
-- **Positive rates**: Exchange rates must be > 0
-- **Currency pairs**: Base and quote currencies must be different
-- **Unique rates**: One rate per currency pair per date
+> 📖 **For detailed business rules documentation** including trigger implementations, security policies, and validation logic, see [`server/db/DATABASE_DOCUMENTATION.md`](server/db/DATABASE_DOCUMENTATION.md)
 
 ---
 

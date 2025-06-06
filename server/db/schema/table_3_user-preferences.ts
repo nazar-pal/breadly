@@ -23,7 +23,7 @@ import { currencies } from '.'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
 // ============================================================================
-// USER PREFERENCES TABLE
+// User preferences table - User-specific application settings
 // ============================================================================
 
 /**
