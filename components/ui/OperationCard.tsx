@@ -1,5 +1,5 @@
-import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext'
+import { useRouter } from 'expo-router'
 import {
   ArrowRight,
   Calendar,
@@ -8,105 +8,105 @@ import {
   Receipt,
   RefreshCw,
   TrendingDown,
-  TrendingUp,
-} from 'lucide-react-native';
-import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import Card from './Card';
+  TrendingUp
+} from 'lucide-react-native'
+import React from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Card from './Card'
 
-export type OperationType = 'expense' | 'income' | 'debt' | 'other';
+export type OperationType = 'expense' | 'income' | 'debt' | 'other'
 
 interface BaseOperation {
-  id: string;
-  amount: number;
-  category: string;
-  date: string;
-  description: string;
-  hasPhoto?: boolean;
-  hasVoice?: boolean;
+  id: string
+  amount: number
+  category: string
+  date: string
+  description: string
+  hasPhoto?: boolean
+  hasVoice?: boolean
 }
 
 interface ExpenseOperation extends BaseOperation {
-  type: 'expense';
+  type: 'expense'
 }
 
 interface IncomeOperation extends BaseOperation {
-  type: 'income';
+  type: 'income'
 }
 
 interface DebtOperation extends BaseOperation {
-  type: 'debt';
-  debtType: 'paid' | 'received';
-  creditor?: string;
-  debtor?: string;
+  type: 'debt'
+  debtType: 'paid' | 'received'
+  creditor?: string
+  debtor?: string
 }
 
 interface OtherOperation extends BaseOperation {
-  type: 'other';
-  transactionType: 'fee' | 'refund' | 'exchange';
+  type: 'other'
+  transactionType: 'fee' | 'refund' | 'exchange'
 }
 
 type Operation =
   | ExpenseOperation
   | IncomeOperation
   | DebtOperation
-  | OtherOperation;
+  | OtherOperation
 
-export type { Operation };
+export type { Operation }
 
 interface OperationCardProps {
-  operation: Operation;
+  operation: Operation
 }
 
 const getOperationIcon = (operation: Operation) => {
   switch (operation.type) {
     case 'income':
-      return TrendingUp;
+      return TrendingUp
     case 'debt':
-      return operation.debtType === 'paid' ? TrendingDown : TrendingUp;
+      return operation.debtType === 'paid' ? TrendingDown : TrendingUp
     case 'other':
       switch (operation.transactionType) {
         case 'fee':
-          return CreditCard;
+          return CreditCard
         case 'refund':
-          return TrendingUp;
+          return TrendingUp
         case 'exchange':
-          return RefreshCw;
+          return RefreshCw
         default:
-          return CreditCard;
+          return CreditCard
       }
     default:
-      return TrendingDown; // expenses
+      return TrendingDown // expenses
   }
-};
+}
 
 const getOperationColor = (operation: Operation, colors: any) => {
   switch (operation.type) {
     case 'income':
-      return colors.success;
+      return colors.success
     case 'debt':
-      return operation.debtType === 'paid' ? colors.error : colors.success;
+      return operation.debtType === 'paid' ? colors.error : colors.success
     case 'other':
       return operation.transactionType === 'refund'
         ? colors.success
-        : colors.primary;
+        : colors.primary
     default:
-      return colors.error; // expenses
+      return colors.error // expenses
   }
-};
+}
 
 const getAmountPrefix = (operation: Operation) => {
   switch (operation.type) {
     case 'income':
-      return '+';
+      return '+'
     case 'debt':
-      return operation.debtType === 'paid' ? '-' : '+';
+      return operation.debtType === 'paid' ? '-' : '+'
     case 'other':
-      return operation.transactionType === 'refund' ? '+' : '-';
+      return operation.transactionType === 'refund' ? '+' : '-'
     default:
-      return '-'; // expenses
+      return '-' // expenses
   }
-};
+}
 
 const getOperationSubtext = (operation: Operation) => {
   switch (operation.type) {
@@ -114,79 +114,148 @@ const getOperationSubtext = (operation: Operation) => {
       if (operation.debtType === 'paid') {
         return operation.creditor
           ? `Paid to ${operation.creditor}`
-          : 'Debt Payment';
+          : 'Debt Payment'
       } else {
         return operation.debtor
           ? `Received from ${operation.debtor}`
-          : 'Debt Received';
+          : 'Debt Received'
       }
     case 'other':
       switch (operation.transactionType) {
         case 'fee':
-          return 'Transaction Fee';
+          return 'Transaction Fee'
         case 'refund':
-          return 'Refund Received';
+          return 'Refund Received'
         case 'exchange':
-          return 'Currency Exchange';
+          return 'Currency Exchange'
         default:
-          return 'Other Transaction';
+          return 'Other Transaction'
       }
     default:
-      return null;
+      return null
   }
-};
+}
 
 export default function OperationCard({ operation }: OperationCardProps) {
-  const { colors, spacing } = useTheme();
-  const router = useRouter();
+  const { colors } = useTheme()
+  const router = useRouter()
 
-  const IconComponent = getOperationIcon(operation);
-  const operationColor = getOperationColor(operation, colors);
-  const amountPrefix = getAmountPrefix(operation);
-  const subtext = getOperationSubtext(operation);
+  const IconComponent = getOperationIcon(operation)
+  const operationColor = getOperationColor(operation, colors)
+  const amountPrefix = getAmountPrefix(operation)
+  const subtext = getOperationSubtext(operation)
 
   const handlePress = () => {
     // Route based on operation type
     switch (operation.type) {
       case 'expense':
-        router.push(`/expenses/${operation.id}`);
-        break;
+        router.push(`/expenses/${operation.id}`)
+        break
       case 'income':
         // TODO: Add income detail screen
-        console.log('Income operation clicked:', operation.id);
-        break;
+        console.log('Income operation clicked:', operation.id)
+        break
       case 'debt':
         // TODO: Add debt detail screen
-        console.log('Debt operation clicked:', operation.id);
-        break;
+        console.log('Debt operation clicked:', operation.id)
+        break
       case 'other':
         // TODO: Add other transaction detail screen
-        console.log('Other operation clicked:', operation.id);
-        break;
+        console.log('Other operation clicked:', operation.id)
+        break
     }
-  };
+  }
 
   return (
     <Pressable onPress={handlePress}>
-      <Card style={styles.container}>
+      <Card variant="elevated" size="sm" style={styles.container}>
         <View style={styles.content}>
-          <View style={styles.leftContent}>
-            <View style={styles.amountContainer}>
+          {/* Left: Icon */}
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                backgroundColor:
+                  colors.iconBackground[
+                    operation.type === 'income'
+                      ? 'success'
+                      : operation.type === 'debt'
+                        ? operation.debtType === 'paid'
+                          ? 'error'
+                          : 'success'
+                        : operation.type === 'other'
+                          ? operation.transactionType === 'refund'
+                            ? 'success'
+                            : 'primary'
+                          : 'error' // expenses
+                  ]
+              }
+            ]}
+          >
+            <IconComponent size={16} color={operationColor} />
+          </View>
+
+          {/* Middle: Info */}
+          <View style={styles.infoContainer}>
+            <View style={styles.topRow}>
+              <Text
+                style={[styles.description, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {operation.description}
+              </Text>
               <Text style={[styles.amount, { color: operationColor }]}>
                 {amountPrefix}${operation.amount.toFixed(2)}
               </Text>
-              <IconComponent
-                size={16}
-                color={operationColor}
-                style={{ marginLeft: 6 }}
-              />
             </View>
-            <Text
-              style={[styles.description, { color: colors.textSecondary }]}
-              numberOfLines={2}
-            >
-              {operation.description}
-            </Text>
+
+            <View style={styles.bottomRow}>
+              <View style={styles.metaInfo}>
+                <View
+                  style={[
+                    styles.categoryBadge,
+                    { backgroundColor: colors.surfaceSecondary }
+                  ]}
+                >
+                  <Text
+                    style={[styles.categoryText, { color: colors.text }]}
+                    numberOfLines={1}
+                  >
+                    {operation.category}
+                  </Text>
+                </View>
+                <View style={styles.dateContainer}>
+                  <Calendar size={12} color={colors.textSecondary} />
+                  <Text
+                    style={[styles.dateText, { color: colors.textSecondary }]}
+                  >
+                    {new Date(operation.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.attachments}>
+                {operation.hasPhoto && (
+                  <Receipt size={14} color={colors.textSecondary} />
+                )}
+                {operation.hasVoice && (
+                  <Mic
+                    size={14}
+                    color={colors.textSecondary}
+                    style={{ marginLeft: 4 }}
+                  />
+                )}
+                <ArrowRight
+                  size={14}
+                  color={colors.textSecondary}
+                  style={{ marginLeft: 4 }}
+                />
+              </View>
+            </View>
+
             {subtext && (
               <Text
                 style={[styles.subtext, { color: colors.textSecondary }]}
@@ -195,129 +264,83 @@ export default function OperationCard({ operation }: OperationCardProps) {
                 {subtext}
               </Text>
             )}
-            <View style={styles.metaContainer}>
-              <View
-                style={[
-                  styles.categoryBadge,
-                  { backgroundColor: colors.secondary },
-                ]}
-              >
-                <Text style={[styles.categoryText, { color: colors.text }]}>
-                  {operation.category}
-                </Text>
-              </View>
-              <View style={[styles.dateContainer, { marginLeft: spacing.sm }]}>
-                <Calendar size={14} color={colors.textSecondary} />
-                <Text
-                  style={[
-                    styles.dateText,
-                    { color: colors.textSecondary, marginLeft: 4 },
-                  ]}
-                >
-                  {operation.date}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.rightContent}>
-            <View style={styles.iconContainer}>
-              {operation.hasPhoto && (
-                <Receipt
-                  size={16}
-                  color={colors.textSecondary}
-                  style={{ marginRight: 8 }}
-                />
-              )}
-              {operation.hasVoice && (
-                <Mic size={16} color={colors.textSecondary} />
-              )}
-            </View>
-            <ArrowRight size={20} color={colors.primary} />
           </View>
         </View>
       </Card>
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
-    ...Platform.select({
-      android: {
-        elevation: 2,
-      },
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-    }),
+    marginBottom: 8,
+    padding: 12
   },
   content: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    minHeight: 80,
+    alignItems: 'center'
   },
-  leftContent: {
-    flex: 1,
-    marginRight: 16,
-  },
-  rightContent: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  amountContainer: {
-    flexDirection: 'row',
+  iconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 4,
+    justifyContent: 'center',
+    marginRight: 12
   },
-  amount: {
-    fontSize: 18,
-    fontWeight: '600',
+  infoContainer: {
+    flex: 1,
+    gap: 4
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   description: {
     fontSize: 14,
-    marginBottom: 4,
-    flexWrap: 'wrap',
+    fontWeight: '500',
+    flex: 1,
+    marginRight: 8
   },
-  subtext: {
-    fontSize: 12,
-    fontStyle: 'italic',
-    marginBottom: 8,
+  amount: {
+    fontSize: 15,
+    fontWeight: '600'
   },
-  metaContainer: {
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  metaInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    gap: 8,
+    flex: 1
   },
   categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4
   },
   categoryText: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '500'
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 11
   },
-  iconContainer: {
+  attachments: {
     flexDirection: 'row',
-    marginBottom: 12,
+    alignItems: 'center'
   },
-});
+  subtext: {
+    fontSize: 11,
+    fontStyle: 'italic'
+  }
+})

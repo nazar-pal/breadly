@@ -1,17 +1,101 @@
-import { useTheme } from '@/context/ThemeContext';
-import React from 'react';
+import { useThemedStyles, type ThemedStylesProps } from '@/context/ThemeContext'
+import React from 'react'
 import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
   View,
-} from 'react-native';
+  ViewStyle
+} from 'react-native'
 
-interface IconButtonProps extends TouchableOpacityProps {
-  icon: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+export type IconButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'destructive'
+  | 'surface'
+
+export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+
+export interface IconButtonProps extends TouchableOpacityProps {
+  icon: React.ReactNode
+  variant?: IconButtonVariant
+  size?: IconButtonSize
 }
+
+const createStyles = ({ colors, borderRadius }: ThemedStylesProps) =>
+  StyleSheet.create({
+    button: {
+      alignItems: 'center',
+      justifyContent: 'center'
+    } as ViewStyle,
+
+    // Size variants
+    sizeExtraSmall: {
+      width: 24,
+      height: 24
+    } as ViewStyle,
+
+    sizeSmall: {
+      width: 32,
+      height: 32
+    } as ViewStyle,
+
+    sizeMedium: {
+      width: 40,
+      height: 40
+    } as ViewStyle,
+
+    sizeLarge: {
+      width: 48,
+      height: 48
+    } as ViewStyle,
+
+    sizeExtraLarge: {
+      width: 56,
+      height: 56
+    } as ViewStyle,
+
+    // Background variants
+    primaryButton: {
+      backgroundColor: colors.button.primaryBg
+    } as ViewStyle,
+
+    secondaryButton: {
+      backgroundColor: colors.button.secondaryBg,
+      borderWidth: 1,
+      borderColor: colors.button.secondaryBorder
+    } as ViewStyle,
+
+    outlineButton: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.border
+    } as ViewStyle,
+
+    ghostButton: {
+      backgroundColor: 'transparent'
+    } as ViewStyle,
+
+    destructiveButton: {
+      backgroundColor: colors.button.destructiveBg
+    } as ViewStyle,
+
+    surfaceButton: {
+      backgroundColor: colors.iconBackground.neutral
+    } as ViewStyle,
+
+    disabledButton: {
+      backgroundColor: colors.button.primaryBgDisabled,
+      borderColor: colors.button.primaryBgDisabled
+    } as ViewStyle,
+
+    iconContainer: {
+      alignItems: 'center',
+      justifyContent: 'center'
+    } as ViewStyle
+  })
 
 export default function IconButton({
   icon,
@@ -21,81 +105,100 @@ export default function IconButton({
   disabled,
   ...props
 }: IconButtonProps) {
-  const { colors, borderRadius } = useTheme();
+  const styles = useThemedStyles(createStyles)
+  const { colors } = useThemedStyles(({ colors }) => ({ colors }))
 
-  const getBackgroundColor = () => {
-    if (disabled) return colors.secondary;
+  const getSizeStyle = () => {
+    switch (size) {
+      case 'xs':
+        return styles.sizeExtraSmall
+      case 'sm':
+        return styles.sizeSmall
+      case 'lg':
+        return styles.sizeLarge
+      case 'xl':
+        return styles.sizeExtraLarge
+      default:
+        return styles.sizeMedium
+    }
+  }
+
+  const getVariantStyle = () => {
+    if (disabled) return styles.disabledButton
 
     switch (variant) {
       case 'primary':
-        return colors.primary;
+        return styles.primaryButton
       case 'secondary':
-        return colors.secondary;
+        return styles.secondaryButton
+      case 'outline':
+        return styles.outlineButton
       case 'ghost':
-        return 'transparent';
+        return styles.ghostButton
+      case 'destructive':
+        return styles.destructiveButton
+      case 'surface':
+        return styles.surfaceButton
       default:
-        return colors.primary;
+        return styles.primaryButton
     }
-  };
+  }
 
   const getIconColor = () => {
-    if (disabled) return colors.textSecondary;
+    if (disabled) return colors.button.primaryTextDisabled
 
     switch (variant) {
       case 'primary':
-        return '#FFFFFF';
+        return colors.button.primaryText
       case 'secondary':
+        return colors.button.secondaryText
+      case 'outline':
+        return colors.text
       case 'ghost':
-        return colors.text;
+        return colors.text
+      case 'destructive':
+        return colors.button.destructiveText
+      case 'surface':
+        return colors.text
       default:
-        return '#FFFFFF';
+        return colors.button.primaryText
     }
-  };
+  }
 
-  const getSizeStyles = () => {
+  const getIconSize = () => {
     switch (size) {
+      case 'xs':
+        return 12
       case 'sm':
-        return { width: 32, height: 32 };
+        return 16
       case 'lg':
-        return { width: 48, height: 48 };
+        return 24
+      case 'xl':
+        return 28
       default:
-        return { width: 40, height: 40 };
+        return 20
     }
-  };
+  }
 
-  const buttonStyles = [
-    styles.button,
-    {
-      backgroundColor: getBackgroundColor(),
-      borderRadius: borderRadius.md,
-      ...getSizeStyles(),
-    },
-    style,
-  ];
+  const buttonStyles = [styles.button, getSizeStyle(), getVariantStyle(), style]
 
-  // Clone the icon with the appropriate color
-  const iconWithColor = React.isValidElement(icon)
+  // Clone the icon with the appropriate color and size
+  const iconWithProps = React.isValidElement(icon)
     ? React.cloneElement(icon, {
         ...(icon.props || {}),
         color: getIconColor(),
-        size: size === 'sm' ? 16 : size === 'lg' ? 24 : 20,
+        size: getIconSize()
       } as any)
-    : icon;
+    : icon
 
   return (
-    <TouchableOpacity style={buttonStyles} disabled={disabled} {...props}>
-      <View style={styles.iconContainer}>{iconWithColor}</View>
+    <TouchableOpacity
+      style={buttonStyles}
+      disabled={disabled}
+      activeOpacity={disabled ? 1 : 0.8}
+      {...props}
+    >
+      <View style={styles.iconContainer}>{iconWithProps}</View>
     </TouchableOpacity>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,32 +1,41 @@
-import { useCategoryContext } from '@/context/CategoryContext';
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import AddCategoryButton from './AddCategoryButton';
-import CategoryCard from './CategoryCard';
+import { useCategoryContext } from '@/context/CategoryContext'
+import { useThemedStyles } from '@/context/ThemeContext'
+import React from 'react'
+import { ScrollView } from 'react-native'
+import AddCategoryButton from './AddCategoryButton'
+import CategoryCard from './CategoryCard'
 
 interface CategoryGridProps {
-  getIcon: (
-    categoryName: string,
-    type: 'expense' | 'income',
-  ) => React.ReactNode;
+  getIcon: (categoryName: string, type: 'expense' | 'income') => React.ReactNode
 }
 
 export default function CategoryGrid({ getIcon }: CategoryGridProps) {
   const {
     currentCategories,
     currentType,
-    isEditMode,
     activeTab,
     handleCategoryPress,
-    handleToggleEditMode,
-  } = useCategoryContext();
+    handleCategoryLongPress
+  } = useCategoryContext()
+
+  const styles = useThemedStyles(theme => ({
+    scrollView: {
+      flex: 1
+    },
+    gridContainer: {
+      padding: theme.spacing.md,
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: theme.spacing.sm * 1.5
+    }
+  }))
 
   return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.gridContainer}
     >
-      {currentCategories.map((category) => {
+      {currentCategories.map(category => {
         const amount =
           currentType === 'expense'
             ? 'spent' in category
@@ -34,7 +43,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
               : 0
             : 'earned' in category
               ? category.earned
-              : 0;
+              : 0
 
         return (
           <CategoryCard
@@ -45,29 +54,15 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
             icon={getIcon(category.name, currentType)}
             type={currentType}
             onPress={handleCategoryPress}
-            isEditMode={isEditMode}
+            onLongPress={handleCategoryLongPress}
           />
-        );
+        )
       })}
 
-      {!isEditMode && (
-        <AddCategoryButton
-          onPress={handleToggleEditMode}
-          label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
-        />
-      )}
+      <AddCategoryButton
+        onPress={() => {}} // TODO: Implement add category functionality
+        label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
+      />
     </ScrollView>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  gridContainer: {
-    padding: 16,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-});

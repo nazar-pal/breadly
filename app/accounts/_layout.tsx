@@ -1,8 +1,8 @@
-import { useTheme } from '@/context/ThemeContext';
-import { Stack } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext'
+import { Stack } from 'expo-router'
 
 export default function AccountsLayout() {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <Stack>
@@ -12,14 +12,15 @@ export default function AccountsLayout() {
           title: 'Account Details',
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface
           },
-          headerTintColor: colors.text,
+          headerTintColor: colors.primary,
           headerTitleStyle: {
             color: colors.text,
-          },
+            fontWeight: '600'
+          }
         }}
       />
     </Stack>
-  );
+  )
 }

@@ -1,55 +1,62 @@
-import { useTheme } from '@/context/ThemeContext';
-import { Tabs } from 'expo-router';
+import { useTheme } from '@/context/ThemeContext'
+import { Tabs } from 'expo-router'
 import {
   ChartBar as BarChart3,
   ChartLine as LineChart,
   List as ListIcon,
   CirclePlus as PlusCircle,
   Settings,
-  Wallet,
-} from 'lucide-react-native';
-import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  Wallet
+} from 'lucide-react-native'
+import { StyleSheet, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function TabBarIcon({
   Icon,
   focused,
   color,
+  focusBackgroundColor
 }: {
-  Icon: any;
-  focused: boolean;
-  color: string;
+  Icon: any
+  focused: boolean
+  color: string
+  focusBackgroundColor: string
 }) {
   return (
     <View
-      style={[styles.iconContainer, focused && styles.iconContainerFocused]}
+      style={[
+        styles.iconContainer,
+        focused && {
+          backgroundColor: focusBackgroundColor
+        }
+      ]}
     >
       <Icon size={24} color={color} strokeWidth={2} />
     </View>
-  );
+  )
 }
 
 export default function TabLayout() {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
+          backgroundColor: colors.tabBar.background,
+          borderTopColor: colors.tabBar.border,
           height: 56 + insets.bottom,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom
         },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarActiveTintColor: colors.tabBar.activeLabel,
+        tabBarInactiveTintColor: colors.tabBar.inactiveLabel,
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '500',
-        },
+          fontWeight: '500'
+        }
       }}
     >
       <Tabs.Screen
@@ -57,8 +64,15 @@ export default function TabLayout() {
         options={{
           title: 'Operations',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={ListIcon} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={ListIcon}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
       <Tabs.Screen
@@ -66,8 +80,15 @@ export default function TabLayout() {
         options={{
           title: 'Categories',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={BarChart3} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={BarChart3}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
       <Tabs.Screen
@@ -75,8 +96,15 @@ export default function TabLayout() {
         options={{
           title: 'Statistics',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={LineChart} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={LineChart}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
       <Tabs.Screen
@@ -84,8 +112,15 @@ export default function TabLayout() {
         options={{
           title: 'Accounts',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={Wallet} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={Wallet}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
       <Tabs.Screen
@@ -93,8 +128,15 @@ export default function TabLayout() {
         options={{
           title: 'Add',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={PlusCircle} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={PlusCircle}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
       <Tabs.Screen
@@ -102,12 +144,19 @@ export default function TabLayout() {
         options={{
           title: 'Settings',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={Settings} focused={focused} color={color} />
-          ),
+            <TabBarIcon
+              Icon={Settings}
+              focused={focused}
+              color={
+                focused ? colors.tabBar.activeIcon : colors.tabBar.inactiveIcon
+              }
+              focusBackgroundColor={colors.tabBar.focusBackground}
+            />
+          )
         }}
       />
     </Tabs>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -116,9 +165,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 40,
     height: 40,
-    borderRadius: 20,
-  },
-  iconContainerFocused: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-  },
-});
+    borderRadius: 20
+  }
+})

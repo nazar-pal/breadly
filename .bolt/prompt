@@ -1,0 +1,132 @@
+Breadly Knowledge Project Prompt (MVP Essentials)
+=================================================
+
+This document defines the canonical code style, architecture, technology, and workflow conventions for the Breadly MVP. All contributors and AI assistants must follow these rules for all code, structure, and documentation.
+
+---
+
+1. TypeScript & Code Style
+--------------------------
+- Prefer `type` aliases over `interface` (except for extending external types).
+- Replace `enum` with `as const` objects or string/number literal union types.
+- Enable `strict: true` & `noUncheckedIndexedAccess: true` in `tsconfig.json`. Avoid `any`.
+- File & directory names: kebab-case (e.g., `expense-card.tsx`).
+- Component names: PascalCase (e.g., `CardExpenseSummary`).
+- Variables & functions: camelCase.
+- Use pure functions and React Hooks; avoid ES6 classes for components/logic.
+- Use template literals for string conversion: `` `Hello ${name}` ``.
+
+2. Folder & File Structure
+--------------------------
+- Shared utilities: `utils/`
+- Global hooks: `hooks/`
+- UI kit: `components/ui/`
+- Feature-specific code: co-locate; use a folder for 3+ related files; re-export via `index.ts`.
+
+3. Technology Stack (MVP)
+-------------------------
+- Mobile: Expo SDK (latest stable), React Native (aligned with Expo)
+- Language: TypeScript
+- API: tRPC
+- State/Queries: TanStack Query v5
+- Validation: Zod
+- Database: PostgreSQL (Neon) via Drizzle ORM
+- Forms: React Hook Form + Zod resolver
+- Auth: Clerk
+- Files: UploadThing
+- Dates: date-fns
+- AI: Vercel AI SDK; model IDs via env vars
+- Styling: Custom theme system (see Styling section)
+- Navigation: React Navigation
+- Images: expo-image
+- Lists: @shopify/flash-list
+- Animations: react-native-reanimated
+- Local Storage: @react-native-async-storage/async-storage
+- Avoid: React Server Components, Server Actions, and `React.Suspense` for data fetching in this MVP
+
+4. Development Workflow
+-----------------------
+- Package manager: pnpm (commit `pnpm-lock.yaml`)
+- Node: Version in `.nvmrc` (≥20). Use `nvm use`.
+- Expo: Start with `pnpm start`
+- Environment variables:
+    - Use `.env` files (ensure `.env` is in `.gitignore`) for local development.
+    - Define a Zod schema (e.g., in `env.ts`) for validation (T3.env style).
+    - Access validated and type-safe variables via an import (e.g., `import { env } from '@/env';`).
+    - For EAS Build, secrets are automatically exposed as environment variables and will be validated by this schema.
+- Git: Conventional Commits; squash-merge PRs.
+- Language: English in code, comments, commits.
+- Scripts:
+    - `pnpm lint` → ESLint + Prettier check.
+    - `pnpm typecheck` → `tsc --noEmit`.
+- Builds/Updates: Use EAS Build, EAS Submit, EAS Update.
+
+5. Styling & Theme System
+-------------------------
+- Always use theme tokens. Avoid hard-coding colors, spacing, border-radius, font sizes.
+- Theme context: `context/ThemeContext.tsx`, tokens in `theme/`
+- Use `useTheme` and `useThemedStyles` for all styles.
+- Key tokens:
+    - Spacing: `theme.spacing.xs` (4px), `.sm` (8px), `.md` (16px), `.lg` (24px), `.xl` (32px)
+    - Colors: `colors.background`, `colors.surface`, `colors.text`, `colors.textSecondary`, `colors.primary`, `colors.secondary`, `colors.success`, `colors.error`
+    - Border radius: `theme.borderRadius.sm` (4px), `.md` (8px), `.lg` (16px)
+    - Typography: `theme.fontSizes.body`, `theme.fontWeights.normal`
+- Use `as const` for string literals in styles.
+- Use `Platform.select({...})` for minor OS-specific styles.
+- Use `StyleSheet.hairlineWidth` for thin borders.
+- Avoid hard-coded values and static `StyleSheet.create()` for themed styles.
+- Ensure text has good contrast with its background via theme colors.
+
+6. React Patterns (React 19+)
+-----------------------------
+- Avoid `useMemo`, `useCallback`, and `React.memo` by default. Trust the React Compiler. Use only if profiling shows a clear, solvable bottleneck.
+- Component definition: `export function MyComponent(props: MyProps) { ... }`
+- Co-locate themed styles via `useThemedStyles`.
+- Use `StyleSheet.create` only for truly static, non-themed styles outside components.
+- Do not use `React.Suspense` for data fetching, `use` hook for promises/context, React Server Components, or Server Actions in this MVP.
+
+7. Accessibility (a11y)
+-----------------------
+- Interactive elements: Ensure `TouchableOpacity`, `Button`, etc., are clearly identifiable.
+- Use `accessibilityLabel` for icon-only buttons or when text is unclear.
+- Text should have sufficient contrast with its background (aim for WCAG AA). Manage this via `theme/colors.ts`.
+- Ensure touch targets are adequately sized (e.g., ~44x44dp).
+
+8. Performance Essentials
+-------------------------
+- Use `@shopify/flash-list` for all virtualized lists. Provide `estimatedItemSize` and a stable `keyExtractor`. Keep `renderItem` light.
+- Use `expo-image` for images. Use placeholders (e.g., blurhash). Optimize image sizes before uploading/serving if possible.
+- Use `react-native-reanimated` for smooth UI thread animations.
+- Defer heavy computations with `InteractionManager.runAfterInteractions`.
+- Use React DevTools Profiler to identify rendering bottlenecks if UI feels slow.
+
+9. Error Handling & Logging
+---------------------------
+- Wrap major UI sections (e.g., screens) in a simple `ErrorBoundary` component to catch JS errors and display a fallback UI.
+- Use `try...catch` for `await` calls and promise chains.
+- Handle errors from TanStack Query/tRPC mutations/queries (`isError`, `error` fields, `onError` callbacks). Show user-friendly messages.
+- Use `console.error` for critical errors during development.
+- Integrate a remote logging service (e.g., Sentry, Bugsnag) for production builds.
+- Do NOT log PII or sensitive data.
+
+10. State Management
+--------------------
+- Server state: TanStack Query v5 for all data fetching, caching, and server state synchronization.
+- Global UI state: React Context API for simple, low-frequency global state (e.g., theme). If Context becomes complex, consider Zustand (but start with Context).
+- Local component state: `useState` and `useReducer` (for more complex logic). Keep state as local as possible.
+- Form state: React Hook Form + `@hookform/resolvers/zod`.
+- Principles: Single source of truth. Immutability: create new state objects/arrays on updates.
+
+11. AI-Generated Change Verification
+------------------------------------
+After AI edits:
+- Run `pnpm lint`. Fix errors.
+- Run `pnpm typecheck`. Fix errors.
+- Review logic:
+    - Does it meet the prompt's requirements?
+    - Does it follow project rules (theme, naming, etc.)?
+    - Any obvious anti-patterns?
+
+---
+
+All code, documentation, and project structure must follow these rules. If in doubt, prefer clarity, consistency, and maintainability.

@@ -1,31 +1,31 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import { Camera, Upload } from 'lucide-react-native';
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { Camera, Upload } from 'lucide-react-native'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 export default function PhotoScreen() {
-  const { colors } = useTheme();
+  const { colors } = useTheme()
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <Card style={styles.cameraPlaceholder}>
           <View
-            style={[styles.cameraIcon, { backgroundColor: colors.secondary }]}
+            style={[
+              styles.cameraIcon,
+              { backgroundColor: colors.iconBackground.info }
+            ]}
           >
-            <Camera size={48} color={colors.text} />
+            <Camera size={48} color={colors.info} />
           </View>
           <Text
             style={[
               styles.placeholderText,
               {
-                color: colors.textSecondary,
-                textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 2,
-              },
+                color: colors.textSecondary
+              }
             ]}
           >
             Take a photo of your receipt for automatic expense entry
@@ -35,7 +35,7 @@ export default function PhotoScreen() {
         <View style={styles.actionButtons}>
           <Button
             variant="primary"
-            leftIcon={<Camera size={20} color="#fff" />}
+            leftIcon={<Camera size={20} color={colors.textInverse} />}
             style={{ flex: 1, marginRight: 8 }}
           >
             Take Photo
@@ -50,21 +50,21 @@ export default function PhotoScreen() {
         </View>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 16
   },
   cameraPlaceholder: {
     height: 400,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   cameraIcon: {
     width: 80,
@@ -72,16 +72,16 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 16
   },
   placeholderText: {
     textAlign: 'center',
     marginHorizontal: 24,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   actionButtons: {
     flexDirection: 'row',
-    marginTop: 16,
-  },
-});
+    marginTop: 16
+  }
+})

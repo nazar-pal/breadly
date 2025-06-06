@@ -1,106 +1,270 @@
-import React, { createContext, useContext } from 'react';
-
-// Define color palette
-const lightColors = {
-  background: '#F5F5F5',
-  card: '#FFFFFF',
-  text: '#3B3B3B',
-  textSecondary: '#6B6B6B',
-  primary: '#6366F1',
-  secondary: '#E0DFD7',
-  accent: '#F59E0B',
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  border: 'rgba(0, 0, 0, 0.1)',
-};
-
-const darkColors = {
-  background: '#1F1F1F',
-  card: '#2A2A2A',
-  text: '#F5F5F5',
-  textSecondary: '#AAAAAA',
-  primary: '#818CF8',
-  secondary: '#3B3B3B',
-  accent: '#FBBF24',
-  success: '#34D399',
-  warning: '#FBBF24',
-  error: '#F87171',
-  border: 'rgba(255, 255, 255, 0.1)',
-};
-
-// Define spacing based on 8pt grid
-const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 40,
-};
-
-// Define border radius
-const borderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 16,
-  xl: 24,
-  round: 9999,
-};
-
-// Define types
-type ThemeContextType = {
-  isDark: boolean;
-  colors: typeof lightColors;
-  spacing: typeof spacing;
-  borderRadius: typeof borderRadius;
-  themePreference: 'light' | 'dark' | 'system';
-  updateTheme: (theme: 'light' | 'dark' | 'system') => void;
-};
-
-// Create the context
-const ThemeContext = createContext<ThemeContextType>({
-  isDark: false,
-  colors: lightColors,
-  spacing,
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
+import { useColorScheme } from 'react-native'
+import {
   borderRadius,
-  themePreference: 'system',
-  updateTheme: () => {},
-});
+  Colors,
+  createNavigationTheme,
+  darkColors,
+  lightColors,
+  spacing,
+  ThemedStylesProps,
+  ThemeMode,
+  ThemePreference
+} from '../theme'
 
-// Define props type for the provider
+// AsyncStorage key for theme persistence
+const THEME_STORAGE_KEY = '@breadly_theme_preference'
+
+// Define context type
+type ThemeContextType = {
+  // Current theme mode (resolved from preference + system)
+  mode: ThemeMode
+  // User's theme preference
+  preference: ThemePreference
+  // Whether we're currently using dark mode
+  isDark: boolean
+  // Color palette for current theme
+  colors: Colors
+  // Design tokens
+  spacing: typeof spacing
+  borderRadius: typeof borderRadius
+  // Navigation theme for React Navigation (memoized)
+  navigationTheme: ReturnType<typeof createNavigationTheme>
+  // Whether theme is still loading from storage
+  isLoading: boolean
+  // Whether theme system is ready (no flashing)
+  isReady: boolean
+  // Function to update theme preference
+  setThemePreference: (preference: ThemePreference) => Promise<void>
+}
+
+// Create the context with default values
+const ThemeContext = createContext<ThemeContextType | null>(null)
+
+// Provider props
 type ThemeProviderProps = {
-  children: React.ReactNode;
-  theme: 'light' | 'dark';
-  themePreference: 'light' | 'dark' | 'system';
-  updateTheme: (theme: 'light' | 'dark' | 'system') => void;
-};
+  children: React.ReactNode
+  // Optional fallback theme to use during loading
+  fallbackTheme?: ThemeMode
+}
+
+// Helper function to resolve theme mode from preference and system
+const resolveThemeMode = (
+  preference: ThemePreference,
+  systemTheme: 'light' | 'dark' | null | undefined
+): ThemeMode => {
+  if (preference === 'system') {
+    return systemTheme === 'dark' ? 'dark' : 'light'
+  }
+  return preference
+}
 
 // Create the provider component
 export const ThemeProvider = ({
   children,
-  theme,
-  updateTheme,
-  themePreference,
+  fallbackTheme = 'light'
 }: ThemeProviderProps) => {
-  const isDark = theme === 'dark';
-  const colors = isDark ? darkColors : lightColors;
+  const systemColorScheme = useColorScheme()
+
+  // State for theme preference (what user selected)
+  const [preference, setPreference] = useState<ThemePreference>('system')
+
+  // State for loading and ready status
+  const [isLoading, setIsLoading] = useState(true)
+  const [isReady, setIsReady] = useState(false)
+
+  // Resolved theme mode (actual theme to use)
+  const mode = useMemo(
+    () => resolveThemeMode(preference, systemColorScheme),
+    [preference, systemColorScheme]
+  )
+
+  // Computed values (memoized for performance)
+  const isDark = mode === 'dark'
+
+  // Memoize colors to prevent unnecessary re-renders
+  const colors = useMemo(() => (isDark ? darkColors : lightColors), [isDark])
+
+  // Memoize navigation theme to prevent recreation on every render
+  const navigationTheme = useMemo(
+    () => createNavigationTheme(colors, isDark),
+    [colors, isDark]
+  )
+
+  // Load theme preference from storage on mount using useLayoutEffect to prevent flashing
+  useLayoutEffect(() => {
+    let isMounted = true
+
+    const loadThemePreference = async () => {
+      try {
+        const savedPreference = await AsyncStorage.getItem(THEME_STORAGE_KEY)
+
+        // Only update state if component is still mounted
+        if (!isMounted) return
+
+        if (
+          savedPreference &&
+          ['light', 'dark', 'system'].includes(savedPreference)
+        ) {
+          setPreference(savedPreference as ThemePreference)
+        }
+      } catch (error) {
+        console.warn('Failed to load theme preference:', error)
+        // Keep default 'system' preference on error
+        // Optionally report to error tracking service
+        if (__DEV__) {
+          console.error('Theme loading error details:', error)
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+          // Add a small delay to ensure smooth transition
+          setTimeout(() => {
+            if (isMounted) {
+              setIsReady(true)
+            }
+          }, 16) // One frame delay
+        }
+      }
+    }
+
+    loadThemePreference()
+
+    // Cleanup function
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  // Function to update theme preference (memoized to prevent unnecessary re-renders)
+  const setThemePreference = useCallback(
+    async (newPreference: ThemePreference) => {
+      const previousPreference = preference
+
+      try {
+        // Update state first for immediate UI feedback
+        setPreference(newPreference)
+
+        // Persist to storage
+        await AsyncStorage.setItem(THEME_STORAGE_KEY, newPreference)
+      } catch (error) {
+        console.warn('Failed to save theme preference:', error)
+        // Revert state on error
+        setPreference(previousPreference)
+
+        // Optionally show user-friendly error message
+        if (__DEV__) {
+          console.error('Theme saving error details:', error)
+        }
+
+        throw error
+      }
+    },
+    [preference]
+  )
+
+  // Context value (memoized to prevent unnecessary re-renders)
+  const contextValue = useMemo<ThemeContextType>(
+    () => ({
+      mode,
+      preference,
+      isDark,
+      colors,
+      spacing,
+      borderRadius,
+      navigationTheme,
+      isLoading,
+      isReady,
+      setThemePreference
+    }),
+    [
+      mode,
+      preference,
+      isDark,
+      colors,
+      navigationTheme,
+      isLoading,
+      isReady,
+      setThemePreference
+    ]
+  )
+
+  // Use fallback theme during loading to prevent flashing
+  const loadingContextValue = useMemo<ThemeContextType>(() => {
+    const fallbackIsDark = fallbackTheme === 'dark'
+    const fallbackColors = fallbackIsDark ? darkColors : lightColors
+
+    return {
+      mode: fallbackTheme,
+      preference: 'system',
+      isDark: fallbackIsDark,
+      colors: fallbackColors,
+      spacing,
+      borderRadius,
+      navigationTheme: createNavigationTheme(fallbackColors, fallbackIsDark),
+      isLoading: true,
+      isReady: false,
+      setThemePreference: async () => {}
+    }
+  }, [fallbackTheme])
 
   return (
-    <ThemeContext.Provider
-      value={{
-        isDark,
-        colors,
-        spacing,
-        borderRadius,
-        themePreference,
-        updateTheme,
-      }}
-    >
+    <ThemeContext.Provider value={isReady ? contextValue : loadingContextValue}>
       {children}
     </ThemeContext.Provider>
-  );
-};
+  )
+}
 
-// Create a custom hook to use the context
-export const useTheme = () => useContext(ThemeContext);
+// Custom hook to use the theme context
+export const useTheme = () => {
+  const context = useContext(ThemeContext)
+
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider')
+  }
+
+  return context
+}
+
+// Export theme constants for direct access when needed
+export const THEME_CONSTANTS = {
+  STORAGE_KEY: THEME_STORAGE_KEY,
+  SPACING: spacing,
+  BORDER_RADIUS: borderRadius,
+  LIGHT_COLORS: lightColors,
+  DARK_COLORS: darkColors
+} as const
+
+// Utility function to get colors for a specific theme mode
+export const getThemeColors = (mode: ThemeMode) => {
+  return mode === 'dark' ? darkColors : lightColors
+}
+
+// Utility function to create a navigation theme
+export const createCustomNavigationTheme = (mode: ThemeMode) => {
+  const colors = getThemeColors(mode)
+  return createNavigationTheme(colors, mode === 'dark')
+}
+
+// Hook for accessing theme-aware styles
+export const useThemedStyles = <T,>(
+  styleFactory: (theme: ThemedStylesProps) => T
+) => {
+  const { colors, spacing, borderRadius, isDark } = useTheme()
+
+  return useMemo(
+    () => styleFactory({ colors, spacing, borderRadius, isDark }),
+    [colors, spacing, borderRadius, isDark, styleFactory]
+  )
+}
+
+// Re-export types for convenience
+export type { Colors, ThemedStylesProps, ThemeMode, ThemePreference }

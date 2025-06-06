@@ -1,78 +1,78 @@
-import Card from '@/components/ui/Card';
-import OperationCard, { Operation } from '@/components/ui/OperationCard';
-import { useTheme } from '@/context/ThemeContext';
+import Card from '@/components/ui/Card'
+import OperationCard, { Operation } from '@/components/ui/OperationCard'
+import { useTheme } from '@/context/ThemeContext'
 import {
   mockDebtOperations,
   mockExpenses,
   mockIncomes,
-  mockOtherTransactions,
-} from '@/data/mockData';
-import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  mockOtherTransactions
+} from '@/data/mockData'
+import React, { useMemo, useState } from 'react'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other';
+type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
 
 export default function OperationsScreen() {
-  const { colors, spacing } = useTheme();
-  const insets = useSafeAreaInsets();
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const { colors, spacing } = useTheme()
+  const insets = useSafeAreaInsets()
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
   // Combine all operations with type information
   const allOperations: Operation[] = useMemo(() => {
-    const expenses = mockExpenses.map((expense) => ({
+    const expenses = mockExpenses.map(expense => ({
       ...expense,
-      type: 'expense' as const,
-    }));
+      type: 'expense' as const
+    }))
 
-    const incomes = mockIncomes.map((income) => ({
+    const incomes = mockIncomes.map(income => ({
       ...income,
-      type: 'income' as const,
-    }));
+      type: 'income' as const
+    }))
 
-    const debts = mockDebtOperations.map((debt) => ({
+    const debts = mockDebtOperations.map(debt => ({
       ...debt,
-      type: 'debt' as const,
-    }));
+      type: 'debt' as const
+    }))
 
-    const others = mockOtherTransactions.map((transaction) => ({
+    const others = mockOtherTransactions.map(transaction => ({
       ...transaction,
-      type: 'other' as const,
-    }));
+      type: 'other' as const
+    }))
 
     // Combine and sort by date (newest first)
     return [...expenses, ...incomes, ...debts, ...others].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-  }, []);
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  }, [])
 
   // Filter operations based on active filter
   const filteredOperations = useMemo(() => {
     if (activeFilter === 'all') {
-      return allOperations;
+      return allOperations
     }
-    return allOperations.filter((operation) => operation.type === activeFilter);
-  }, [allOperations, activeFilter]);
+    return allOperations.filter(operation => operation.type === activeFilter)
+  }, [allOperations, activeFilter])
 
   // Get today's operations
   const todaysOperations = useMemo(() => {
-    const today = '2025-03-01'; // Current mock date
-    return filteredOperations.filter((operation) => operation.date === today);
-  }, [filteredOperations]);
+    const today = '2025-03-01' // Current mock date
+    return filteredOperations.filter(operation => operation.date === today)
+  }, [filteredOperations])
 
   const filterButtons = [
     { key: 'all', label: 'All', count: allOperations.length },
     { key: 'expense', label: 'Expenses', count: mockExpenses.length },
     { key: 'income', label: 'Income', count: mockIncomes.length },
     { key: 'debt', label: 'Debts', count: mockDebtOperations.length },
-    { key: 'other', label: 'Other', count: mockOtherTransactions.length },
-  ];
+    { key: 'other', label: 'Other', count: mockOtherTransactions.length }
+  ]
 
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top },
+        { backgroundColor: colors.background, paddingTop: insets.top }
       ]}
     >
       <View style={styles.header}>
@@ -88,7 +88,7 @@ export default function OperationsScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersContent}
         >
-          {filterButtons.map((filter) => (
+          {filterButtons.map(filter => (
             <Pressable
               key={filter.key}
               style={[
@@ -97,8 +97,8 @@ export default function OperationsScreen() {
                   backgroundColor:
                     activeFilter === filter.key
                       ? colors.primary
-                      : colors.secondary,
-                },
+                      : colors.surfaceSecondary
+                }
               ]}
               onPress={() => setActiveFilter(filter.key as FilterType)}
             >
@@ -107,8 +107,10 @@ export default function OperationsScreen() {
                   styles.filterButtonText,
                   {
                     color:
-                      activeFilter === filter.key ? '#FFFFFF' : colors.text,
-                  },
+                      activeFilter === filter.key
+                        ? colors.textInverse
+                        : colors.text
+                  }
                 ]}
               >
                 {filter.label} ({filter.count})
@@ -122,7 +124,7 @@ export default function OperationsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl },
+          { paddingBottom: insets.bottom + spacing.xl }
         ]}
       >
         {/* Today's Operations */}
@@ -131,7 +133,7 @@ export default function OperationsScreen() {
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Today&apos;s Operations
             </Text>
-            {todaysOperations.map((operation) => (
+            {todaysOperations.map(operation => (
               <OperationCard
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
@@ -145,10 +147,10 @@ export default function OperationsScreen() {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             {activeFilter === 'all'
               ? 'All Operations'
-              : `${filterButtons.find((f) => f.key === activeFilter)?.label} Operations`}
+              : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
           </Text>
           {filteredOperations.length > 0 ? (
-            filteredOperations.map((operation) => (
+            filteredOperations.map(operation => (
               <OperationCard
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
@@ -166,27 +168,27 @@ export default function OperationsScreen() {
         </View>
       </ScrollView>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 16
   },
   screenTitle: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   filtersContainer: {
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 16
   },
   filtersContent: {
-    paddingVertical: 8,
+    paddingVertical: 8
   },
   filterButton: {
     paddingHorizontal: 16,
@@ -194,21 +196,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 8,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   filterButtonText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 24
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 12,
-  },
-});
+    marginBottom: 12
+  }
+})

@@ -1,25 +1,25 @@
-import type { Account } from '@/hooks/useAccountManagement';
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AccountSection from './AccountSection';
+import type { Account } from '@/hooks/useAccountManagement'
+import React from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import AccountSection from './AccountSection'
 
 interface AccountsListProps {
   accounts: {
-    payment: Account[];
-    savings: Account[];
-    debt: Account[];
-  };
-  onEditAccount: (account: Account) => void;
-  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void;
+    payment: Account[]
+    savings: Account[]
+    debt: Account[]
+  }
+  onEditAccount: (account: Account) => void
+  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
 }
 
 export default function AccountsList({
   accounts,
   onEditAccount,
-  onAddAccount,
+  onAddAccount
 }: AccountsListProps) {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets()
 
   return (
     <ScrollView
@@ -27,7 +27,7 @@ export default function AccountsList({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[
         styles.scrollContent,
-        { paddingBottom: insets.bottom + 20 },
+        { paddingBottom: insets.bottom + 20 }
       ]}
     >
       <AccountSection
@@ -54,15 +54,15 @@ export default function AccountsList({
         onAddAccount={onAddAccount}
       />
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   content: {
-    flex: 1,
+    flex: 1
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-});
+    paddingTop: 8
+  }
+})

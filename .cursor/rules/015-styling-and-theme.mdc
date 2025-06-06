@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: "Guidelines for using the project's theme system and styling conventions (MVP Essentials)."
+globs: ["**/*.tsx", "**/*.ts"]
+alwaysApply: true
+version: 1.0.0
+---
+
+# 015: Styling and Theme Usage (MVP Essentials)
+
+## 1. Core Principle: Theme System First
+Always use theme tokens. Avoid hard-coding colors, spacing, border-radius, font sizes.
+**Context**: `context/ThemeContext.tsx`, **Files**: `theme/` (colors, tokens, etc.)
+
+## 2. Import & Usage
+```typescript
+import { useTheme, useThemedStyles } from '@/context/ThemeContext';
+
+// Recommended:
+const styles = useThemedStyles(theme => ({
+  container: { padding: theme.spacing.md, backgroundColor: theme.colors.background },
+  text: { fontSize: theme.fontSizes.body, color: theme.colors.text },
+}));
+
+// Direct access (less common for style blocks):
+// const { colors } = useTheme();
+```
+
+## 3. Key Tokens (Examples)
+-   **Spacing**: `theme.spacing.xs` (4px), `.sm` (8px), `.md` (16px), `.lg` (24px), `.xl` (32px).
+-   **Colors**:
+    -   Backgrounds: `colors.background`, `colors.surface`
+    -   Text: `colors.text`, `colors.textSecondary`
+    -   Brand: `colors.primary`, `colors.secondary`
+    -   Semantic: `colors.success`, `colors.error`
+-   **Border Radius**: `theme.borderRadius.sm` (4px), `.md` (8px), `.lg` (16px).
+-   **Typography**: `theme.fontSizes.body`, `theme.fontWeights.normal` (Define in `theme/tokens.ts`).
+
+## 4. TypeScript: `as const`
+For string literals in styles: `flexDirection: 'row' as const`.
+
+## 5. Platform Styles & Hairline
+-   `Platform.select({...})` for minor OS-specific styles.
+-   `borderBottomWidth: StyleSheet.hairlineWidth` for thin borders.
+
+## 6. Anti-Patterns (Avoid)
+❌ Hard-coded values: `backgroundColor: '#FFF'`, `padding: 16`.
+❌ Static `StyleSheet.create()` for themed styles.
+
+## 7. Modern Approach (Follow)
+✅ Use semantic color/spacing tokens: `colors.surface`, `theme.spacing.md`.
+✅ Use `useThemedStyles`.
+✅ Type-safe with `as const`.
+✅ Basic Accessibility: Ensure text has good contrast with its background via theme colors.

@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: "React 19 compiler-aware patterns."
+globs: ["src/**/*.tsx", "**/*.tsx"] # Adjusted glob to include root .tsx
+alwaysApply: true
+version: 1.0.0
+---
+
+# React Patterns
+
+-   **Memoization (`useMemo`, `useCallback`, `React.memo`)**:
+    -   Avoid by default. Trust the React Compiler.
+    -   Use only if profiling shows a clear, solvable bottleneck.
+-   **Component Definition**: `export function MyComponent(props: MyProps) { ... }`.
+-   **Styling**:
+    -   Co-locate themed styles via `useThemedStyles`.
+    -   `StyleSheet.create` for *truly static, non-themed* styles *outside* components.
+-   **Avoid**: Do not use `React.Suspense` for data fetching, `use` hook for promises/context, React Server Components, or Server Actions in this MVP.

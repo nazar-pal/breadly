@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: "Essential error handling and logging for MVP."
+globs: ["**/*.{ts,tsx}", "**/*.ts"]
+alwaysApply: true
+version: 1.0.0
+---
+
+# Error Handling & Logging (MVP Essentials)
+
+1.  **Error Boundaries**: Wrap major UI sections (e.g., screens) in a simple `ErrorBoundary` component to catch JS errors and display a fallback UI.
+    ```typescript
+    // class ErrorBoundary extends React.Component { /* basic componentDidCatch, render fallback */ }
+    ```
+2.  **Async/Promises**: Use `try...catch` for `await` calls and promise chains.
+    ```typescript
+    try { await someAsyncFunc(); } catch (error) { console.error(error); /* show user message */ }
+    ```
+3.  **API Errors (tRPC)**: Handle errors from TanStack Query/tRPC mutations/queries (`isError`, `error` fields, `onError` callbacks). Show user-friendly messages.
+4.  **Logging**:
+    -   Use `console.error` for critical errors during development.
+    -   **Integrate a remote logging service (e.g., Sentry, Bugsnag) for production builds.** This is crucial for MVP stability.
+    -   **Do NOT log PII** or sensitive data.

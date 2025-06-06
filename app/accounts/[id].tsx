@@ -1,12 +1,12 @@
-import AccountOperationCard from '@/components/accounts/AccountOperationCard';
-import EditAccountModal from '@/components/accounts/EditAccountModal';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { useTheme } from '@/context/ThemeContext';
-import { mockAccounts } from '@/data/mockAccounts';
-import { mockAccountOperations } from '@/data/mockData';
-import { useAccountManagement } from '@/hooks/useAccountManagement';
-import { useLocalSearchParams } from 'expo-router';
+import AccountOperationCard from '@/components/accounts/AccountOperationCard'
+import EditAccountModal from '@/components/accounts/EditAccountModal'
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import { useTheme } from '@/context/ThemeContext'
+import { mockAccounts } from '@/data/mockAccounts'
+import { mockAccountOperations } from '@/data/mockData'
+import { useAccountManagement } from '@/hooks/useAccountManagement'
+import { useLocalSearchParams } from 'expo-router'
 import {
   Calendar,
   CreditCard,
@@ -16,37 +16,37 @@ import {
   Target,
   TrendingDown,
   TrendingUp,
-  Wallet,
-} from 'lucide-react-native';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  Wallet
+} from 'lucide-react-native'
+import React from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountDetailsScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
   const {
     editModalVisible,
     selectedAccount,
     handleEditAccount,
     handleSaveAccount,
-    handleCloseModal,
-  } = useAccountManagement();
+    handleCloseModal
+  } = useAccountManagement()
 
   // Find the account
   const allAccounts = [
     ...mockAccounts.payment,
     ...mockAccounts.savings,
-    ...mockAccounts.debt,
-  ];
-  const account = allAccounts.find((acc) => acc.id === id);
+    ...mockAccounts.debt
+  ]
+  const account = allAccounts.find(acc => acc.id === id)
 
   // Get account operations
   const accountOperations = mockAccountOperations
-    .filter((op) => op.accountId === id)
+    .filter(op => op.accountId === id)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 10); // Show last 10 operations
+    .slice(0, 10) // Show last 10 operations
 
   if (!account) {
     return (
@@ -55,7 +55,7 @@ export default function AccountDetailsScreen() {
           Account not found
         </Text>
       </View>
-    );
+    )
   }
 
   const getAccountIcon = () => {
@@ -63,61 +63,61 @@ export default function AccountDetailsScreen() {
       case 'payment':
         return account.name.toLowerCase().includes('credit')
           ? CreditCard
-          : Wallet;
+          : Wallet
       case 'savings':
-        return PiggyBank;
+        return PiggyBank
       case 'debt':
-        return DollarSign;
+        return DollarSign
       default:
-        return Wallet;
+        return Wallet
     }
-  };
+  }
 
   const getTypeColor = () => {
     switch (account.type) {
       case 'payment':
-        return colors.primary;
+        return colors.primary
       case 'savings':
-        return colors.success;
+        return colors.success
       case 'debt':
-        return colors.error;
+        return colors.error
       default:
-        return colors.primary;
+        return colors.primary
     }
-  };
+  }
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: account.currency,
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(Math.abs(amount));
-  };
+      maximumFractionDigits: 2
+    }).format(Math.abs(amount))
+  }
 
   const getProgressPercentage = () => {
     if (account.type === 'savings' && account.targetAmount) {
-      return (account.balance / account.targetAmount) * 100;
+      return (account.balance / account.targetAmount) * 100
     }
     if (account.type === 'debt' && account.initialAmount) {
       return (
         ((account.initialAmount - account.balance) / account.initialAmount) *
         100
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
-  const Icon = getAccountIcon();
-  const typeColor = getTypeColor();
-  const progress = getProgressPercentage();
+  const Icon = getAccountIcon()
+  const typeColor = getTypeColor()
+  const progress = getProgressPercentage()
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 },
+          { paddingBottom: insets.bottom + 20 }
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -127,7 +127,14 @@ export default function AccountDetailsScreen() {
             <View
               style={[
                 styles.iconContainer,
-                { backgroundColor: typeColor + '20' },
+                {
+                  backgroundColor:
+                    account.type === 'savings'
+                      ? colors.iconBackground.success
+                      : account.type === 'debt'
+                        ? colors.iconBackground.error
+                        : colors.iconBackground.primary
+                }
               ]}
             >
               <Icon size={24} color={typeColor} />
@@ -185,7 +192,7 @@ export default function AccountDetailsScreen() {
                 <Text
                   style={[
                     styles.progressLabel,
-                    { color: colors.textSecondary },
+                    { color: colors.textSecondary }
                   ]}
                 >
                   {account.type === 'savings'
@@ -199,7 +206,7 @@ export default function AccountDetailsScreen() {
               <View
                 style={[
                   styles.progressBar,
-                  { backgroundColor: colors.secondary },
+                  { backgroundColor: colors.borderLight }
                 ]}
               >
                 <View
@@ -207,8 +214,8 @@ export default function AccountDetailsScreen() {
                     styles.progressFill,
                     {
                       width: `${Math.min(progress, 100)}%`,
-                      backgroundColor: typeColor,
-                    },
+                      backgroundColor: typeColor
+                    }
                   ]}
                 />
               </View>
@@ -265,7 +272,7 @@ export default function AccountDetailsScreen() {
             Recent Activity
           </Text>
           {accountOperations.length > 0 ? (
-            accountOperations.map((operation) => (
+            accountOperations.map(operation => (
               <AccountOperationCard key={operation.id} operation={operation} />
             ))
           ) : (
@@ -273,7 +280,7 @@ export default function AccountDetailsScreen() {
               <Text
                 style={[
                   styles.noOperationsText,
-                  { color: colors.textSecondary },
+                  { color: colors.textSecondary }
                 ]}
               >
                 No recent activity for this account
@@ -290,29 +297,29 @@ export default function AccountDetailsScreen() {
         onClose={handleCloseModal}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollContent: {
-    padding: 16,
+    padding: 16
   },
   errorText: {
     fontSize: 18,
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: 40
   },
   headerCard: {
     borderLeftWidth: 4,
-    marginBottom: 24,
+    marginBottom: 24
   },
   accountHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 12
   },
   iconContainer: {
     width: 48,
@@ -320,93 +327,93 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 12
   },
   accountInfo: {
-    flex: 1,
+    flex: 1
   },
   accountName: {
     fontSize: 20,
     fontWeight: '700',
-    marginBottom: 2,
+    marginBottom: 2
   },
   accountType: {
     fontSize: 14,
-    textTransform: 'capitalize',
+    textTransform: 'capitalize'
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 16,
+    marginBottom: 16
   },
   balanceSection: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   balanceLabel: {
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 4
   },
   balanceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8
   },
   balance: {
     fontSize: 32,
-    fontWeight: '800',
+    fontWeight: '800'
   },
   progressSection: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 8
   },
   progressLabel: {
-    fontSize: 14,
+    fontSize: 14
   },
   progressText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   progressBar: {
     height: 6,
     borderRadius: 3,
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   progressFill: {
-    height: '100%',
+    height: '100%'
   },
   additionalInfo: {
-    gap: 12,
+    gap: 12
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8
   },
   infoLabel: {
     fontSize: 14,
-    flex: 1,
+    flex: 1
   },
   infoValue: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   operationsSection: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 16,
-    letterSpacing: -0.5,
+    letterSpacing: -0.5
   },
   noOperationsText: {
     textAlign: 'center',
     fontSize: 14,
-    fontStyle: 'italic',
-  },
-});
+    fontStyle: 'italic'
+  }
+})
