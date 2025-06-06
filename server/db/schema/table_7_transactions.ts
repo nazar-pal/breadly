@@ -23,15 +23,20 @@ import {
   check,
   date,
   index,
-  numeric,
   pgEnum,
   pgTable,
-  timestamp,
   uuid,
   varchar
 } from 'drizzle-orm/pg-core'
 
 import { accounts, categories, currencies, transactionAttachments } from '.'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  isoCurrencyCodeColumn,
+  monetaryAmountColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // TRANSACTION TYPE DEFINITIONS
@@ -70,10 +75,8 @@ export const txType = pgEnum('transaction_type', [
 export const transactions = pgTable(
   'transactions',
   {
-    id: uuid().defaultRandom().primaryKey(),
-    userId: varchar({ length: 50 })
-      .default(sql`(auth.user_id())`)
-      .notNull(), // Clerk user ID for multi-tenant isolation
+    id: uuidPrimaryKey(),
+    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: txType().notNull(), // Transaction type (expense/income/transfer)
 
     // Account references
@@ -84,13 +87,13 @@ export const transactions = pgTable(
 
     // Classification and details
     categoryId: uuid().references(() => categories.id), // Optional transaction category
-    amount: numeric({ precision: 14, scale: 2 }).notNull(), // Transaction amount (always positive)
-    currencyId: varchar({ length: 3 })
+    amount: monetaryAmountColumn(), // Transaction amount (always positive)
+    currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Transaction currency (must match account currency)
     txDate: date().notNull(), // Transaction date (when the transaction occurred)
     notes: varchar({ length: 1000 }), // Optional user notes/description
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull() // Record creation timestamp
+    createdAt: createdAtColumn() // Record creation timestamp
   },
   table => [
     // Performance indexes for common query patterns

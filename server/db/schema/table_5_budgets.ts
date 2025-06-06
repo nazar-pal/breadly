@@ -22,14 +22,17 @@ import {
   check,
   date,
   index,
-  numeric,
   pgEnum,
   pgTable,
   uniqueIndex,
-  uuid,
-  varchar
+  uuid
 } from 'drizzle-orm/pg-core'
 import { categories } from '.'
+import {
+  clerkUserIdColumn,
+  monetaryAmountColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // BUDGET PERIOD DEFINITIONS
@@ -70,14 +73,12 @@ export const budgetPeriod = pgEnum('budget_period', [
 export const budgets = pgTable(
   'budgets',
   {
-    id: uuid().defaultRandom().primaryKey(),
-    userId: varchar({ length: 50 })
-      .default(sql`(auth.user_id())`)
-      .notNull(), // Clerk user ID for multi-tenant isolation
+    id: uuidPrimaryKey(),
+    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     categoryId: uuid()
       .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(), // Category this budget applies to
-    amount: numeric({ precision: 14, scale: 2 }).notNull(), // Budget limit amount
+    amount: monetaryAmountColumn(), // Budget limit amount
     period: budgetPeriod().default('monthly').notNull(), // Budget time period
     startDate: date().notNull() // When this budget period starts
   },

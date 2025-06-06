@@ -25,12 +25,11 @@ import {
   pgEnum,
   pgTable,
   text,
-  timestamp,
-  uuid,
   varchar
 } from 'drizzle-orm/pg-core'
 
 import { transactionAttachments, transactions } from '.'
+import { createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
 // ATTACHMENT TYPE DEFINITIONS
@@ -63,14 +62,14 @@ export const attachmentType = pgEnum('attachment_type', ['receipt', 'voice'])
 export const attachments = pgTable(
   'attachments',
   {
-    id: uuid().defaultRandom().primaryKey(),
+    id: uuidPrimaryKey(),
     type: attachmentType().notNull(), // receipt or voice message type
     bucketPath: text().notNull(), // Cloud storage path (S3, etc.) - unlimited length for complex paths
     mime: varchar({ length: 150 }).notNull(), // File MIME type - supports complex MIME types
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
     fileSize: numeric().notNull(), // File size in bytes (for storage management)
     duration: numeric(), // Duration in seconds (required for voice, optional for video receipts)
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull() // Upload timestamp
+    createdAt: createdAtColumn() // Upload timestamp
   },
   table => [
     // Performance indexes for common queries

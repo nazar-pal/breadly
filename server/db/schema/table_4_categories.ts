@@ -19,18 +19,24 @@ Key Features:
 import { relations, sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
-  boolean,
   check,
   foreignKey,
   index,
   pgEnum,
   pgTable,
-  timestamp,
   uniqueIndex,
   uuid,
   varchar
 } from 'drizzle-orm/pg-core'
 import { budgets, transactions } from '.'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  descriptionColumn,
+  isArchivedColumn,
+  nameColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // CATEGORY TYPE DEFINITIONS
@@ -62,17 +68,15 @@ export const categoryType = pgEnum('category_type', ['expense', 'income'])
 export const categories = pgTable(
   'categories',
   {
-    id: uuid().defaultRandom().primaryKey(),
-    userId: varchar({ length: 50 })
-      .default(sql`(auth.user_id())`)
-      .notNull(), // Clerk user ID for multi-tenant isolation
+    id: uuidPrimaryKey(),
+    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: categoryType().notNull(), // Income or expense category classification
     parentId: uuid(), // Self-reference for hierarchy (null = root category)
-    name: varchar({ length: 100 }).notNull(), // Category display name
-    description: varchar({ length: 1000 }), // Optional user notes about the category
+    name: nameColumn(), // Category display name
+    description: descriptionColumn(), // Optional user notes about the category
     icon: varchar({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
-    isArchived: boolean().default(false).notNull(), // Soft deletion flag
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull()
+    isArchived: isArchivedColumn(), // Soft deletion flag
+    createdAt: createdAtColumn()
   },
   table => [
     // Self-referencing foreign key for hierarchy

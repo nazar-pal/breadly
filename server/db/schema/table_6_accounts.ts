@@ -17,19 +17,19 @@ Key Features:
 
 import { relations, sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
-import {
-  boolean,
-  check,
-  index,
-  numeric,
-  pgEnum,
-  pgTable,
-  timestamp,
-  uuid,
-  varchar
-} from 'drizzle-orm/pg-core'
+import { check, index, pgEnum, pgTable } from 'drizzle-orm/pg-core'
 
 import { currencies, transactions } from '.'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  descriptionColumn,
+  isArchivedColumn,
+  isoCurrencyCodeColumn,
+  monetaryAmountColumn,
+  nameColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // ACCOUNT TYPE DEFINITIONS
@@ -61,17 +61,15 @@ export const accountType = pgEnum('account_type', ['saving', 'payment', 'debt'])
 export const accounts = pgTable(
   'accounts',
   {
-    id: uuid().defaultRandom().primaryKey(),
-    userId: varchar({ length: 50 })
-      .default(sql`(auth.user_id())`)
-      .notNull(), // Clerk user ID for multi-tenant isolation
+    id: uuidPrimaryKey(),
+    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: accountType().notNull(), // Account classification (saving/payment/debt)
-    name: varchar({ length: 100 }).notNull(), // User-defined account name
-    description: varchar({ length: 1000 }), // Optional user notes about the account
-    currencyId: varchar({ length: 3 }).references(() => currencies.code), // Account base currency
-    balance: numeric({ precision: 14, scale: 2 }).default('0'), // Current balance (updated by triggers)
-    isArchived: boolean('is_archived').default(false).notNull(), // Soft deletion flag
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull()
+    name: nameColumn(), // User-defined account name
+    description: descriptionColumn(), // Optional user notes about the account
+    currencyId: isoCurrencyCodeColumn().references(() => currencies.code), // Account base currency
+    balance: monetaryAmountColumn().default('0'), // Current balance (updated by triggers)
+    isArchived: isArchivedColumn(), // Soft deletion flag
+    createdAt: createdAtColumn()
   },
   table => [
     // Performance indexes for common query patterns

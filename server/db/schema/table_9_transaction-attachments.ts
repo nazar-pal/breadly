@@ -18,14 +18,9 @@ Key Features:
 
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, crudPolicy } from 'drizzle-orm/neon'
-import {
-  index,
-  pgTable,
-  primaryKey,
-  timestamp,
-  uuid
-} from 'drizzle-orm/pg-core'
+import { index, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core'
 import { attachments, transactions } from '.'
+import { createdAtColumn } from './utils'
 
 // ============================================================================
 // TRANSACTION ATTACHMENTS JUNCTION TABLE
@@ -52,7 +47,7 @@ export const transactionAttachments = pgTable(
     attachmentId: uuid()
       .references(() => attachments.id, { onDelete: 'cascade' })
       .notNull(), // Attachment being referenced
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull() // Link creation timestamp
+    createdAt: createdAtColumn() // Link creation timestamp
   },
   table => [
     // Composite primary key ensures unique transaction-attachment pairs

@@ -17,6 +17,7 @@ Key Features:
 import { relations } from 'drizzle-orm'
 import { pgTable, varchar } from 'drizzle-orm/pg-core'
 import { accounts, exchangeRates, transactions, userPreferences } from '.'
+import { isoCurrencyCodeColumn } from './utils'
 
 // ============================================================================
 // CORE CURRENCY TABLE
@@ -32,7 +33,7 @@ import { accounts, exchangeRates, transactions, userPreferences } from '.'
  * - All monetary amounts in the system reference these currencies
  */
 export const currencies = pgTable('currencies', {
-  code: varchar({ length: 3 }).primaryKey(), // ISO 4217 currency code (e.g., USD, EUR)
+  code: isoCurrencyCodeColumn().primaryKey(), // ISO 4217 currency code (e.g., USD, EUR)
   symbol: varchar({ length: 10 }).notNull(), // Currency symbol (e.g., $, €, £)
   name: varchar({ length: 100 }).notNull() // Full currency name (e.g., US Dollar)
 })

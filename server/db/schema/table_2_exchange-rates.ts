@@ -22,11 +22,10 @@ import {
   index,
   numeric,
   pgTable,
-  uniqueIndex,
-  uuid,
-  varchar
+  uniqueIndex
 } from 'drizzle-orm/pg-core'
 import { currencies } from '.'
+import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
 // EXCHANGE RATES TABLE
@@ -47,11 +46,11 @@ import { currencies } from '.'
 export const exchangeRates = pgTable(
   'exchange_rates',
   {
-    id: uuid().defaultRandom().primaryKey(),
-    baseCurrency: varchar({ length: 3 })
+    id: uuidPrimaryKey(),
+    baseCurrency: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Base currency (e.g., USD in USD/EUR)
-    quoteCurrency: varchar({ length: 3 })
+    quoteCurrency: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Quote currency (e.g., EUR in USD/EUR)
     rate: numeric().notNull(), // Exchange rate (base to quote conversion factor)

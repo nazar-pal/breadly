@@ -20,6 +20,7 @@ import { relations, sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, numeric, pgTable, varchar } from 'drizzle-orm/pg-core'
 import { currencies } from '.'
+import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
 // ============================================================================
 // USER PREFERENCES TABLE
@@ -40,11 +41,8 @@ import { currencies } from '.'
 export const userPreferences = pgTable(
   'user_preferences',
   {
-    userId: varchar({ length: 50 })
-      .default(sql`(auth.user_id())`)
-      .notNull()
-      .primaryKey(), // Clerk user ID (one record per user)
-    defaultCurrency: varchar({ length: 3 }).references(() => currencies.code), // Default currency for new accounts/transactions
+    userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
+    defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
     firstWeekday: numeric().default('1'), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
     locale: varchar({ length: 20 }).default('en-US') // Localization/language code (ISO format)
   },

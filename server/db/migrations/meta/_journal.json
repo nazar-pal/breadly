@@ -36,6 +36,13 @@
       "when": 1749221673809,
       "tag": "0004_currency_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1749240395007,
+      "tag": "0005_spooky_franklin_richards",
+      "breakpoints": true
     }
   ]
 }
