@@ -12,13 +12,16 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "format": "prettier . --write"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.12.0",
     "@expo/vector-icons": "^14.1.0",
     "@hookform/resolvers": "^5.0.1",
     "@lucide/lab": "^0.1.2",
+    "@neondatabase/serverless": "^1.0.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.14",
     "@react-navigation/material-top-tabs": "^7.2.14",
@@ -26,6 +29,8 @@
     "@t3-oss/env-core": "^0.13.6",
     "babel-plugin-react-compiler": "19.0.0-beta-af1b7da-20250417",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.44.2",
     "expo": "^53.0.9",
     "expo-blur": "~14.1.4",
     "expo-camera": "~16.1.6",
@@ -61,6 +66,7 @@
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@types/react": "~19.0.14",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^9.28.0",
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.5",
