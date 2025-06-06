@@ -2,7 +2,27 @@ import { env } from '@/env'
 import { getClerkInstance } from '@clerk/clerk-expo'
 import { neon, NeonQueryFunction } from '@neondatabase/serverless'
 import { drizzle, NeonHttpDatabase } from 'drizzle-orm/neon-http'
-import * as schema from './schema'
+import * as accounts_schema from './schema/accounts'
+import * as attachments_schema from './schema/attachments'
+import * as budgets_schema from './schema/budgets'
+import * as categories_schema from './schema/categories'
+import * as currencies_schema from './schema/currencies'
+import * as exchangeRates_schema from './schema/exchangeRates'
+import * as transactionAttachments_schema from './schema/transactionAttachments'
+import * as transactions_schema from './schema/transactions'
+import * as userPreferences_schema from './schema/userPreferences'
+
+const schema = {
+  ...accounts_schema,
+  ...attachments_schema,
+  ...budgets_schema,
+  ...categories_schema,
+  ...currencies_schema,
+  ...exchangeRates_schema,
+  ...transactions_schema,
+  ...userPreferences_schema,
+  ...transactionAttachments_schema
+}
 
 // start TODO: remove this once we have a proper serverless db
 // import { drizzle as drizzleServerless } from 'drizzle-orm/neon-serverless'

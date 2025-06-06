@@ -1,0 +1,130 @@
+/*
+================================================================================
+CATEGORIES SCHEMA - Transaction Classification System
+================================================================================
+Purpose: Manages hierarchical transaction categories for income and expense
+         classification. Supports parent-child relationships for nested
+         categorization and organization.
+
+Key Features:
+- Hierarchical category structure (parent-child relationships)
+- Income and expense category types
+- User-specific categories with multi-tenant isolation
+- Icon support for visual representation
+- Soft deletion with archive functionality
+- Unique naming within user+parent scope
+================================================================================
+*/
+
+import { relations, sql } from 'drizzle-orm'
+import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
+import {
+  boolean,
+  check,
+  foreignKey,
+  index,
+  pgEnum,
+  pgTable,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar
+} from 'drizzle-orm/pg-core'
+import { budgets, transactions } from '.'
+
+// ============================================================================
+// CATEGORY TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Category types for transaction classification
+ * - expense: Money going out (groceries, rent, utilities, entertainment)
+ * - income: Money coming in (salary, freelance, investments, gifts)
+ */
+export const categoryType = pgEnum('category_type', ['expense', 'income'])
+
+// ============================================================================
+// CATEGORIES TABLE
+// ============================================================================
+
+/**
+ * Hierarchical transaction categories (income/expense classification)
+ * Supports parent-child relationships for nested categorization
+ *
+ * Business Rules:
+ * - Categories belong to individual users (multi-tenant isolation)
+ * - Categories can have parent-child relationships for organization
+ * - Category names must be unique within user+parent scope
+ * - Self-referencing parent relationships are prevented
+ * - Categories cannot be deleted if they have child categories
+ * - Archived categories are hidden but preserve historical data
+ */
+export const categories = pgTable(
+  'categories',
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: varchar({ length: 50 })
+      .default(sql`(auth.user_id())`)
+      .notNull(), // Clerk user ID for multi-tenant isolation
+    type: categoryType().notNull(), // Income or expense category classification
+    parentId: uuid(), // Self-reference for hierarchy (null = root category)
+    name: varchar({ length: 100 }).notNull(), // Category display name
+    description: varchar({ length: 1000 }), // Optional user notes about the category
+    icon: varchar({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
+    isArchived: boolean().default(false).notNull(), // Soft deletion flag
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull()
+  },
+  table => [
+    // Self-referencing foreign key for hierarchy
+    foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+      name: 'categories_parent_id_fk'
+    }).onDelete('cascade'), // Cascade deletion to prevent orphaned categories
+
+    // Performance indexes for common query patterns
+    index('categories_user_idx').on(table.userId), // User's categories lookup
+    index('categories_parent_idx').on(table.parentId), // Child categories lookup
+    index('categories_user_archived_idx').on(table.userId, table.isArchived), // Active categories only
+    index('categories_user_type_idx').on(table.userId, table.type), // Categories by type
+
+    // Unique constraint: same name per user+parent (null parent duplicates allowed)
+    uniqueIndex('categories_user_parent_name_unq').on(
+      table.userId,
+      table.parentId,
+      table.name
+    ),
+
+    // Business rule constraints
+    check('categories_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
+    check(
+      'categories_no_self_parent',
+      sql`${table.parentId} IS NULL OR ${table.parentId} != ${table.id}`
+    ), // Prevent self-referencing
+
+    // RLS: Users can only access their own categories
+    crudPolicy({
+      role: authenticatedRole,
+      read: authUid(table.userId),
+      modify: authUid(table.userId)
+    })
+  ]
+)
+
+// ============================================================================
+// CATEGORY RELATIONSHIPS
+// ============================================================================
+
+/**
+ * Category relationship mappings
+ * Defines hierarchical relationships and connections to other entities
+ */
+export const categoriesRelations = relations(categories, ({ many, one }) => ({
+  parent: one(categories, {
+    fields: [categories.parentId],
+    references: [categories.id]
+  }), // Parent category relationship
+  children: many(categories), // Child categories relationship
+  transactions: many(transactions), // Transactions using this category
+  budgets: many(budgets) // Budgets tracking this category
+}))
