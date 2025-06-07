@@ -1,7 +1,7 @@
-import { useTheme } from '@/context/ThemeContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import { Plus } from 'lucide-react-native'
 import React from 'react'
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, Text, View } from 'react-native'
 
 interface AddAccountButtonProps {
   onPress: () => void
@@ -13,6 +13,50 @@ export default function AddAccountButton({
   label = 'Add Account'
 }: AddAccountButtonProps) {
   const { colors } = useTheme()
+
+  const styles = useThemedStyles(
+    theme =>
+      ({
+        container: {
+          width: '100%',
+          padding: 12,
+          borderRadius: 12,
+          minHeight: 60, // Reduced height for single column
+          marginBottom: 8,
+          ...Platform.select({
+            ios: {
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2
+            },
+            android: {
+              elevation: 1
+            },
+            web: {
+              boxShadow: `0px 1px 2px ${theme.colors.shadowLight}`
+            }
+          })
+        },
+        content: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12
+        },
+        iconContainer: {
+          width: 28,
+          height: 28,
+          borderRadius: 6,
+          alignItems: 'center',
+          justifyContent: 'center'
+        },
+        label: {
+          fontSize: 14,
+          fontWeight: '600',
+          textAlign: 'center'
+        }
+      }) as const
+  )
 
   return (
     <Pressable
@@ -41,46 +85,3 @@ export default function AddAccountButton({
     </Pressable>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    padding: 12,
-    borderRadius: 12,
-    minHeight: 60, // Reduced height for single column
-    marginBottom: 8,
-    ...Platform.select({
-      ios: {
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2
-      },
-      android: {
-        elevation: 1
-      },
-      web: {
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2
-      }
-    })
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12
-  },
-  iconContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center'
-  }
-})

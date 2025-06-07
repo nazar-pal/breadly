@@ -45,10 +45,7 @@ export default function CategoryCard({
           elevation: isPressed ? 1 : 2
         },
         web: {
-          shadowColor: theme.colors.shadow,
-          shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
-          shadowOpacity: isPressed ? 0.5 : 1,
-          shadowRadius: isPressed ? 2 : 4
+          boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px ${theme.colors.shadow}${isPressed ? '80' : ''}`
         }
       })
     },

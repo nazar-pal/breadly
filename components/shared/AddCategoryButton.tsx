@@ -36,10 +36,7 @@ export default function AddCategoryButton({
           elevation: 1
         },
         web: {
-          shadowColor: theme.colors.shadowLight,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4
+          boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
         }
       })
     },
