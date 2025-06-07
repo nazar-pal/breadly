@@ -1,6 +1,7 @@
 import { CurrencyProvider } from '@/context/CurrencyContext'
 import { ThemeProvider, useTheme } from '@/context/ThemeContext'
 import { useFrameworkReady } from '@/hooks/useFrameworkReady'
+import { TRPCReactProvider } from '@/trpc/react'
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
@@ -32,11 +33,13 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <CurrencyProvider>
-          <ThemeProvider>
-            <AppLayout />
-          </ThemeProvider>
-        </CurrencyProvider>
+        <TRPCReactProvider>
+          <CurrencyProvider>
+            <ThemeProvider>
+              <AppLayout />
+            </ThemeProvider>
+          </CurrencyProvider>
+        </TRPCReactProvider>
       </GestureHandlerRootView>
     </ClerkProvider>
   )

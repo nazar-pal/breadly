@@ -1,8 +1,8 @@
-import { useTheme } from '@/context/ThemeContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import type { Account } from '@/hooks/useAccountManagement'
 import { CreditCard, PiggyBank, Receipt } from 'lucide-react-native'
 import React, { useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -68,6 +68,68 @@ export default function AccountsTabView({
       }
     })
 
+  const styles = useThemedStyles(
+    theme =>
+      ({
+        container: {
+          flex: 1
+        },
+        tabBar: {
+          flexDirection: 'row',
+          paddingHorizontal: 20,
+          paddingVertical: 12,
+          gap: 8
+        },
+        tab: {
+          flex: 1,
+          paddingVertical: 10,
+          paddingHorizontal: 16,
+          borderRadius: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 40
+        },
+        activeTab: {
+          ...Platform.select({
+            ios: {
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4
+            },
+            android: {
+              elevation: 3
+            },
+            web: {
+              boxShadow: `0px 2px 4px ${theme.colors.shadow}`
+            }
+          })
+        },
+        tabContent: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8
+        },
+        tabText: {
+          fontSize: 14,
+          fontWeight: '500',
+          textAlign: 'center'
+        },
+        activeTabText: {
+          fontWeight: '600'
+        },
+        contentContainer: {
+          flex: 1
+        },
+        scrollView: {
+          flex: 1
+        },
+        scrollContent: {
+          paddingHorizontal: 16,
+          paddingTop: 8
+        }
+      }) as const
+  )
+
   const renderTabContent = () => {
     const tabAccounts = accounts[activeTab]
     const sectionTitle = tabs.find(tab => tab.key === activeTab)?.title || ''
@@ -111,7 +173,17 @@ export default function AccountsTabView({
                   styles.activeTab,
                   {
                     backgroundColor: colors.primary,
-                    shadowColor: colors.shadow
+                    ...Platform.select({
+                      ios: {
+                        boxShadow: colors.shadow
+                      },
+                      android: {
+                        elevation: 3
+                      },
+                      web: {
+                        boxShadow: `0px 2px 4px ${colors.shadow}`
+                      }
+                    })
                   }
                 ]
               ]}
@@ -144,53 +216,3 @@ export default function AccountsTabView({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  tabBar: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    gap: 8
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 40
-  },
-  activeTab: {
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  tabContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center'
-  },
-  activeTabText: {
-    fontWeight: '600'
-  },
-  contentContainer: {
-    flex: 1
-  },
-  scrollView: {
-    flex: 1
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8
-  }
-})
