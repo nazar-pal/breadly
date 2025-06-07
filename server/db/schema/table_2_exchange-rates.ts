@@ -24,7 +24,7 @@ import {
   pgTable,
   uniqueIndex
 } from 'drizzle-orm/pg-core'
-import { currencies } from '.'
+import { currencies } from './table_1_currencies'
 import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================

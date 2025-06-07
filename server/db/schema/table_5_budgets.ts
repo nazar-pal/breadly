@@ -27,7 +27,7 @@ import {
   uniqueIndex,
   uuid
 } from 'drizzle-orm/pg-core'
-import { categories } from '.'
+import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
   monetaryAmountColumn,

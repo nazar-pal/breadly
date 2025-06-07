@@ -29,7 +29,9 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
-import { accounts, categories, currencies } from '.'
+import { currencies } from './table_1_currencies'
+import { categories } from './table_4_categories'
+import { accounts } from './table_6_accounts'
 import {
   clerkUserIdColumn,
   createdAtColumn,

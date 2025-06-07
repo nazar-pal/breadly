@@ -19,7 +19,7 @@ Key Features:
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, numeric, pgTable, varchar } from 'drizzle-orm/pg-core'
-import { currencies } from '.'
+import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
 // ============================================================================
