@@ -5,9 +5,7 @@ export const env = createEnv({
   clientPrefix: 'EXPO_PUBLIC_',
 
   server: {
-    // Environment (automatically set by Expo)
-    NODE_ENV: z.enum(['development', 'production', 'test']),
-
+    // Clerk
     CLERK_SECRET_KEY: z.string().min(1),
     CLERK_JWT_KEY: z.string().min(1),
 
@@ -26,9 +24,6 @@ export const env = createEnv({
   },
 
   runtimeEnv: {
-    // Environment (automatically set by Expo)
-    NODE_ENV: process.env.NODE_ENV,
-
     // API
     EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
 
