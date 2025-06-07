@@ -16,7 +16,7 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
   check,
@@ -28,7 +28,6 @@ import {
   uuid,
   varchar
 } from 'drizzle-orm/pg-core'
-import { budgets, transactions } from '.'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -110,21 +109,3 @@ export const categories = pgTable(
     })
   ]
 )
-
-// ============================================================================
-// CATEGORY RELATIONSHIPS
-// ============================================================================
-
-/**
- * Category relationship mappings
- * Defines hierarchical relationships and connections to other entities
- */
-export const categoriesRelations = relations(categories, ({ one, many }) => ({
-  parent: one(categories, {
-    fields: [categories.parentId],
-    references: [categories.id]
-  }), // Parent category relationship
-  children: many(categories), // Child categories relationship
-  transactions: many(transactions), // Transactions using this category
-  budgets: many(budgets) // Budgets tracking this category
-}))

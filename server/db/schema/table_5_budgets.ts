@@ -16,7 +16,7 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
   check,
@@ -102,18 +102,3 @@ export const budgets = pgTable(
     })
   ]
 )
-
-// ============================================================================
-// BUDGET RELATIONSHIPS
-// ============================================================================
-
-/**
- * Budget relationship mappings
- * Defines how budgets relate to categories for spending analysis
- */
-export const budgetsRelations = relations(budgets, ({ one }) => ({
-  category: one(categories, {
-    fields: [budgets.categoryId],
-    references: [categories.id]
-  }) // Category this budget tracks
-}))

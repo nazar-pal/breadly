@@ -15,11 +15,11 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, index, pgEnum, pgTable } from 'drizzle-orm/pg-core'
 
-import { currencies, transactions } from '.'
+import { currencies } from '.'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -88,20 +88,3 @@ export const accounts = pgTable(
     })
   ]
 )
-
-// ============================================================================
-// ACCOUNT RELATIONSHIPS
-// ============================================================================
-
-/**
- * Account relationship mappings
- * Defines how accounts relate to other entities in the system
- */
-export const accountsRelations = relations(accounts, ({ one, many }) => ({
-  currency: one(currencies, {
-    fields: [accounts.currencyId],
-    references: [currencies.code]
-  }),
-  transactions: many(transactions), // Transactions from this account
-  counterTransactions: many(transactions, { relationName: 'counterAccount' }) // Transfers to this account
-}))

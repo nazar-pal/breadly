@@ -17,7 +17,7 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import {
   check,
   index,
@@ -28,7 +28,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
-import { transactionAttachments, transactions } from '.'
 import { createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
@@ -94,33 +93,4 @@ export const attachments = pgTable(
       sql`${table.type} != 'voice' OR ${table.duration} IS NOT NULL`
     ) // Voice messages require duration
   ]
-)
-
-// ============================================================================
-// ATTACHMENT RELATIONSHIPS
-// ============================================================================
-
-/**
- * Attachment relationship mappings
- * Defines connections to transactions through junction table
- */
-export const attachmentsRelations = relations(attachments, ({ many }) => ({
-  transactions: many(transactions, { relationName: 'transactionAttachments' })
-}))
-/**
- * Transaction-attachment junction relationship mappings
- * Links attachments to their associated transactions
- */
-export const transactionAttachmentsRelations = relations(
-  transactionAttachments,
-  ({ one }) => ({
-    transaction: one(transactions, {
-      fields: [transactionAttachments.transactionId],
-      references: [transactions.id]
-    }), // Transaction that references this attachment
-    attachment: one(attachments, {
-      fields: [transactionAttachments.attachmentId],
-      references: [attachments.id]
-    }) // Attachment referenced by this transaction
-  })
 )

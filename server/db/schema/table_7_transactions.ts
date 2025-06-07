@@ -17,7 +17,7 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
   check,
@@ -29,7 +29,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
-import { accounts, categories, currencies, transactionAttachments } from '.'
+import { accounts, categories, currencies } from '.'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -128,36 +128,4 @@ export const transactions = pgTable(
       modify: authUid(table.userId)
     })
   ]
-)
-
-// ============================================================================
-// TRANSACTION RELATIONSHIPS
-// ============================================================================
-
-/**
- * Transaction relationship mappings
- * Defines how transactions relate to accounts, categories, currencies, and attachments
- */
-export const transactionsRelations = relations(
-  transactions,
-  ({ one, many }) => ({
-    account: one(accounts, {
-      fields: [transactions.accountId],
-      references: [accounts.id]
-    }), // Primary account relationship
-    counterAccount: one(accounts, {
-      fields: [transactions.counterAccountId],
-      references: [accounts.id],
-      relationName: 'counterAccount'
-    }), // Transfer destination account
-    category: one(categories, {
-      fields: [transactions.categoryId],
-      references: [categories.id]
-    }), // Transaction category relationship
-    currency: one(currencies, {
-      fields: [transactions.currencyId],
-      references: [currencies.code]
-    }), // Transaction currency relationship
-    transactionAttachments: many(transactionAttachments) // Associated attachments (receipts, voice notes)
-  })
 )

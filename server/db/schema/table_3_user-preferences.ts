@@ -16,7 +16,7 @@ Key Features:
 ================================================================================
 */
 
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, numeric, pgTable, varchar } from 'drizzle-orm/pg-core'
 import { currencies } from '.'
@@ -60,22 +60,4 @@ export const userPreferences = pgTable(
       modify: authUid(table.userId)
     })
   ]
-)
-
-// ============================================================================
-// USER PREFERENCES RELATIONSHIPS
-// ============================================================================
-
-/**
- * User preferences relationship mappings
- * Defines connections to currencies for default currency validation
- */
-export const userPreferencesRelations = relations(
-  userPreferences,
-  ({ one }) => ({
-    defaultCurrency: one(currencies, {
-      fields: [userPreferences.defaultCurrency],
-      references: [currencies.code]
-    }) // Default currency relationship
-  })
 )
