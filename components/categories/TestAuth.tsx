@@ -1,9 +1,8 @@
-import { useTRPC } from '@/trpc/react'
+import { trpc } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import { Text } from 'react-native'
 
 const TestAuth = () => {
-  const trpc = useTRPC()
   const { data, isLoading, isError } = useQuery(
     trpc.appTest.testAuth.queryOptions()
   )
