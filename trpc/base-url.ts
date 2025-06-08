@@ -9,21 +9,32 @@ import Constants from 'expo-constants'
 export const getBaseUrl = () => {
   if (__DEV__) {
     /**
-     * Development: Gets the IP address of your host-machine from Expo Constants.
-     * This automatically handles the localhost vs actual IP issue for mobile devices.
+     * Development: Platform-specific URLs for optimal performance and compatibility
+     * - Web: Uses localhost for best performance and reliability
+     * - Mobile: Uses actual IP address since localhost refers to the device itself
      */
-    const debuggerHost = Constants.expoConfig?.hostUri
-    const localhost = debuggerHost?.split(':')[0]
+    const { Platform } = require('react-native')
 
-    if (!localhost) {
-      throw new Error(
-        'Failed to get localhost. Make sure your Expo development server is running.'
-      )
+    if (Platform.OS === 'web') {
+      // Web can use localhost for better performance and fewer firewall issues
+      const url = 'http://localhost:8081'
+      console.log('[getBaseUrl] Development mode (web):', url)
+      return url
+    } else {
+      // Mobile devices need the actual IP address of the development machine
+      const debuggerHost = Constants.expoConfig?.hostUri
+      const hostIP = debuggerHost?.split(':')[0]
+
+      if (!hostIP) {
+        throw new Error(
+          'Failed to get host IP from Expo. Make sure your Expo development server is running.'
+        )
+      }
+
+      const url = `http://${hostIP}:8081`
+      console.log('[getBaseUrl] Development mode (mobile):', url)
+      return url
     }
-
-    const url = `http://${localhost}:8081`
-    console.log('[getBaseUrl] Development mode:', url)
-    return url
   } else {
     /**
      * Production: Uses the production API URL from environment variables
