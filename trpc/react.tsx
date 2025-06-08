@@ -1,11 +1,11 @@
-import { createTRPCClient, httpBatchStreamLink, loggerLink } from '@trpc/client'
+import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import SuperJSON from 'superjson'
 
 import type { AppRouter } from '@/server/api'
 
-import { env } from '@/env'
 import { getClerkInstance } from '@clerk/clerk-expo'
+import { getBaseUrl } from './base-url'
 import { queryClient } from './query-client'
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
@@ -16,7 +16,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
           __DEV__ || (op.direction === 'down' && op.result instanceof Error),
         colorMode: 'none'
       }),
-      httpBatchStreamLink({
+      httpBatchLink({
         transformer: SuperJSON,
         url: `${getBaseUrl()}/api/trpc`,
         async headers() {
@@ -38,14 +38,3 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
   }),
   queryClient
 })
-
-function getBaseUrl() {
-  let url
-  if (__DEV__) {
-    url = 'http://localhost:8081'
-  } else {
-    url = `https://${env.EXPO_PUBLIC_API_URL}`
-  }
-  console.log('[trpc] getBaseUrl:', url)
-  return url
-}

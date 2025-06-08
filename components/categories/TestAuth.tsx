@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Text } from 'react-native'
 
 const TestAuth = () => {
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, error } = useQuery(
     trpc.appTest.testAuth.queryOptions()
   )
 
@@ -12,7 +12,12 @@ const TestAuth = () => {
   }
 
   if (isError) {
-    return <Text style={{ color: 'red' }}>Failed to authenticate</Text>
+    console.error('[TestAuth] Query error:', error)
+    return (
+      <Text style={{ color: 'red' }}>
+        Failed to authenticate: {error?.message || 'Network error'}
+      </Text>
+    )
   }
 
   return (
