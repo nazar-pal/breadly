@@ -11,6 +11,7 @@ import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import './global.css'
 
 // Layout component that needs access to theme
 function AppLayout() {
