@@ -1,4 +1,4 @@
-import { useTheme } from '@/context/ThemeContext'
+import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import { useRouter } from 'expo-router'
 import {
   Banknote as BanknoteIcon,
@@ -11,7 +11,7 @@ import {
   Wallet
 } from 'lucide-react-native'
 import React from 'react'
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, Text, View } from 'react-native'
 
 interface AccountCardProps {
   account: {
@@ -35,6 +35,99 @@ interface AccountCardProps {
 export default function AccountCard({ account, onPress }: AccountCardProps) {
   const { colors } = useTheme()
   const router = useRouter()
+
+  const styles = useThemedStyles(theme => ({
+    container: {
+      width: '100%' as const,
+      padding: 12,
+      borderRadius: 12,
+      borderLeftWidth: 3,
+      marginBottom: 8,
+      ...Platform.select({
+        android: {
+          elevation: 1
+        },
+        default: {
+          boxShadow: `0px 1px 3px ${theme.colors.shadowLight}`
+        }
+      })
+    } as const,
+    header: {
+      flexDirection: 'row' as const,
+      alignItems: 'flex-start' as const,
+      marginBottom: 8
+    },
+    iconContainer: {
+      width: 28,
+      height: 28,
+      borderRadius: 6,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      marginRight: 12
+    },
+    headerText: {
+      flex: 1,
+      minWidth: 0 // Ensures text truncation works
+    },
+    name: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      marginBottom: 1
+    },
+    type: {
+      fontSize: 12,
+      textTransform: 'capitalize' as const
+    },
+    balanceContainer: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const
+    },
+    trendIcon: {
+      marginRight: 2
+    },
+    balance: {
+      fontSize: 16,
+      fontWeight: '700' as const
+    },
+    progressSection: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      marginBottom: 6
+    },
+    progressContainer: {
+      flex: 1,
+      height: 3,
+      borderRadius: 1.5,
+      overflow: 'hidden' as const,
+      marginRight: 8
+    },
+    progressBar: {
+      height: '100%' as const
+    },
+    progressText: {
+      fontSize: 10,
+      fontWeight: '500' as const,
+      minWidth: 30,
+      textAlign: 'right' as const
+    },
+    footer: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const
+    },
+    secondaryInfo: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const
+    },
+    secondaryLabel: {
+      fontSize: 11,
+      marginLeft: 3
+    },
+    secondaryValue: {
+      fontSize: 11,
+      fontWeight: '500' as const
+    }
+  }))
 
   const handlePress = () => {
     router.push(`/accounts/${account.id}` as any)
@@ -230,101 +323,3 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
     </Pressable>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    padding: 12,
-    borderRadius: 12,
-    borderLeftWidth: 3,
-    marginBottom: 8,
-    ...Platform.select({
-      ios: {
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.08,
-        shadowRadius: 3
-      },
-      android: {
-        elevation: 1
-      },
-      web: {
-        boxShadow: `0px 1px 3px rgba(0, 0, 0, 0.08)`
-      }
-    })
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8
-  },
-  iconContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  headerText: {
-    flex: 1,
-    minWidth: 0 // Ensures text truncation works
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 1
-  },
-  type: {
-    fontSize: 12,
-    textTransform: 'capitalize'
-  },
-  balanceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  trendIcon: {
-    marginRight: 2
-  },
-  balance: {
-    fontSize: 16,
-    fontWeight: '700'
-  },
-  progressSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6
-  },
-  progressContainer: {
-    flex: 1,
-    height: 3,
-    borderRadius: 1.5,
-    overflow: 'hidden',
-    marginRight: 8
-  },
-  progressBar: {
-    height: '100%'
-  },
-  progressText: {
-    fontSize: 10,
-    fontWeight: '500',
-    minWidth: 30,
-    textAlign: 'right'
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  secondaryInfo: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  secondaryLabel: {
-    fontSize: 11,
-    marginLeft: 3
-  },
-  secondaryValue: {
-    fontSize: 11,
-    fontWeight: '500'
-  }
-})

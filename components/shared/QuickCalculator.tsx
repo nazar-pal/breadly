@@ -100,16 +100,10 @@ export default function QuickCalculator({
       marginBottom: theme.spacing.xl - 8,
       backgroundColor: theme.colors.card,
       ...Platform.select({
-        ios: {
-          shadowColor: theme.colors.shadow,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4
-        },
         android: {
           elevation: 2
         },
-        web: {
+        default: {
           boxShadow: `0px 2px 4px ${theme.colors.shadow}`
         }
       })
@@ -141,16 +135,10 @@ export default function QuickCalculator({
       justifyContent: 'center' as const,
       height: '100%' as const,
       ...Platform.select({
-        ios: {
-          shadowColor: theme.colors.shadowLight,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4
-        },
         android: {
           elevation: 2
         },
-        web: {
+        default: {
           boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
         }
       })

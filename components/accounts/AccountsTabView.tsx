@@ -91,15 +91,10 @@ export default function AccountsTabView({
         },
         activeTab: {
           ...Platform.select({
-            ios: {
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4
-            },
             android: {
               elevation: 3
             },
-            web: {
+            default: {
               boxShadow: `0px 2px 4px ${theme.colors.shadow}`
             }
           })
@@ -174,13 +169,10 @@ export default function AccountsTabView({
                   {
                     backgroundColor: colors.primary,
                     ...Platform.select({
-                      ios: {
-                        boxShadow: colors.shadow
-                      },
                       android: {
                         elevation: 3
                       },
-                      web: {
+                      default: {
                         boxShadow: `0px 2px 4px ${colors.shadow}`
                       }
                     })

@@ -24,15 +24,10 @@ export default function AddAccountButton({
           minHeight: 60, // Reduced height for single column
           marginBottom: 8,
           ...Platform.select({
-            ios: {
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.05,
-              shadowRadius: 2
-            },
             android: {
               elevation: 1
             },
-            web: {
+            default: {
               boxShadow: `0px 1px 2px ${theme.colors.shadowLight}`
             }
           })

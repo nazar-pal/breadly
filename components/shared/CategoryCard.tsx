@@ -35,16 +35,10 @@ export default function CategoryCard({
       opacity: isPressed ? 0.7 : 1,
       transform: [{ scale: isPressed ? 0.98 : 1 }],
       ...Platform.select({
-        ios: {
-          shadowColor: theme.colors.shadow,
-          shadowOffset: { width: 0, height: isPressed ? 1 : 2 },
-          shadowOpacity: isPressed ? 0.5 : 1,
-          shadowRadius: isPressed ? 2 : 4
-        },
         android: {
           elevation: isPressed ? 1 : 2
         },
-        web: {
+        default: {
           boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px ${theme.colors.shadow}${isPressed ? '80' : ''}`
         }
       })

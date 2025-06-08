@@ -26,16 +26,10 @@ export default function AddCategoryButton({
       borderWidth: 1,
       borderColor: theme.colors.borderLight,
       ...Platform.select({
-        ios: {
-          shadowColor: theme.colors.shadowLight,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4
-        },
         android: {
           elevation: 1
         },
-        web: {
+        default: {
           boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
         }
       })

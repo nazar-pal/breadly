@@ -53,13 +53,7 @@ const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
         android: {
           elevation: 4
         },
-        ios: {
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 6
-        },
-        web: {
+        default: {
           boxShadow: `0px 2px 6px ${colors.shadow}1a`
         }
       })
@@ -97,14 +91,8 @@ const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
         android: {
           elevation: 2
         },
-        ios: {
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.05,
-          shadowRadius: 3
-        },
-        web: {
-          boxShadow: `0px 1px 3px ${colors.shadow}0d`
+        default: {
+          boxShadow: `0px 1px 3px ${colors.shadowLight}`
         }
       })
     } as ViewStyle,
@@ -114,13 +102,7 @@ const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
         android: {
           elevation: 4
         },
-        ios: {
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 6
-        },
-        web: {
+        default: {
           boxShadow: `0px 2px 6px ${colors.shadow}1a`
         }
       })
@@ -131,14 +113,8 @@ const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
         android: {
           elevation: 8
         },
-        ios: {
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 12
-        },
-        web: {
-          boxShadow: `0px 4px 12px ${colors.shadow}26`
+        default: {
+          boxShadow: `0px 4px 12px ${colors.shadowStrong}`
         }
       })
     } as ViewStyle,
