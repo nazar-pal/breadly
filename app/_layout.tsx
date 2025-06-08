@@ -1,10 +1,12 @@
 import { CurrencyProvider } from '@/context/CurrencyContext'
 import { ThemeProvider, useTheme } from '@/context/ThemeContext'
 import { useFrameworkReady } from '@/hooks/useFrameworkReady'
-import { TRPCReactProvider } from '@/trpc/react'
+import { queryClient } from '@/trpc/query-client'
 import { ClerkProvider } from '@clerk/clerk-expo'
+import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
@@ -31,15 +33,18 @@ export default function RootLayout() {
   useFrameworkReady()
 
   return (
-    <ClerkProvider tokenCache={tokenCache}>
+    <ClerkProvider
+      tokenCache={tokenCache}
+      __experimental_resourceCache={resourceCache}
+    >
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <TRPCReactProvider>
+        <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <ThemeProvider>
               <AppLayout />
             </ThemeProvider>
           </CurrencyProvider>
-        </TRPCReactProvider>
+        </QueryClientProvider>
       </GestureHandlerRootView>
     </ClerkProvider>
   )

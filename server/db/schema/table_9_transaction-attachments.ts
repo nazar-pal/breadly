@@ -19,7 +19,8 @@ Key Features:
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, crudPolicy } from 'drizzle-orm/neon'
 import { index, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core'
-import { attachments, transactions } from '.'
+import { transactions } from './table_7_transactions'
+import { attachments } from './table_8_attachments'
 import { createdAtColumn } from './utils'
 
 // ============================================================================

@@ -1,7 +1,5 @@
 import { z } from 'zod'
-import { createTRPCRouter, publicProcedure } from '../trpc'
-
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 export const appTestRouter = createTRPCRouter({
   hello: publicProcedure
@@ -11,11 +9,16 @@ export const appTestRouter = createTRPCRouter({
       })
     )
     .query(async opts => {
-      await sleep(2000)
       return {
         greeting: `hello ${opts.input.text}`
       }
-    })
+    }),
+  testAuth: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.userId
+    return {
+      userId
+    }
+  })
 })
 // export type definition of API
 export type AppTestRouter = typeof appTestRouter

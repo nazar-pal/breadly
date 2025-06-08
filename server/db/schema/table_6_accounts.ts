@@ -19,7 +19,7 @@ import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, index, pgEnum, pgTable } from 'drizzle-orm/pg-core'
 
-import { currencies } from '.'
+import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
   createdAtColumn,
