@@ -14,7 +14,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 // Layout component that needs access to theme
 function AppLayout() {
-  const { isDark, navigationTheme } = useTheme()
+  const { isDark, navigationTheme, isReady } = useTheme()
+
+  // To prevent hydration errors, we wait until the theme is ready on the client
+  // before rendering the theme-dependent UI.
+  if (!isReady) {
+    return null
+  }
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
