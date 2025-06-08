@@ -13,6 +13,8 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "expo:fix-deps": "pnpx expo install --fix",
+    "expo:doctor": "pnpx expo doctor",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate"
   },
