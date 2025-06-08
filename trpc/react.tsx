@@ -8,6 +8,7 @@ import SuperJSON from 'superjson'
 import type { AppRouter } from '@/server/api'
 
 import { env } from '@/env'
+import { useAuth } from '@clerk/clerk-expo'
 import { createQueryClient } from './query-client'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
@@ -23,6 +24,7 @@ export const { useTRPC, TRPCProvider } = createTRPCContext<AppRouter>()
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
+  const { getToken } = useAuth()
 
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
@@ -34,10 +36,18 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         httpBatchStreamLink({
           transformer: SuperJSON,
           url: getBaseUrl() + '/api/trpc',
-          headers() {
+
+          async headers() {
             const headers = new Headers()
             headers.set('x-trpc-source', 'expo-react')
-            return headers
+
+            // Use `getToken()` to get the current user's session token
+            const token = await getToken()
+            const cookies = `Bearer ${token}`
+            if (cookies) {
+              headers.set('Authorization', cookies)
+            }
+            return Object.fromEntries(headers)
           }
         })
       ]
