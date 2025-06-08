@@ -8,7 +8,7 @@ import SuperJSON from 'superjson'
 import type { AppRouter } from '@/server/api'
 
 import { env } from '@/env'
-import { useAuth } from '@clerk/clerk-expo'
+import { getClerkInstance } from '@clerk/clerk-expo'
 import { createQueryClient } from './query-client'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
@@ -24,7 +24,6 @@ export const { useTRPC, TRPCProvider } = createTRPCContext<AppRouter>()
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
-  const { getToken } = useAuth()
 
   const [trpcClient] = useState(() =>
     createTRPCClient<AppRouter>({
@@ -41,11 +40,12 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             const headers = new Headers()
             headers.set('x-trpc-source', 'expo-react')
 
-            // Use `getToken()` to get the current user's session token
-            const token = await getToken()
-            const cookies = `Bearer ${token}`
-            if (cookies) {
-              headers.set('Authorization', cookies)
+            const clerkInstance = getClerkInstance()
+            // Use `getToken()` to get the current session token
+            const token = await clerkInstance.session?.getToken()
+
+            if (token) {
+              headers.set('Authorization', `Bearer ${token}`)
             }
             return Object.fromEntries(headers)
           }
