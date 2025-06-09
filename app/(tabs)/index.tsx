@@ -70,13 +70,13 @@ export default function OperationsScreen() {
 
   return (
     <View
-      className="flex-1 bg-background"
+      className="bg-background flex-1"
       style={{
         paddingTop: insets.top
       }}
     >
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold text-foreground">
+        <Text className="text-foreground text-[28px] font-bold">
           Operations
         </Text>
       </View>
@@ -124,7 +124,7 @@ export default function OperationsScreen() {
         {/* Today's Operations */}
         {todaysOperations.length > 0 && (
           <View className="mb-6">
-            <Text className="mb-3 text-lg font-semibold text-foreground">
+            <Text className="text-foreground mb-3 text-lg font-semibold">
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
@@ -138,7 +138,7 @@ export default function OperationsScreen() {
 
         {/* All Operations */}
         <View className="mb-6">
-          <Text className="mb-3 text-lg font-semibold text-foreground">
+          <Text className="text-foreground mb-3 text-lg font-semibold">
             {activeFilter === 'all'
               ? 'All Operations'
               : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
@@ -153,7 +153,7 @@ export default function OperationsScreen() {
           ) : (
             <Card>
               <CardContent>
-                <Text className="text-center text-foreground">
+                <Text className="text-foreground text-center">
                   No operations found for the selected filter
                 </Text>
               </CardContent>

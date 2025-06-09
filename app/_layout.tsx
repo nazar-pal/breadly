@@ -1,4 +1,4 @@
-import '@/app/global.css'
+import './global.css'
 
 import { CurrencyProvider } from '@/context/CurrencyContext'
 import { NAV_THEME } from '@/lib/constants'
