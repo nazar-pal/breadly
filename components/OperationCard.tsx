@@ -1,3 +1,4 @@
+import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'expo-router'
 import {
   ArrowRight,
@@ -11,7 +12,6 @@ import {
 } from 'lucide-react-native'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
-import Card from './Card'
 
 export type OperationType = 'expense' | 'income' | 'debt' | 'other'
 
@@ -184,77 +184,79 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card variant="elevated" size="sm" className="mb-2 p-3">
-        <View className="flex-row items-center">
-          {/* Left: Icon */}
-          <View
-            className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
-            style={{ backgroundColor: iconBgColor }}
-          >
-            <IconComponent size={16} color={operationColor} />
-          </View>
-
-          {/* Middle: Info */}
-          <View className="flex-1 gap-1">
-            <View className="flex-row items-center justify-between">
-              <Text
-                className="mr-2 flex-1 text-sm font-medium text-old-text"
-                numberOfLines={1}
-              >
-                {operation.description}
-              </Text>
-              <Text
-                className="text-[15px] font-semibold"
-                style={{ color: operationColor }}
-              >
-                {amountPrefix}${operation.amount.toFixed(2)}
-              </Text>
+      <Card className="mb-2">
+        <CardContent className="p-3">
+          <View className="flex-row items-center">
+            {/* Left: Icon */}
+            <View
+              className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
+              style={{ backgroundColor: iconBgColor }}
+            >
+              <IconComponent size={16} color={operationColor} />
             </View>
 
-            <View className="flex-row items-center justify-between">
-              <View className="flex-1 flex-row items-center gap-2">
-                <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
-                  <Text
-                    className="text-[11px] font-medium text-old-text"
-                    numberOfLines={1}
-                  >
-                    {operation.category}
-                  </Text>
+            {/* Middle: Info */}
+            <View className="flex-1 gap-1">
+              <View className="flex-row items-center justify-between">
+                <Text
+                  className="mr-2 flex-1 text-sm font-medium text-old-text"
+                  numberOfLines={1}
+                >
+                  {operation.description}
+                </Text>
+                <Text
+                  className="text-[15px] font-semibold"
+                  style={{ color: operationColor }}
+                >
+                  {amountPrefix}${operation.amount.toFixed(2)}
+                </Text>
+              </View>
+
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1 flex-row items-center gap-2">
+                  <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
+                    <Text
+                      className="text-[11px] font-medium text-old-text"
+                      numberOfLines={1}
+                    >
+                      {operation.category}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center gap-1">
+                    <Calendar size={12} color="#4A5568" />
+                    <Text className="text-[11px] text-old-text-secondary">
+                      {new Date(operation.date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </Text>
+                  </View>
                 </View>
-                <View className="flex-row items-center gap-1">
-                  <Calendar size={12} color="#4A5568" />
-                  <Text className="text-[11px] text-old-text-secondary">
-                    {new Date(operation.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </Text>
+
+                <View className="flex-row items-center">
+                  {operation.hasPhoto && <Receipt size={14} color="#4A5568" />}
+                  {operation.hasVoice && (
+                    <Mic size={14} color="#4A5568" style={{ marginLeft: 4 }} />
+                  )}
+                  <ArrowRight
+                    size={14}
+                    color="#4A5568"
+                    style={{ marginLeft: 4 }}
+                  />
                 </View>
               </View>
 
-              <View className="flex-row items-center">
-                {operation.hasPhoto && <Receipt size={14} color="#4A5568" />}
-                {operation.hasVoice && (
-                  <Mic size={14} color="#4A5568" style={{ marginLeft: 4 }} />
-                )}
-                <ArrowRight
-                  size={14}
-                  color="#4A5568"
-                  style={{ marginLeft: 4 }}
-                />
-              </View>
+              {subtext && (
+                <Text
+                  className="text-[11px] italic text-old-text-secondary"
+                  numberOfLines={1}
+                >
+                  {subtext}
+                </Text>
+              )}
             </View>
-
-            {subtext && (
-              <Text
-                className="text-[11px] italic text-old-text-secondary"
-                numberOfLines={1}
-              >
-                {subtext}
-              </Text>
-            )}
           </View>
-        </View>
+        </CardContent>
       </Card>
     </Pressable>
   )

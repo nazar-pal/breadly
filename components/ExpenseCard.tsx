@@ -1,8 +1,8 @@
+import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'expo-router'
 import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
-import Card from './Card'
 
 interface ExpenseCardProps {
   expense: {
@@ -25,8 +25,8 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card variant="elevated" size="md" className="mb-3">
-        <View className="min-h-[80px] flex-row items-start justify-between">
+      <Card className="mb-3">
+        <CardContent className="min-h-[80px] flex-row items-start justify-between">
           <View className="mr-4 flex-1">
             <Text className="mb-1 text-lg font-semibold text-old-text">
               ${expense.amount.toFixed(2)}
@@ -61,7 +61,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
             </View>
             <ArrowRight size={20} color="#6366F1" />
           </View>
-        </View>
+        </CardContent>
       </Card>
     </Pressable>
   )

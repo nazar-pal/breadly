@@ -1,5 +1,5 @@
-import Card from '@/components/ui-old/Card'
-import OperationCard, { Operation } from '@/components/ui-old/OperationCard'
+import OperationCard, { Operation } from '@/components/OperationCard'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   mockDebtOperations,
   mockExpenses,
@@ -150,9 +150,11 @@ export default function OperationsScreen() {
             ))
           ) : (
             <Card>
-              <Text className="text-center text-old-text-secondary">
-                No operations found for the selected filter
-              </Text>
+              <CardContent>
+                <Text className="text-center text-old-text-secondary">
+                  No operations found for the selected filter
+                </Text>
+              </CardContent>
             </Card>
           )}
         </View>

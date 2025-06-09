@@ -1,4 +1,4 @@
-import Card from '@/components/ui-old/Card'
+import { Card, CardContent } from '@/components/ui/card'
 import { mockExpenses } from '@/data/mockData'
 import { useLocalSearchParams } from 'expo-router'
 import { Calendar, Mic, Tag } from 'lucide-react-native'
@@ -38,72 +38,80 @@ export default function ExpenseDetailsScreen() {
       </View>
 
       <Card className="mb-4">
-        <View className="flex-row items-center py-3">
-          <View className="bg-old-icon-background-info mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
-            <Calendar size={20} color="#3B82F6" />
+        <CardContent>
+          <View className="flex-row items-center py-3">
+            <View className="bg-old-icon-background-info mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
+              <Calendar size={20} color="#3B82F6" />
+            </View>
+            <View>
+              <Text className="mb-1 text-sm text-old-text-secondary">Date</Text>
+              <Text className="text-base font-medium text-old-text">
+                {expense.date}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text className="mb-1 text-sm text-old-text-secondary">Date</Text>
-            <Text className="text-base font-medium text-old-text">
-              {expense.date}
-            </Text>
-          </View>
-        </View>
 
-        <View className="h-px w-full bg-old-border" />
+          <View className="h-px w-full bg-old-border" />
 
-        <View className="flex-row items-center py-3">
-          <View className="bg-old-icon-background-primary mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
-            <Tag size={20} color="#6366F1" />
+          <View className="flex-row items-center py-3">
+            <View className="bg-old-icon-background-primary mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
+              <Tag size={20} color="#6366F1" />
+            </View>
+            <View>
+              <Text className="mb-1 text-sm text-old-text-secondary">
+                Category
+              </Text>
+              <Text className="text-base font-medium text-old-text">
+                {expense.category}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text className="mb-1 text-sm text-old-text-secondary">
-              Category
-            </Text>
-            <Text className="text-base font-medium text-old-text">
-              {expense.category}
-            </Text>
-          </View>
-        </View>
 
-        <View className="h-px w-full bg-old-border" />
+          <View className="h-px w-full bg-old-border" />
 
-        <View className="flex-row py-3">
-          <View className="flex-1">
-            <Text className="mb-1 text-sm text-old-text-secondary">
-              Description
-            </Text>
-            <Text className="text-base leading-6 text-old-text">
-              {expense.description ?? 'No description provided'}
-            </Text>
+          <View className="flex-row py-3">
+            <View className="flex-1">
+              <Text className="mb-1 text-sm text-old-text-secondary">
+                Description
+              </Text>
+              <Text className="text-base leading-6 text-old-text">
+                {expense.description ?? 'No description provided'}
+              </Text>
+            </View>
           </View>
-        </View>
+        </CardContent>
       </Card>
 
       {expense.hasPhoto && (
         <Card className="mb-4">
-          <Text className="mb-3 text-base font-semibold text-old-text">
-            Receipt Photo
-          </Text>
-          <View className="h-[200px] overflow-hidden rounded-lg bg-old-surface-secondary">
-            <Image
-              source={{ uri: receiptImageUrl }}
-              className="h-full w-full"
-              resizeMode="contain"
-            />
-          </View>
+          <CardContent>
+            <Text className="mb-3 text-base font-semibold text-old-text">
+              Receipt Photo
+            </Text>
+            <View className="h-[200px] overflow-hidden rounded-lg bg-old-surface-secondary">
+              <Image
+                source={{ uri: receiptImageUrl }}
+                className="h-full w-full"
+                resizeMode="contain"
+              />
+            </View>
+          </CardContent>
         </Card>
       )}
 
       {expense.hasVoice && (
         <Card className="mb-4">
-          <Text className="mb-3 text-base font-semibold text-old-text">
-            Voice Memo
-          </Text>
-          <View className="bg-old-icon-background-warning flex-row items-center rounded-lg p-3">
-            <Mic size={24} color="#F59E0B" className="mr-2" />
-            <Text className="text-base text-old-text">Voice Memo (00:12)</Text>
-          </View>
+          <CardContent>
+            <Text className="mb-3 text-base font-semibold text-old-text">
+              Voice Memo
+            </Text>
+            <View className="bg-old-icon-background-warning flex-row items-center rounded-lg p-3">
+              <Mic size={24} color="#F59E0B" className="mr-2" />
+              <Text className="text-base text-old-text">
+                Voice Memo (00:12)
+              </Text>
+            </View>
+          </CardContent>
         </Card>
       )}
     </ScrollView>

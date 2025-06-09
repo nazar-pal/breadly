@@ -1,4 +1,4 @@
-import Card from '@/components/ui-old/Card'
+import { Card, CardContent } from '@/components/ui/card'
 import { mockCategories } from '@/data/mockData'
 import { ArrowDown, ArrowUp, TrendingUp } from 'lucide-react-native'
 import React from 'react'
@@ -61,30 +61,32 @@ function StatCard({
 
   return (
     <Card className="flex-1">
-      <Text className="mb-1 text-sm text-old-text-secondary">{title}</Text>
-      <Text className="mb-1 text-xl font-bold text-old-text">
-        ${amount.toFixed(2)}
-      </Text>
-      {trend !== undefined && (
-        <View className="flex-row items-center gap-1">
-          {trend > 0 ? (
-            <ArrowUp size={16} color={getTrendColor()} />
-          ) : (
-            <ArrowDown size={16} color={getTrendColor()} />
-          )}
-          <Text
-            className="text-sm font-semibold"
-            style={{ color: getTrendColor() }}
-          >
-            {Math.abs(trend)}%
-          </Text>
-          {trendLabel && (
-            <Text className="ml-1 text-xs text-old-text-secondary">
-              {trendLabel}
+      <CardContent>
+        <Text className="mb-1 text-sm text-old-text-secondary">{title}</Text>
+        <Text className="mb-1 text-xl font-bold text-old-text">
+          ${amount.toFixed(2)}
+        </Text>
+        {trend !== undefined && (
+          <View className="flex-row items-center gap-1">
+            {trend > 0 ? (
+              <ArrowUp size={16} color={getTrendColor()} />
+            ) : (
+              <ArrowDown size={16} color={getTrendColor()} />
+            )}
+            <Text
+              className="text-sm font-semibold"
+              style={{ color: getTrendColor() }}
+            >
+              {Math.abs(trend)}%
             </Text>
-          )}
-        </View>
-      )}
+            {trendLabel && (
+              <Text className="ml-1 text-xs text-old-text-secondary">
+                {trendLabel}
+              </Text>
+            )}
+          </View>
+        )}
+      </CardContent>
     </Card>
   )
 }
@@ -97,22 +99,24 @@ function TopTransactions() {
       </Text>
       {mockStats.topTransactions.map(transaction => (
         <Card key={transaction.id} className="mb-2">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-base font-semibold text-old-expense">
-              ${transaction.amount.toFixed(2)}
-            </Text>
-            <View className="rounded bg-old-icon-bg-neutral px-2 py-1">
-              <Text className="text-xs font-medium text-old-text-secondary">
-                {transaction.category}
+          <CardContent>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-base font-semibold text-old-expense">
+                ${transaction.amount.toFixed(2)}
               </Text>
+              <View className="rounded bg-old-icon-bg-neutral px-2 py-1">
+                <Text className="text-xs font-medium text-old-text-secondary">
+                  {transaction.category}
+                </Text>
+              </View>
             </View>
-          </View>
-          <Text
-            className="mt-1 text-sm text-old-text-secondary"
-            numberOfLines={2}
-          >
-            {transaction.description}
-          </Text>
+            <Text
+              className="mt-1 text-sm text-old-text-secondary"
+              numberOfLines={2}
+            >
+              {transaction.description}
+            </Text>
+          </CardContent>
         </Card>
       ))}
     </View>
@@ -133,40 +137,42 @@ function CategoryBreakdown() {
         Top Categories
       </Text>
       <Card>
-        {topCategories.map((category, index) => {
-          const percentage = (category.spent / totalSpent) * 100
-          return (
-            <View
-              key={category.id}
-              className="border-b py-3"
-              style={{ borderBottomColor: '#F7FAFC' }} // old-border-light
-            >
-              <View className="mb-2 flex-row justify-between">
-                <Text className="text-sm font-medium text-old-text">
-                  {category.name}
-                </Text>
-                <Text className="text-sm text-old-text-secondary">
-                  ${category.spent.toFixed(2)}
-                </Text>
-              </View>
+        <CardContent>
+          {topCategories.map((category, index) => {
+            const percentage = (category.spent / totalSpent) * 100
+            return (
               <View
-                className="mb-1 h-1 overflow-hidden rounded-sm"
-                style={{ backgroundColor: '#F7FAFC' }} // old-border-light
+                key={category.id}
+                className="border-b py-3"
+                style={{ borderBottomColor: '#F7FAFC' }} // old-border-light
               >
+                <View className="mb-2 flex-row justify-between">
+                  <Text className="text-sm font-medium text-old-text">
+                    {category.name}
+                  </Text>
+                  <Text className="text-sm text-old-text-secondary">
+                    ${category.spent.toFixed(2)}
+                  </Text>
+                </View>
                 <View
-                  className="h-full"
-                  style={{
-                    width: `${percentage}%`,
-                    backgroundColor: '#6366F1' // old-primary
-                  }}
-                />
+                  className="mb-1 h-1 overflow-hidden rounded-sm"
+                  style={{ backgroundColor: '#F7FAFC' }} // old-border-light
+                >
+                  <View
+                    className="h-full"
+                    style={{
+                      width: `${percentage}%`,
+                      backgroundColor: '#6366F1' // old-primary
+                    }}
+                  />
+                </View>
+                <Text className="text-right text-xs text-old-text-secondary">
+                  {percentage.toFixed(1)}%
+                </Text>
               </View>
-              <Text className="text-right text-xs text-old-text-secondary">
-                {percentage.toFixed(1)}%
-              </Text>
-            </View>
-          )
-        })}
+            )
+          })}
+        </CardContent>
       </Card>
     </View>
   )
@@ -210,34 +216,36 @@ export default function StatisticsScreen() {
         </View>
 
         <Card className="mb-4">
-          <View className="mb-3 flex-row items-start justify-between">
-            <View className="flex-1">
-              <Text className="mb-1 text-base font-semibold text-old-text">
-                Monthly Savings
-              </Text>
-              <Text className="text-2xl font-bold text-old-success">
-                ${mockStats.currentMonth.savings.toFixed(2)}
-              </Text>
+          <CardContent>
+            <View className="mb-3 flex-row items-start justify-between">
+              <View className="flex-1">
+                <Text className="mb-1 text-base font-semibold text-old-text">
+                  Monthly Savings
+                </Text>
+                <Text className="text-2xl font-bold text-old-success">
+                  ${mockStats.currentMonth.savings.toFixed(2)}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-1 rounded-lg bg-old-icon-bg-success p-2">
+                <TrendingUp size={16} color="#10B981" />
+                <Text className="text-sm font-semibold text-old-success">
+                  {mockStats.currentMonth.savingsRate}% Rate
+                </Text>
+              </View>
             </View>
-            <View className="flex-row items-center gap-1 rounded-lg bg-old-icon-bg-success p-2">
-              <TrendingUp size={16} color="#10B981" />
-              <Text className="text-sm font-semibold text-old-success">
-                {mockStats.currentMonth.savingsRate}% Rate
-              </Text>
-            </View>
-          </View>
-          <View
-            className="h-2 overflow-hidden rounded"
-            style={{ backgroundColor: '#F7FAFC' }} // old-border-light
-          >
             <View
-              className="h-full"
-              style={{
-                width: `${mockStats.currentMonth.savingsRate}%`,
-                backgroundColor: '#10B981' // old-success
-              }}
-            />
-          </View>
+              className="h-2 overflow-hidden rounded"
+              style={{ backgroundColor: '#F7FAFC' }} // old-border-light
+            >
+              <View
+                className="h-full"
+                style={{
+                  width: `${mockStats.currentMonth.savingsRate}%`,
+                  backgroundColor: '#10B981' // old-success
+                }}
+              />
+            </View>
+          </CardContent>
         </Card>
 
         <View className="mb-4 flex-row gap-3">

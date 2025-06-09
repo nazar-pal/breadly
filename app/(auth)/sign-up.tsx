@@ -1,5 +1,5 @@
-import Card from '@/components/ui-old/Card'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
@@ -105,32 +105,34 @@ export default function SignUpScreen() {
             </Text>
           </View>
 
-          <Card className="mb-6">
-            <View className="mb-5">
-              <Text className="mb-2 text-base font-semibold text-old-text">
-                Verification Code
-              </Text>
-              <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
-                <Shield size={20} color="#4A5568" className="mr-3" />
-                <TextInput
-                  className="h-full flex-1 text-base text-old-text"
-                  value={code}
-                  placeholder="Enter verification code"
-                  placeholderTextColor="#A0ADB8"
-                  keyboardType="number-pad"
-                  onChangeText={setCode}
-                />
+          <Card>
+            <CardContent>
+              <View className="mb-5">
+                <Text className="mb-2 text-base font-semibold text-old-text">
+                  Verification Code
+                </Text>
+                <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
+                  <Shield size={20} color="#4A5568" className="mr-3" />
+                  <TextInput
+                    className="h-full flex-1 text-base text-old-text"
+                    value={code}
+                    placeholder="Enter verification code"
+                    placeholderTextColor="#A0ADB8"
+                    keyboardType="number-pad"
+                    onChangeText={setCode}
+                  />
+                </View>
               </View>
-            </View>
 
-            <Button
-              variant="default"
-              onPress={onVerifyPress}
-              disabled={!code || isLoading}
-              className="mt-2 w-full"
-            >
-              <Text>{isLoading ? 'Verifying...' : 'Verify Email'}</Text>
-            </Button>
+              <Button
+                variant="default"
+                onPress={onVerifyPress}
+                disabled={!code || isLoading}
+                className="mt-2 w-full"
+              >
+                <Text>{isLoading ? 'Verifying...' : 'Verify Email'}</Text>
+              </Button>
+            </CardContent>
           </Card>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -164,51 +166,55 @@ export default function SignUpScreen() {
           </Text>
         </View>
 
-        <Card className="mb-6">
-          <View className="mb-5">
-            <Text className="mb-2 text-base font-semibold text-old-text">
-              Email Address
-            </Text>
-            <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
-              <Mail size={20} color="#4A5568" className="mr-3" />
-              <TextInput
-                className="h-full flex-1 text-base text-old-text"
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                value={emailAddress}
-                placeholder="Enter your email"
-                placeholderTextColor="#A0ADB8"
-                onChangeText={setEmailAddress}
-              />
+        <Card>
+          <CardContent>
+            <View className="mb-5">
+              <Text className="mb-2 text-base font-semibold text-old-text">
+                Email Address
+              </Text>
+              <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
+                <Mail size={20} color="#4A5568" className="mr-3" />
+                <TextInput
+                  className="h-full flex-1 text-base text-old-text"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  value={emailAddress}
+                  placeholder="Enter your email"
+                  placeholderTextColor="#A0ADB8"
+                  onChangeText={setEmailAddress}
+                />
+              </View>
             </View>
-          </View>
 
-          <View className="mb-5">
-            <Text className="mb-2 text-base font-semibold text-old-text">
-              Password
-            </Text>
-            <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
-              <Lock size={20} color="#4A5568" className="mr-3" />
-              <TextInput
-                className="h-full flex-1 text-base text-old-text"
-                value={password}
-                placeholder="Create a password"
-                placeholderTextColor="#A0ADB8"
-                secureTextEntry={true}
-                onChangeText={setPassword}
-              />
+            <View className="mb-5">
+              <Text className="mb-2 text-base font-semibold text-old-text">
+                Password
+              </Text>
+              <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
+                <Lock size={20} color="#4A5568" className="mr-3" />
+                <TextInput
+                  className="h-full flex-1 text-base text-old-text"
+                  value={password}
+                  placeholder="Create a password"
+                  placeholderTextColor="#A0ADB8"
+                  secureTextEntry={true}
+                  onChangeText={setPassword}
+                />
+              </View>
             </View>
-          </View>
 
-          <Button
-            variant="default"
-            onPress={onSignUpPress}
-            disabled={!emailAddress || !password || isLoading}
-            className="mt-2 w-full"
-          >
-            <Text>{isLoading ? 'Creating Account...' : 'Create Account'}</Text>
-          </Button>
+            <Button
+              variant="default"
+              onPress={onSignUpPress}
+              disabled={!emailAddress || !password || isLoading}
+              className="mt-2 w-full"
+            >
+              <Text>
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </Text>
+            </Button>
+          </CardContent>
         </Card>
 
         <View className="flex-row items-center justify-center">

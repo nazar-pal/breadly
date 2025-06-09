@@ -1,5 +1,5 @@
-import Card from '@/components/ui-old/Card'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { Camera, Upload } from 'lucide-react-native'
 import React from 'react'
@@ -9,13 +9,15 @@ export default function PhotoScreen() {
   return (
     <View className="flex-1 bg-old-background">
       <View className="flex-1 p-4">
-        <Card className="h-[400px] items-center justify-center">
-          <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-old-icon-bg-info">
-            <Camera size={48} color="#3B82F6" />
-          </View>
-          <Text className="mx-6 text-center text-base font-medium text-old-text-secondary">
-            Take a photo of your receipt for automatic expense entry
-          </Text>
+        <Card>
+          <CardContent className="h-[400px] items-center justify-center">
+            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-old-icon-bg-info">
+              <Camera size={48} color="#3B82F6" />
+            </View>
+            <Text className="mx-6 text-center text-base font-medium text-old-text-secondary">
+              Take a photo of your receipt for automatic expense entry
+            </Text>
+          </CardContent>
         </Card>
 
         <View className="mt-4 flex-row">
