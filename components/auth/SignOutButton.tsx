@@ -1,4 +1,5 @@
-import Button from '@/components/ui-old/Button'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useClerk } from '@clerk/clerk-expo'
 import * as Linking from 'expo-linking'
 
@@ -17,8 +18,8 @@ export const SignOutButton = () => {
     }
   }
   return (
-    <Button variant="destructive" onPress={handleSignOut} fullWidth>
-      Sign Out
+    <Button variant="destructive" onPress={handleSignOut} className="w-full">
+      <Text>Sign Out</Text>
     </Button>
   )
 }

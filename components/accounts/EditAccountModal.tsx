@@ -1,4 +1,5 @@
-import Button from '@/components/ui-old/Button'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useCurrency } from '@/context/CurrencyContext'
 import { Check, X } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
@@ -9,7 +10,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View
 } from 'react-native'
@@ -324,10 +324,14 @@ export default function EditAccountModal({
                 variant="secondary"
                 className="flex-[0.4]"
               >
-                Cancel
+                <Text>Cancel</Text>
               </Button>
-              <Button onPress={handleSave} className="flex-[0.6]">
-                Save
+              <Button
+                onPress={handleSave}
+                variant="default"
+                className="flex-[0.6]"
+              >
+                <Text>Save</Text>
               </Button>
             </View>
           </ScrollView>

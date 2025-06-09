@@ -1,8 +1,9 @@
-import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { Mic } from 'lucide-react-native'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 export default function VoiceScreen() {
   return (
@@ -21,12 +22,9 @@ export default function VoiceScreen() {
           </Text>
         </Card>
 
-        <Button
-          variant="primary"
-          leftIcon={<Mic size={20} color="#FFFFFF" />}
-          style={{ alignSelf: 'center', marginTop: 24 }}
-        >
-          Start Recording
+        <Button variant="default" size="lg" className="mx-auto mt-6">
+          <Mic size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Text>Start Recording</Text>
         </Button>
       </View>
     </View>

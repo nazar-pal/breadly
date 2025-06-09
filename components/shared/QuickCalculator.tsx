@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { mockCategories, mockIncomeCategories } from '@/data/mockData'
 import { Check, MessageSquare, Save } from 'lucide-react-native'
 import React, { useState } from 'react'
@@ -6,11 +8,9 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View
 } from 'react-native'
-import Button from '../ui-old/Button'
 
 interface QuickCalculatorProps {
   type: 'expense' | 'income'
@@ -296,12 +296,12 @@ export default function QuickCalculator({
       <View className="mt-6">
         <Button
           onPress={handleSubmit}
-          variant="primary"
+          variant="default"
           size="lg"
-          fullWidth
-          leftIcon={<Save size={20} color="#FFFFFF" />}
+          className="w-full"
         >
-          Save {type === 'expense' ? 'Expense' : 'Income'}
+          <Save size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Text>Save {type === 'expense' ? 'Expense' : 'Income'}</Text>
         </Button>
       </View>
 
@@ -346,9 +346,9 @@ export default function QuickCalculator({
               <Button
                 onPress={() => setShowCategoryModal(false)}
                 variant="outline"
-                fullWidth
+                className="w-full"
               >
-                Close
+                <Text>Close</Text>
               </Button>
             </View>
           </View>
@@ -385,15 +385,15 @@ export default function QuickCalculator({
                 variant="outline"
                 className="flex-[0.4]"
               >
-                Cancel
+                <Text>Cancel</Text>
               </Button>
               <Button
                 onPress={() => setShowCommentModal(false)}
-                variant="primary"
+                variant="default"
                 className="flex-[0.6]"
-                leftIcon={<Check size={16} color="#FFFFFF" />}
               >
-                Save
+                <Check size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
+                <Text>Save</Text>
               </Button>
             </View>
           </View>

@@ -1,8 +1,9 @@
-import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { Camera, Upload } from 'lucide-react-native'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 export default function PhotoScreen() {
   return (
@@ -18,19 +19,13 @@ export default function PhotoScreen() {
         </Card>
 
         <View className="mt-4 flex-row">
-          <Button
-            variant="primary"
-            leftIcon={<Camera size={20} color="#FFFFFF" />}
-            style={{ flex: 1, marginRight: 8 }}
-          >
-            Take Photo
+          <Button variant="default" className="mr-2 flex-1">
+            <Camera size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+            <Text>Take Photo</Text>
           </Button>
-          <Button
-            variant="outline"
-            leftIcon={<Upload size={20} color="#1A202C" />}
-            style={{ flex: 1 }}
-          >
-            Upload
+          <Button variant="outline" className="flex-1">
+            <Upload size={20} color="#1A202C" style={{ marginRight: 8 }} />
+            <Text>Upload</Text>
           </Button>
         </View>
       </View>

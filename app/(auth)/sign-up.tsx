@@ -1,5 +1,6 @@
-import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { Lock, Mail, Shield, UserPlus } from 'lucide-react-native'
@@ -9,7 +10,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Text,
   TextInput,
   View
 } from 'react-native'
@@ -124,12 +124,12 @@ export default function SignUpScreen() {
             </View>
 
             <Button
-              variant="primary"
+              variant="default"
               onPress={onVerifyPress}
               disabled={!code || isLoading}
-              className="mt-2"
+              className="mt-2 w-full"
             >
-              {isLoading ? 'Verifying...' : 'Verify Email'}
+              <Text>{isLoading ? 'Verifying...' : 'Verify Email'}</Text>
             </Button>
           </Card>
         </ScrollView>
@@ -202,12 +202,12 @@ export default function SignUpScreen() {
           </View>
 
           <Button
-            variant="primary"
+            variant="default"
             onPress={onSignUpPress}
             disabled={!emailAddress || !password || isLoading}
-            className="mt-2"
+            className="mt-2 w-full"
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+            <Text>{isLoading ? 'Creating Account...' : 'Create Account'}</Text>
           </Button>
         </Card>
 

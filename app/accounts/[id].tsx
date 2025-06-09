@@ -1,7 +1,8 @@
 import AccountOperationCard from '@/components/accounts/AccountOperationCard'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
-import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { mockAccounts } from '@/data/mockAccounts'
 import { mockAccountOperations } from '@/data/mockData'
 import { useAccountManagement } from '@/hooks/useAccountManagement'
@@ -18,7 +19,7 @@ import {
   Wallet
 } from 'lucide-react-native'
 import React from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountDetailsScreen() {
@@ -156,9 +157,9 @@ export default function AccountDetailsScreen() {
               variant="outline"
               size="sm"
               onPress={() => handleEditAccount(account)}
-              leftIcon={<Edit2 size={16} color="#1A202C" />}
             >
-              Edit
+              <Edit2 size={16} color="#1A202C" style={{ marginRight: 8 }} />
+              <Text>Edit</Text>
             </Button>
           </View>
 

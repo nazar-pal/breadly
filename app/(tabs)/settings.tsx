@@ -1,13 +1,14 @@
 import { SignOutButton } from '@/components/auth/SignOutButton'
-import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { currencies, useCurrency } from '@/context/CurrencyContext'
 import { useColorScheme } from '@/lib/useColorScheme'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
 import { Link } from 'expo-router'
 import { ChevronRight, DollarSign, Moon, Sun, User } from 'lucide-react-native'
 import React from 'react'
-import { Pressable, ScrollView, Switch, Text, View } from 'react-native'
+import { Pressable, ScrollView, Switch, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SettingsScreen() {
@@ -72,10 +73,14 @@ export default function SettingsScreen() {
               </Text>
               <View className="gap-2">
                 <Link href="/sign-in" asChild>
-                  <Button>Sign In</Button>
+                  <Button className="w-full">
+                    <Text>Sign In</Text>
+                  </Button>
                 </Link>
                 <Link href="/sign-up" asChild>
-                  <Button variant="secondary">Sign Up</Button>
+                  <Button variant="secondary" className="w-full">
+                    <Text>Sign Up</Text>
+                  </Button>
                 </Link>
               </View>
             </View>

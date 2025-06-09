@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { mockCategories } from '@/data/mockData'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -10,16 +12,8 @@ import {
 } from 'lucide-react-native'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
+import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native'
 import * as z from 'zod'
-import Button from '../ui-old/Button'
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
@@ -258,16 +252,16 @@ export default function ExpenseForm({
                 variant="outline"
                 onPress={handleCancelEdit}
                 className="mr-2 flex-1"
-                leftIcon={<X size={20} color="#1A202C" />}
               >
-                Cancel
+                <X size={20} color="#1A202C" style={{ marginRight: 8 }} />
+                <Text>Cancel</Text>
               </Button>
               <Button
-                variant="primary"
+                variant="default"
                 onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1 }}
+                className="flex-1"
               >
-                Update Expense
+                <Text>Update Expense</Text>
               </Button>
             </>
           ) : (
@@ -276,17 +270,19 @@ export default function ExpenseForm({
                 variant="outline"
                 onPress={handleSubmit(handleAddExpense)}
                 className="mr-2 flex-1"
-                leftIcon={<Plus size={20} color="#1A202C" />}
               >
-                Add Another
+                <Plus size={20} color="#1A202C" style={{ marginRight: 8 }} />
+                <Text>Add Another</Text>
               </Button>
               <Button
-                variant="primary"
+                variant="default"
                 onPress={handleFinalSubmit}
-                style={{ flex: 1 }}
+                className="flex-1"
               >
-                Save {expenses.length > 0 ? 'All ' : ''}
-                Expense{expenses.length !== 0 ? 's' : ''}
+                <Text>
+                  Save {expenses.length > 0 ? 'All ' : ''}Expense
+                  {expenses.length !== 0 ? 's' : ''}
+                </Text>
               </Button>
             </>
           )}
@@ -351,13 +347,7 @@ export default function ExpenseForm({
           onPress={() => setShowCategoryPicker(false)}
         >
           <View className="max-h-[80%] rounded-xl bg-old-surface">
-            <Text
-              className="border-b p-4 text-lg font-semibold"
-              style={{
-                color: '#1A202C', // colors.text
-                borderBottomColor: '#F7FAFC' // colors.borderLight
-              }}
-            >
+            <Text className="border-b p-4 text-lg font-semibold text-old-text">
               Select Category
             </Text>
             <ScrollView>
@@ -368,7 +358,7 @@ export default function ExpenseForm({
                   style={{
                     backgroundColor:
                       selectedCategory === category.name
-                        ? '#6366F1' // colors.primary
+                        ? '#6366F1'
                         : 'transparent'
                   }}
                   onPress={() => {
@@ -381,8 +371,8 @@ export default function ExpenseForm({
                     style={{
                       color:
                         selectedCategory === category.name
-                          ? '#FFFFFF' // colors.textInverse
-                          : '#1A202C' // colors.text
+                          ? '#FFFFFF'
+                          : '#1A202C'
                     }}
                   >
                     {category.name}
@@ -407,13 +397,7 @@ export default function ExpenseForm({
           onPress={() => setShowDatePicker(false)}
         >
           <View className="max-h-[80%] rounded-xl bg-old-surface">
-            <Text
-              className="border-b p-4 text-lg font-semibold"
-              style={{
-                color: '#1A202C', // colors.text
-                borderBottomColor: '#F7FAFC' // colors.borderLight
-              }}
-            >
+            <Text className="border-b p-4 text-lg font-semibold text-old-text">
               Select Date
             </Text>
             <ScrollView>
@@ -429,9 +413,7 @@ export default function ExpenseForm({
                     className="p-4"
                     style={{
                       backgroundColor:
-                        selectedDate === dateString
-                          ? '#6366F1' // colors.primary
-                          : 'transparent'
+                        selectedDate === dateString ? '#6366F1' : 'transparent'
                     }}
                     onPress={() => {
                       setValue('date', dateString)
@@ -442,9 +424,7 @@ export default function ExpenseForm({
                       className="text-base"
                       style={{
                         color:
-                          selectedDate === dateString
-                            ? '#FFFFFF' // colors.textInverse
-                            : '#1A202C' // colors.text
+                          selectedDate === dateString ? '#FFFFFF' : '#1A202C'
                       }}
                     >
                       {isToday ? 'Today' : formatDate(dateString)}
