@@ -1,4 +1,3 @@
-import TestAuth from '@/components/categories/TestAuth'
 import CalculatorModal from '@/components/shared/CalculatorModal'
 import CategoryEditModal from '@/components/shared/CategoryEditModal'
 import CategoryGrid from '@/components/shared/CategoryGrid'
@@ -109,8 +108,6 @@ function CategoriesContent() {
           totalExpenses={totalExpenses}
           totalIncome={totalIncome}
         />
-
-        <TestAuth />
 
         <CategoryGrid getIcon={getCategoryIcon} />
 
