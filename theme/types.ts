@@ -1,5 +1,5 @@
 import { darkColors, lightColors } from './colors'
-import { borderRadius, spacing } from './tokens'
+import { spacing } from './tokens'
 
 // Theme preference type
 export type ThemePreference = 'light' | 'dark' | 'system'
@@ -14,6 +14,5 @@ export type Colors = typeof lightColors | typeof darkColors
 export type ThemedStylesProps = {
   colors: Colors
   spacing: typeof spacing
-  borderRadius: typeof borderRadius
   isDark: boolean
 }

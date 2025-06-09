@@ -116,13 +116,13 @@ export default function Card({
 
     switch (size) {
       case 'sm':
-        return 'p-2' // spacing.sm
+        return 'p-2'
       case 'lg':
-        return 'p-4' // spacing.lg
+        return 'p-4'
       case 'xl':
-        return 'p-6' // spacing.xl
+        return 'p-6'
       default:
-        return 'p-3' // spacing.md
+        return 'p-3'
     }
   }
 

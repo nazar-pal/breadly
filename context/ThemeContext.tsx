@@ -9,7 +9,6 @@ import React, {
 } from 'react'
 import { useColorScheme } from 'react-native'
 import {
-  borderRadius,
   Colors,
   createNavigationTheme,
   darkColors,
@@ -35,7 +34,6 @@ type ThemeContextType = {
   colors: Colors
   // Design tokens
   spacing: typeof spacing
-  borderRadius: typeof borderRadius
   // Navigation theme for React Navigation (memoized)
   navigationTheme: ReturnType<typeof createNavigationTheme>
   // Whether theme is still loading from storage
@@ -179,7 +177,6 @@ export const ThemeProvider = ({
       isDark,
       colors,
       spacing,
-      borderRadius,
       navigationTheme,
       isLoading,
       isReady,
@@ -208,7 +205,6 @@ export const ThemeProvider = ({
       isDark: fallbackIsDark,
       colors: fallbackColors,
       spacing,
-      borderRadius,
       navigationTheme: createNavigationTheme(fallbackColors, fallbackIsDark),
       isLoading: true,
       isReady: false,
@@ -238,7 +234,6 @@ export const useTheme = () => {
 export const THEME_CONSTANTS = {
   STORAGE_KEY: THEME_STORAGE_KEY,
   SPACING: spacing,
-  BORDER_RADIUS: borderRadius,
   LIGHT_COLORS: lightColors,
   DARK_COLORS: darkColors
 } as const
@@ -258,11 +253,11 @@ export const createCustomNavigationTheme = (mode: ThemeMode) => {
 export const useThemedStyles = <T,>(
   styleFactory: (theme: ThemedStylesProps) => T
 ) => {
-  const { colors, spacing, borderRadius, isDark } = useTheme()
+  const { colors, spacing, isDark } = useTheme()
 
   return useMemo(
-    () => styleFactory({ colors, spacing, borderRadius, isDark }),
-    [colors, spacing, borderRadius, isDark, styleFactory]
+    () => styleFactory({ colors, spacing, isDark }),
+    [colors, spacing, isDark, styleFactory]
   )
 }
 

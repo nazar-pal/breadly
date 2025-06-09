@@ -7,12 +7,3 @@ export const spacing = {
   xl: 32,
   xxl: 40
 } as const
-
-// Design tokens for border radius
-export const borderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 16,
-  xl: 24,
-  round: 9999
-} as const
