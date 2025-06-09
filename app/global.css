@@ -37,7 +37,7 @@
     --savings: 186 84% 42%;
   }
 
-  .dark {
+  .dark:root {
     --background: 224 71.4% 4.1%;
     --foreground: 210 20% 98%;
     --card: 224 71.4% 4.1%;
