@@ -1,6 +1,6 @@
 import { SignOutButton } from '@/components/auth/SignOutButton'
-import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
+import Button from '@/components/ui-old/Button'
+import Card from '@/components/ui-old/Card'
 import { currencies, useCurrency } from '@/context/CurrencyContext'
 import {
   useTheme,

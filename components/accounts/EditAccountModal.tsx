@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button'
+import Button from '@/components/ui-old/Button'
 import { useCurrency } from '@/context/CurrencyContext'
 import { useTheme } from '@/context/ThemeContext'
 import { Check, X } from 'lucide-react-native'

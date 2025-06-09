@@ -1,4 +1,4 @@
-import Card from '@/components/ui/Card'
+import Card from '@/components/ui-old/Card'
 import { useTheme } from '@/context/ThemeContext'
 import { mockExpenses } from '@/data/mockData'
 import { useLocalSearchParams } from 'expo-router'

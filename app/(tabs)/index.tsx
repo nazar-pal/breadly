@@ -1,5 +1,5 @@
-import Card from '@/components/ui/Card'
-import OperationCard, { Operation } from '@/components/ui/OperationCard'
+import Card from '@/components/ui-old/Card'
+import OperationCard, { Operation } from '@/components/ui-old/OperationCard'
 import { useTheme } from '@/context/ThemeContext'
 import {
   mockDebtOperations,

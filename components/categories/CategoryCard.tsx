@@ -2,8 +2,8 @@ import { useTheme } from '@/context/ThemeContext'
 import { CreditCard as Edit2, Trash2 } from 'lucide-react-native'
 import React from 'react'
 import { Text, View } from 'react-native'
-import Card from '../ui/Card'
-import IconButton from '../ui/IconButton'
+import Card from '../ui-old/Card'
+import IconButton from '../ui-old/IconButton'
 
 interface CategoryCardProps {
   category: {

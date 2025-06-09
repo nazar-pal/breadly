@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button'
+import Button from '@/components/ui-old/Button'
 import { useClerk } from '@clerk/clerk-expo'
 import * as Linking from 'expo-linking'
 

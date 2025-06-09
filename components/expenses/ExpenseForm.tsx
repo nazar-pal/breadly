@@ -20,7 +20,7 @@ import {
   View
 } from 'react-native'
 import * as z from 'zod'
-import Button from '../ui/Button'
+import Button from '../ui-old/Button'
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),

@@ -11,7 +11,7 @@ import {
   TextInput,
   View
 } from 'react-native'
-import Button from '../ui/Button'
+import Button from '../ui-old/Button'
 
 interface QuickCalculatorProps {
   type: 'expense' | 'income'
