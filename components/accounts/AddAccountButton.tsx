@@ -28,7 +28,7 @@ export default function AddAccountButton({
         <View className="h-7 w-7 items-center justify-center rounded-md">
           <Plus size={16} color="#6366F1" />
         </View>
-        <Text className="text-foreground text-center text-sm font-semibold">
+        <Text className="text-center text-sm font-semibold text-foreground">
           {label}
         </Text>
       </View>

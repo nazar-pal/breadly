@@ -62,8 +62,8 @@ function StatCard({
   return (
     <Card className="flex-1">
       <CardContent>
-        <Text className="text-foreground mb-1 text-sm">{title}</Text>
-        <Text className="text-foreground mb-1 text-xl font-bold">
+        <Text className="mb-1 text-sm text-foreground">{title}</Text>
+        <Text className="mb-1 text-xl font-bold text-foreground">
           ${amount.toFixed(2)}
         </Text>
         {trend !== undefined && (
@@ -80,7 +80,7 @@ function StatCard({
               {Math.abs(trend)}%
             </Text>
             {trendLabel && (
-              <Text className="text-foreground ml-1 text-xs">{trendLabel}</Text>
+              <Text className="ml-1 text-xs text-foreground">{trendLabel}</Text>
             )}
           </View>
         )}
@@ -92,7 +92,7 @@ function StatCard({
 function TopTransactions() {
   return (
     <View className="mb-6">
-      <Text className="text-foreground mb-3 text-lg font-semibold">
+      <Text className="mb-3 text-lg font-semibold text-foreground">
         Top Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
@@ -103,12 +103,12 @@ function TopTransactions() {
                 ${transaction.amount.toFixed(2)}
               </Text>
               <View className="rounded px-2 py-1">
-                <Text className="text-foreground text-xs font-medium">
+                <Text className="text-xs font-medium text-foreground">
                   {transaction.category}
                 </Text>
               </View>
             </View>
-            <Text className="text-foreground mt-1 text-sm" numberOfLines={2}>
+            <Text className="mt-1 text-sm text-foreground" numberOfLines={2}>
               {transaction.description}
             </Text>
           </CardContent>
@@ -128,7 +128,7 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text className="text-foreground mb-3 text-lg font-semibold">
+      <Text className="mb-3 text-lg font-semibold text-foreground">
         Top Categories
       </Text>
       <Card>
@@ -142,10 +142,10 @@ function CategoryBreakdown() {
                 style={{ borderBottomColor: '#F7FAFC' }} // border-light
               >
                 <View className="mb-2 flex-row justify-between">
-                  <Text className="text-foreground text-sm font-medium">
+                  <Text className="text-sm font-medium text-foreground">
                     {category.name}
                   </Text>
-                  <Text className="text-foreground text-sm">
+                  <Text className="text-sm text-foreground">
                     ${category.spent.toFixed(2)}
                   </Text>
                 </View>
@@ -161,7 +161,7 @@ function CategoryBreakdown() {
                     }}
                   />
                 </View>
-                <Text className="text-foreground text-right text-xs">
+                <Text className="text-right text-xs text-foreground">
                   {percentage.toFixed(1)}%
                 </Text>
               </View>
@@ -177,9 +177,9 @@ export default function StatisticsScreen() {
   const insets = useSafeAreaInsets()
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-4 py-4">
-        <Text className="text-foreground text-[28px] font-bold">
+        <Text className="text-[28px] font-bold text-foreground">
           Statistics
         </Text>
       </View>
@@ -213,7 +213,7 @@ export default function StatisticsScreen() {
           <CardContent>
             <View className="mb-3 flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="text-foreground mb-1 text-base font-semibold">
+                <Text className="mb-1 text-base font-semibold text-foreground">
                   Monthly Savings
                 </Text>
                 <Text className="text-2xl font-bold text-green-500">

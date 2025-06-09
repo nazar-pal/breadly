@@ -10,7 +10,7 @@ export default function AuthRoutesLayout() {
   }
 
   return (
-    <View className="bg-background flex-1">
+    <View className="flex-1 bg-background">
       <Stack
         screenOptions={{
           headerShown: true,

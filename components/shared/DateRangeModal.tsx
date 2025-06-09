@@ -155,13 +155,13 @@ export default function DateRangeModal({
           onPress={onClose}
         />
         <View
-          className="bg-background max-h-[80%] min-h-[50%] rounded-t-3xl"
+          className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-background"
           style={{
             paddingBottom: insets.bottom + 16
           }}
         >
           {/* Header with Navigation */}
-          <View className="border-border min-h-[60px] flex-row items-center border-b px-4 py-4">
+          <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
             {!showCustomPicker && canNavigate && navigatePrevious && (
               <Pressable
                 onPress={navigatePrevious}
@@ -172,11 +172,11 @@ export default function DateRangeModal({
             )}
 
             <View className="mx-4 flex-1 items-center">
-              <Text className="text-foreground text-center text-lg font-semibold">
+              <Text className="text-center text-lg font-semibold text-foreground">
                 {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
               </Text>
               {!showCustomPicker && formattedRange && (
-                <Text className="text-foreground mt-0.5 text-center text-[11px]">
+                <Text className="mt-0.5 text-center text-[11px] text-foreground">
                   {formattedRange}
                 </Text>
               )}
@@ -234,7 +234,7 @@ export default function DateRangeModal({
                       >
                         {option.label}
                       </Text>
-                      <Text className="text-foreground text-xs">
+                      <Text className="text-xs text-foreground">
                         {option.description}
                       </Text>
                     </View>
@@ -270,10 +270,10 @@ export default function DateRangeModal({
               {/* Custom Range Actions */}
               <View className="flex-row gap-3 pt-5">
                 <Pressable
-                  className="bg-secondary flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl py-3"
+                  className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-secondary py-3"
                   onPress={handleCustomRangeCancel}
                 >
-                  <Text className="text-foreground text-base font-semibold">
+                  <Text className="text-base font-semibold text-foreground">
                     Cancel
                   </Text>
                 </Pressable>
