@@ -10,7 +10,6 @@ import React, {
 import { useColorScheme } from 'react-native'
 import {
   Colors,
-  createNavigationTheme,
   darkColors,
   lightColors,
   ThemedStylesProps,
@@ -31,8 +30,6 @@ type ThemeContextType = {
   isDark: boolean
   // Color palette for current theme
   colors: Colors
-  // Navigation theme for React Navigation (memoized)
-  navigationTheme: ReturnType<typeof createNavigationTheme>
   // Whether theme is still loading from storage
   isLoading: boolean
   // Whether theme system is ready (no flashing)
@@ -87,12 +84,6 @@ export const ThemeProvider = ({
 
   // Memoize colors to prevent unnecessary re-renders
   const colors = useMemo(() => (isDark ? darkColors : lightColors), [isDark])
-
-  // Memoize navigation theme to prevent recreation on every render
-  const navigationTheme = useMemo(
-    () => createNavigationTheme(colors, isDark),
-    [colors, isDark]
-  )
 
   // Load theme preference from storage on mount using useLayoutEffect to prevent flashing
   useLayoutEffect(() => {
@@ -173,21 +164,11 @@ export const ThemeProvider = ({
       preference,
       isDark,
       colors,
-      navigationTheme,
       isLoading,
       isReady,
       setThemePreference
     }),
-    [
-      mode,
-      preference,
-      isDark,
-      colors,
-      navigationTheme,
-      isLoading,
-      isReady,
-      setThemePreference
-    ]
+    [mode, preference, isDark, colors, isLoading, isReady, setThemePreference]
   )
 
   // Use fallback theme during loading to prevent flashing
@@ -200,7 +181,6 @@ export const ThemeProvider = ({
       preference: 'system',
       isDark: fallbackIsDark,
       colors: fallbackColors,
-      navigationTheme: createNavigationTheme(fallbackColors, fallbackIsDark),
       isLoading: true,
       isReady: false,
       setThemePreference: async () => {}
@@ -235,12 +215,6 @@ export const THEME_CONSTANTS = {
 // Utility function to get colors for a specific theme mode
 export const getThemeColors = (mode: ThemeMode) => {
   return mode === 'dark' ? darkColors : lightColors
-}
-
-// Utility function to create a navigation theme
-export const createCustomNavigationTheme = (mode: ThemeMode) => {
-  const colors = getThemeColors(mode)
-  return createNavigationTheme(colors, mode === 'dark')
 }
 
 // Hook for accessing theme-aware styles
