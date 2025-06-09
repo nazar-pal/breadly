@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { Mic } from 'lucide-react-native'
+import { Mic } from '@/lib/icons'
 import React from 'react'
 import { View } from 'react-native'
 

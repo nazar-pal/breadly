@@ -1,12 +1,12 @@
-import { Tabs } from 'expo-router'
 import {
-  ChartBar as BarChart3,
-  ChartLine as LineChart,
-  List as ListIcon,
-  CirclePlus as PlusCircle,
+  ChartBar,
+  ChartLine,
+  CirclePlus,
+  List,
   Settings,
   Wallet
-} from 'lucide-react-native'
+} from '@/lib/icons'
+import { Tabs } from 'expo-router'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -45,7 +45,7 @@ export default function TabLayout() {
         options={{
           title: 'Operations',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={ListIcon} focused={focused} />
+            <TabBarIcon Icon={List} focused={focused} />
           )
         }}
       />
@@ -54,7 +54,7 @@ export default function TabLayout() {
         options={{
           title: 'Categories',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={BarChart3} focused={focused} />
+            <TabBarIcon Icon={ChartBar} focused={focused} />
           )
         }}
       />
@@ -63,7 +63,7 @@ export default function TabLayout() {
         options={{
           title: 'Statistics',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={LineChart} focused={focused} />
+            <TabBarIcon Icon={ChartLine} focused={focused} />
           )
         }}
       />
@@ -81,7 +81,7 @@ export default function TabLayout() {
         options={{
           title: 'Add',
           tabBarIcon: ({ focused, color }) => (
-            <TabBarIcon Icon={PlusCircle} focused={focused} />
+            <TabBarIcon Icon={CirclePlus} focused={focused} />
           )
         }}
       />

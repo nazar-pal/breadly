@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react-native'
+import { Plus } from '@/lib/icons'
 import React from 'react'
 import { Platform, Pressable, Text, View, ViewStyle } from 'react-native'
 

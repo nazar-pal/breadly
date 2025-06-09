@@ -1,5 +1,5 @@
+import { Camera, Mic, Pencil } from '@/lib/icons'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
-import { Camera, Mic, Pencil } from 'lucide-react-native'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 

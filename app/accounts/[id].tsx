@@ -6,7 +6,6 @@ import { Text } from '@/components/ui/text'
 import { mockAccounts } from '@/data/mockAccounts'
 import { mockAccountOperations } from '@/data/mockData'
 import { useAccountManagement } from '@/hooks/useAccountManagement'
-import { useLocalSearchParams } from 'expo-router'
 import {
   Calendar,
   CreditCard,
@@ -17,7 +16,8 @@ import {
   TrendingDown,
   TrendingUp,
   Wallet
-} from 'lucide-react-native'
+} from '@/lib/icons'
+import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -49,8 +49,8 @@ export default function AccountDetailsScreen() {
 
   if (!account) {
     return (
-      <View className="flex-1 bg-background">
-        <Text className="mt-10 text-center text-lg text-destructive">
+      <View className="bg-background flex-1">
+        <Text className="text-destructive mt-10 text-center text-lg">
           Account not found
         </Text>
       </View>
@@ -124,7 +124,7 @@ export default function AccountDetailsScreen() {
   const progress = getProgressPercentage()
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <ScrollView
         contentContainerStyle={{
           padding: 16,
@@ -146,10 +146,10 @@ export default function AccountDetailsScreen() {
                 <Icon size={24} color={typeColor} />
               </View>
               <View className="flex-1">
-                <Text className="mb-0.5 text-xl font-bold text-foreground">
+                <Text className="text-foreground mb-0.5 text-xl font-bold">
                   {account.name}
                 </Text>
-                <Text className="text-sm capitalize text-foreground">
+                <Text className="text-foreground text-sm capitalize">
                   {account.type.charAt(0).toUpperCase() + account.type.slice(1)}{' '}
                   Account
                 </Text>
@@ -164,13 +164,13 @@ export default function AccountDetailsScreen() {
               </Button>
             </View>
 
-            <Text className="mb-4 text-sm leading-5 text-foreground">
+            <Text className="text-foreground mb-4 text-sm leading-5">
               {account.description}
             </Text>
 
             {/* Balance Section */}
             <View className="mb-4">
-              <Text className="mb-1 text-sm text-foreground">
+              <Text className="text-foreground mb-1 text-sm">
                 Current Balance
               </Text>
               <View className="flex-row items-center gap-2">
@@ -194,12 +194,12 @@ export default function AccountDetailsScreen() {
             {progress !== null && (
               <View className="mb-4">
                 <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="text-sm text-foreground">
+                  <Text className="text-foreground text-sm">
                     {account.type === 'savings'
                       ? 'Savings Progress'
                       : 'Repayment Progress'}
                   </Text>
-                  <Text className="text-sm font-semibold text-foreground">
+                  <Text className="text-foreground text-sm font-semibold">
                     {progress.toFixed(1)}%
                   </Text>
                 </View>
@@ -220,10 +220,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'savings' && account.targetAmount && (
                 <View className="flex-row items-center gap-2">
                   <Target size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-foreground">
+                  <Text className="text-foreground flex-1 text-sm">
                     Target Amount
                   </Text>
-                  <Text className="text-sm font-semibold text-foreground">
+                  <Text className="text-foreground text-sm font-semibold">
                     {formatBalance(account.targetAmount)}
                   </Text>
                 </View>
@@ -231,10 +231,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'debt' && account.dueDate && (
                 <View className="flex-row items-center gap-2">
                   <Calendar size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-foreground">
+                  <Text className="text-foreground flex-1 text-sm">
                     Due Date
                   </Text>
-                  <Text className="text-sm font-semibold text-foreground">
+                  <Text className="text-foreground text-sm font-semibold">
                     {new Date(account.dueDate).toLocaleDateString()}
                   </Text>
                 </View>
@@ -242,10 +242,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'debt' && account.interestRate && (
                 <View className="flex-row items-center gap-2">
                   <DollarSign size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-foreground">
+                  <Text className="text-foreground flex-1 text-sm">
                     Interest Rate
                   </Text>
-                  <Text className="text-sm font-semibold text-foreground">
+                  <Text className="text-foreground text-sm font-semibold">
                     {account.interestRate}%
                   </Text>
                 </View>
@@ -256,7 +256,7 @@ export default function AccountDetailsScreen() {
 
         {/* Recent Operations */}
         <View className="mb-5">
-          <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
+          <Text className="text-foreground mb-4 text-xl font-bold tracking-tight">
             Recent Activity
           </Text>
           {accountOperations.length > 0 ? (
@@ -269,7 +269,7 @@ export default function AccountDetailsScreen() {
           ) : (
             <Card>
               <CardContent>
-                <Text className="text-center text-sm italic text-foreground">
+                <Text className="text-foreground text-center text-sm italic">
                   No recent activity for this account
                 </Text>
               </CardContent>

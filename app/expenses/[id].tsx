@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { mockExpenses } from '@/data/mockData'
+import { Calendar, Mic, Tag } from '@/lib/icons'
 import { useLocalSearchParams } from 'expo-router'
-import { Calendar, Mic, Tag } from 'lucide-react-native'
 import React from 'react'
 import { Image, ScrollView, Text, View } from 'react-native'
 

@@ -1,14 +1,5 @@
+import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
 import { useRouter } from 'expo-router'
-import {
-  Banknote as BanknoteIcon,
-  Calendar,
-  CreditCard,
-  PiggyBank,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet
-} from 'lucide-react-native'
 import React from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
@@ -59,13 +50,13 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       case 'payment':
         return account.name.toLowerCase().includes('credit')
           ? CreditCard
-          : Wallet
+          : DollarSign
       case 'savings':
         return PiggyBank
       case 'debt':
-        return BanknoteIcon
+        return DollarSign
       default:
-        return Wallet
+        return DollarSign
     }
   }
 
@@ -133,14 +124,14 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const getSecondaryInfo = () => {
     if (account.type === 'savings' && account.targetAmount) {
       return {
-        icon: Target,
+        icon: DollarSign,
         text: formatBalance(account.targetAmount),
         label: 'Target'
       }
     }
     if (account.type === 'debt' && account.dueDate) {
       return {
-        icon: Calendar,
+        icon: DollarSign,
         text: new Date(account.dueDate).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric'
@@ -169,12 +160,12 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         </View>
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-px text-base font-semibold text-foreground"
+            className="text-foreground mb-px text-base font-semibold"
             numberOfLines={1}
           >
             {account.name}
           </Text>
-          <Text className="text-xs capitalize text-foreground">
+          <Text className="text-foreground text-xs capitalize">
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
@@ -187,7 +178,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
             />
           )}
           {account.balance > 0 && account.type === 'savings' && (
-            <TrendingUp
+            <TrendingDown
               size={12}
               color="#10B981" // colors.success
               style={{ marginRight: 2 }}
@@ -214,7 +205,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
               }}
             />
           </View>
-          <Text className="min-w-[30px] text-right text-[10px] font-medium text-foreground">
+          <Text className="text-foreground min-w-[30px] text-right text-[10px] font-medium">
             {progress.toFixed(0)}%
           </Text>
         </View>
@@ -225,11 +216,11 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
             <secondaryInfo.icon size={10} color="#4A5568" />
-            <Text className="ml-1 text-[11px] text-foreground">
+            <Text className="text-foreground ml-1 text-[11px]">
               {secondaryInfo.label}
             </Text>
           </View>
-          <Text className="text-[11px] font-medium text-foreground">
+          <Text className="text-foreground text-[11px] font-medium">
             {secondaryInfo.text}
           </Text>
         </View>

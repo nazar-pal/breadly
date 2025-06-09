@@ -16,7 +16,7 @@ import {
   Users,
   UtensilsCrossed,
   X
-} from 'lucide-react-native'
+} from '@/lib/icons'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,

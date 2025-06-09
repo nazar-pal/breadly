@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { ArrowRight, Calendar, Mic, Receipt } from '@/lib/icons'
 import { useRouter } from 'expo-router'
-import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 

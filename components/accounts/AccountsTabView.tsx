@@ -1,5 +1,5 @@
 import type { Account } from '@/hooks/useAccountManagement'
-import { CreditCard, PiggyBank, Receipt } from 'lucide-react-native'
+import { CreditCard, PiggyBank, Receipt } from '@/lib/icons'
 import React, { useState } from 'react'
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'

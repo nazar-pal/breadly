@@ -1,5 +1,5 @@
 import { DateRange, DateRangeMode } from '@/hooks/useDateRange'
-import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react-native'
+import { Check, ChevronLeft, ChevronRight, X } from '@/lib/icons'
 import React, { useState } from 'react'
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native'
 import { Calendar } from 'react-native-calendars'

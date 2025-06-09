@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useCurrency } from '@/context/CurrencyContext'
-import { Check, X } from 'lucide-react-native'
+import { Check, X } from '@/lib/icons'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,

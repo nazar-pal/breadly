@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { CreditCard as Edit2, Trash2 } from 'lucide-react-native'
+import { CreditCard, Trash2 } from '@/lib/icons'
 import React from 'react'
 import { Text, View } from 'react-native'
 
@@ -39,7 +39,7 @@ export default function CategoryCard({
               onPress={() => onEdit(category.id)}
               className="mr-1 h-8 w-8 items-center justify-center"
             >
-              <Edit2 size={16} color="#1A202C" />
+              <CreditCard size={16} color="#1A202C" />
             </Button>
             <Button
               variant="ghost"

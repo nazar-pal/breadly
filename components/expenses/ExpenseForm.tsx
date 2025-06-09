@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { mockCategories } from '@/data/mockData'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   AlignLeft,
   Calendar,
@@ -9,7 +8,8 @@ import {
   ChevronRight,
   Plus,
   X
-} from 'lucide-react-native'
+} from '@/lib/icons'
+import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native'

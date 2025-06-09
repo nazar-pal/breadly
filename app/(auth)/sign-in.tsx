@@ -2,9 +2,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
+import { Lock, LogIn, Mail } from '@/lib/icons'
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import { Lock, LogIn, Mail } from 'lucide-react-native'
 import React from 'react'
 import {
   Alert,

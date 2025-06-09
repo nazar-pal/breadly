@@ -5,7 +5,7 @@ import {
   RefreshCw,
   TrendingDown,
   TrendingUp
-} from 'lucide-react-native'
+} from '@/lib/icons'
 import React from 'react'
 import { Text, View } from 'react-native'
 

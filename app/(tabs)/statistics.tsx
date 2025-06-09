@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { mockCategories } from '@/data/mockData'
-import { ArrowDown, ArrowUp, TrendingUp } from 'lucide-react-native'
+import { ArrowDown, ArrowUp, TrendingUp } from '@/lib/icons'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

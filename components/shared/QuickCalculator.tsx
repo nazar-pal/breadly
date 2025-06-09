@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { mockCategories, mockIncomeCategories } from '@/data/mockData'
-import { Check, MessageSquare, Save } from 'lucide-react-native'
+import { Check, MessageSquare, Save } from '@/lib/icons'
 import React, { useState } from 'react'
 import {
   Modal,
