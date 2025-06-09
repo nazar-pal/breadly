@@ -194,10 +194,10 @@ export default function QuickCalculator({
       <View className="mb-6 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Pressable
-            className="flex-row items-center rounded bg-old-surface-secondary px-3 py-2"
+            className="bg-card-secondary flex-row items-center rounded px-3 py-2"
             onPress={() => setShowCategoryModal(true)}
           >
-            <Text className="text-2xl font-semibold text-old-text">
+            <Text className="text-2xl font-semibold text-foreground">
               {category}
             </Text>
           </Pressable>
@@ -211,17 +211,17 @@ export default function QuickCalculator({
 
       {/* Display */}
       <View
-        className="mb-6 rounded-2xl bg-old-card p-4"
+        className="mb-6 rounded-2xl bg-card p-4"
         style={Platform.select({
           android: { elevation: 2 },
           default: { boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }
         })}
       >
-        <Text className="text-right text-4xl font-bold text-old-text">
+        <Text className="text-right text-4xl font-bold text-foreground">
           ${getDisplayExpression()}
         </Text>
         {comment && (
-          <Text className="mt-2 text-right text-xs text-old-text-secondary">
+          <Text className="mt-2 text-right text-xs text-foreground">
             {comment}
           </Text>
         )}
@@ -316,8 +316,8 @@ export default function QuickCalculator({
           className="flex-1 justify-center p-4"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
         >
-          <View className="max-h-[80%] rounded-2xl bg-old-surface p-4">
-            <Text className="mb-4 text-xl font-semibold text-old-text">
+          <View className="max-h-[80%] rounded-2xl bg-card p-4">
+            <Text className="mb-4 text-xl font-semibold text-foreground">
               {modalTitle}
             </Text>
             <ScrollView>
@@ -336,7 +336,7 @@ export default function QuickCalculator({
                     setShowCategoryModal(false)
                   }}
                 >
-                  <Text className="text-base font-medium text-old-text">
+                  <Text className="text-base font-medium text-foreground">
                     {cat.name}
                   </Text>
                 </Pressable>
@@ -366,12 +366,12 @@ export default function QuickCalculator({
           className="flex-1 justify-center p-4"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
         >
-          <View className="max-h-[80%] rounded-2xl bg-old-surface p-4">
-            <Text className="mb-4 text-xl font-semibold text-old-text">
+          <View className="max-h-[80%] rounded-2xl bg-card p-4">
+            <Text className="mb-4 text-xl font-semibold text-foreground">
               Add Comment
             </Text>
             <TextInput
-              className="mb-4 min-h-[100px] rounded-lg border border-old-border bg-old-background p-3 text-old-text"
+              className="mb-4 min-h-[100px] rounded-lg border border-border bg-background p-3 text-foreground"
               value={comment}
               onChangeText={setComment}
               placeholder="Add a comment..."

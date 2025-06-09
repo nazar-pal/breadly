@@ -10,20 +10,20 @@ export default function AuthRoutesLayout() {
   }
 
   return (
-    <View className="flex-1 bg-old-background">
+    <View className="flex-1 bg-background">
       <Stack
         screenOptions={{
           headerShown: true,
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: '#FFFFFF' // old-surface
+            backgroundColor: '#FFFFFF' // card
           },
           headerTintColor: '#6366F1', // old-primary
           headerTitleStyle: {
-            color: '#1A202C', // old-text
+            color: '#1A202C', // foreground
             fontWeight: '600'
           },
-          contentStyle: { backgroundColor: '#F5F5F5' } // old-background
+          contentStyle: { backgroundColor: '#F5F5F5' } // background
         }}
       />
     </View>

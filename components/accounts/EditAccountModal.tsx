@@ -99,13 +99,13 @@ export default function EditAccountModal({
         className="flex-1"
       >
         <View
-          className="flex-1 rounded-t-3xl bg-old-background"
+          className="flex-1 rounded-t-3xl bg-background"
           style={{
             marginTop: SCREEN_HEIGHT * 0.1
           }}
         >
-          <View className="flex-row items-center justify-between border-b border-old-border-light px-5 py-4">
-            <Text className="text-lg font-semibold text-old-text">
+          <View className="border-border-light flex-row items-center justify-between border-b px-5 py-4">
+            <Text className="text-lg font-semibold text-foreground">
               {getTitle()}
             </Text>
             <Pressable onPress={onClose} className="rounded p-2">
@@ -122,11 +122,11 @@ export default function EditAccountModal({
             ]}
           >
             <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-old-text">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Account Name
               </Text>
               <TextInput
-                className="min-h-[48px] rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                 value={formData.name}
                 onChangeText={text =>
                   setFormData(prev => ({ ...prev, name: text }))
@@ -137,11 +137,11 @@ export default function EditAccountModal({
             </View>
 
             <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-old-text">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Description
               </Text>
               <TextInput
-                className="h-[100px] rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                className="h-[100px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                 style={{ paddingTop: 12 }}
                 value={formData.description}
                 onChangeText={text =>
@@ -155,15 +155,15 @@ export default function EditAccountModal({
             </View>
 
             <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-old-text">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Balance
               </Text>
               <View className="flex-row items-center">
-                <Text className="mr-3 text-base text-old-text-secondary">
+                <Text className="mr-3 text-base text-foreground">
                   {currency.symbol}
                 </Text>
                 <TextInput
-                  className="min-h-[48px] flex-1 rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                  className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                   value={formData.balance}
                   onChangeText={text =>
                     setFormData(prev => ({ ...prev, balance: text }))
@@ -178,15 +178,15 @@ export default function EditAccountModal({
             {/* Type-specific fields */}
             {account?.type === 'savings' && (
               <View className="mb-6">
-                <Text className="mb-2 text-base font-semibold text-old-text">
+                <Text className="mb-2 text-base font-semibold text-foreground">
                   Target Amount
                 </Text>
                 <View className="flex-row items-center">
-                  <Text className="mr-3 text-base text-old-text-secondary">
+                  <Text className="mr-3 text-base text-foreground">
                     {currency.symbol}
                   </Text>
                   <TextInput
-                    className="min-h-[48px] flex-1 rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                    className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                     value={formData.targetAmount}
                     onChangeText={text =>
                       setFormData(prev => ({ ...prev, targetAmount: text }))
@@ -202,15 +202,15 @@ export default function EditAccountModal({
             {account?.type === 'debt' && (
               <>
                 <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-old-text">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
                     Initial Amount
                   </Text>
                   <View className="flex-row items-center">
-                    <Text className="mr-3 text-base text-old-text-secondary">
+                    <Text className="mr-3 text-base text-foreground">
                       {currency.symbol}
                     </Text>
                     <TextInput
-                      className="min-h-[48px] flex-1 rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                      className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                       value={formData.initialAmount}
                       onChangeText={text =>
                         setFormData(prev => ({ ...prev, initialAmount: text }))
@@ -223,7 +223,7 @@ export default function EditAccountModal({
                 </View>
 
                 <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-old-text">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
                     Debt Type
                   </Text>
                   <View className="flex-row gap-3">
@@ -302,11 +302,11 @@ export default function EditAccountModal({
                 </View>
 
                 <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-old-text">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
                     Person/Institution
                   </Text>
                   <TextInput
-                    className="min-h-[48px] rounded-xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                    className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
                     value={formData.person}
                     onChangeText={text =>
                       setFormData(prev => ({ ...prev, person: text }))

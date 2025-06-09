@@ -43,13 +43,6 @@ module.exports = {
         },
 
         // Colors migrated from theme/colors.ts
-        'old-background': 'var(--old-background)',
-        'old-surface': 'var(--old-surface)',
-        'old-surface-secondary': 'var(--old-surface-secondary)',
-        'old-card': 'var(--old-card)',
-        'old-text': 'var(--old-text)',
-        'old-text-secondary': 'var(--old-text-secondary)',
-        'old-text-inverse': 'var(--old-text-inverse)',
         'old-primary': 'var(--old-primary)',
         'old-secondary': 'var(--old-secondary)',
         'old-success': 'var(--old-success)',
@@ -59,9 +52,6 @@ module.exports = {
         'old-expense': 'var(--old-expense)',
         'old-transfer': 'var(--old-transfer)',
         'old-savings': 'var(--old-savings)',
-        'old-border': 'var(--old-border)',
-        'old-border-light': 'var(--old-border-light)',
-        'old-border-strong': 'var(--old-border-strong)',
         'old-shadow': 'var(--old-shadow)',
         'old-shadow-light': 'var(--old-shadow-light)',
         'old-shadow-strong': 'var(--old-shadow-strong)'

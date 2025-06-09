@@ -128,7 +128,7 @@ export default function ExpenseForm({
       <View className="mb-6">
         <View className="mb-4 flex-row items-start">
           <View className="mr-3 flex-1">
-            <Text className="mb-2 text-sm font-medium text-old-text">
+            <Text className="mb-2 text-sm font-medium text-foreground">
               Amount
             </Text>
             <Controller
@@ -161,7 +161,7 @@ export default function ExpenseForm({
           </View>
 
           <View className="flex-[1.2]">
-            <Text className="mb-2 text-sm font-medium text-old-text">
+            <Text className="mb-2 text-sm font-medium text-foreground">
               Category
             </Text>
             <Pressable
@@ -193,7 +193,9 @@ export default function ExpenseForm({
 
         <View className="mb-4 flex-row items-end">
           <View className="flex-1">
-            <Text className="mb-2 text-sm font-medium text-old-text">Date</Text>
+            <Text className="mb-2 text-sm font-medium text-foreground">
+              Date
+            </Text>
             <Pressable
               onPress={() => setShowDatePicker(true)}
               className="h-12 flex-row items-center justify-between rounded-lg border px-4"
@@ -202,7 +204,7 @@ export default function ExpenseForm({
                 borderColor: '#E2E8F0' // colors.border
               }}
             >
-              <Text className="text-base text-old-text">
+              <Text className="text-base text-foreground">
                 {selectedDate === today ? 'Today' : formatDate(selectedDate)}
               </Text>
               <Calendar size={20} color="#1A202C" />
@@ -291,8 +293,8 @@ export default function ExpenseForm({
 
       {/* Added Expenses List */}
       {expenses.length > 0 && (
-        <View className="rounded-lg bg-old-surface-secondary p-4">
-          <Text className="mb-3 text-sm font-semibold text-old-text">
+        <View className="bg-card-secondary rounded-lg p-4">
+          <Text className="mb-3 text-sm font-semibold text-foreground">
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
@@ -306,15 +308,15 @@ export default function ExpenseForm({
               }}
             >
               <View className="flex-row items-center justify-between">
-                <Text className="text-base font-semibold text-old-text">
+                <Text className="text-base font-semibold text-foreground">
                   ${parseFloat(expense.amount).toFixed(2)}
                 </Text>
                 <View className="mx-3 flex-1 flex-row items-center justify-end gap-2">
-                  <Text className="text-xs text-old-text-secondary">
+                  <Text className="text-xs text-foreground">
                     {formatDate(expense.date)}
                   </Text>
-                  <View className="rounded bg-old-card px-2 py-1">
-                    <Text className="text-xs font-medium text-old-text">
+                  <View className="rounded bg-card px-2 py-1">
+                    <Text className="text-xs font-medium text-foreground">
                       {expense.category}
                     </Text>
                   </View>
@@ -323,7 +325,7 @@ export default function ExpenseForm({
               </View>
               {expense.description && (
                 <Text
-                  className="mt-2 pl-1 text-[13px] text-old-text-secondary"
+                  className="mt-2 pl-1 text-[13px] text-foreground"
                   numberOfLines={2}
                 >
                   {expense.description}
@@ -346,8 +348,8 @@ export default function ExpenseForm({
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View className="max-h-[80%] rounded-xl bg-old-surface">
-            <Text className="border-b p-4 text-lg font-semibold text-old-text">
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b p-4 text-lg font-semibold text-foreground">
               Select Category
             </Text>
             <ScrollView>
@@ -396,8 +398,8 @@ export default function ExpenseForm({
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
           onPress={() => setShowDatePicker(false)}
         >
-          <View className="max-h-[80%] rounded-xl bg-old-surface">
-            <Text className="border-b p-4 text-lg font-semibold text-old-text">
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b p-4 text-lg font-semibold text-foreground">
               Select Date
             </Text>
             <ScrollView>

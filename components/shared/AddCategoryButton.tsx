@@ -36,9 +36,7 @@ export default function AddCategoryButton({
     >
       <View className="flex-1 flex-row items-center justify-center gap-2">
         <Plus size={20} color="#4A5568" />
-        <Text className="text-sm font-medium text-old-text-secondary">
-          {label}
-        </Text>
+        <Text className="text-sm font-medium text-foreground">{label}</Text>
       </View>
     </Pressable>
   )

@@ -10,7 +10,7 @@ export default function AccountsHeader({
 }: AccountsHeaderProps) {
   return (
     <View className="px-4 py-3">
-      <Text className="text-[32px] font-extrabold tracking-tighter text-old-text">
+      <Text className="text-[32px] font-extrabold tracking-tighter text-foreground">
         {title}
       </Text>
     </View>

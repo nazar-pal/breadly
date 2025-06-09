@@ -80,7 +80,7 @@ export default function SignUpScreen() {
   if (pendingVerification) {
     return (
       <KeyboardAvoidingView
-        className="flex-1 bg-old-background"
+        className="flex-1 bg-background"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
@@ -97,10 +97,10 @@ export default function SignUpScreen() {
             <View className="mb-6 h-20 w-20 items-center justify-center rounded-[40px] bg-old-primary">
               <Shield size={32} color="#FFFFFF" />
             </View>
-            <Text className="mb-2 text-[28px] font-bold text-old-text">
+            <Text className="mb-2 text-[28px] font-bold text-foreground">
               Verify Your Email
             </Text>
-            <Text className="text-center text-base leading-6 text-old-text-secondary">
+            <Text className="text-center text-base leading-6 text-foreground">
               We sent a verification code to {emailAddress}
             </Text>
           </View>
@@ -108,7 +108,7 @@ export default function SignUpScreen() {
           <Card>
             <CardContent>
               <View className="mb-5">
-                <Text className="mb-2 text-base font-semibold text-old-text">
+                <Text className="mb-2 text-base font-semibold text-foreground">
                   Verification Code
                 </Text>
                 <View className="flex-row items-center gap-3">
@@ -117,7 +117,7 @@ export default function SignUpScreen() {
                   </View>
                   <View className="flex-1">
                     <Input
-                      className="h-14 text-old-text"
+                      className="h-14 text-foreground"
                       value={code}
                       placeholder="Enter verification code"
                       placeholderClassName="text-[#A0ADB8]"
@@ -145,7 +145,7 @@ export default function SignUpScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-old-background"
+      className="flex-1 bg-background"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -162,10 +162,10 @@ export default function SignUpScreen() {
           <View className="mb-6 h-20 w-20 items-center justify-center rounded-[40px] bg-old-primary">
             <UserPlus size={32} color="#FFFFFF" />
           </View>
-          <Text className="mb-2 text-[28px] font-bold text-old-text">
+          <Text className="mb-2 text-[28px] font-bold text-foreground">
             Create Account
           </Text>
-          <Text className="text-center text-base leading-6 text-old-text-secondary">
+          <Text className="text-center text-base leading-6 text-foreground">
             Sign up to start tracking your expenses
           </Text>
         </View>
@@ -173,7 +173,7 @@ export default function SignUpScreen() {
         <Card>
           <CardContent>
             <View className="mb-5">
-              <Text className="mb-2 text-base font-semibold text-old-text">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Email Address
               </Text>
               <View className="flex-row items-center gap-3">
@@ -182,7 +182,7 @@ export default function SignUpScreen() {
                 </View>
                 <View className="flex-1">
                   <Input
-                    className="h-14 text-old-text"
+                    className="h-14 text-foreground"
                     autoCapitalize="none"
                     autoCorrect={false}
                     keyboardType="email-address"
@@ -196,7 +196,7 @@ export default function SignUpScreen() {
             </View>
 
             <View className="mb-5">
-              <Text className="mb-2 text-base font-semibold text-old-text">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Password
               </Text>
               <View className="flex-row items-center gap-3">
@@ -205,7 +205,7 @@ export default function SignUpScreen() {
                 </View>
                 <View className="flex-1">
                   <Input
-                    className="h-14 text-old-text"
+                    className="h-14 text-foreground"
                     value={password}
                     placeholder="Create a password"
                     placeholderClassName="text-[#A0ADB8]"
@@ -230,7 +230,7 @@ export default function SignUpScreen() {
         </Card>
 
         <View className="flex-row items-center justify-center">
-          <Text className="text-base text-old-text-secondary">
+          <Text className="text-base text-foreground">
             Already have an account?{' '}
           </Text>
           <Link href="/sign-in" asChild>

@@ -35,9 +35,7 @@ export default function FinancialHeader({
       {/* Top Row: Balance and Date Range */}
       <View className="mb-2 flex-row items-center justify-between">
         <View className="flex-1">
-          <Text className="mb-0.5 text-xs text-old-text-secondary">
-            Net Balance
-          </Text>
+          <Text className="mb-0.5 text-xs text-foreground">Net Balance</Text>
           <Text
             className="text-2xl font-bold"
             style={{
@@ -49,10 +47,10 @@ export default function FinancialHeader({
         </View>
 
         <Pressable onPress={handleDateRangePress} className="items-end">
-          <Text className="text-right text-sm font-semibold text-old-text">
+          <Text className="text-right text-sm font-semibold text-foreground">
             {formattedRange}
           </Text>
-          <Text className="mt-0.5 text-[10px] uppercase tracking-wider text-old-text-secondary">
+          <Text className="mt-0.5 text-[10px] uppercase tracking-wider text-foreground">
             {getModeDisplayName(mode)}
           </Text>
         </Pressable>

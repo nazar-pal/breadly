@@ -29,7 +29,7 @@ export default function CategoryCard({
     <Card className="mb-3">
       <CardContent>
         <View className="mb-2 flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-old-text">
+          <Text className="text-base font-semibold text-foreground">
             {category.name}
           </Text>
           <View className="flex-row">
@@ -54,10 +54,10 @@ export default function CategoryCard({
 
         <View className="mb-2 flex-row items-center justify-between">
           <View className="flex-row items-baseline">
-            <Text className="mr-1 text-lg font-semibold text-old-text">
+            <Text className="mr-1 text-lg font-semibold text-foreground">
               ${category.spent.toFixed(2)}
             </Text>
-            <Text className="text-sm text-old-text-secondary">
+            <Text className="text-sm text-foreground">
               {type === 'expense' ? 'of' : 'from'} ${category.budget.toFixed(2)}
             </Text>
           </View>
@@ -69,7 +69,7 @@ export default function CategoryCard({
           </Text>
         </View>
 
-        <View className="h-2 overflow-hidden rounded bg-old-surface-secondary">
+        <View className="bg-card-secondary h-2 overflow-hidden rounded">
           <View
             className="h-full"
             style={{

@@ -18,7 +18,7 @@ export default function AddExpenseTabBar({
       }}
     >
       {/* Title */}
-      <Text className="mb-4 px-4 text-[32px] font-bold tracking-tight text-old-text">
+      <Text className="mb-4 px-4 text-[32px] font-bold tracking-tight text-foreground">
         Add Expense
       </Text>
 

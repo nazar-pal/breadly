@@ -34,7 +34,7 @@ export default function AccountSection({
 
   return (
     <View className="mb-8">
-      <Text className="mb-4 text-xl font-bold tracking-tight text-old-text">
+      <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
         {title}
       </Text>
       <View className="flex-col">

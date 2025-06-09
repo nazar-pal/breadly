@@ -62,8 +62,8 @@ function StatCard({
   return (
     <Card className="flex-1">
       <CardContent>
-        <Text className="mb-1 text-sm text-old-text-secondary">{title}</Text>
-        <Text className="mb-1 text-xl font-bold text-old-text">
+        <Text className="mb-1 text-sm text-foreground">{title}</Text>
+        <Text className="mb-1 text-xl font-bold text-foreground">
           ${amount.toFixed(2)}
         </Text>
         {trend !== undefined && (
@@ -80,9 +80,7 @@ function StatCard({
               {Math.abs(trend)}%
             </Text>
             {trendLabel && (
-              <Text className="ml-1 text-xs text-old-text-secondary">
-                {trendLabel}
-              </Text>
+              <Text className="ml-1 text-xs text-foreground">{trendLabel}</Text>
             )}
           </View>
         )}
@@ -94,7 +92,7 @@ function StatCard({
 function TopTransactions() {
   return (
     <View className="mb-6">
-      <Text className="mb-3 text-lg font-semibold text-old-text">
+      <Text className="mb-3 text-lg font-semibold text-foreground">
         Top Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
@@ -105,15 +103,12 @@ function TopTransactions() {
                 ${transaction.amount.toFixed(2)}
               </Text>
               <View className="bg-old-icon-bg-neutral rounded px-2 py-1">
-                <Text className="text-xs font-medium text-old-text-secondary">
+                <Text className="text-xs font-medium text-foreground">
                   {transaction.category}
                 </Text>
               </View>
             </View>
-            <Text
-              className="mt-1 text-sm text-old-text-secondary"
-              numberOfLines={2}
-            >
+            <Text className="mt-1 text-sm text-foreground" numberOfLines={2}>
               {transaction.description}
             </Text>
           </CardContent>
@@ -133,7 +128,7 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text className="mb-3 text-lg font-semibold text-old-text">
+      <Text className="mb-3 text-lg font-semibold text-foreground">
         Top Categories
       </Text>
       <Card>
@@ -144,19 +139,19 @@ function CategoryBreakdown() {
               <View
                 key={category.id}
                 className="border-b py-3"
-                style={{ borderBottomColor: '#F7FAFC' }} // old-border-light
+                style={{ borderBottomColor: '#F7FAFC' }} // border-light
               >
                 <View className="mb-2 flex-row justify-between">
-                  <Text className="text-sm font-medium text-old-text">
+                  <Text className="text-sm font-medium text-foreground">
                     {category.name}
                   </Text>
-                  <Text className="text-sm text-old-text-secondary">
+                  <Text className="text-sm text-foreground">
                     ${category.spent.toFixed(2)}
                   </Text>
                 </View>
                 <View
                   className="mb-1 h-1 overflow-hidden rounded-sm"
-                  style={{ backgroundColor: '#F7FAFC' }} // old-border-light
+                  style={{ backgroundColor: '#F7FAFC' }} // border-light
                 >
                   <View
                     className="h-full"
@@ -166,7 +161,7 @@ function CategoryBreakdown() {
                     }}
                   />
                 </View>
-                <Text className="text-right text-xs text-old-text-secondary">
+                <Text className="text-right text-xs text-foreground">
                   {percentage.toFixed(1)}%
                 </Text>
               </View>
@@ -182,12 +177,11 @@ export default function StatisticsScreen() {
   const insets = useSafeAreaInsets()
 
   return (
-    <View
-      className="flex-1 bg-old-background"
-      style={{ paddingTop: insets.top }}
-    >
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold text-old-text">Statistics</Text>
+        <Text className="text-[28px] font-bold text-foreground">
+          Statistics
+        </Text>
       </View>
 
       <ScrollView
@@ -219,7 +213,7 @@ export default function StatisticsScreen() {
           <CardContent>
             <View className="mb-3 flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="mb-1 text-base font-semibold text-old-text">
+                <Text className="mb-1 text-base font-semibold text-foreground">
                   Monthly Savings
                 </Text>
                 <Text className="text-2xl font-bold text-old-success">
@@ -235,7 +229,7 @@ export default function StatisticsScreen() {
             </View>
             <View
               className="h-2 overflow-hidden rounded"
-              style={{ backgroundColor: '#F7FAFC' }} // old-border-light
+              style={{ backgroundColor: '#F7FAFC' }} // border-light
             >
               <View
                 className="h-full"

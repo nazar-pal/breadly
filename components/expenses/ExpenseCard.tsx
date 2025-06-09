@@ -28,24 +28,24 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
       <Card className="mb-3">
         <CardContent className="min-h-[80px] flex-row items-start justify-between">
           <View className="mr-4 flex-1">
-            <Text className="mb-1 text-lg font-semibold text-old-text">
+            <Text className="mb-1 text-lg font-semibold text-foreground">
               ${expense.amount.toFixed(2)}
             </Text>
             <Text
-              className="mb-2 flex-wrap text-sm text-old-text-secondary"
+              className="mb-2 flex-wrap text-sm text-foreground"
               numberOfLines={2}
             >
               {expense.description}
             </Text>
             <View className="flex-row flex-wrap items-center">
-              <View className="mr-2 rounded bg-old-surface-secondary px-2 py-1">
-                <Text className="text-xs font-medium text-old-text">
+              <View className="bg-card-secondary mr-2 rounded px-2 py-1">
+                <Text className="text-xs font-medium text-foreground">
                   {expense.category}
                 </Text>
               </View>
               <View className="ml-2 flex-row items-center">
                 <Calendar size={14} color="#4A5568" />
-                <Text className="ml-1 text-xs text-old-text-secondary">
+                <Text className="ml-1 text-xs text-foreground">
                   {expense.date}
                 </Text>
               </View>

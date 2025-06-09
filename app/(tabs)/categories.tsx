@@ -94,7 +94,7 @@ function CategoriesContent() {
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        className="flex-1 bg-old-background"
+        className="flex-1 bg-background"
         style={{
           paddingTop: insets.top
         }}

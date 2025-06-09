@@ -155,28 +155,28 @@ export default function DateRangeModal({
           onPress={onClose}
         />
         <View
-          className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-old-background"
+          className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-background"
           style={{
             paddingBottom: insets.bottom + 16
           }}
         >
           {/* Header with Navigation */}
-          <View className="min-h-[60px] flex-row items-center border-b border-old-border px-4 py-4">
+          <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
             {!showCustomPicker && canNavigate && navigatePrevious && (
               <Pressable
                 onPress={navigatePrevious}
-                className="rounded bg-old-surface-secondary p-2"
+                className="bg-card-secondary rounded p-2"
               >
                 <ChevronLeft size={18} color="#1A202C" />
               </Pressable>
             )}
 
             <View className="mx-4 flex-1 items-center">
-              <Text className="text-center text-lg font-semibold text-old-text">
+              <Text className="text-center text-lg font-semibold text-foreground">
                 {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
               </Text>
               {!showCustomPicker && formattedRange && (
-                <Text className="mt-0.5 text-center text-[11px] text-old-text-secondary">
+                <Text className="mt-0.5 text-center text-[11px] text-foreground">
                   {formattedRange}
                 </Text>
               )}
@@ -185,7 +185,7 @@ export default function DateRangeModal({
             {!showCustomPicker && canNavigate && navigateNext && (
               <Pressable
                 onPress={navigateNext}
-                className="rounded bg-old-surface-secondary p-2"
+                className="bg-card-secondary rounded p-2"
               >
                 <ChevronRight size={18} color="#1A202C" />
               </Pressable>
@@ -234,7 +234,7 @@ export default function DateRangeModal({
                       >
                         {option.label}
                       </Text>
-                      <Text className="text-xs text-old-text-secondary">
+                      <Text className="text-xs text-foreground">
                         {option.description}
                       </Text>
                     </View>
@@ -273,7 +273,7 @@ export default function DateRangeModal({
                   className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-old-secondary py-3"
                   onPress={handleCustomRangeCancel}
                 >
-                  <Text className="text-base font-semibold text-old-text">
+                  <Text className="text-base font-semibold text-foreground">
                     Cancel
                   </Text>
                 </Pressable>

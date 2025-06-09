@@ -107,7 +107,7 @@ export default function AccountsTabView({
   return (
     <View className="flex-1">
       {/* Tab Navigation */}
-      <View className="flex-row gap-2 bg-old-background px-5 py-3">
+      <View className="flex-row gap-2 bg-background px-5 py-3">
         {tabs.map(tab => {
           const IconComponent = tab.icon
           const isActive = activeTab === tab.key
@@ -116,7 +116,7 @@ export default function AccountsTabView({
           return (
             <Pressable
               key={tab.key}
-              className="min-h-[40px] flex-1 items-center justify-center rounded-2xl bg-old-surface-secondary px-4 py-2.5"
+              className="bg-card-secondary min-h-[40px] flex-1 items-center justify-center rounded-2xl px-4 py-2.5"
               style={isActive ? getActiveTabStyle() : undefined}
               onPress={() => handleTabPress(tab.key)}
             >

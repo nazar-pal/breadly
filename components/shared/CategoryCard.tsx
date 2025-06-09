@@ -85,7 +85,7 @@ export default function CategoryCard({
       <View className="ml-3 flex-1">
         <Text
           numberOfLines={1}
-          className="mb-0.5 text-sm font-semibold text-old-text"
+          className="mb-0.5 text-sm font-semibold text-foreground"
         >
           {name}
         </Text>

@@ -169,12 +169,12 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         </View>
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-px text-base font-semibold text-old-text"
+            className="mb-px text-base font-semibold text-foreground"
             numberOfLines={1}
           >
             {account.name}
           </Text>
-          <Text className="text-xs capitalize text-old-text-secondary">
+          <Text className="text-xs capitalize text-foreground">
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
@@ -205,7 +205,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       {/* Progress Bar */}
       {progress !== null && (
         <View className="mb-1.5 flex-row items-center">
-          <View className="mr-2 h-0.5 flex-1 overflow-hidden rounded-sm bg-old-surface-secondary">
+          <View className="bg-card-secondary mr-2 h-0.5 flex-1 overflow-hidden rounded-sm">
             <View
               className="h-full"
               style={{
@@ -214,7 +214,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
               }}
             />
           </View>
-          <Text className="min-w-[30px] text-right text-[10px] font-medium text-old-text-secondary">
+          <Text className="min-w-[30px] text-right text-[10px] font-medium text-foreground">
             {progress.toFixed(0)}%
           </Text>
         </View>
@@ -225,11 +225,11 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
             <secondaryInfo.icon size={10} color="#4A5568" />
-            <Text className="ml-1 text-[11px] text-old-text-secondary">
+            <Text className="ml-1 text-[11px] text-foreground">
               {secondaryInfo.label}
             </Text>
           </View>
-          <Text className="text-[11px] font-medium text-old-text-secondary">
+          <Text className="text-[11px] font-medium text-foreground">
             {secondaryInfo.text}
           </Text>
         </View>
