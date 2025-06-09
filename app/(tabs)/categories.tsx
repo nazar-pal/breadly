@@ -64,7 +64,7 @@ function CategoriesContent() {
     const IconComponent = icons[categoryName] || Home
 
     // Use semantic colors based on category type
-    const iconColor = type === 'expense' ? '#EF4444' : '#10B981' // old-expense : old-income
+    const iconColor = type === 'expense' ? '#EF4444' : '#10B981'
 
     return <IconComponent size={20} color={iconColor} />
   }
@@ -94,7 +94,7 @@ function CategoriesContent() {
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        className="flex-1 bg-background"
+        className="bg-background flex-1"
         style={{
           paddingTop: insets.top
         }}

@@ -26,17 +26,11 @@
 
     /* Colors migrated from theme/colors.ts (lightColors) */
     --old-primary: #6366f1;
-    --old-secondary: #e2e8f0;
-    --old-success: #10b981;
-    --old-warning: #f59e0b;
-    --old-info: #3b82f6;
-    --old-income: #10b981;
-    --old-expense: #ef4444;
-    --old-transfer: #3b82f6;
-    --old-savings: #059669;
-    --old-shadow: rgba(0, 0, 0, 0.1);
-    --old-shadow-light: rgba(0, 0, 0, 0.05);
-    --old-shadow-strong: rgba(0, 0, 0, 0.15);
+    --success: #10b981;
+    --income: #10b981;
+    --expense: #ef4444;
+    --transfer: #3b82f6;
+    --savings: #059669;
   }
 
   .dark:root {
@@ -62,16 +56,10 @@
 
     /* Colors migrated from theme/colors.ts (darkColors) */
     --old-primary: #818cf8;
-    --old-secondary: #475569;
-    --old-success: #34d399;
-    --old-warning: #fbbf24;
-    --old-info: #60a5fa;
-    --old-income: #34d399;
-    --old-expense: #f87171;
-    --old-transfer: #60a5fa;
-    --old-savings: #10b981;
-    --old-shadow: rgba(0, 0, 0, 0.3);
-    --old-shadow-light: rgba(0, 0, 0, 0.2);
-    --old-shadow-strong: rgba(0, 0, 0, 0.4);
+    --success: #34d399;
+    --income: #34d399;
+    --expense: #f87171;
+    --transfer: #60a5fa;
+    --savings: #10b981;
   }
 }

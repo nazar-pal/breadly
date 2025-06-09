@@ -44,17 +44,11 @@ module.exports = {
 
         // Colors migrated from theme/colors.ts
         'old-primary': 'var(--old-primary)',
-        'old-secondary': 'var(--old-secondary)',
-        'old-success': 'var(--old-success)',
-        'old-warning': 'var(--old-warning)',
-        'old-info': 'var(--old-info)',
-        'old-income': 'var(--old-income)',
-        'old-expense': 'var(--old-expense)',
-        'old-transfer': 'var(--old-transfer)',
-        'old-savings': 'var(--old-savings)',
-        'old-shadow': 'var(--old-shadow)',
-        'old-shadow-light': 'var(--old-shadow-light)',
-        'old-shadow-strong': 'var(--old-shadow-strong)'
+        success: 'var(--success)',
+        income: 'var(--income)',
+        expense: 'var(--expense)',
+        transfer: 'var(--transfer)',
+        savings: 'var(--savings)'
       },
       borderWidth: {
         hairline: hairlineWidth()
