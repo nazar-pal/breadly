@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn()
   const router = useRouter()
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
   const [emailAddress, setEmailAddress] = React.useState('')
@@ -61,11 +61,10 @@ export default function SignInScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        className="flex-grow justify-center"
+        className="flex-grow justify-center px-4"
         contentContainerStyle={{
-          paddingTop: insets.top + spacing.xl,
-          paddingBottom: insets.bottom + spacing.xl,
-          paddingHorizontal: spacing.md
+          paddingTop: insets.top + 32,
+          paddingBottom: insets.bottom + 32
         }}
         showsVerticalScrollIndicator={false}
       >

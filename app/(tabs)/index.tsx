@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
 
 export default function OperationsScreen() {
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
@@ -119,9 +119,9 @@ export default function OperationsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
+        className="px-4"
         contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + spacing.xl
+          paddingBottom: insets.bottom + 32
         }}
       >
         {/* Today's Operations */}

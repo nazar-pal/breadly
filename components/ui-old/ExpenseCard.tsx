@@ -18,7 +18,7 @@ interface ExpenseCardProps {
 }
 
 export default function ExpenseCard({ expense }: ExpenseCardProps) {
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
   const router = useRouter()
 
   const handlePress = () => {
@@ -55,10 +55,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
                   {expense.category}
                 </Text>
               </View>
-              <View
-                className="flex-row items-center"
-                style={{ marginLeft: spacing.sm }}
-              >
+              <View className="ml-2 flex-row items-center">
                 <Calendar size={14} color={colors.textSecondary} />
                 <Text
                   className="ml-1 text-xs"

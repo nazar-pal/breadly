@@ -5,8 +5,7 @@ import { currencies, useCurrency } from '@/context/CurrencyContext'
 import {
   useTheme,
   useThemedStyles,
-  type ThemePreference,
-  type ThemedStylesProps
+  type ThemePreference
 } from '@/context/ThemeContext'
 import { useColorScheme } from '@/lib/useColorScheme'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
@@ -32,19 +31,15 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Create themed styles using the new useThemedStyles hook
-const createThemedStyles = ({
-  colors,
-  spacing,
-  borderRadius
-}: ThemedStylesProps) =>
+const createThemedStyles = () =>
   StyleSheet.create({
     authButtons: {
-      gap: spacing.sm
+      gap: 8
     }
   })
 
 export default function SettingsScreen() {
-  const { colors, spacing, preference, isLoading } = useTheme()
+  const { colors, preference, isLoading } = useTheme()
 
   const { setColorScheme } = useColorScheme()
 
@@ -90,9 +85,9 @@ export default function SettingsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
+        className="px-4"
         contentContainerStyle={{
-          paddingHorizontal: spacing.md,
-          paddingBottom: insets.bottom + spacing.xl
+          paddingBottom: insets.bottom + 32
         }}
       >
         <SignedIn>

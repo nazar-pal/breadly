@@ -23,7 +23,7 @@ export default function CategoryCard({
   onDelete,
   type = 'expense'
 }: CategoryCardProps) {
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
 
   const percentage = (category.spent / category.budget) * 100
   const isOverBudget = type === 'expense' ? percentage > 100 : percentage < 100
@@ -43,7 +43,7 @@ export default function CategoryCard({
             variant="ghost"
             size="sm"
             onPress={() => onEdit(category.id)}
-            style={{ marginRight: spacing.xs }}
+            className="mr-1"
           />
           <IconButton
             icon={<Trash2 size={16} />}

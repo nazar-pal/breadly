@@ -40,7 +40,7 @@ export default function ExpenseForm({
   onSubmit,
   initialData
 }: ExpenseFormProps) {
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
   const [showDescription, setShowDescription] = useState(false)
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -275,7 +275,7 @@ export default function ExpenseForm({
               <Button
                 variant="outline"
                 onPress={handleCancelEdit}
-                style={{ flex: 1, marginRight: spacing.sm }}
+                className="mr-2 flex-1"
                 leftIcon={<X size={20} color={colors.text} />}
               >
                 Cancel
@@ -293,7 +293,7 @@ export default function ExpenseForm({
               <Button
                 variant="outline"
                 onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1, marginRight: spacing.sm }}
+                className="mr-2 flex-1"
                 leftIcon={<Plus size={20} color={colors.text} />}
               >
                 Add Another

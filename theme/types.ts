@@ -1,5 +1,4 @@
 import { darkColors, lightColors } from './colors'
-import { spacing } from './tokens'
 
 // Theme preference type
 export type ThemePreference = 'light' | 'dark' | 'system'
@@ -13,6 +12,5 @@ export type Colors = typeof lightColors | typeof darkColors
 // Type helper for theme-aware components
 export type ThemedStylesProps = {
   colors: Colors
-  spacing: typeof spacing
   isDark: boolean
 }

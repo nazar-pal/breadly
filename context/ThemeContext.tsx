@@ -13,7 +13,6 @@ import {
   createNavigationTheme,
   darkColors,
   lightColors,
-  spacing,
   ThemedStylesProps,
   ThemeMode,
   ThemePreference
@@ -32,8 +31,6 @@ type ThemeContextType = {
   isDark: boolean
   // Color palette for current theme
   colors: Colors
-  // Design tokens
-  spacing: typeof spacing
   // Navigation theme for React Navigation (memoized)
   navigationTheme: ReturnType<typeof createNavigationTheme>
   // Whether theme is still loading from storage
@@ -176,7 +173,6 @@ export const ThemeProvider = ({
       preference,
       isDark,
       colors,
-      spacing,
       navigationTheme,
       isLoading,
       isReady,
@@ -204,7 +200,6 @@ export const ThemeProvider = ({
       preference: 'system',
       isDark: fallbackIsDark,
       colors: fallbackColors,
-      spacing,
       navigationTheme: createNavigationTheme(fallbackColors, fallbackIsDark),
       isLoading: true,
       isReady: false,
@@ -233,7 +228,6 @@ export const useTheme = () => {
 // Export theme constants for direct access when needed
 export const THEME_CONSTANTS = {
   STORAGE_KEY: THEME_STORAGE_KEY,
-  SPACING: spacing,
   LIGHT_COLORS: lightColors,
   DARK_COLORS: darkColors
 } as const
@@ -253,11 +247,11 @@ export const createCustomNavigationTheme = (mode: ThemeMode) => {
 export const useThemedStyles = <T,>(
   styleFactory: (theme: ThemedStylesProps) => T
 ) => {
-  const { colors, spacing, isDark } = useTheme()
+  const { colors, isDark } = useTheme()
 
   return useMemo(
-    () => styleFactory({ colors, spacing, isDark }),
-    [colors, spacing, isDark, styleFactory]
+    () => styleFactory({ colors, isDark }),
+    [colors, isDark, styleFactory]
   )
 }
 

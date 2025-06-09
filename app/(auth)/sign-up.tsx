@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
-  const { colors, spacing } = useTheme()
+  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
   const [emailAddress, setEmailAddress] = React.useState('')
@@ -87,12 +87,12 @@ export default function SignUpScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
+          className="px-4"
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'center',
-            paddingTop: insets.top + spacing.xl,
-            paddingBottom: insets.bottom + spacing.xl,
-            paddingHorizontal: spacing.md
+            paddingTop: insets.top + 32,
+            paddingBottom: insets.bottom + 32
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -170,12 +170,12 @@ export default function SignUpScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
+        className="px-4"
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'center',
-          paddingTop: insets.top + spacing.xl,
-          paddingBottom: insets.bottom + spacing.xl,
-          paddingHorizontal: spacing.md
+          paddingTop: insets.top + 32,
+          paddingBottom: insets.bottom + 32
         }}
         showsVerticalScrollIndicator={false}
       >
