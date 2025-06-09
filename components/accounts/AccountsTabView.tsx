@@ -1,4 +1,3 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import type { Account } from '@/hooks/useAccountManagement'
 import { CreditCard, PiggyBank, Receipt } from 'lucide-react-native'
 import React, { useState } from 'react'
@@ -32,7 +31,6 @@ export default function AccountsTabView({
   onEditAccount,
   onAddAccount
 }: AccountsTabViewProps) {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const [activeTab, setActiveTab] = useState<TabType>('payment')
 
@@ -68,21 +66,19 @@ export default function AccountsTabView({
       }
     })
 
-  const styles = useThemedStyles(
-    theme =>
-      ({
-        activeTab: {
-          ...Platform.select({
-            android: {
-              elevation: 3
-            },
-            default: {
-              boxShadow: `0px 2px 4px ${theme.colors.shadow}`
-            }
-          })
+  const getActiveTabStyle = () => {
+    return {
+      backgroundColor: '#6366F1', // colors.primary
+      ...Platform.select({
+        android: {
+          elevation: 3
+        },
+        default: {
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' // colors.shadow
         }
-      }) as const
-  )
+      })
+    }
+  }
 
   const renderTabContent = () => {
     const tabAccounts = accounts[activeTab]
@@ -111,48 +107,27 @@ export default function AccountsTabView({
   return (
     <View className="flex-1">
       {/* Tab Navigation */}
-      <View
-        className="flex-row gap-2 px-5 py-3"
-        style={{ backgroundColor: colors.background }}
-      >
+      <View className="flex-row gap-2 bg-old-background px-5 py-3">
         {tabs.map(tab => {
           const IconComponent = tab.icon
           const isActive = activeTab === tab.key
-          const iconColor = isActive ? colors.textInverse : colors.textSecondary
+          const iconColor = isActive ? '#FFFFFF' : '#4A5568' // colors.textInverse : colors.textSecondary
 
           return (
             <Pressable
               key={tab.key}
-              className="min-h-[40px] flex-1 items-center justify-center rounded-2xl px-4 py-2.5"
-              style={[
-                { backgroundColor: colors.surfaceSecondary },
-                isActive && [
-                  styles.activeTab,
-                  {
-                    backgroundColor: colors.primary,
-                    ...Platform.select({
-                      android: {
-                        elevation: 3
-                      },
-                      default: {
-                        boxShadow: `0px 2px 4px ${colors.shadow}`
-                      }
-                    })
-                  }
-                ]
-              ]}
+              className="min-h-[40px] flex-1 items-center justify-center rounded-2xl bg-old-surface-secondary px-4 py-2.5"
+              style={isActive ? getActiveTabStyle() : undefined}
               onPress={() => handleTabPress(tab.key)}
             >
               <View className="flex-row items-center gap-2">
                 <IconComponent size={18} color={iconColor} />
                 <Text
                   className="text-center text-sm font-medium"
-                  style={[
-                    { color: colors.textSecondary },
-                    isActive && [
-                      { fontWeight: '600', color: colors.textInverse }
-                    ]
-                  ]}
+                  style={{
+                    color: isActive ? '#FFFFFF' : '#4A5568', // colors.textInverse : colors.textSecondary
+                    fontWeight: isActive ? '600' : '400'
+                  }}
                 >
                   {tab.title}
                 </Text>

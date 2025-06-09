@@ -1,12 +1,9 @@
-import { useThemedStyles, type ThemedStylesProps } from '@/context/ThemeContext'
 import React from 'react'
 import {
   ActivityIndicator,
   Pressable,
   PressableProps,
-  StyleSheet,
   Text,
-  TextStyle,
   View,
   ViewStyle
 } from 'react-native'
@@ -31,64 +28,6 @@ interface ButtonProps extends Omit<PressableProps, 'style'> {
   className?: string
 }
 
-const createStyles = ({ colors }: ThemedStylesProps) =>
-  StyleSheet.create({
-    // Background variants
-    primaryButton: {
-      backgroundColor: colors.button.primaryBg
-    } as ViewStyle,
-
-    secondaryButton: {
-      backgroundColor: colors.button.secondaryBg,
-      borderWidth: 1,
-      borderColor: colors.button.secondaryBorder
-    } as ViewStyle,
-
-    outlineButton: {
-      backgroundColor: 'transparent',
-      borderWidth: 1,
-      borderColor: colors.primary
-    } as ViewStyle,
-
-    ghostButton: {
-      backgroundColor: 'transparent'
-    } as ViewStyle,
-
-    destructiveButton: {
-      backgroundColor: colors.button.destructiveBg
-    } as ViewStyle,
-
-    disabledButton: {
-      backgroundColor: colors.button.primaryBgDisabled,
-      borderColor: colors.button.primaryBgDisabled
-    } as ViewStyle,
-
-    // Text color variants
-    primaryText: {
-      color: colors.button.primaryText
-    } as TextStyle,
-
-    secondaryText: {
-      color: colors.button.secondaryText
-    } as TextStyle,
-
-    outlineText: {
-      color: colors.primary
-    } as TextStyle,
-
-    ghostText: {
-      color: colors.text
-    } as TextStyle,
-
-    destructiveText: {
-      color: colors.button.destructiveText
-    } as TextStyle,
-
-    disabledText: {
-      color: colors.button.primaryTextDisabled
-    } as TextStyle
-  })
-
 export default function Button({
   variant = 'primary',
   size = 'md',
@@ -102,8 +41,6 @@ export default function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const styles = useThemedStyles(createStyles)
-
   const getSizeClassName = () => {
     switch (size) {
       case 'sm':
@@ -126,74 +63,74 @@ export default function Button({
     }
   }
 
-  const getVariantStyle = () => {
-    if (disabled) return styles.disabledButton
+  const getVariantClassName = () => {
+    if (disabled) {
+      return 'bg-old-button-primary-bg-disabled border-old-button-primary-bg-disabled'
+    }
 
     switch (variant) {
       case 'primary':
-        return styles.primaryButton
+        return 'bg-old-button-primary-bg'
       case 'secondary':
-        return styles.secondaryButton
+        return 'bg-old-button-secondary-bg border border-old-button-secondary-border'
       case 'outline':
-        return styles.outlineButton
+        return 'bg-transparent border border-old-primary'
       case 'ghost':
-        return styles.ghostButton
+        return 'bg-transparent'
       case 'destructive':
-        return styles.destructiveButton
+        return 'bg-old-button-destructive-bg'
       default:
-        return styles.primaryButton
+        return 'bg-old-button-primary-bg'
     }
   }
 
-  const getTextVariantStyle = () => {
-    if (disabled) return styles.disabledText
+  const getTextVariantClassName = () => {
+    if (disabled) {
+      return 'text-old-button-primary-text-disabled'
+    }
 
     switch (variant) {
       case 'primary':
-        return styles.primaryText
+        return 'text-old-button-primary-text'
       case 'secondary':
-        return styles.secondaryText
+        return 'text-old-button-secondary-text'
       case 'outline':
-        return styles.outlineText
+        return 'text-old-primary'
       case 'ghost':
-        return styles.ghostText
+        return 'text-old-text'
       case 'destructive':
-        return styles.destructiveText
+        return 'text-old-button-destructive-text'
       default:
-        return styles.primaryText
+        return 'text-old-button-primary-text'
     }
   }
 
   const getLoadingColor = () => {
-    if (disabled) return styles.disabledText.color
+    if (disabled) return '#A0ADB8' // old-button-primary-text-disabled
 
     switch (variant) {
       case 'primary':
-        return styles.primaryText.color
+        return '#FFFFFF' // old-button-primary-text
       case 'secondary':
-        return styles.secondaryText.color
+        return '#4A5568' // old-button-secondary-text
       case 'outline':
-        return styles.outlineText.color
+        return '#6366F1' // old-primary
       case 'ghost':
-        return styles.ghostText.color
+        return '#1A202C' // old-text
       case 'destructive':
-        return styles.destructiveText.color
+        return '#FFFFFF' // old-button-destructive-text
       default:
-        return styles.primaryText.color
+        return '#FFFFFF' // old-button-primary-text
     }
   }
 
   const baseClassName =
-    `flex-row items-center justify-center rounded-md ${getSizeClassName()} ${fullWidth ? 'w-full' : ''} ${className}`.trim()
+    `flex-row items-center justify-center rounded-md ${getSizeClassName()} ${getVariantClassName()} ${fullWidth ? 'w-full' : ''} ${className}`.trim()
 
   return (
     <Pressable
       className={baseClassName}
-      style={({ pressed }) => [
-        getVariantStyle(),
-        pressed && !disabled && { opacity: 0.8 },
-        style
-      ]}
+      style={({ pressed }) => [pressed && !disabled && { opacity: 0.8 }, style]}
       disabled={disabled || loading}
       {...props}
     >
@@ -204,8 +141,7 @@ export default function Button({
           <ActivityIndicator size="small" color={getLoadingColor()} />
         ) : (
           <Text
-            className={`${getTextSizeClassName()} text-center font-semibold`}
-            style={getTextVariantStyle()}
+            className={`${getTextSizeClassName()} ${getTextVariantClassName()} text-center font-semibold`}
           >
             {children}
           </Text>

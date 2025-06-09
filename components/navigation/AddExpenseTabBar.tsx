@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import { Camera, Mic, Pencil } from 'lucide-react-native'
 import React from 'react'
@@ -10,21 +9,16 @@ export default function AddExpenseTabBar({
   state,
   navigation
 }: MaterialTopTabBarProps) {
-  const { colors } = useTheme()
-
   return (
     <View
       className="border-b pb-2 pt-12"
       style={{
-        backgroundColor: colors.background,
-        borderBottomColor: colors.borderLight
+        backgroundColor: '#F5F5F5',
+        borderBottomColor: '#F7FAFC'
       }}
     >
       {/* Title */}
-      <Text
-        className="mb-4 px-4 text-[32px] font-bold tracking-tight"
-        style={{ color: colors.text }}
-      >
+      <Text className="mb-4 px-4 text-[32px] font-bold tracking-tight text-old-text">
         Add Expense
       </Text>
 
@@ -47,20 +41,20 @@ export default function AddExpenseTabBar({
               style={[
                 focused && {
                   borderBottomWidth: 2,
-                  borderBottomColor: colors.primary
+                  borderBottomColor: '#6366F1'
                 }
               ]}
               onPress={onPress}
             >
               <Icon
                 size={20}
-                color={focused ? colors.primary : colors.textSecondary}
+                color={focused ? '#6366F1' : '#4A5568'}
                 style={{ marginRight: 6 }}
               />
               <Text
                 className="text-base"
                 style={{
-                  color: focused ? colors.primary : colors.textSecondary,
+                  color: focused ? '#6366F1' : '#4A5568',
                   fontWeight: focused ? '600' : '400'
                 }}
               >

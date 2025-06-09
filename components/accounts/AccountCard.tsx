@@ -1,4 +1,3 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import { useRouter } from 'expo-router'
 import {
   Banknote as BanknoteIcon,
@@ -33,23 +32,23 @@ interface AccountCardProps {
 }
 
 export default function AccountCard({ account, onPress }: AccountCardProps) {
-  const { colors } = useTheme()
   const router = useRouter()
 
-  const styles = useThemedStyles(theme => ({
-    container: {
-      backgroundColor: theme.colors.card,
+  const getCardStyle = () => {
+    return {
+      backgroundColor: '#FFFFFF', // colors.card
       borderLeftWidth: 3,
+      borderLeftColor: getTypeColor(),
       ...Platform.select({
         android: {
           elevation: 1
         },
         default: {
-          boxShadow: `0px 1px 3px ${theme.colors.shadowLight}`
+          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)' // colors.shadowLight
         }
       })
     }
-  }))
+  }
 
   const handlePress = () => {
     router.push(`/accounts/${account.id}` as any)
@@ -73,18 +72,32 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const getTypeColor = () => {
     switch (account.type) {
       case 'payment':
-        return colors.primary
+        return '#6366F1' // colors.primary
       case 'savings':
-        return colors.success
+        return '#10B981' // colors.success
       case 'debt':
-        return colors.error
+        return '#EF4444' // colors.error
       default:
-        return colors.primary
+        return '#6366F1' // colors.primary
+    }
+  }
+
+  const getIconBackgroundColor = () => {
+    switch (account.type) {
+      case 'payment':
+        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+      case 'savings':
+        return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+      case 'debt':
+        return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
+      default:
+        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
     }
   }
 
   const Icon = getIcon()
   const typeColor = getTypeColor()
+  const iconBgColor = getIconBackgroundColor()
 
   const getProgressPercentage = () => {
     if (account.type === 'savings' && account.targetAmount) {
@@ -103,9 +116,9 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
   const getBalanceColor = () => {
     if (account.type === 'debt') {
-      return account.debtType === 'owed' ? colors.error : colors.success
+      return account.debtType === 'owed' ? '#EF4444' : '#10B981' // colors.error : colors.success
     }
-    return account.balance >= 0 ? colors.text : colors.error
+    return account.balance >= 0 ? '#1A202C' : '#EF4444' // colors.text : colors.error
   }
 
   const formatBalance = (amount: number) => {
@@ -143,43 +156,25 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   return (
     <Pressable
       className="mb-2 w-full rounded-xl p-3"
-      style={[
-        styles.container,
-        {
-          borderLeftColor: typeColor
-        }
-      ]}
+      style={getCardStyle()}
       onPress={handlePress}
     >
       {/* Header Row */}
       <View className="mb-2 flex-row items-start">
         <View
           className="mr-3 h-7 w-7 items-center justify-center rounded-md"
-          style={{
-            backgroundColor:
-              colors.iconBackground[
-                account.type === 'payment'
-                  ? 'primary'
-                  : account.type === 'savings'
-                    ? 'success'
-                    : 'error'
-              ]
-          }}
+          style={{ backgroundColor: iconBgColor }}
         >
           <Icon size={16} color={typeColor} />
         </View>
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-px text-base font-semibold"
-            style={{ color: colors.text }}
+            className="mb-px text-base font-semibold text-old-text"
             numberOfLines={1}
           >
             {account.name}
           </Text>
-          <Text
-            className="text-xs capitalize"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="text-xs capitalize text-old-text-secondary">
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
@@ -187,14 +182,14 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           {account.balance < 0 && account.type === 'payment' && (
             <TrendingDown
               size={12}
-              color={colors.error}
+              color="#EF4444" // colors.error
               style={{ marginRight: 2 }}
             />
           )}
           {account.balance > 0 && account.type === 'savings' && (
             <TrendingUp
               size={12}
-              color={colors.success}
+              color="#10B981" // colors.success
               style={{ marginRight: 2 }}
             />
           )}
@@ -210,10 +205,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       {/* Progress Bar */}
       {progress !== null && (
         <View className="mb-1.5 flex-row items-center">
-          <View
-            className="mr-2 h-0.5 flex-1 overflow-hidden rounded-sm"
-            style={{ backgroundColor: colors.surfaceSecondary }}
-          >
+          <View className="mr-2 h-0.5 flex-1 overflow-hidden rounded-sm bg-old-surface-secondary">
             <View
               className="h-full"
               style={{
@@ -222,10 +214,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
               }}
             />
           </View>
-          <Text
-            className="min-w-[30px] text-right text-[10px] font-medium"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="min-w-[30px] text-right text-[10px] font-medium text-old-text-secondary">
             {progress.toFixed(0)}%
           </Text>
         </View>
@@ -235,18 +224,12 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       {secondaryInfo && (
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <secondaryInfo.icon size={10} color={colors.textSecondary} />
-            <Text
-              className="ml-1 text-[11px]"
-              style={{ color: colors.textSecondary }}
-            >
+            <secondaryInfo.icon size={10} color="#4A5568" />
+            <Text className="ml-1 text-[11px] text-old-text-secondary">
               {secondaryInfo.label}
             </Text>
           </View>
-          <Text
-            className="text-[11px] font-medium"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="text-[11px] font-medium text-old-text-secondary">
             {secondaryInfo.text}
           </Text>
         </View>

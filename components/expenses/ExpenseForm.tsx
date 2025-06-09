@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import { mockCategories } from '@/data/mockData'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -40,7 +39,6 @@ export default function ExpenseForm({
   onSubmit,
   initialData
 }: ExpenseFormProps) {
-  const { colors } = useTheme()
   const [showDescription, setShowDescription] = useState(false)
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -136,10 +134,7 @@ export default function ExpenseForm({
       <View className="mb-6">
         <View className="mb-4 flex-row items-start">
           <View className="mr-3 flex-1">
-            <Text
-              className="mb-2 text-sm font-medium"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-2 text-sm font-medium text-old-text">
               Amount
             </Text>
             <Controller
@@ -150,11 +145,11 @@ export default function ExpenseForm({
                   <TextInput
                     className="h-12 rounded-lg border px-4 text-xl font-semibold"
                     style={{
-                      color: colors.text,
-                      borderColor: errors.amount ? colors.error : colors.border,
-                      backgroundColor: colors.card
+                      color: '#1A202C', // colors.text
+                      borderColor: errors.amount ? '#EF4444' : '#E2E8F0', // colors.error : colors.border
+                      backgroundColor: '#FFFFFF' // colors.card
                     }}
-                    placeholderTextColor={colors.textSecondary}
+                    placeholderTextColor="#4A5568" // colors.textSecondary
                     placeholder="0.00"
                     keyboardType="decimal-pad"
                     onBlur={onBlur}
@@ -162,10 +157,7 @@ export default function ExpenseForm({
                     value={value}
                   />
                   {errors.amount && (
-                    <Text
-                      className="mt-1 text-xs"
-                      style={{ color: colors.error }}
-                    >
+                    <Text className="mt-1 text-xs" style={{ color: '#EF4444' }}>
                       {errors.amount.message}
                     </Text>
                   )}
@@ -175,33 +167,30 @@ export default function ExpenseForm({
           </View>
 
           <View className="flex-[1.2]">
-            <Text
-              className="mb-2 text-sm font-medium"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-2 text-sm font-medium text-old-text">
               Category
             </Text>
             <Pressable
               onPress={() => setShowCategoryPicker(true)}
               className="h-12 flex-row items-center justify-between rounded-lg border px-4"
               style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border
+                backgroundColor: '#FFFFFF', // colors.card
+                borderColor: '#E2E8F0' // colors.border
               }}
             >
               <Text
                 className="flex-1 text-base"
                 style={{
-                  color: selectedCategory ? colors.text : colors.textSecondary
+                  color: selectedCategory ? '#1A202C' : '#4A5568' // colors.text : colors.textSecondary
                 }}
                 numberOfLines={1}
               >
                 {selectedCategory || 'Select'}
               </Text>
-              <ChevronDown size={20} color={colors.text} />
+              <ChevronDown size={20} color="#1A202C" />
             </Pressable>
             {errors.category && (
-              <Text className="mt-1 text-xs" style={{ color: colors.error }}>
+              <Text className="mt-1 text-xs" style={{ color: '#EF4444' }}>
                 {errors.category.message}
               </Text>
             )}
@@ -210,33 +199,28 @@ export default function ExpenseForm({
 
         <View className="mb-4 flex-row items-end">
           <View className="flex-1">
-            <Text
-              className="mb-2 text-sm font-medium"
-              style={{ color: colors.text }}
-            >
-              Date
-            </Text>
+            <Text className="mb-2 text-sm font-medium text-old-text">Date</Text>
             <Pressable
               onPress={() => setShowDatePicker(true)}
               className="h-12 flex-row items-center justify-between rounded-lg border px-4"
               style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border
+                backgroundColor: '#FFFFFF', // colors.card
+                borderColor: '#E2E8F0' // colors.border
               }}
             >
-              <Text className="text-base" style={{ color: colors.text }}>
+              <Text className="text-base text-old-text">
                 {selectedDate === today ? 'Today' : formatDate(selectedDate)}
               </Text>
-              <Calendar size={20} color={colors.text} />
+              <Calendar size={20} color="#1A202C" />
             </Pressable>
           </View>
 
           <Pressable
             onPress={() => setShowDescription(!showDescription)}
             className="ml-3 h-12 w-12 items-center justify-center rounded-lg"
-            style={{ backgroundColor: colors.iconBackground.neutral }}
+            style={{ backgroundColor: '#F1F5F9' }} // colors.iconBackground.neutral
           >
-            <AlignLeft size={20} color={colors.text} />
+            <AlignLeft size={20} color="#1A202C" />
           </Pressable>
         </View>
 
@@ -249,14 +233,12 @@ export default function ExpenseForm({
                 <TextInput
                   className="h-20 rounded-lg border px-4 py-3 text-base"
                   style={{
-                    color: colors.text,
-                    borderColor: errors.description
-                      ? colors.error
-                      : colors.border,
-                    backgroundColor: colors.card,
+                    color: '#1A202C', // colors.text
+                    borderColor: errors.description ? '#EF4444' : '#E2E8F0', // colors.error : colors.border
+                    backgroundColor: '#FFFFFF', // colors.card
                     textAlignVertical: 'top'
                   }}
-                  placeholderTextColor={colors.textSecondary}
+                  placeholderTextColor="#4A5568" // colors.textSecondary
                   placeholder="What was this expense for?"
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -276,7 +258,7 @@ export default function ExpenseForm({
                 variant="outline"
                 onPress={handleCancelEdit}
                 className="mr-2 flex-1"
-                leftIcon={<X size={20} color={colors.text} />}
+                leftIcon={<X size={20} color="#1A202C" />}
               >
                 Cancel
               </Button>
@@ -294,7 +276,7 @@ export default function ExpenseForm({
                 variant="outline"
                 onPress={handleSubmit(handleAddExpense)}
                 className="mr-2 flex-1"
-                leftIcon={<Plus size={20} color={colors.text} />}
+                leftIcon={<Plus size={20} color="#1A202C" />}
               >
                 Add Another
               </Button>
@@ -313,14 +295,8 @@ export default function ExpenseForm({
 
       {/* Added Expenses List */}
       {expenses.length > 0 && (
-        <View
-          className="rounded-lg p-4"
-          style={{ backgroundColor: colors.surfaceSecondary }}
-        >
-          <Text
-            className="mb-3 text-sm font-semibold"
-            style={{ color: colors.text }}
-          >
+        <View className="rounded-lg bg-old-surface-secondary p-4">
+          <Text className="mb-3 text-sm font-semibold text-old-text">
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
@@ -330,41 +306,28 @@ export default function ExpenseForm({
               className="mb-2 rounded-lg p-3"
               style={{
                 backgroundColor:
-                  editingExpenseIndex === index ? colors.card : 'transparent'
+                  editingExpenseIndex === index ? '#FFFFFF' : 'transparent' // colors.card
               }}
             >
               <View className="flex-row items-center justify-between">
-                <Text
-                  className="text-base font-semibold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-base font-semibold text-old-text">
                   ${parseFloat(expense.amount).toFixed(2)}
                 </Text>
                 <View className="mx-3 flex-1 flex-row items-center justify-end gap-2">
-                  <Text
-                    className="text-xs"
-                    style={{ color: colors.textSecondary }}
-                  >
+                  <Text className="text-xs text-old-text-secondary">
                     {formatDate(expense.date)}
                   </Text>
-                  <View
-                    className="rounded px-2 py-1"
-                    style={{ backgroundColor: colors.card }}
-                  >
-                    <Text
-                      className="text-xs font-medium"
-                      style={{ color: colors.text }}
-                    >
+                  <View className="rounded bg-old-card px-2 py-1">
+                    <Text className="text-xs font-medium text-old-text">
                       {expense.category}
                     </Text>
                   </View>
                 </View>
-                <ChevronRight size={20} color={colors.textSecondary} />
+                <ChevronRight size={20} color="#4A5568" />
               </View>
               {expense.description && (
                 <Text
-                  className="mt-2 pl-1 text-[13px]"
-                  style={{ color: colors.textSecondary }}
+                  className="mt-2 pl-1 text-[13px] text-old-text-secondary"
                   numberOfLines={2}
                 >
                   {expense.description}
@@ -384,18 +347,15 @@ export default function ExpenseForm({
       >
         <Pressable
           className="flex-1 justify-center p-4"
-          style={{ backgroundColor: colors.shadow }}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View
-            className="max-h-[80%] rounded-xl"
-            style={{ backgroundColor: colors.surface }}
-          >
+          <View className="max-h-[80%] rounded-xl bg-old-surface">
             <Text
               className="border-b p-4 text-lg font-semibold"
               style={{
-                color: colors.text,
-                borderBottomColor: colors.borderLight
+                color: '#1A202C', // colors.text
+                borderBottomColor: '#F7FAFC' // colors.borderLight
               }}
             >
               Select Category
@@ -408,7 +368,7 @@ export default function ExpenseForm({
                   style={{
                     backgroundColor:
                       selectedCategory === category.name
-                        ? colors.primary
+                        ? '#6366F1' // colors.primary
                         : 'transparent'
                   }}
                   onPress={() => {
@@ -421,8 +381,8 @@ export default function ExpenseForm({
                     style={{
                       color:
                         selectedCategory === category.name
-                          ? colors.textInverse
-                          : colors.text
+                          ? '#FFFFFF' // colors.textInverse
+                          : '#1A202C' // colors.text
                     }}
                   >
                     {category.name}
@@ -443,18 +403,15 @@ export default function ExpenseForm({
       >
         <Pressable
           className="flex-1 justify-center p-4"
-          style={{ backgroundColor: colors.shadow }}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
           onPress={() => setShowDatePicker(false)}
         >
-          <View
-            className="max-h-[80%] rounded-xl"
-            style={{ backgroundColor: colors.surface }}
-          >
+          <View className="max-h-[80%] rounded-xl bg-old-surface">
             <Text
               className="border-b p-4 text-lg font-semibold"
               style={{
-                color: colors.text,
-                borderBottomColor: colors.borderLight
+                color: '#1A202C', // colors.text
+                borderBottomColor: '#F7FAFC' // colors.borderLight
               }}
             >
               Select Date
@@ -473,7 +430,7 @@ export default function ExpenseForm({
                     style={{
                       backgroundColor:
                         selectedDate === dateString
-                          ? colors.primary
+                          ? '#6366F1' // colors.primary
                           : 'transparent'
                     }}
                     onPress={() => {
@@ -486,8 +443,8 @@ export default function ExpenseForm({
                       style={{
                         color:
                           selectedDate === dateString
-                            ? colors.textInverse
-                            : colors.text
+                            ? '#FFFFFF' // colors.textInverse
+                            : '#1A202C' // colors.text
                       }}
                     >
                       {isToday ? 'Today' : formatDate(dateString)}

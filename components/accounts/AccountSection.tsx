@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import type { Account } from '@/hooks/useAccountManagement'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -20,8 +19,6 @@ export default function AccountSection({
   onEditAccount,
   onAddAccount
 }: AccountSectionProps) {
-  const { colors } = useTheme()
-
   const getAddButtonLabel = () => {
     switch (accountType) {
       case 'payment':
@@ -37,10 +34,7 @@ export default function AccountSection({
 
   return (
     <View className="mb-8">
-      <Text
-        className="mb-4 text-xl font-bold tracking-tight"
-        style={{ color: colors.text }}
-      >
+      <Text className="mb-4 text-xl font-bold tracking-tight text-old-text">
         {title}
       </Text>
       <View className="flex-col">

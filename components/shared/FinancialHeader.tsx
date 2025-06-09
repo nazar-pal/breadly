@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useTheme } from '@/context/ThemeContext'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import DateRangeModal from './DateRangeModal'
@@ -13,7 +12,6 @@ export default function FinancialHeader({
   totalExpenses,
   totalIncome
 }: FinancialHeaderProps) {
-  const { colors } = useTheme()
   const {
     activeTab,
     setActiveTab,
@@ -37,16 +35,13 @@ export default function FinancialHeader({
       {/* Top Row: Balance and Date Range */}
       <View className="mb-2 flex-row items-center justify-between">
         <View className="flex-1">
-          <Text
-            className="mb-0.5 text-xs"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="mb-0.5 text-xs text-old-text-secondary">
             Net Balance
           </Text>
           <Text
             className="text-2xl font-bold"
             style={{
-              color: netBalance >= 0 ? colors.success : colors.error
+              color: netBalance >= 0 ? '#10B981' : '#EF4444'
             }}
           >
             ${Math.abs(netBalance).toFixed(2)}
@@ -54,16 +49,10 @@ export default function FinancialHeader({
         </View>
 
         <Pressable onPress={handleDateRangePress} className="items-end">
-          <Text
-            className="text-right text-sm font-semibold"
-            style={{ color: colors.text }}
-          >
+          <Text className="text-right text-sm font-semibold text-old-text">
             {formattedRange}
           </Text>
-          <Text
-            className="mt-0.5 text-[10px] uppercase tracking-wider"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="mt-0.5 text-[10px] uppercase tracking-wider text-old-text-secondary">
             {getModeDisplayName(mode)}
           </Text>
         </Pressable>
@@ -76,19 +65,17 @@ export default function FinancialHeader({
           style={{
             backgroundColor:
               activeTab === 'expenses'
-                ? colors.iconBackground.primary
+                ? 'rgba(99, 102, 241, 0.1)'
                 : 'transparent',
             borderWidth: activeTab === 'expenses' ? 1 : 0,
-            borderColor:
-              activeTab === 'expenses' ? colors.primary : 'transparent'
+            borderColor: activeTab === 'expenses' ? '#6366F1' : 'transparent'
           }}
           onPress={() => setActiveTab('expenses')}
         >
           <Text
             className="mb-0.5 text-base font-semibold"
             style={{
-              color:
-                activeTab === 'expenses' ? colors.primary : colors.textSecondary
+              color: activeTab === 'expenses' ? '#6366F1' : '#4A5568'
             }}
           >
             Expenses
@@ -96,8 +83,7 @@ export default function FinancialHeader({
           <Text
             className="text-sm font-medium"
             style={{
-              color:
-                activeTab === 'expenses' ? colors.error : colors.textSecondary
+              color: activeTab === 'expenses' ? '#EF4444' : '#4A5568'
             }}
           >
             ${totalExpenses.toFixed(2)}
@@ -109,19 +95,17 @@ export default function FinancialHeader({
           style={{
             backgroundColor:
               activeTab === 'incomes'
-                ? colors.iconBackground.primary
+                ? 'rgba(99, 102, 241, 0.1)'
                 : 'transparent',
             borderWidth: activeTab === 'incomes' ? 1 : 0,
-            borderColor:
-              activeTab === 'incomes' ? colors.primary : 'transparent'
+            borderColor: activeTab === 'incomes' ? '#6366F1' : 'transparent'
           }}
           onPress={() => setActiveTab('incomes')}
         >
           <Text
             className="mb-0.5 text-base font-semibold"
             style={{
-              color:
-                activeTab === 'incomes' ? colors.primary : colors.textSecondary
+              color: activeTab === 'incomes' ? '#6366F1' : '#4A5568'
             }}
           >
             Income
@@ -129,8 +113,7 @@ export default function FinancialHeader({
           <Text
             className="text-sm font-medium"
             style={{
-              color:
-                activeTab === 'incomes' ? colors.success : colors.textSecondary
+              color: activeTab === 'incomes' ? '#10B981' : '#4A5568'
             }}
           >
             ${totalIncome.toFixed(2)}

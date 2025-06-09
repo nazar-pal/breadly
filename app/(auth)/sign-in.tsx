@@ -1,6 +1,5 @@
 import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
-import { useTheme } from '@/context/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { Lock, LogIn, Mail } from 'lucide-react-native'
@@ -19,7 +18,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn()
   const router = useRouter()
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
   const [emailAddress, setEmailAddress] = React.useState('')
@@ -56,8 +54,7 @@ export default function SignInScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1"
-      style={{ backgroundColor: colors.background }}
+      className="flex-1 bg-old-background"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -69,85 +66,48 @@ export default function SignInScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-8 items-center">
-          <View
-            className="mb-6 h-20 w-20 items-center justify-center rounded-full"
-            style={{ backgroundColor: colors.primary }}
-          >
-            <LogIn size={32} color={colors.textInverse} />
+          <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-old-primary">
+            <LogIn size={32} color="#FFFFFF" />
           </View>
-          <Text
-            className="mb-2 text-[28px] font-bold"
-            style={{ color: colors.text }}
-          >
+          <Text className="mb-2 text-[28px] font-bold text-old-text">
             Welcome Back
           </Text>
-          <Text
-            className="text-center text-base leading-6"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="text-center text-base leading-6 text-old-text-secondary">
             Sign in to your account to continue
           </Text>
         </View>
 
         <Card className="mb-6">
           <View className="mb-5">
-            <Text
-              className="mb-2 text-base font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-2 text-base font-semibold text-old-text">
               Email Address
             </Text>
-            <View
-              className="h-14 flex-row items-center rounded-xl border px-4"
-              style={{
-                borderColor: colors.input.border,
-                backgroundColor: colors.input.background
-              }}
-            >
-              <Mail
-                size={20}
-                color={colors.textSecondary}
-                style={{ marginRight: 12 }}
-              />
+            <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
+              <Mail size={20} color="#4A5568" style={{ marginRight: 12 }} />
               <TextInput
-                className="h-full flex-1 text-base"
-                style={{ color: colors.text }}
+                className="h-full flex-1 text-base text-old-text"
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
                 value={emailAddress}
                 placeholder="Enter your email"
-                placeholderTextColor={colors.input.placeholder}
+                placeholderTextColor="#A0ADB8"
                 onChangeText={setEmailAddress}
               />
             </View>
           </View>
 
           <View className="mb-5">
-            <Text
-              className="mb-2 text-base font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-2 text-base font-semibold text-old-text">
               Password
             </Text>
-            <View
-              className="h-14 flex-row items-center rounded-xl border px-4"
-              style={{
-                borderColor: colors.input.border,
-                backgroundColor: colors.input.background
-              }}
-            >
-              <Lock
-                size={20}
-                color={colors.textSecondary}
-                style={{ marginRight: 12 }}
-              />
+            <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
+              <Lock size={20} color="#4A5568" style={{ marginRight: 12 }} />
               <TextInput
-                className="h-full flex-1 text-base"
-                style={{ color: colors.text }}
+                className="h-full flex-1 text-base text-old-text"
                 value={password}
                 placeholder="Enter your password"
-                placeholderTextColor={colors.input.placeholder}
+                placeholderTextColor="#A0ADB8"
                 secureTextEntry={true}
                 onChangeText={setPassword}
               />
@@ -165,15 +125,12 @@ export default function SignInScreen() {
         </Card>
 
         <View className="flex-row items-center justify-center">
-          <Text className="text-base" style={{ color: colors.textSecondary }}>
+          <Text className="text-base text-old-text-secondary">
             Don&apos;t have an account?{' '}
           </Text>
           <Link href="/sign-up" asChild>
             <Button variant="ghost" className="px-2 py-1">
-              <Text
-                className="text-base font-semibold"
-                style={{ color: colors.primary }}
-              >
+              <Text className="text-base font-semibold text-old-primary">
                 Sign Up
               </Text>
             </Button>

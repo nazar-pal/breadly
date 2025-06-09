@@ -1,5 +1,4 @@
 import Card from '@/components/ui-old/Card'
-import { useTheme } from '@/context/ThemeContext'
 import { mockCategories } from '@/data/mockData'
 import { ArrowDown, ArrowUp, TrendingUp } from 'lucide-react-native'
 import React from 'react'
@@ -54,22 +53,16 @@ function StatCard({
   trendLabel?: string
   type?: 'success' | 'error' | 'neutral'
 }) {
-  const { colors } = useTheme()
-
   const getTrendColor = () => {
-    if (type === 'success')
-      return trend && trend > 0 ? colors.success : colors.error
-    if (type === 'error')
-      return trend && trend > 0 ? colors.error : colors.success
-    return trend && trend > 0 ? colors.success : colors.error
+    if (type === 'success') return trend && trend > 0 ? '#10B981' : '#EF4444' // old-success : old-error
+    if (type === 'error') return trend && trend > 0 ? '#EF4444' : '#10B981' // old-error : old-success
+    return trend && trend > 0 ? '#10B981' : '#EF4444' // old-success : old-error
   }
 
   return (
     <Card className="flex-1">
-      <Text className="mb-1 text-sm" style={{ color: colors.textSecondary }}>
-        {title}
-      </Text>
-      <Text className="mb-1 text-xl font-bold" style={{ color: colors.text }}>
+      <Text className="mb-1 text-sm text-old-text-secondary">{title}</Text>
+      <Text className="mb-1 text-xl font-bold text-old-text">
         ${amount.toFixed(2)}
       </Text>
       {trend !== undefined && (
@@ -86,10 +79,7 @@ function StatCard({
             {Math.abs(trend)}%
           </Text>
           {trendLabel && (
-            <Text
-              className="ml-1 text-xs"
-              style={{ color: colors.textSecondary }}
-            >
+            <Text className="ml-1 text-xs text-old-text-secondary">
               {trendLabel}
             </Text>
           )}
@@ -100,40 +90,25 @@ function StatCard({
 }
 
 function TopTransactions() {
-  const { colors } = useTheme()
-
   return (
     <View className="mb-6">
-      <Text
-        className="mb-3 text-lg font-semibold"
-        style={{ color: colors.text }}
-      >
+      <Text className="mb-3 text-lg font-semibold text-old-text">
         Top Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
         <Card key={transaction.id} className="mb-2">
           <View className="flex-row items-center justify-between">
-            <Text
-              className="text-base font-semibold"
-              style={{ color: colors.expense }}
-            >
+            <Text className="text-base font-semibold text-old-expense">
               ${transaction.amount.toFixed(2)}
             </Text>
-            <View
-              className="rounded px-2 py-1"
-              style={{ backgroundColor: colors.iconBackground.neutral }}
-            >
-              <Text
-                className="text-xs font-medium"
-                style={{ color: colors.textSecondary }}
-              >
+            <View className="rounded bg-old-icon-bg-neutral px-2 py-1">
+              <Text className="text-xs font-medium text-old-text-secondary">
                 {transaction.category}
               </Text>
             </View>
           </View>
           <Text
-            className="mt-1 text-sm"
-            style={{ color: colors.textSecondary }}
+            className="mt-1 text-sm text-old-text-secondary"
             numberOfLines={2}
           >
             {transaction.description}
@@ -145,8 +120,6 @@ function TopTransactions() {
 }
 
 function CategoryBreakdown() {
-  const { colors } = useTheme()
-
   // Get top 5 categories by spent amount
   const topCategories = [...mockCategories]
     .sort((a, b) => b.spent - a.spent)
@@ -156,10 +129,7 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text
-        className="mb-3 text-lg font-semibold"
-        style={{ color: colors.text }}
-      >
+      <Text className="mb-3 text-lg font-semibold text-old-text">
         Top Categories
       </Text>
       <Card>
@@ -169,38 +139,29 @@ function CategoryBreakdown() {
             <View
               key={category.id}
               className="border-b py-3"
-              style={{ borderBottomColor: colors.borderLight }}
+              style={{ borderBottomColor: '#F7FAFC' }} // old-border-light
             >
               <View className="mb-2 flex-row justify-between">
-                <Text
-                  className="text-sm font-medium"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-sm font-medium text-old-text">
                   {category.name}
                 </Text>
-                <Text
-                  className="text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Text className="text-sm text-old-text-secondary">
                   ${category.spent.toFixed(2)}
                 </Text>
               </View>
               <View
                 className="mb-1 h-1 overflow-hidden rounded-sm"
-                style={{ backgroundColor: colors.borderLight }}
+                style={{ backgroundColor: '#F7FAFC' }} // old-border-light
               >
                 <View
                   className="h-full"
                   style={{
                     width: `${percentage}%`,
-                    backgroundColor: colors.primary
+                    backgroundColor: '#6366F1' // old-primary
                   }}
                 />
               </View>
-              <Text
-                className="text-right text-xs"
-                style={{ color: colors.textSecondary }}
-              >
+              <Text className="text-right text-xs text-old-text-secondary">
                 {percentage.toFixed(1)}%
               </Text>
             </View>
@@ -212,18 +173,15 @@ function CategoryBreakdown() {
 }
 
 export default function StatisticsScreen() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
   return (
     <View
-      className="flex-1"
-      style={{ backgroundColor: colors.background, paddingTop: insets.top }}
+      className="flex-1 bg-old-background"
+      style={{ paddingTop: insets.top }}
     >
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold" style={{ color: colors.text }}>
-          Statistics
-        </Text>
+        <Text className="text-[28px] font-bold text-old-text">Statistics</Text>
       </View>
 
       <ScrollView
@@ -254,41 +212,29 @@ export default function StatisticsScreen() {
         <Card className="mb-4">
           <View className="mb-3 flex-row items-start justify-between">
             <View className="flex-1">
-              <Text
-                className="mb-1 text-base font-semibold"
-                style={{ color: colors.text }}
-              >
+              <Text className="mb-1 text-base font-semibold text-old-text">
                 Monthly Savings
               </Text>
-              <Text
-                className="text-2xl font-bold"
-                style={{ color: colors.success }}
-              >
+              <Text className="text-2xl font-bold text-old-success">
                 ${mockStats.currentMonth.savings.toFixed(2)}
               </Text>
             </View>
-            <View
-              className="flex-row items-center gap-1 rounded-lg p-2"
-              style={{ backgroundColor: colors.iconBackground.success }}
-            >
-              <TrendingUp size={16} color={colors.success} />
-              <Text
-                className="text-sm font-semibold"
-                style={{ color: colors.success }}
-              >
+            <View className="flex-row items-center gap-1 rounded-lg bg-old-icon-bg-success p-2">
+              <TrendingUp size={16} color="#10B981" />
+              <Text className="text-sm font-semibold text-old-success">
                 {mockStats.currentMonth.savingsRate}% Rate
               </Text>
             </View>
           </View>
           <View
             className="h-2 overflow-hidden rounded"
-            style={{ backgroundColor: colors.borderLight }}
+            style={{ backgroundColor: '#F7FAFC' }} // old-border-light
           >
             <View
               className="h-full"
               style={{
                 width: `${mockStats.currentMonth.savingsRate}%`,
-                backgroundColor: colors.success
+                backgroundColor: '#10B981' // old-success
               }}
             />
           </View>

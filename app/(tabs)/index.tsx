@@ -1,6 +1,5 @@
 import Card from '@/components/ui-old/Card'
 import OperationCard, { Operation } from '@/components/ui-old/OperationCard'
-import { useTheme } from '@/context/ThemeContext'
 import {
   mockDebtOperations,
   mockExpenses,
@@ -14,7 +13,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
 
 export default function OperationsScreen() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
@@ -70,16 +68,13 @@ export default function OperationsScreen() {
 
   return (
     <View
-      className="flex-1"
+      className="flex-1 bg-old-background"
       style={{
-        backgroundColor: colors.background,
         paddingTop: insets.top
       }}
     >
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold" style={{ color: colors.text }}>
-          Operations
-        </Text>
+        <Text className="text-[28px] font-bold text-old-text">Operations</Text>
       </View>
 
       {/* Filter Tabs */}
@@ -96,8 +91,8 @@ export default function OperationsScreen() {
               style={{
                 backgroundColor:
                   activeFilter === filter.key
-                    ? colors.primary
-                    : colors.surfaceSecondary
+                    ? '#6366F1' // old-primary
+                    : '#F8F9FA' // old-surface-secondary
               }}
               onPress={() => setActiveFilter(filter.key as FilterType)}
             >
@@ -106,8 +101,8 @@ export default function OperationsScreen() {
                 style={{
                   color:
                     activeFilter === filter.key
-                      ? colors.textInverse
-                      : colors.text
+                      ? '#FFFFFF' // old-text-inverse
+                      : '#1A202C' // old-text
                 }}
               >
                 {filter.label} ({filter.count})
@@ -127,10 +122,7 @@ export default function OperationsScreen() {
         {/* Today's Operations */}
         {todaysOperations.length > 0 && (
           <View className="mb-6">
-            <Text
-              className="mb-3 text-lg font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-3 text-lg font-semibold text-old-text">
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
@@ -144,10 +136,7 @@ export default function OperationsScreen() {
 
         {/* All Operations */}
         <View className="mb-6">
-          <Text
-            className="mb-3 text-lg font-semibold"
-            style={{ color: colors.text }}
-          >
+          <Text className="mb-3 text-lg font-semibold text-old-text">
             {activeFilter === 'all'
               ? 'All Operations'
               : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
@@ -161,10 +150,7 @@ export default function OperationsScreen() {
             ))
           ) : (
             <Card>
-              <Text
-                className="text-center"
-                style={{ color: colors.textSecondary }}
-              >
+              <Text className="text-center text-old-text-secondary">
                 No operations found for the selected filter
               </Text>
             </Card>

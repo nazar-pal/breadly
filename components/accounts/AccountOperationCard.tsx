@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import {
   ArrowDown,
   Calendar,
@@ -39,24 +38,35 @@ const getOperationIcon = (type: string) => {
   }
 }
 
-const getOperationColor = (type: string, amount: number, colors: any) => {
+const getOperationColor = (type: string, amount: number) => {
   if (amount > 0) {
-    return colors.success
+    return '#10B981' // colors.success
   } else {
-    return colors.error
+    return '#EF4444' // colors.error
+  }
+}
+
+const getIconBackgroundColor = (type: string) => {
+  switch (type) {
+    case 'income':
+      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+    case 'expense':
+      return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
+    case 'payment':
+      return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+    case 'transfer':
+      return 'rgba(59, 130, 246, 0.1)' // colors.iconBackground.info
+    default:
+      return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
   }
 }
 
 export default function AccountOperationCard({
   operation
 }: AccountOperationCardProps) {
-  const { colors } = useTheme()
   const IconComponent = getOperationIcon(operation.type)
-  const operationColor = getOperationColor(
-    operation.type,
-    operation.amount,
-    colors
-  )
+  const operationColor = getOperationColor(operation.type, operation.amount)
+  const iconBgColor = getIconBackgroundColor(operation.type)
   const isPositive = operation.amount > 0
 
   const formatAmount = (amount: number) => {
@@ -76,55 +86,31 @@ export default function AccountOperationCard({
   }
 
   return (
-    <View
-      className="mb-2 overflow-hidden rounded-lg"
-      style={{ backgroundColor: colors.card }}
-    >
+    <View className="mb-2 overflow-hidden rounded-lg bg-old-card">
       <View className="flex-row items-center p-3">
         <View
           className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
-          style={{
-            backgroundColor:
-              colors.iconBackground[
-                operation.type === 'income'
-                  ? 'success'
-                  : operation.type === 'expense'
-                    ? 'error'
-                    : operation.type === 'payment'
-                      ? 'primary'
-                      : 'info'
-              ]
-          }}
+          style={{ backgroundColor: iconBgColor }}
         >
           <IconComponent size={16} color={operationColor} />
         </View>
 
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-1 text-sm font-medium"
-            style={{ color: colors.text }}
+            className="mb-1 text-sm font-medium text-old-text"
             numberOfLines={1}
           >
             {operation.description}
           </Text>
           <View className="flex-row items-center gap-3">
-            <View
-              className="rounded px-1.5 py-0.5"
-              style={{ backgroundColor: colors.surfaceSecondary }}
-            >
-              <Text
-                className="text-[11px] font-medium"
-                style={{ color: colors.textSecondary }}
-              >
+            <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
+              <Text className="text-[11px] font-medium text-old-text-secondary">
                 {operation.category}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
-              <Calendar size={10} color={colors.textSecondary} />
-              <Text
-                className="text-[11px]"
-                style={{ color: colors.textSecondary }}
-              >
+              <Calendar size={10} color="#4A5568" />
+              <Text className="text-[11px] text-old-text-secondary">
                 {formatDate(operation.date)}
               </Text>
             </View>

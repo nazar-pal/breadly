@@ -23,6 +23,56 @@
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
+
+    /* Colors migrated from theme/colors.ts (lightColors) */
+    --old-background: #f5f5f5;
+    --old-surface: #ffffff;
+    --old-surface-secondary: #f8f9fa;
+    --old-card: #ffffff;
+    --old-text: #1a202c;
+    --old-text-secondary: #4a5568;
+    --old-text-inverse: #ffffff;
+    --old-primary: #6366f1;
+    --old-secondary: #e2e8f0;
+    --old-success: #10b981;
+    --old-warning: #f59e0b;
+    --old-error: #ef4444;
+    --old-info: #3b82f6;
+    --old-income: #10b981;
+    --old-expense: #ef4444;
+    --old-transfer: #3b82f6;
+    --old-savings: #059669;
+    --old-input-background: #ffffff;
+    --old-input-border: #e2e8f0;
+    --old-input-placeholder: #a0adb8;
+    --old-button-primary-bg: #6366f1;
+    --old-button-primary-bg-disabled: #cbd5e0;
+    --old-button-primary-text: #ffffff;
+    --old-button-primary-text-disabled: #a0adb8;
+    --old-button-secondary-bg: transparent;
+    --old-button-secondary-border: #e2e8f0;
+    --old-button-secondary-text: #4a5568;
+    --old-button-destructive-bg: #ef4444;
+    --old-button-destructive-text: #ffffff;
+    --old-border: #e2e8f0;
+    --old-border-light: #f7fafc;
+    --old-border-strong: #cbd5e0;
+    --old-shadow: rgba(0, 0, 0, 0.1);
+    --old-shadow-light: rgba(0, 0, 0, 0.05);
+    --old-shadow-strong: rgba(0, 0, 0, 0.15);
+    --old-tab-bar-background: #ffffff;
+    --old-tab-bar-border: #e2e8f0;
+    --old-tab-bar-active-icon: #6366f1;
+    --old-tab-bar-inactive-icon: #718096;
+    --old-tab-bar-active-label: #6366f1;
+    --old-tab-bar-inactive-label: #718096;
+    --old-tab-bar-focus-background: rgba(99, 102, 241, 0.1);
+    --old-icon-background-neutral: #f1f5f9;
+    --old-icon-background-primary: rgba(99, 102, 241, 0.1);
+    --old-icon-background-success: rgba(16, 185, 129, 0.1);
+    --old-icon-background-warning: rgba(245, 158, 11, 0.1);
+    --old-icon-background-error: rgba(239, 68, 68, 0.1);
+    --old-icon-background-info: rgba(59, 130, 246, 0.1);
   }
 
   .dark:root {
@@ -45,5 +95,55 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    /* Colors migrated from theme/colors.ts (darkColors) */
+    --old-background: #0f172a;
+    --old-surface: #1e293b;
+    --old-surface-secondary: #334155;
+    --old-card: #1e293b;
+    --old-text: #f8fafc;
+    --old-text-secondary: #cbd5e1;
+    --old-text-inverse: #0f172a;
+    --old-primary: #818cf8;
+    --old-secondary: #475569;
+    --old-success: #34d399;
+    --old-warning: #fbbf24;
+    --old-error: #f87171;
+    --old-info: #60a5fa;
+    --old-income: #34d399;
+    --old-expense: #f87171;
+    --old-transfer: #60a5fa;
+    --old-savings: #10b981;
+    --old-input-background: #334155;
+    --old-input-border: #475569;
+    --old-input-placeholder: #64748b;
+    --old-button-primary-bg: #818cf8;
+    --old-button-primary-bg-disabled: #475569;
+    --old-button-primary-text: #0f172a;
+    --old-button-primary-text-disabled: #64748b;
+    --old-button-secondary-bg: transparent;
+    --old-button-secondary-border: #475569;
+    --old-button-secondary-text: #cbd5e1;
+    --old-button-destructive-bg: #f87171;
+    --old-button-destructive-text: #0f172a;
+    --old-border: #475569;
+    --old-border-light: #334155;
+    --old-border-strong: #64748b;
+    --old-shadow: rgba(0, 0, 0, 0.3);
+    --old-shadow-light: rgba(0, 0, 0, 0.2);
+    --old-shadow-strong: rgba(0, 0, 0, 0.4);
+    --old-tab-bar-background: #1e293b;
+    --old-tab-bar-border: #475569;
+    --old-tab-bar-active-icon: #818cf8;
+    --old-tab-bar-inactive-icon: #94a3b8;
+    --old-tab-bar-active-label: #818cf8;
+    --old-tab-bar-inactive-label: #94a3b8;
+    --old-tab-bar-focus-background: rgba(129, 140, 248, 0.15);
+    --old-icon-background-neutral: #334155;
+    --old-icon-background-primary: rgba(129, 140, 248, 0.15);
+    --old-icon-background-success: rgba(52, 211, 153, 0.15);
+    --old-icon-background-warning: rgba(251, 191, 36, 0.15);
+    --old-icon-background-error: rgba(248, 113, 113, 0.15);
+    --old-icon-background-info: rgba(96, 165, 250, 0.15);
   }
 }

@@ -1,5 +1,4 @@
 import Card from '@/components/ui-old/Card'
-import { useTheme } from '@/context/ThemeContext'
 import { mockExpenses } from '@/data/mockData'
 import { useLocalSearchParams } from 'expo-router'
 import { Calendar, Mic, Tag } from 'lucide-react-native'
@@ -8,7 +7,6 @@ import { Image, ScrollView, Text, View } from 'react-native'
 
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
 
   // Find the expense with the matching ID
   const expense = mockExpenses.find(e => e.id === id)
@@ -19,11 +17,8 @@ export default function ExpenseDetailsScreen() {
 
   if (!expense) {
     return (
-      <View className="flex-1" style={{ backgroundColor: colors.background }}>
-        <Text
-          className="mt-10 text-center text-lg"
-          style={{ color: colors.error }}
-        >
+      <View className="flex-1 bg-old-background">
+        <Text className="mt-10 text-center text-lg text-old-error">
           Expense not found
         </Text>
       </View>
@@ -32,94 +27,53 @@ export default function ExpenseDetailsScreen() {
 
   return (
     <ScrollView
-      className="flex-1"
-      style={{ backgroundColor: colors.background }}
+      className="flex-1 bg-old-background"
       contentContainerStyle={{ padding: 16 }}
     >
       <View className="mb-6 items-center">
-        <Text
-          className="mb-2 text-base"
-          style={{ color: colors.textSecondary }}
-        >
-          Amount
-        </Text>
-        <Text
-          className="text-[48px] font-bold"
-          style={{ color: colors.expense }}
-        >
+        <Text className="mb-2 text-base text-old-text-secondary">Amount</Text>
+        <Text className="text-[48px] font-bold text-old-expense">
           ${expense.amount.toFixed(2)}
         </Text>
       </View>
 
       <Card className="mb-4">
         <View className="flex-row items-center py-3">
-          <View
-            className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
-            style={{ backgroundColor: colors.iconBackground.info }}
-          >
-            <Calendar size={20} color={colors.info} />
+          <View className="bg-old-icon-background-info mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
+            <Calendar size={20} color="#3B82F6" />
           </View>
           <View>
-            <Text
-              className="mb-1 text-sm"
-              style={{ color: colors.textSecondary }}
-            >
-              Date
-            </Text>
-            <Text
-              className="text-base font-medium"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-1 text-sm text-old-text-secondary">Date</Text>
+            <Text className="text-base font-medium text-old-text">
               {expense.date}
             </Text>
           </View>
         </View>
 
-        <View
-          className="h-px w-full"
-          style={{ backgroundColor: colors.border }}
-        />
+        <View className="h-px w-full bg-old-border" />
 
         <View className="flex-row items-center py-3">
-          <View
-            className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
-            style={{ backgroundColor: colors.iconBackground.primary }}
-          >
-            <Tag size={20} color={colors.primary} />
+          <View className="bg-old-icon-background-primary mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
+            <Tag size={20} color="#6366F1" />
           </View>
           <View>
-            <Text
-              className="mb-1 text-sm"
-              style={{ color: colors.textSecondary }}
-            >
+            <Text className="mb-1 text-sm text-old-text-secondary">
               Category
             </Text>
-            <Text
-              className="text-base font-medium"
-              style={{ color: colors.text }}
-            >
+            <Text className="text-base font-medium text-old-text">
               {expense.category}
             </Text>
           </View>
         </View>
 
-        <View
-          className="h-px w-full"
-          style={{ backgroundColor: colors.border }}
-        />
+        <View className="h-px w-full bg-old-border" />
 
         <View className="flex-row py-3">
           <View className="flex-1">
-            <Text
-              className="mb-1 text-sm"
-              style={{ color: colors.textSecondary }}
-            >
+            <Text className="mb-1 text-sm text-old-text-secondary">
               Description
             </Text>
-            <Text
-              className="text-base leading-6"
-              style={{ color: colors.text }}
-            >
+            <Text className="text-base leading-6 text-old-text">
               {expense.description ?? 'No description provided'}
             </Text>
           </View>
@@ -128,16 +82,10 @@ export default function ExpenseDetailsScreen() {
 
       {expense.hasPhoto && (
         <Card className="mb-4">
-          <Text
-            className="mb-3 text-base font-semibold"
-            style={{ color: colors.text }}
-          >
+          <Text className="mb-3 text-base font-semibold text-old-text">
             Receipt Photo
           </Text>
-          <View
-            className="h-[200px] overflow-hidden rounded-lg"
-            style={{ backgroundColor: colors.surfaceSecondary }}
-          >
+          <View className="h-[200px] overflow-hidden rounded-lg bg-old-surface-secondary">
             <Image
               source={{ uri: receiptImageUrl }}
               className="h-full w-full"
@@ -149,20 +97,12 @@ export default function ExpenseDetailsScreen() {
 
       {expense.hasVoice && (
         <Card className="mb-4">
-          <Text
-            className="mb-3 text-base font-semibold"
-            style={{ color: colors.text }}
-          >
+          <Text className="mb-3 text-base font-semibold text-old-text">
             Voice Memo
           </Text>
-          <View
-            className="flex-row items-center rounded-lg p-3"
-            style={{ backgroundColor: colors.iconBackground.warning }}
-          >
-            <Mic size={24} color={colors.warning} className="mr-2" />
-            <Text className="text-base" style={{ color: colors.text }}>
-              Voice Memo (00:12)
-            </Text>
+          <View className="bg-old-icon-background-warning flex-row items-center rounded-lg p-3">
+            <Mic size={24} color="#F59E0B" className="mr-2" />
+            <Text className="text-base text-old-text">Voice Memo (00:12)</Text>
           </View>
         </Card>
       )}

@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import { useRouter } from 'expo-router'
 import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native'
 import React from 'react'
@@ -18,7 +17,6 @@ interface ExpenseCardProps {
 }
 
 export default function ExpenseCard({ expense }: ExpenseCardProps) {
-  const { colors } = useTheme()
   const router = useRouter()
 
   const handlePress = () => {
@@ -30,37 +28,24 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
       <Card variant="elevated" size="md" className="mb-3">
         <View className="min-h-[80px] flex-row items-start justify-between">
           <View className="mr-4 flex-1">
-            <Text
-              className="mb-1 text-lg font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="mb-1 text-lg font-semibold text-old-text">
               ${expense.amount.toFixed(2)}
             </Text>
             <Text
-              className="mb-2 flex-wrap text-sm"
-              style={{ color: colors.textSecondary }}
+              className="mb-2 flex-wrap text-sm text-old-text-secondary"
               numberOfLines={2}
             >
               {expense.description}
             </Text>
             <View className="flex-row flex-wrap items-center">
-              <View
-                className="mr-2 rounded px-2 py-1"
-                style={{ backgroundColor: colors.surfaceSecondary }}
-              >
-                <Text
-                  className="text-xs font-medium"
-                  style={{ color: colors.text }}
-                >
+              <View className="mr-2 rounded bg-old-surface-secondary px-2 py-1">
+                <Text className="text-xs font-medium text-old-text">
                   {expense.category}
                 </Text>
               </View>
               <View className="ml-2 flex-row items-center">
-                <Calendar size={14} color={colors.textSecondary} />
-                <Text
-                  className="ml-1 text-xs"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Calendar size={14} color="#4A5568" />
+                <Text className="ml-1 text-xs text-old-text-secondary">
                   {expense.date}
                 </Text>
               </View>
@@ -70,17 +55,11 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
           <View className="items-end justify-between">
             <View className="mb-3 flex-row">
               {expense.hasPhoto && (
-                <Receipt
-                  size={16}
-                  color={colors.textSecondary}
-                  style={{ marginRight: 8 }}
-                />
+                <Receipt size={16} color="#4A5568" style={{ marginRight: 8 }} />
               )}
-              {expense.hasVoice && (
-                <Mic size={16} color={colors.textSecondary} />
-              )}
+              {expense.hasVoice && <Mic size={16} color="#4A5568" />}
             </View>
-            <ArrowRight size={20} color={colors.primary} />
+            <ArrowRight size={20} color="#6366F1" />
           </View>
         </View>
       </Card>

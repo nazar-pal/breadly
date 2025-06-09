@@ -1,6 +1,5 @@
-import { useThemedStyles, type ThemedStylesProps } from '@/context/ThemeContext'
 import React from 'react'
-import { Platform, StyleSheet, View, ViewProps, ViewStyle } from 'react-native'
+import { Platform, View, ViewProps, ViewStyle } from 'react-native'
 
 type CardVariant =
   | 'elevated'
@@ -22,82 +21,6 @@ interface CardProps extends ViewProps {
   className?: string
 }
 
-const createStyles = ({ colors }: ThemedStylesProps) =>
-  StyleSheet.create({
-    // Background variants with theme colors
-    elevatedCard: {
-      backgroundColor: colors.card,
-      ...Platform.select({
-        android: {
-          elevation: 4
-        },
-        default: {
-          boxShadow: `0px 2px 6px ${colors.shadow}1a`
-        }
-      })
-    } as ViewStyle,
-
-    outlinedCard: {
-      backgroundColor: colors.background,
-      borderColor: colors.border,
-      borderWidth: 1
-    } as ViewStyle,
-
-    filledCard: {
-      backgroundColor: colors.surface
-    } as ViewStyle,
-
-    surfaceCard: {
-      backgroundColor: colors.surface
-    } as ViewStyle,
-
-    surfaceVariantCard: {
-      backgroundColor: colors.surfaceSecondary
-    } as ViewStyle,
-
-    primaryCard: {
-      backgroundColor: colors.primary
-    } as ViewStyle,
-
-    secondaryCard: {
-      backgroundColor: colors.iconBackground.neutral
-    } as ViewStyle,
-
-    // Elevated variants with different shadow levels
-    elevatedLight: {
-      ...Platform.select({
-        android: {
-          elevation: 2
-        },
-        default: {
-          boxShadow: `0px 1px 3px ${colors.shadowLight}`
-        }
-      })
-    } as ViewStyle,
-
-    elevatedMedium: {
-      ...Platform.select({
-        android: {
-          elevation: 4
-        },
-        default: {
-          boxShadow: `0px 2px 6px ${colors.shadow}1a`
-        }
-      })
-    } as ViewStyle,
-
-    elevatedHigh: {
-      ...Platform.select({
-        android: {
-          elevation: 8
-        },
-        default: {
-          boxShadow: `0px 4px 12px ${colors.shadowStrong}`
-        }
-      })
-    } as ViewStyle
-  })
-
 export default function Card({
   children,
   style,
@@ -108,8 +31,6 @@ export default function Card({
   className = '',
   ...props
 }: CardProps) {
-  const styles = useThemedStyles(createStyles)
-
   const getSizeClassName = () => {
     const shouldHavePadding = padded !== undefined ? padded : !noPadding
     if (!shouldHavePadding) return ''
@@ -126,34 +47,49 @@ export default function Card({
     }
   }
 
-  const getVariantStyle = () => {
+  const getVariantClassName = () => {
     switch (variant) {
       case 'elevated':
-        return [styles.elevatedCard, styles.elevatedMedium]
+        return 'bg-old-card shadow-md'
       case 'outlined':
-        return styles.outlinedCard
+        return 'bg-old-background border border-old-border'
       case 'filled':
-        return styles.filledCard
+        return 'bg-old-surface'
       case 'surface':
-        return styles.surfaceCard
+        return 'bg-old-surface'
       case 'surfaceVariant':
-        return styles.surfaceVariantCard
+        return 'bg-old-surface-secondary'
       case 'primary':
-        return [styles.primaryCard, styles.elevatedLight]
+        return 'bg-old-primary shadow-sm'
       case 'secondary':
-        return [styles.secondaryCard, styles.elevatedLight]
+        return 'bg-old-icon-bg-neutral shadow-sm'
       default:
-        return [styles.elevatedCard, styles.elevatedMedium]
+        return 'bg-old-card shadow-md'
     }
   }
 
+  const getCustomShadowStyle = (): ViewStyle | undefined => {
+    if (Platform.OS === 'android') {
+      switch (variant) {
+        case 'elevated':
+          return { elevation: 4 }
+        case 'primary':
+        case 'secondary':
+          return { elevation: 2 }
+        default:
+          return undefined
+      }
+    }
+    return undefined
+  }
+
   const baseClassName =
-    `rounded-md overflow-hidden w-full ${getSizeClassName()} ${className}`.trim()
+    `rounded-md overflow-hidden w-full ${getSizeClassName()} ${getVariantClassName()} ${className}`.trim()
 
   return (
     <View
       className={baseClassName}
-      style={[getVariantStyle(), style]}
+      style={[getCustomShadowStyle(), style]}
       {...props}
     >
       {children}

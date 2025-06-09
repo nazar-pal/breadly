@@ -1,15 +1,7 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import { DateRange, DateRangeMode } from '@/hooks/useDateRange'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react-native'
 import React, { useState } from 'react'
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -55,7 +47,6 @@ export default function DateRangeModal({
   navigateNext,
   formattedRange
 }: DateRangeModalProps) {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const [showCustomPicker, setShowCustomPicker] = useState(false)
   const [selectedDates, setSelectedDates] = useState<{
@@ -71,25 +62,6 @@ export default function DateRangeModal({
     end?: string
   }>({})
 
-  const styles = useThemedStyles(theme => ({
-    modalOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      backgroundColor: theme.colors.background
-    },
-    navButton: {
-      backgroundColor: theme.colors.surfaceSecondary
-    },
-    modeOption: {
-      borderWidth: 1
-    },
-    cancelButton: {
-      backgroundColor: theme.colors.secondary
-    }
-  }))
-
   const handleModeSelect = (mode: DateRangeMode) => {
     if (mode === 'custom') {
       setShowCustomPicker(true)
@@ -101,6 +73,7 @@ export default function DateRangeModal({
 
   const handleDayPress = (day: any) => {
     const dateString = day.dateString
+    const primaryColor = '#6366F1'
 
     if (!customRange.start || (customRange.start && customRange.end)) {
       // Start new selection
@@ -109,7 +82,7 @@ export default function DateRangeModal({
         [dateString]: {
           selected: true,
           startingDay: true,
-          color: colors.primary
+          color: primaryColor
         }
       })
     } else {
@@ -139,7 +112,7 @@ export default function DateRangeModal({
           selected: true,
           startingDay: current === customRange.start,
           endingDay: current === dateString,
-          color: colors.primary
+          color: primaryColor
         }
         currentDate.setDate(currentDate.getDate() + 1)
       }
@@ -176,43 +149,34 @@ export default function DateRangeModal({
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-end">
-        <Pressable style={styles.modalOverlay} onPress={onClose} />
+        <Pressable
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+          onPress={onClose}
+        />
         <View
-          className="max-h-[80%] min-h-[50%] rounded-t-3xl"
-          style={[
-            styles.modalContent,
-            {
-              paddingBottom: insets.bottom + 16
-            }
-          ]}
+          className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-old-background"
+          style={{
+            paddingBottom: insets.bottom + 16
+          }}
         >
           {/* Header with Navigation */}
-          <View
-            className="min-h-[60px] flex-row items-center border-b px-4 py-4"
-            style={{ borderBottomColor: colors.border }}
-          >
+          <View className="min-h-[60px] flex-row items-center border-b border-old-border px-4 py-4">
             {!showCustomPicker && canNavigate && navigatePrevious && (
               <Pressable
                 onPress={navigatePrevious}
-                className="rounded p-2"
-                style={styles.navButton}
+                className="rounded bg-old-surface-secondary p-2"
               >
-                <ChevronLeft size={18} color={colors.text} />
+                <ChevronLeft size={18} color="#1A202C" />
               </Pressable>
             )}
 
             <View className="mx-4 flex-1 items-center">
-              <Text
-                className="text-center text-lg font-semibold"
-                style={{ color: colors.text }}
-              >
+              <Text className="text-center text-lg font-semibold text-old-text">
                 {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
               </Text>
               {!showCustomPicker && formattedRange && (
-                <Text
-                  className="mt-0.5 text-center text-[11px]"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Text className="mt-0.5 text-center text-[11px] text-old-text-secondary">
                   {formattedRange}
                 </Text>
               )}
@@ -221,10 +185,9 @@ export default function DateRangeModal({
             {!showCustomPicker && canNavigate && navigateNext && (
               <Pressable
                 onPress={navigateNext}
-                className="rounded p-2"
-                style={styles.navButton}
+                className="rounded bg-old-surface-secondary p-2"
               >
-                <ChevronRight size={18} color={colors.text} />
+                <ChevronRight size={18} color="#1A202C" />
               </Pressable>
             )}
 
@@ -232,7 +195,7 @@ export default function DateRangeModal({
               onPress={showCustomPicker ? handleCustomRangeCancel : onClose}
               className="p-2"
             >
-              <X size={20} color={colors.text} />
+              <X size={20} color="#1A202C" />
             </Pressable>
           </View>
 
@@ -246,20 +209,17 @@ export default function DateRangeModal({
                 {MODE_OPTIONS.map(option => (
                   <Pressable
                     key={option.mode}
-                    className="my-1 w-[48%] flex-row items-center rounded-2xl px-3 py-3"
-                    style={[
-                      styles.modeOption,
-                      {
-                        backgroundColor:
-                          currentMode === option.mode
-                            ? colors.iconBackground.primary
-                            : colors.card,
-                        borderColor:
-                          currentMode === option.mode
-                            ? colors.primary
-                            : colors.border
-                      }
-                    ]}
+                    className="my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3"
+                    style={{
+                      backgroundColor:
+                        currentMode === option.mode
+                          ? 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+                          : '#FFFFFF', // colors.card
+                      borderColor:
+                        currentMode === option.mode
+                          ? '#6366F1' // colors.primary
+                          : '#E2E8F0' // colors.border
+                    }}
                     onPress={() => handleModeSelect(option.mode)}
                   >
                     <View className="flex-1">
@@ -268,21 +228,18 @@ export default function DateRangeModal({
                         style={{
                           color:
                             currentMode === option.mode
-                              ? colors.primary
-                              : colors.text
+                              ? '#6366F1' // colors.primary
+                              : '#1A202C' // colors.text
                         }}
                       >
                         {option.label}
                       </Text>
-                      <Text
-                        className="text-xs"
-                        style={{ color: colors.textSecondary }}
-                      >
+                      <Text className="text-xs text-old-text-secondary">
                         {option.description}
                       </Text>
                     </View>
                     {currentMode === option.mode && (
-                      <Check size={16} color={colors.primary} />
+                      <Check size={16} color="#6366F1" />
                     )}
                   </Pressable>
                 ))}
@@ -296,31 +253,27 @@ export default function DateRangeModal({
                 markingType="period"
                 markedDates={selectedDates}
                 theme={{
-                  backgroundColor: colors.background,
-                  calendarBackground: colors.background,
-                  textSectionTitleColor: colors.textSecondary,
-                  selectedDayBackgroundColor: colors.primary,
-                  selectedDayTextColor: colors.background,
-                  todayTextColor: colors.primary,
-                  dayTextColor: colors.text,
-                  textDisabledColor: colors.textSecondary,
-                  arrowColor: colors.primary,
-                  monthTextColor: colors.text,
-                  indicatorColor: colors.primary
+                  backgroundColor: '#F5F5F5', // colors.background
+                  calendarBackground: '#F5F5F5', // colors.background
+                  textSectionTitleColor: '#4A5568', // colors.textSecondary
+                  selectedDayBackgroundColor: '#6366F1', // colors.primary
+                  selectedDayTextColor: '#F5F5F5', // colors.background
+                  todayTextColor: '#6366F1', // colors.primary
+                  dayTextColor: '#1A202C', // colors.text
+                  textDisabledColor: '#4A5568', // colors.textSecondary
+                  arrowColor: '#6366F1', // colors.primary
+                  monthTextColor: '#1A202C', // colors.text
+                  indicatorColor: '#6366F1' // colors.primary
                 }}
               />
 
               {/* Custom Range Actions */}
               <View className="flex-row gap-3 pt-5">
                 <Pressable
-                  className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl py-3"
-                  style={styles.cancelButton}
+                  className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-old-secondary py-3"
                   onPress={handleCustomRangeCancel}
                 >
-                  <Text
-                    className="text-base font-semibold"
-                    style={{ color: colors.text }}
-                  >
+                  <Text className="text-base font-semibold text-old-text">
                     Cancel
                   </Text>
                 </Pressable>
@@ -330,17 +283,14 @@ export default function DateRangeModal({
                   style={{
                     backgroundColor:
                       customRange.start && customRange.end
-                        ? colors.primary
-                        : colors.button.primaryBgDisabled
+                        ? '#6366F1' // colors.primary
+                        : '#CBD5E0' // colors.button.primaryBgDisabled
                   }}
                   onPress={handleCustomRangeConfirm}
                   disabled={!customRange.start || !customRange.end}
                 >
-                  <Check size={16} color={colors.button.primaryText} />
-                  <Text
-                    className="text-base font-semibold"
-                    style={{ color: colors.button.primaryText }}
-                  >
+                  <Check size={16} color="#FFFFFF" />
+                  <Text className="text-base font-semibold text-old-button-primary-text">
                     Confirm
                   </Text>
                 </Pressable>

@@ -1,31 +1,29 @@
-import { useTheme } from '@/context/ThemeContext'
 import { useAuth } from '@clerk/clerk-expo'
 import { Redirect, Stack } from 'expo-router'
 import { View } from 'react-native'
 
 export default function AuthRoutesLayout() {
   const { isSignedIn } = useAuth()
-  const { colors } = useTheme()
 
   if (isSignedIn) {
     return <Redirect href={'/'} />
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View className="flex-1 bg-old-background">
       <Stack
         screenOptions={{
           headerShown: true,
           headerBackTitle: 'Back',
           headerStyle: {
-            backgroundColor: colors.surface
+            backgroundColor: '#FFFFFF' // old-surface
           },
-          headerTintColor: colors.primary,
+          headerTintColor: '#6366F1', // old-primary
           headerTitleStyle: {
-            color: colors.text,
+            color: '#1A202C', // old-text
             fontWeight: '600'
           },
-          contentStyle: { backgroundColor: colors.background }
+          contentStyle: { backgroundColor: '#F5F5F5' } // old-background
         }}
       />
     </View>

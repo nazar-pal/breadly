@@ -1,4 +1,3 @@
-import { useTheme } from '@/context/ThemeContext'
 import { useRouter } from 'expo-router'
 import {
   ArrowRight,
@@ -80,18 +79,18 @@ const getOperationIcon = (operation: Operation) => {
   }
 }
 
-const getOperationColor = (operation: Operation, colors: any) => {
+const getOperationColor = (operation: Operation) => {
   switch (operation.type) {
     case 'income':
-      return colors.success
+      return '#10B981' // colors.success
     case 'debt':
-      return operation.debtType === 'paid' ? colors.error : colors.success
+      return operation.debtType === 'paid' ? '#EF4444' : '#10B981' // colors.error : colors.success
     case 'other':
       return operation.transactionType === 'refund'
-        ? colors.success
-        : colors.primary
+        ? '#10B981' // colors.success
+        : '#6366F1' // colors.primary
     default:
-      return colors.error // expenses
+      return '#EF4444' // colors.error (expenses)
   }
 }
 
@@ -136,14 +135,31 @@ const getOperationSubtext = (operation: Operation) => {
   }
 }
 
+const getIconBackgroundColor = (operation: Operation) => {
+  switch (operation.type) {
+    case 'income':
+      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+    case 'debt':
+      return operation.debtType === 'paid'
+        ? 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
+        : 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+    case 'other':
+      return operation.transactionType === 'refund'
+        ? 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+        : 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+    default:
+      return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error (expenses)
+  }
+}
+
 export default function OperationCard({ operation }: OperationCardProps) {
-  const { colors } = useTheme()
   const router = useRouter()
 
   const IconComponent = getOperationIcon(operation)
-  const operationColor = getOperationColor(operation, colors)
+  const operationColor = getOperationColor(operation)
   const amountPrefix = getAmountPrefix(operation)
   const subtext = getOperationSubtext(operation)
+  const iconBgColor = getIconBackgroundColor(operation)
 
   const handlePress = () => {
     // Route based on operation type
@@ -173,22 +189,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
           {/* Left: Icon */}
           <View
             className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
-            style={{
-              backgroundColor:
-                colors.iconBackground[
-                  operation.type === 'income'
-                    ? 'success'
-                    : operation.type === 'debt'
-                      ? operation.debtType === 'paid'
-                        ? 'error'
-                        : 'success'
-                      : operation.type === 'other'
-                        ? operation.transactionType === 'refund'
-                          ? 'success'
-                          : 'primary'
-                        : 'error' // expenses
-                ]
-            }}
+            style={{ backgroundColor: iconBgColor }}
           >
             <IconComponent size={16} color={operationColor} />
           </View>
@@ -197,8 +198,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
           <View className="flex-1 gap-1">
             <View className="flex-row items-center justify-between">
               <Text
-                className="mr-2 flex-1 text-sm font-medium"
-                style={{ color: colors.text }}
+                className="mr-2 flex-1 text-sm font-medium text-old-text"
                 numberOfLines={1}
               >
                 {operation.description}
@@ -213,24 +213,17 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
             <View className="flex-row items-center justify-between">
               <View className="flex-1 flex-row items-center gap-2">
-                <View
-                  className="rounded px-1.5 py-0.5"
-                  style={{ backgroundColor: colors.surfaceSecondary }}
-                >
+                <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
                   <Text
-                    className="text-[11px] font-medium"
-                    style={{ color: colors.text }}
+                    className="text-[11px] font-medium text-old-text"
                     numberOfLines={1}
                   >
                     {operation.category}
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">
-                  <Calendar size={12} color={colors.textSecondary} />
-                  <Text
-                    className="text-[11px]"
-                    style={{ color: colors.textSecondary }}
-                  >
+                  <Calendar size={12} color="#4A5568" />
+                  <Text className="text-[11px] text-old-text-secondary">
                     {new Date(operation.date).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric'
@@ -240,19 +233,13 @@ export default function OperationCard({ operation }: OperationCardProps) {
               </View>
 
               <View className="flex-row items-center">
-                {operation.hasPhoto && (
-                  <Receipt size={14} color={colors.textSecondary} />
-                )}
+                {operation.hasPhoto && <Receipt size={14} color="#4A5568" />}
                 {operation.hasVoice && (
-                  <Mic
-                    size={14}
-                    color={colors.textSecondary}
-                    style={{ marginLeft: 4 }}
-                  />
+                  <Mic size={14} color="#4A5568" style={{ marginLeft: 4 }} />
                 )}
                 <ArrowRight
                   size={14}
-                  color={colors.textSecondary}
+                  color="#4A5568"
                   style={{ marginLeft: 4 }}
                 />
               </View>
@@ -260,8 +247,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
             {subtext && (
               <Text
-                className="text-[11px] italic"
-                style={{ color: colors.textSecondary }}
+                className="text-[11px] italic text-old-text-secondary"
                 numberOfLines={1}
               >
                 {subtext}

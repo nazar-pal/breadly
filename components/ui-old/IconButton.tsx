@@ -1,12 +1,5 @@
-import { useThemedStyles, type ThemedStylesProps } from '@/context/ThemeContext'
 import React from 'react'
-import {
-  StyleSheet,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  View,
-  ViewStyle
-} from 'react-native'
+import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native'
 
 export type IconButtonVariant =
   | 'primary'
@@ -25,43 +18,6 @@ export interface IconButtonProps extends TouchableOpacityProps {
   className?: string
 }
 
-const createStyles = ({ colors }: ThemedStylesProps) =>
-  StyleSheet.create({
-    // Background variants
-    primaryButton: {
-      backgroundColor: colors.button.primaryBg
-    } as ViewStyle,
-
-    secondaryButton: {
-      backgroundColor: colors.button.secondaryBg,
-      borderWidth: 1,
-      borderColor: colors.button.secondaryBorder
-    } as ViewStyle,
-
-    outlineButton: {
-      backgroundColor: 'transparent',
-      borderWidth: 1,
-      borderColor: colors.border
-    } as ViewStyle,
-
-    ghostButton: {
-      backgroundColor: 'transparent'
-    } as ViewStyle,
-
-    destructiveButton: {
-      backgroundColor: colors.button.destructiveBg
-    } as ViewStyle,
-
-    surfaceButton: {
-      backgroundColor: colors.iconBackground.neutral
-    } as ViewStyle,
-
-    disabledButton: {
-      backgroundColor: colors.button.primaryBgDisabled,
-      borderColor: colors.button.primaryBgDisabled
-    } as ViewStyle
-  })
-
 export default function IconButton({
   icon,
   variant = 'primary',
@@ -71,9 +27,6 @@ export default function IconButton({
   className = '',
   ...props
 }: IconButtonProps) {
-  const styles = useThemedStyles(createStyles)
-  const { colors } = useThemedStyles(({ colors }) => ({ colors }))
-
   const getSizeClassName = () => {
     switch (size) {
       case 'xs':
@@ -90,44 +43,67 @@ export default function IconButton({
   }
 
   const getVariantStyle = () => {
-    if (disabled) return styles.disabledButton
+    if (disabled) {
+      return {
+        backgroundColor: '#CBD5E0', // colors.button.primaryBgDisabled
+        borderColor: '#CBD5E0'
+      }
+    }
 
     switch (variant) {
       case 'primary':
-        return styles.primaryButton
+        return {
+          backgroundColor: '#6366F1' // colors.button.primaryBg
+        }
       case 'secondary':
-        return styles.secondaryButton
+        return {
+          backgroundColor: 'transparent', // colors.button.secondaryBg
+          borderWidth: 1,
+          borderColor: '#E2E8F0' // colors.button.secondaryBorder
+        }
       case 'outline':
-        return styles.outlineButton
+        return {
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: '#E2E8F0' // colors.border
+        }
       case 'ghost':
-        return styles.ghostButton
+        return {
+          backgroundColor: 'transparent'
+        }
       case 'destructive':
-        return styles.destructiveButton
+        return {
+          backgroundColor: '#EF4444' // colors.button.destructiveBg
+        }
       case 'surface':
-        return styles.surfaceButton
+        return {
+          backgroundColor: '#F1F5F9' // colors.iconBackground.neutral
+        }
       default:
-        return styles.primaryButton
+        return {
+          backgroundColor: '#6366F1' // colors.button.primaryBg
+        }
     }
   }
 
   const getIconColor = () => {
-    if (disabled) return colors.button.primaryTextDisabled
+    if (disabled) return '#A0ADB8' // colors.button.primaryTextDisabled
 
     switch (variant) {
       case 'primary':
-        return colors.button.primaryText
+        return '#FFFFFF' // colors.button.primaryText
       case 'secondary':
-        return colors.button.secondaryText
+        return '#4A5568' // colors.button.secondaryText
       case 'outline':
-        return colors.text
+        return '#1A202C' // colors.text
       case 'ghost':
-        return colors.text
+        return '#1A202C' // colors.text
       case 'destructive':
-        return colors.button.destructiveText
+        return '#FFFFFF' // colors.button.destructiveText
       case 'surface':
-        return colors.text
+        return '#1A202C' // colors.text
       default:
-        return colors.button.primaryText
+        return '#FFFFFF' // colors.button.primaryText
     }
   }
 

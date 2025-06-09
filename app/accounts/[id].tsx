@@ -2,7 +2,6 @@ import AccountOperationCard from '@/components/accounts/AccountOperationCard'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
 import Button from '@/components/ui-old/Button'
 import Card from '@/components/ui-old/Card'
-import { useTheme } from '@/context/ThemeContext'
 import { mockAccounts } from '@/data/mockAccounts'
 import { mockAccountOperations } from '@/data/mockData'
 import { useAccountManagement } from '@/hooks/useAccountManagement'
@@ -24,7 +23,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const {
     editModalVisible,
@@ -50,11 +48,8 @@ export default function AccountDetailsScreen() {
 
   if (!account) {
     return (
-      <View className="flex-1" style={{ backgroundColor: colors.background }}>
-        <Text
-          className="mt-10 text-center text-lg"
-          style={{ color: colors.error }}
-        >
+      <View className="flex-1 bg-old-background">
+        <Text className="mt-10 text-center text-lg text-old-error">
           Account not found
         </Text>
       </View>
@@ -79,13 +74,24 @@ export default function AccountDetailsScreen() {
   const getTypeColor = () => {
     switch (account.type) {
       case 'payment':
-        return colors.primary
+        return '#6366F1' // colors.primary
       case 'savings':
-        return colors.success
+        return '#10B981' // colors.success
       case 'debt':
-        return colors.error
+        return '#EF4444' // colors.error
       default:
-        return colors.primary
+        return '#6366F1' // colors.primary
+    }
+  }
+
+  const getIconBackgroundColor = () => {
+    switch (account.type) {
+      case 'savings':
+        return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+      case 'debt':
+        return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
+      default:
+        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
     }
   }
 
@@ -113,10 +119,11 @@ export default function AccountDetailsScreen() {
 
   const Icon = getAccountIcon()
   const typeColor = getTypeColor()
+  const iconBgColor = getIconBackgroundColor()
   const progress = getProgressPercentage()
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View className="flex-1 bg-old-background">
       <ScrollView
         contentContainerStyle={{
           padding: 16,
@@ -132,28 +139,15 @@ export default function AccountDetailsScreen() {
           <View className="mb-3 flex-row items-center">
             <View
               className="mr-3 h-12 w-12 items-center justify-center rounded-xl"
-              style={{
-                backgroundColor:
-                  account.type === 'savings'
-                    ? colors.iconBackground.success
-                    : account.type === 'debt'
-                      ? colors.iconBackground.error
-                      : colors.iconBackground.primary
-              }}
+              style={{ backgroundColor: iconBgColor }}
             >
               <Icon size={24} color={typeColor} />
             </View>
             <View className="flex-1">
-              <Text
-                className="mb-0.5 text-xl font-bold"
-                style={{ color: colors.text }}
-              >
+              <Text className="mb-0.5 text-xl font-bold text-old-text">
                 {account.name}
               </Text>
-              <Text
-                className="text-sm capitalize"
-                style={{ color: colors.textSecondary }}
-              >
+              <Text className="text-sm capitalize text-old-text-secondary">
                 {account.type.charAt(0).toUpperCase() + account.type.slice(1)}{' '}
                 Account
               </Text>
@@ -162,25 +156,19 @@ export default function AccountDetailsScreen() {
               variant="outline"
               size="sm"
               onPress={() => handleEditAccount(account)}
-              leftIcon={<Edit2 size={16} color={colors.text} />}
+              leftIcon={<Edit2 size={16} color="#1A202C" />}
             >
               Edit
             </Button>
           </View>
 
-          <Text
-            className="mb-4 text-sm leading-5"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="mb-4 text-sm leading-5 text-old-text-secondary">
             {account.description}
           </Text>
 
           {/* Balance Section */}
           <View className="mb-4">
-            <Text
-              className="mb-1 text-sm"
-              style={{ color: colors.textSecondary }}
-            >
+            <Text className="mb-1 text-sm text-old-text-secondary">
               Current Balance
             </Text>
             <View className="flex-row items-center gap-2">
@@ -192,10 +180,10 @@ export default function AccountDetailsScreen() {
                 {formatBalance(account.balance)}
               </Text>
               {account.balance > 0 && account.type === 'savings' && (
-                <TrendingUp size={20} color={colors.success} />
+                <TrendingUp size={20} color="#10B981" />
               )}
               {account.balance < 0 && account.type === 'payment' && (
-                <TrendingDown size={20} color={colors.error} />
+                <TrendingDown size={20} color="#EF4444" />
               )}
             </View>
           </View>
@@ -204,25 +192,16 @@ export default function AccountDetailsScreen() {
           {progress !== null && (
             <View className="mb-4">
               <View className="mb-2 flex-row items-center justify-between">
-                <Text
-                  className="text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Text className="text-sm text-old-text-secondary">
                   {account.type === 'savings'
                     ? 'Savings Progress'
                     : 'Repayment Progress'}
                 </Text>
-                <Text
-                  className="text-sm font-semibold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-sm font-semibold text-old-text">
                   {progress.toFixed(1)}%
                 </Text>
               </View>
-              <View
-                className="h-1.5 overflow-hidden rounded-sm"
-                style={{ backgroundColor: colors.borderLight }}
-              >
+              <View className="h-1.5 overflow-hidden rounded-sm bg-old-border-light">
                 <View
                   className="h-full"
                   style={{
@@ -238,51 +217,33 @@ export default function AccountDetailsScreen() {
           <View className="gap-3">
             {account.type === 'savings' && account.targetAmount && (
               <View className="flex-row items-center gap-2">
-                <Target size={16} color={colors.textSecondary} />
-                <Text
-                  className="flex-1 text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Target size={16} color="#4A5568" />
+                <Text className="flex-1 text-sm text-old-text-secondary">
                   Target Amount
                 </Text>
-                <Text
-                  className="text-sm font-semibold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-sm font-semibold text-old-text">
                   {formatBalance(account.targetAmount)}
                 </Text>
               </View>
             )}
             {account.type === 'debt' && account.dueDate && (
               <View className="flex-row items-center gap-2">
-                <Calendar size={16} color={colors.textSecondary} />
-                <Text
-                  className="flex-1 text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Calendar size={16} color="#4A5568" />
+                <Text className="flex-1 text-sm text-old-text-secondary">
                   Due Date
                 </Text>
-                <Text
-                  className="text-sm font-semibold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-sm font-semibold text-old-text">
                   {new Date(account.dueDate).toLocaleDateString()}
                 </Text>
               </View>
             )}
             {account.type === 'debt' && account.interestRate && (
               <View className="flex-row items-center gap-2">
-                <DollarSign size={16} color={colors.textSecondary} />
-                <Text
-                  className="flex-1 text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
+                <DollarSign size={16} color="#4A5568" />
+                <Text className="flex-1 text-sm text-old-text-secondary">
                   Interest Rate
                 </Text>
-                <Text
-                  className="text-sm font-semibold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-sm font-semibold text-old-text">
                   {account.interestRate}%
                 </Text>
               </View>
@@ -292,10 +253,7 @@ export default function AccountDetailsScreen() {
 
         {/* Recent Operations */}
         <View className="mb-5">
-          <Text
-            className="mb-4 text-xl font-bold tracking-tight"
-            style={{ color: colors.text }}
-          >
+          <Text className="mb-4 text-xl font-bold tracking-tight text-old-text">
             Recent Activity
           </Text>
           {accountOperations.length > 0 ? (
@@ -304,10 +262,7 @@ export default function AccountDetailsScreen() {
             ))
           ) : (
             <Card>
-              <Text
-                className="text-center text-sm italic"
-                style={{ color: colors.textSecondary }}
-              >
+              <Text className="text-center text-sm italic text-old-text-secondary">
                 No recent activity for this account
               </Text>
             </Card>

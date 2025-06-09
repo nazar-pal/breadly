@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useThemedStyles } from '@/context/ThemeContext'
 import React from 'react'
 import {
   Dimensions,
@@ -7,7 +6,6 @@ import {
   Modal,
   Platform,
   Pressable,
-  StyleSheet,
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -25,23 +23,15 @@ export default function CalculatorModal() {
     handleCloseModal
   } = useCategoryContext()
 
-  const styles = useThemedStyles(theme => ({
-    modalOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      backgroundColor: theme.colors.background,
-      maxHeight: Platform.select({
-        ios: SCREEN_HEIGHT * 0.8,
-        android: SCREEN_HEIGHT * 0.8,
-        web: SCREEN_HEIGHT * 0.8
-      })
-    },
-    modalHandle: {
-      backgroundColor: theme.colors.borderStrong
-    }
-  }))
+  const getModalContentStyle = () => ({
+    backgroundColor: '#F5F5F5', // colors.background
+    maxHeight: Platform.select({
+      ios: SCREEN_HEIGHT * 0.8,
+      android: SCREEN_HEIGHT * 0.8,
+      web: SCREEN_HEIGHT * 0.8
+    }),
+    paddingBottom: insets.bottom
+  })
 
   return (
     <Modal
@@ -54,19 +44,15 @@ export default function CalculatorModal() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 justify-end"
       >
-        <Pressable style={styles.modalOverlay} onPress={handleCloseModal} />
-        <View
-          className="rounded-t-3xl pt-6"
-          style={[
-            styles.modalContent,
-            {
-              paddingBottom: insets.bottom
-            }
-          ]}
-        >
+        <Pressable
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }} // colors.shadow
+          onPress={handleCloseModal}
+        />
+        <View className="rounded-t-3xl pt-6" style={getModalContentStyle()}>
           <View
             className="mb-4 h-1 w-10 self-center rounded-full"
-            style={styles.modalHandle}
+            style={{ backgroundColor: '#CBD5E0' }} // colors.borderStrong
           />
           {selectedCategory && (
             <QuickCalculator

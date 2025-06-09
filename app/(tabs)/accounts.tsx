@@ -1,7 +1,6 @@
 import AccountsHeader from '@/components/accounts/AccountsHeader'
 import AccountsTabView from '@/components/accounts/AccountsTabView'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
-import { useTheme } from '@/context/ThemeContext'
 import { mockAccounts } from '@/data/mockAccounts'
 import { useAccountManagement } from '@/hooks/useAccountManagement'
 import React from 'react'
@@ -9,7 +8,6 @@ import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountsScreen() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const {
     editModalVisible,
@@ -22,9 +20,8 @@ export default function AccountsScreen() {
 
   return (
     <View
-      className="flex-1"
+      className="flex-1 bg-old-background"
       style={{
-        backgroundColor: colors.background,
         paddingTop: insets.top
       }}
     >

@@ -1,4 +1,3 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import { mockCategories, mockIncomeCategories } from '@/data/mockData'
 import { Check, MessageSquare, Save } from 'lucide-react-native'
 import React, { useState } from 'react'
@@ -30,7 +29,6 @@ export default function QuickCalculator({
   onSubmit,
   onClose
 }: QuickCalculatorProps) {
-  const { colors } = useTheme()
   const [currentInput, setCurrentInput] = useState('0')
   const [expression, setExpression] = useState<string[]>([])
   const [isNewNumber, setIsNewNumber] = useState(true)
@@ -43,44 +41,6 @@ export default function QuickCalculator({
   const categories = type === 'expense' ? mockCategories : mockIncomeCategories
   const modalTitle =
     type === 'expense' ? 'Select Category' : 'Select Income Category'
-
-  const styles = useThemedStyles(theme => ({
-    display: {
-      backgroundColor: theme.colors.card,
-      ...Platform.select({
-        android: {
-          elevation: 2
-        },
-        default: {
-          boxShadow: `0px 2px 4px ${theme.colors.shadow}`
-        }
-      })
-    },
-    calcButton: {
-      ...Platform.select({
-        android: {
-          elevation: 2
-        },
-        default: {
-          boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
-        }
-      })
-    },
-    modalContainer: {
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      backgroundColor: theme.colors.card
-    },
-    commentInput: {
-      color: theme.colors.text,
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.border
-    },
-    currencyOption: {
-      backgroundColor: 'transparent'
-    }
-  }))
 
   const getDisplayExpression = () => {
     if (expression.length === 0) return currentInput
@@ -184,39 +144,49 @@ export default function QuickCalculator({
     onPress: () => void
     variant?: 'default' | 'operation' | 'equal' | 'special'
     isWide?: boolean
-  }) => (
-    <Pressable
-      className={`h-[60px] items-center justify-center rounded-2xl ${isWide ? 'flex-[2]' : 'flex-1'}`}
-      style={[
-        styles.calcButton,
-        {
-          backgroundColor:
-            variant === 'operation'
-              ? colors.iconBackground.primary
-              : variant === 'equal'
-                ? colors.primary
-                : variant === 'special'
-                  ? colors.iconBackground.warning
-                  : colors.card
-        }
-      ]}
-      onPress={onPress}
-    >
-      <Text
-        className="text-xl font-semibold"
-        style={{
-          color:
-            variant === 'equal'
-              ? colors.textInverse
-              : variant === 'operation' || variant === 'special'
-                ? colors.primary
-                : colors.text
-        }}
+  }) => {
+    const getButtonStyle = () => {
+      const baseStyle = Platform.select({
+        android: { elevation: 2 },
+        default: { boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)' }
+      })
+
+      let backgroundColor = '#FFFFFF' // colors.card
+      if (variant === 'operation') {
+        backgroundColor = 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+      } else if (variant === 'equal') {
+        backgroundColor = '#6366F1' // colors.primary
+      } else if (variant === 'special') {
+        backgroundColor = 'rgba(245, 158, 11, 0.1)' // colors.iconBackground.warning
+      }
+
+      return { ...baseStyle, backgroundColor }
+    }
+
+    const getTextColor = () => {
+      if (variant === 'equal') {
+        return '#FFFFFF' // colors.textInverse
+      } else if (variant === 'operation' || variant === 'special') {
+        return '#6366F1' // colors.primary
+      }
+      return '#1A202C' // colors.text
+    }
+
+    return (
+      <Pressable
+        className={`h-[60px] items-center justify-center rounded-2xl ${isWide ? 'flex-[2]' : 'flex-1'}`}
+        style={getButtonStyle()}
+        onPress={onPress}
       >
-        {label}
-      </Text>
-    </Pressable>
-  )
+        <Text
+          className="text-xl font-semibold"
+          style={{ color: getTextColor() }}
+        >
+          {label}
+        </Text>
+      </Pressable>
+    )
+  }
 
   return (
     <View className="p-4">
@@ -224,38 +194,34 @@ export default function QuickCalculator({
       <View className="mb-6 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Pressable
-            className="flex-row items-center rounded px-3 py-2"
-            style={{ backgroundColor: colors.surfaceSecondary }}
+            className="flex-row items-center rounded bg-old-surface-secondary px-3 py-2"
             onPress={() => setShowCategoryModal(true)}
           >
-            <Text
-              className="text-2xl font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="text-2xl font-semibold text-old-text">
               {category}
             </Text>
           </Pressable>
         </View>
         <View className="flex-row items-center">
           <Pressable onPress={() => setShowCommentModal(true)}>
-            <MessageSquare size={24} color={colors.textSecondary} />
+            <MessageSquare size={24} color="#4A5568" />
           </Pressable>
         </View>
       </View>
 
       {/* Display */}
-      <View className="mb-6 rounded-2xl p-4" style={styles.display}>
-        <Text
-          className="text-right text-4xl font-bold"
-          style={{ color: colors.text }}
-        >
+      <View
+        className="mb-6 rounded-2xl bg-old-card p-4"
+        style={Platform.select({
+          android: { elevation: 2 },
+          default: { boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }
+        })}
+      >
+        <Text className="text-right text-4xl font-bold text-old-text">
           ${getDisplayExpression()}
         </Text>
         {comment && (
-          <Text
-            className="mt-2 text-right text-xs"
-            style={{ color: colors.textSecondary }}
-          >
+          <Text className="mt-2 text-right text-xs text-old-text-secondary">
             {comment}
           </Text>
         )}
@@ -333,7 +299,7 @@ export default function QuickCalculator({
           variant="primary"
           size="lg"
           fullWidth
-          leftIcon={<Save size={20} color={colors.textInverse} />}
+          leftIcon={<Save size={20} color="#FFFFFF" />}
         >
           Save {type === 'expense' ? 'Expense' : 'Income'}
         </Button>
@@ -348,16 +314,10 @@ export default function QuickCalculator({
       >
         <View
           className="flex-1 justify-center p-4"
-          style={styles.modalContainer}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
         >
-          <View
-            className="max-h-[80%] rounded-2xl p-4"
-            style={styles.modalContent}
-          >
-            <Text
-              className="mb-4 text-xl font-semibold"
-              style={{ color: colors.text }}
-            >
+          <View className="max-h-[80%] rounded-2xl bg-old-surface p-4">
+            <Text className="mb-4 text-xl font-semibold text-old-text">
               {modalTitle}
             </Text>
             <ScrollView>
@@ -365,24 +325,18 @@ export default function QuickCalculator({
                 <Pressable
                   key={cat.id}
                   className="my-1 rounded-lg p-4"
-                  style={[
-                    styles.currencyOption,
-                    {
-                      backgroundColor:
-                        cat.name === category
-                          ? colors.iconBackground.primary
-                          : 'transparent'
-                    }
-                  ]}
+                  style={{
+                    backgroundColor:
+                      cat.name === category
+                        ? 'rgba(99, 102, 241, 0.1)'
+                        : 'transparent'
+                  }}
                   onPress={() => {
                     setCategory(cat.name)
                     setShowCategoryModal(false)
                   }}
                 >
-                  <Text
-                    className="text-base font-medium"
-                    style={{ color: colors.text }}
-                  >
+                  <Text className="text-base font-medium text-old-text">
                     {cat.name}
                   </Text>
                 </Pressable>
@@ -410,25 +364,18 @@ export default function QuickCalculator({
       >
         <View
           className="flex-1 justify-center p-4"
-          style={styles.modalContainer}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
         >
-          <View
-            className="max-h-[80%] rounded-2xl p-4"
-            style={styles.modalContent}
-          >
-            <Text
-              className="mb-4 text-xl font-semibold"
-              style={{ color: colors.text }}
-            >
+          <View className="max-h-[80%] rounded-2xl bg-old-surface p-4">
+            <Text className="mb-4 text-xl font-semibold text-old-text">
               Add Comment
             </Text>
             <TextInput
-              className="mb-4 min-h-[100px] rounded-lg border p-3"
-              style={styles.commentInput}
+              className="mb-4 min-h-[100px] rounded-lg border border-old-border bg-old-background p-3 text-old-text"
               value={comment}
               onChangeText={setComment}
               placeholder="Add a comment..."
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor="#4A5568"
               multiline
               textAlignVertical="top"
             />
@@ -444,7 +391,7 @@ export default function QuickCalculator({
                 onPress={() => setShowCommentModal(false)}
                 variant="primary"
                 className="flex-[0.6]"
-                leftIcon={<Check size={16} color={colors.textInverse} />}
+                leftIcon={<Check size={16} color="#FFFFFF" />}
               >
                 Save
               </Button>

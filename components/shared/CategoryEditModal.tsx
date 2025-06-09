@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import {
   Briefcase,
   Building,
@@ -24,7 +23,6 @@ import {
   Modal,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View
@@ -54,7 +52,6 @@ const availableIcons = {
 const iconNames = Object.keys(availableIcons) as (keyof typeof availableIcons)[]
 
 export default function CategoryEditModal() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const {
     editModalVisible,
@@ -68,29 +65,6 @@ export default function CategoryEditModal() {
   const [description, setDescription] = useState('')
   const [selectedIcon, setSelectedIcon] =
     useState<keyof typeof availableIcons>('Home')
-
-  const styles = useThemedStyles(theme => ({
-    modalOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      backgroundColor: theme.colors.background
-    },
-    input: {
-      color: theme.colors.text,
-      backgroundColor: theme.colors.card,
-      borderColor: theme.colors.border
-    },
-    cancelButton: {
-      backgroundColor: theme.colors.button.secondaryBg,
-      borderWidth: 1,
-      borderColor: theme.colors.button.secondaryBorder
-    },
-    saveButton: {
-      backgroundColor: theme.colors.button.primaryBg
-    }
-  }))
 
   useEffect(() => {
     if (categoryToEdit) {
@@ -126,9 +100,9 @@ export default function CategoryEditModal() {
 
   const getIconBackgroundColor = () => {
     if (currentType === 'income') {
-      return colors.iconBackground.success
+      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
     }
-    return colors.iconBackground.neutral
+    return '#F1F5F9' // colors.iconBackground.neutral
   }
 
   if (!categoryToEdit) return null
@@ -141,30 +115,25 @@ export default function CategoryEditModal() {
       onRequestClose={handleCloseEditModal}
     >
       <View className="flex-1 justify-end">
-        <Pressable style={styles.modalOverlay} onPress={handleCloseEditModal} />
+        <Pressable
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+          onPress={handleCloseEditModal}
+        />
         <View
-          className="rounded-t-3xl pt-2"
-          style={[
-            styles.modalContent,
-            {
-              paddingBottom: insets.bottom + 16,
-              maxHeight: SCREEN_HEIGHT * 0.8
-            }
-          ]}
+          className="rounded-t-3xl bg-old-background pt-2"
+          style={{
+            paddingBottom: insets.bottom + 16,
+            maxHeight: SCREEN_HEIGHT * 0.8
+          }}
         >
           {/* Header */}
-          <View
-            className="flex-row items-center justify-between border-b px-5 py-4"
-            style={{ borderBottomColor: colors.border }}
-          >
-            <Text
-              className="text-xl font-semibold"
-              style={{ color: colors.text }}
-            >
+          <View className="flex-row items-center justify-between border-b border-old-border px-5 py-4">
+            <Text className="text-xl font-semibold text-old-text">
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
             <Pressable onPress={handleCloseEditModal} className="p-1">
-              <X size={24} color={colors.text} />
+              <X size={24} color="#1A202C" />
             </Pressable>
           </View>
 
@@ -175,38 +144,31 @@ export default function CategoryEditModal() {
           >
             {/* Category Name */}
             <View className="mb-6">
-              <Text
-                className="mb-2 text-base font-semibold"
-                style={{ color: colors.text }}
-              >
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Category Name
               </Text>
               <TextInput
-                className="min-h-[48px] rounded-2xl border px-4 py-3 text-base"
-                style={styles.input}
+                className="min-h-[48px] rounded-2xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter category name"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor="#4A5568"
                 autoFocus
               />
             </View>
 
             {/* Category Description */}
             <View className="mb-6">
-              <Text
-                className="mb-2 text-base font-semibold"
-                style={{ color: colors.text }}
-              >
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Description (Optional)
               </Text>
               <TextInput
-                className="h-[100px] rounded-2xl border px-4 py-3 text-base"
-                style={[styles.input, { paddingTop: 12 }]}
+                className="h-[100px] rounded-2xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
+                style={{ paddingTop: 12 }}
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Add a description for this category"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor="#4A5568"
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
@@ -215,10 +177,7 @@ export default function CategoryEditModal() {
 
             {/* Icon Selection */}
             <View className="mb-6">
-              <Text
-                className="mb-2 text-base font-semibold"
-                style={{ color: colors.text }}
-              >
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Choose Icon
               </Text>
               <View className="flex-row flex-wrap gap-3 pt-2">
@@ -232,15 +191,15 @@ export default function CategoryEditModal() {
                       className="h-14 w-14 items-center justify-center rounded-2xl border-2"
                       style={{
                         backgroundColor: isSelected
-                          ? colors.iconBackground.primary
+                          ? 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
                           : getIconBackgroundColor(),
-                        borderColor: isSelected ? colors.primary : 'transparent'
+                        borderColor: isSelected ? '#6366F1' : 'transparent' // colors.primary
                       }}
                       onPress={() => setSelectedIcon(iconName)}
                     >
                       <IconComponent
                         size={24}
-                        color={isSelected ? colors.primary : colors.text}
+                        color={isSelected ? '#6366F1' : '#1A202C'} // colors.primary : colors.text
                       />
                     </Pressable>
                   )
@@ -250,34 +209,23 @@ export default function CategoryEditModal() {
           </ScrollView>
 
           {/* Footer */}
-          <View
-            className="flex-row gap-3 border-t px-5 pb-2 pt-4"
-            style={{ borderTopColor: colors.borderLight }}
-          >
+          <View className="flex-row gap-3 border-t border-old-border-light px-5 pb-2 pt-4">
             <Pressable
-              className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl py-3"
-              style={styles.cancelButton}
+              className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border border-old-button-secondary-border bg-old-button-secondary-bg py-3"
               onPress={handleCloseEditModal}
             >
-              <Text
-                className="text-base font-semibold"
-                style={{ color: colors.button.secondaryText }}
-              >
+              <Text className="text-base font-semibold text-old-button-secondary-text">
                 Cancel
               </Text>
             </Pressable>
 
             <Pressable
-              className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
-              style={styles.saveButton}
+              className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl bg-old-button-primary-bg py-3"
               onPress={handleSave}
               disabled={!name.trim()}
             >
-              <Check size={20} color={colors.button.primaryText} />
-              <Text
-                className="text-base font-semibold"
-                style={{ color: colors.button.primaryText }}
-              >
+              <Check size={20} color="#FFFFFF" />
+              <Text className="text-base font-semibold text-old-button-primary-text">
                 Save Changes
               </Text>
             </Pressable>

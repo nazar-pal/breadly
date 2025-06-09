@@ -3,7 +3,6 @@ import CategoryEditModal from '@/components/shared/CategoryEditModal'
 import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
 import { CategoryProvider, useCategoryContext } from '@/context/CategoryContext'
-import { useTheme } from '@/context/ThemeContext'
 import {
   Briefcase,
   Building,
@@ -50,7 +49,6 @@ const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
 }
 
 function CategoriesContent() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const { canNavigate, navigatePrevious, navigateNext } = useCategoryContext()
 
@@ -66,7 +64,7 @@ function CategoriesContent() {
     const IconComponent = icons[categoryName] || Home
 
     // Use semantic colors based on category type
-    const iconColor = type === 'expense' ? colors.expense : colors.income
+    const iconColor = type === 'expense' ? '#EF4444' : '#10B981' // old-expense : old-income
 
     return <IconComponent size={20} color={iconColor} />
   }
@@ -96,9 +94,8 @@ function CategoriesContent() {
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        className="flex-1"
+        className="flex-1 bg-old-background"
         style={{
-          backgroundColor: colors.background,
           paddingTop: insets.top
         }}
       >
