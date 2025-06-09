@@ -20,7 +20,7 @@ export default function AccountsScreen() {
 
   return (
     <View
-      className="flex-1 bg-background"
+      className="bg-background flex-1"
       style={{
         paddingTop: insets.top
       }}

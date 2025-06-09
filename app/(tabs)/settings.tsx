@@ -1,15 +1,84 @@
 import { SignOutButton } from '@/components/auth/SignOutButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
 import { currencies, useCurrency } from '@/context/CurrencyContext'
 import { ChevronRight, DollarSign, Moon, Sun, User } from '@/lib/icons'
 import { useColorScheme } from '@/lib/useColorScheme'
+import { cn } from '@/lib/utils'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
 import { Link } from 'expo-router'
 import React from 'react'
-import { Pressable, ScrollView, Switch, View } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+interface SettingsSectionProps {
+  title: string
+  children: React.ReactNode
+  className?: string
+}
+
+function SettingsSection({ title, children, className }: SettingsSectionProps) {
+  return (
+    <View className={className}>
+      <Text className="text-foreground mb-4 text-lg font-semibold">
+        {title}
+      </Text>
+      <Card>
+        <CardContent>{children}</CardContent>
+      </Card>
+    </View>
+  )
+}
+
+interface SettingsItemProps {
+  icon: React.ReactNode
+  title: string
+  subtitle?: string
+  rightElement?: React.ReactNode
+  onPress?: () => void
+  showBorder?: boolean
+}
+
+function SettingsItem({
+  icon,
+  title,
+  subtitle,
+  rightElement,
+  onPress,
+  showBorder = true
+}: SettingsItemProps) {
+  const Container = onPress ? Pressable : View
+
+  return (
+    <>
+      <Container
+        className={cn(
+          'flex-row items-center justify-between py-3',
+          onPress && 'active:opacity-70'
+        )}
+        onPress={onPress}
+      >
+        <View className="flex-1 flex-row items-center">
+          <View className="bg-secondary mr-3 h-10 w-10 items-center justify-center rounded-full">
+            {icon}
+          </View>
+          <View>
+            <Text className="text-foreground text-base">{title}</Text>
+            {subtitle && (
+              <Text className="text-muted-foreground mt-0.5 text-sm">
+                {subtitle}
+              </Text>
+            )}
+          </View>
+        </View>
+        {rightElement}
+      </Container>
+      {showBorder && <View className="bg-border h-px" />}
+    </>
+  )
+}
 
 export default function SettingsScreen() {
   const { colorScheme, setColorScheme } = useColorScheme()
@@ -19,15 +88,10 @@ export default function SettingsScreen() {
 
   const [showCurrencyModal, setShowCurrencyModal] = React.useState(false)
 
-  // Handle theme change - only light/dark supported
-  const handleThemeChange = (newScheme: 'light' | 'dark') => {
-    setColorScheme(newScheme)
-  }
-
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold text-foreground">Settings</Text>
+        <Text className="text-foreground text-3xl font-bold">Settings</Text>
       </View>
 
       <ScrollView
@@ -38,154 +102,121 @@ export default function SettingsScreen() {
         }}
       >
         <SignedIn>
-          <Card>
-            <CardContent>
-              <View className="mb-4 flex-row items-center">
-                <View className="h-[60px] w-[60px] items-center justify-center rounded-[30px]">
-                  <User size={32} color="#1A202C" />
-                </View>
-                <View className="ml-4">
-                  <Text className="mb-1 text-lg font-semibold text-foreground">
-                    {user?.firstName && user?.lastName
-                      ? `${user.firstName} ${user.lastName}`
-                      : user?.username || 'User'}
-                  </Text>
-                  <Text className="text-sm text-foreground">
-                    {user?.emailAddresses[0]?.emailAddress || 'No email'}
-                  </Text>
-                </View>
+          <SettingsSection title="Account">
+            <View className="mb-4 flex-row items-center">
+              <View className="bg-secondary h-[60px] w-[60px] items-center justify-center rounded-full">
+                <User size={32} className="text-foreground" />
               </View>
-              <View className="my-4 h-px w-full bg-border" />
-              <SignOutButton />
-            </CardContent>
-          </Card>
+              <View className="ml-4">
+                <Text className="text-foreground mb-1 text-lg font-semibold">
+                  {user?.firstName && user?.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.username || 'User'}
+                </Text>
+                <Text className="text-muted-foreground text-sm">
+                  {user?.emailAddresses[0]?.emailAddress || 'No email'}
+                </Text>
+              </View>
+            </View>
+            <View className="bg-border my-4 h-px w-full" />
+            <SignOutButton />
+          </SettingsSection>
         </SignedIn>
 
         <SignedOut>
-          <Card>
-            <CardContent>
-              <View className="py-2">
-                <Text className="mb-2 text-lg font-semibold text-foreground">
-                  Sign in to access your account
-                </Text>
-                <Text className="mb-4 text-sm leading-5 text-foreground">
-                  Sign in or create an account to sync your data across devices
-                </Text>
-                <View className="gap-2">
-                  <Link href="/sign-in" asChild>
-                    <Button className="w-full">
-                      <Text>Sign In</Text>
-                    </Button>
-                  </Link>
-                  <Link href="/sign-up" asChild>
-                    <Button variant="secondary" className="w-full">
-                      <Text>Sign Up</Text>
-                    </Button>
-                  </Link>
-                </View>
+          <SettingsSection title="Account">
+            <View className="py-2">
+              <Text className="text-foreground mb-2 text-lg font-semibold">
+                Sign in to access your account
+              </Text>
+              <Text className="text-muted-foreground mb-4 text-sm leading-5">
+                Sign in or create an account to sync your data across devices
+              </Text>
+              <View className="gap-2">
+                <Link href="/sign-in" asChild>
+                  <Button className="w-full">
+                    <Text>Sign In</Text>
+                  </Button>
+                </Link>
+                <Link href="/sign-up" asChild>
+                  <Button variant="secondary" className="w-full">
+                    <Text>Sign Up</Text>
+                  </Button>
+                </Link>
               </View>
-            </CardContent>
-          </Card>
+            </View>
+          </SettingsSection>
         </SignedOut>
 
-        <Text className="my-4 mt-6 text-lg font-semibold text-foreground">
-          Preferences
-        </Text>
-        <Card>
-          <CardContent>
-            <Pressable
-              className="flex-row items-center justify-between py-3"
-              onPress={() => setShowCurrencyModal(!showCurrencyModal)}
-            >
-              <View className="flex-1 flex-row items-center">
-                <View className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
-                  <DollarSign size={20} color="#F59E0B" />
-                </View>
-                <View>
-                  <Text className="text-base text-foreground">
-                    Default Currency
-                  </Text>
-                  <Text className="mt-0.5 text-sm text-foreground">
-                    {currency.name} ({currency.symbol})
-                  </Text>
-                </View>
-              </View>
-              <ChevronRight size={20} color="#4A5568" />
-            </Pressable>
+        <SettingsSection title="Preferences" className="mt-6">
+          <SettingsItem
+            icon={<DollarSign size={20} className="text-primary" />}
+            title="Default Currency"
+            subtitle={`${currency.name} (${currency.symbol})`}
+            rightElement={
+              <ChevronRight size={20} className="text-muted-foreground" />
+            }
+            onPress={() => setShowCurrencyModal(!showCurrencyModal)}
+          />
 
-            <View className="h-px bg-border" />
-
-            <View className="flex-row items-center justify-between py-3">
-              <View className="flex-row items-center">
-                <View className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
-                  <Sun size={20} color="#F59E0B" />
-                </View>
-                <Text className="text-base text-foreground">Light Mode</Text>
-              </View>
+          <SettingsItem
+            icon={<Sun size={20} className="text-primary" />}
+            title="Light Mode"
+            rightElement={
               <Switch
-                value={colorScheme === 'light'}
-                onValueChange={value =>
-                  handleThemeChange(value ? 'light' : 'dark')
+                checked={colorScheme === 'light'}
+                onCheckedChange={checked =>
+                  setColorScheme(checked ? 'light' : 'dark')
                 }
-                trackColor={{ false: '#E2E8F0', true: '#6366F1' }} // colors.secondary : colors.primary
-                thumbColor="#FFFFFF"
               />
-            </View>
+            }
+          />
 
-            <View className="h-px bg-border" />
-
-            <View className="flex-row items-center justify-between py-3">
-              <View className="flex-row items-center">
-                <View className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
-                  <Moon size={20} color="#3B82F6" />
-                </View>
-                <Text className="text-base text-foreground">Dark Mode</Text>
-              </View>
+          <SettingsItem
+            icon={<Moon size={20} className="text-primary" />}
+            title="Dark Mode"
+            rightElement={
               <Switch
-                value={colorScheme === 'dark'}
-                onValueChange={value =>
-                  handleThemeChange(value ? 'dark' : 'light')
+                checked={colorScheme === 'dark'}
+                onCheckedChange={checked =>
+                  setColorScheme(checked ? 'dark' : 'light')
                 }
-                trackColor={{ false: '#E2E8F0', true: '#6366F1' }} // colors.secondary : colors.primary
-                thumbColor="#FFFFFF"
               />
-            </View>
-          </CardContent>
-        </Card>
+            }
+            showBorder={false}
+          />
+        </SettingsSection>
 
         {showCurrencyModal && (
           <Card className="mt-2">
             <CardContent>
-              <Text className="mb-3 text-base font-semibold text-foreground">
+              <Text className="text-foreground mb-3 text-base font-semibold">
                 Select Currency
               </Text>
               {currencies.map(curr => (
                 <Pressable
                   key={curr.code}
-                  className="mb-1 flex-row items-center justify-between rounded-lg p-3"
-                  style={
-                    curr.code === currency.code
-                      ? { backgroundColor: '#6366F1' }
-                      : undefined
-                  }
+                  className={cn(
+                    'mb-1 flex-row items-center justify-between rounded-lg p-3',
+                    curr.code === currency.code && 'bg-primary'
+                  )}
                   onPress={() => {
                     setCurrency(curr)
                     setShowCurrencyModal(false)
                   }}
                 >
                   <Text
-                    className="text-base"
-                    style={{
-                      color: curr.code === currency.code ? '#FFFFFF' : '#1A202C' // colors.text
-                    }}
+                    className={cn(
+                      'text-base',
+                      curr.code === currency.code
+                        ? 'text-primary-foreground'
+                        : 'text-foreground'
+                    )}
                   >
                     {curr.symbol} - {curr.name}
                   </Text>
                   {curr.code === currency.code && (
-                    <View
-                      className="rounded-1 h-2 w-2"
-                      style={{ backgroundColor: '#FFFFFF' }}
-                    />
+                    <View className="bg-primary-foreground h-2 w-2 rounded-full" />
                   )}
                 </Pressable>
               ))}
@@ -193,7 +224,7 @@ export default function SettingsScreen() {
           </Card>
         )}
 
-        <Text className="mt-6 text-center text-sm text-foreground">
+        <Text className="text-muted-foreground mt-6 text-center text-sm">
           Breadly v1.0.0
         </Text>
       </ScrollView>

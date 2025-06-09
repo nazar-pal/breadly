@@ -1,6 +1,15 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { mockCategories } from '@/data/mockData'
-import { ArrowDown, ArrowUp, TrendingUp } from '@/lib/icons'
+import {
+  ArrowDown,
+  ArrowUp,
+  Calendar,
+  DollarSign,
+  TrendingUp
+} from '@/lib/icons'
+import { cn } from '@/lib/utils'
+import { LucideIcon } from 'lucide-react-native'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -45,42 +54,65 @@ function StatCard({
   amount,
   trend,
   trendLabel,
-  type = 'neutral'
+  variant = 'default',
+  icon: Icon
 }: {
   title: string
   amount: number
   trend?: number
   trendLabel?: string
-  type?: 'success' | 'error' | 'neutral'
+  variant?: 'default' | 'income' | 'expense'
+  icon?: LucideIcon
 }) {
-  const getTrendColor = () => {
-    if (type === 'success') return trend && trend > 0 ? '#10B981' : '#EF4444' // success : destructive
-    if (type === 'error') return trend && trend > 0 ? '#EF4444' : '#10B981' // destructive : success
-    return trend && trend > 0 ? '#10B981' : '#EF4444' // success : destructive
+  const variants = {
+    default: {
+      trend: trend && trend > 0 ? 'text-income' : 'text-expense',
+      icon: 'bg-primary/10 text-primary'
+    },
+    income: {
+      trend: 'text-income',
+      icon: 'bg-income/10 text-income'
+    },
+    expense: {
+      trend: 'text-expense',
+      icon: 'bg-expense/10 text-expense'
+    }
   }
 
   return (
     <Card className="flex-1">
-      <CardContent>
-        <Text className="mb-1 text-sm text-foreground">{title}</Text>
-        <Text className="mb-1 text-xl font-bold text-foreground">
+      <CardContent className="p-4">
+        <View className="mb-3 flex-row items-center justify-between gap-2">
+          <Text className="text-muted-foreground text-sm font-medium">
+            {title}
+          </Text>
+          {Icon && (
+            <View className={cn('rounded-full p-2', variants[variant].icon)}>
+              <Icon size={14} className={variants[variant].icon} />
+            </View>
+          )}
+        </View>
+        <Text className="text-foreground mb-2 text-2xl font-bold">
           ${amount.toFixed(2)}
         </Text>
         {trend !== undefined && (
           <View className="flex-row items-center gap-1">
-            {trend > 0 ? (
-              <ArrowUp size={16} color={getTrendColor()} />
-            ) : (
-              <ArrowDown size={16} color={getTrendColor()} />
-            )}
+            <View className={cn('rounded-full p-1')}>
+              {trend > 0 ? (
+                <ArrowUp size={12} className={variants[variant].trend} />
+              ) : (
+                <ArrowDown size={12} className={variants[variant].trend} />
+              )}
+            </View>
             <Text
-              className="text-sm font-semibold"
-              style={{ color: getTrendColor() }}
+              className={cn('text-sm font-semibold', variants[variant].trend)}
             >
               {Math.abs(trend)}%
             </Text>
             {trendLabel && (
-              <Text className="ml-1 text-xs text-foreground">{trendLabel}</Text>
+              <Text className="text-muted-foreground ml-1 text-xs">
+                {trendLabel}
+              </Text>
             )}
           </View>
         )}
@@ -92,25 +124,25 @@ function StatCard({
 function TopTransactions() {
   return (
     <View className="mb-6">
-      <Text className="mb-3 text-lg font-semibold text-foreground">
-        Top Transactions
+      <Text className="text-foreground mb-4 text-lg font-semibold">
+        Recent Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
-        <Card key={transaction.id} className="mb-2">
-          <CardContent>
+        <Card key={transaction.id} className="mb-3">
+          <CardContent className="p-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-info text-base font-semibold">
-                ${transaction.amount.toFixed(2)}
-              </Text>
-              <View className="rounded px-2 py-1">
-                <Text className="text-xs font-medium text-foreground">
+              <View className="flex-1">
+                <Text className="text-foreground text-base font-semibold">
+                  {transaction.description}
+                </Text>
+                <Text className="text-muted-foreground mt-1 text-sm">
                   {transaction.category}
                 </Text>
               </View>
+              <Text className="text-primary text-base font-semibold">
+                ${transaction.amount.toFixed(2)}
+              </Text>
             </View>
-            <Text className="mt-1 text-sm text-foreground" numberOfLines={2}>
-              {transaction.description}
-            </Text>
           </CardContent>
         </Card>
       ))}
@@ -128,42 +160,40 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text className="mb-3 text-lg font-semibold text-foreground">
-        Top Categories
+      <Text className="text-foreground mb-4 text-lg font-semibold">
+        Spending by Category
       </Text>
       <Card>
-        <CardContent>
+        <CardContent className="p-4">
           {topCategories.map((category, index) => {
             const percentage = (category.spent / totalSpent) * 100
             return (
               <View
                 key={category.id}
-                className="border-b py-3"
-                style={{ borderBottomColor: '#F7FAFC' }} // border-light
+                className={cn(
+                  'py-3',
+                  index !== topCategories.length - 1 &&
+                    'border-border/10 border-b'
+                )}
               >
                 <View className="mb-2 flex-row justify-between">
-                  <Text className="text-sm font-medium text-foreground">
-                    {category.name}
-                  </Text>
-                  <Text className="text-sm text-foreground">
-                    ${category.spent.toFixed(2)}
+                  <View className="flex-1">
+                    <Text className="text-foreground text-sm font-medium">
+                      {category.name}
+                    </Text>
+                    <Text className="text-muted-foreground text-xs">
+                      ${category.spent.toFixed(2)}
+                    </Text>
+                  </View>
+                  <Text className="text-foreground text-sm font-medium">
+                    {percentage.toFixed(1)}%
                   </Text>
                 </View>
-                <View
-                  className="mb-1 h-1 overflow-hidden rounded-sm"
-                  style={{ backgroundColor: '#F7FAFC' }} // border-light
-                >
-                  <View
-                    className="h-full"
-                    style={{
-                      width: `${percentage}%`,
-                      backgroundColor: '#6366F1'
-                    }}
-                  />
-                </View>
-                <Text className="text-right text-xs text-foreground">
-                  {percentage.toFixed(1)}%
-                </Text>
+                <Progress
+                  value={percentage}
+                  className="h-2"
+                  indicatorClassName="bg-primary"
+                />
               </View>
             )
           })}
@@ -177,10 +207,16 @@ export default function StatisticsScreen() {
   const insets = useSafeAreaInsets()
 
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
-      <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold text-foreground">
-          Statistics
+    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+      <View className="border-border/10 border-b px-4 py-4">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-foreground text-2xl font-bold">Statistics</Text>
+          <View className="bg-primary/10 rounded-full p-2">
+            <Calendar size={20} className="text-primary" />
+          </View>
+        </View>
+        <Text className="text-muted-foreground mt-1 text-sm">
+          Track your financial progress
         </Text>
       </View>
 
@@ -198,58 +234,62 @@ export default function StatisticsScreen() {
             amount={mockStats.currentMonth.income}
             trend={8.5}
             trendLabel="vs last month"
-            type="success"
+            variant="income"
+            icon={DollarSign}
           />
           <StatCard
             title="Monthly Expenses"
             amount={mockStats.currentMonth.expenses}
             trend={12.5}
             trendLabel="vs last month"
-            type="error"
+            variant="expense"
+            icon={DollarSign}
           />
         </View>
 
         <Card className="mb-4">
-          <CardContent>
+          <CardContent className="p-4">
             <View className="mb-3 flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="mb-1 text-base font-semibold text-foreground">
+                <Text className="text-foreground mb-1 text-base font-semibold">
                   Monthly Savings
                 </Text>
-                <Text className="text-2xl font-bold text-green-500">
+                <Text className="text-income text-2xl font-bold">
                   ${mockStats.currentMonth.savings.toFixed(2)}
                 </Text>
               </View>
-              <View className="flex-row items-center gap-1 rounded-lg p-2">
-                <TrendingUp size={16} color="#10B981" />
-                <Text className="text-sm font-semibold text-green-500">
-                  {mockStats.currentMonth.savingsRate}% Rate
-                </Text>
+              <View className="bg-income/10 rounded-full p-2">
+                <TrendingUp size={20} className="text-income" />
               </View>
             </View>
-            <View
-              className="h-2 overflow-hidden rounded"
-              style={{ backgroundColor: '#F7FAFC' }} // border-light
-            >
-              <View
-                className="h-full"
-                style={{
-                  width: `${mockStats.currentMonth.savingsRate}%`,
-                  backgroundColor: '#10B981' // success
-                }}
+            <View className="mt-4">
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="text-muted-foreground text-sm">
+                  Savings Rate
+                </Text>
+                <Text className="text-income text-sm font-medium">
+                  {mockStats.currentMonth.savingsRate}%
+                </Text>
+              </View>
+              <Progress
+                value={mockStats.currentMonth.savingsRate}
+                className="h-2"
+                indicatorClassName="bg-income"
               />
             </View>
           </CardContent>
         </Card>
 
-        <View className="mb-4 flex-row gap-3">
+        <View className="mb-6 flex-row gap-3">
           <StatCard
             title="Budget Remaining"
             amount={mockStats.currentMonth.budgetRemaining}
+            variant="default"
           />
           <StatCard
             title="Avg. Monthly"
             amount={mockStats.currentMonth.averageMonthlySpending}
+            variant="default"
           />
         </View>
 

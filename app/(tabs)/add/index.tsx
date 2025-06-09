@@ -3,15 +3,22 @@ import { router } from 'expo-router'
 import React from 'react'
 import { Alert, View } from 'react-native'
 
+interface ExpenseFormData {
+  amount: string
+  category: string
+  date: string
+  description?: string
+}
+
 export default function ManualScreen() {
-  function handleSubmit(data: any) {
+  const handleSubmit = (data: ExpenseFormData) => {
     // TODO: persist data
     Alert.alert('Success', 'Expense saved!')
-    router.push('/') // back to dashboard
+    router.push('/(tabs)') // back to dashboard
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1 p-4">
       <ExpenseForm onSubmit={handleSubmit} />
     </View>
   )

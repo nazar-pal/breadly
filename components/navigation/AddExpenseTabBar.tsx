@@ -1,7 +1,9 @@
 import { Camera, Mic, Pencil } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ICONS = { index: Pencil, photo: Camera, voice: Mic }
 
@@ -9,16 +11,15 @@ export default function AddExpenseTabBar({
   state,
   navigation
 }: MaterialTopTabBarProps) {
+  const insets = useSafeAreaInsets()
+
   return (
     <View
-      className="border-b pb-2 pt-12"
-      style={{
-        backgroundColor: '#F5F5F5',
-        borderBottomColor: '#F7FAFC'
-      }}
+      className="bg-background border-border border-b"
+      style={{ paddingTop: insets.top }}
     >
       {/* Title */}
-      <Text className="mb-4 px-4 text-[32px] font-bold tracking-tight text-foreground">
+      <Text className="text-foreground px-4 pb-4 text-[32px] font-bold tracking-tight">
         Add Expense
       </Text>
 
@@ -37,26 +38,26 @@ export default function AddExpenseTabBar({
               key={route.key}
               accessibilityRole="button"
               accessibilityState={focused ? { selected: true } : {}}
-              className="flex-1 flex-row items-center justify-center py-3"
-              style={[
-                focused && {
-                  borderBottomWidth: 2,
-                  borderBottomColor: '#6366F1'
-                }
-              ]}
+              className={cn(
+                'flex-1 flex-row items-center justify-center py-3',
+                focused && 'border-primary border-b-2'
+              )}
               onPress={onPress}
             >
               <Icon
                 size={20}
-                color={focused ? '#6366F1' : '#4A5568'}
-                style={{ marginRight: 6 }}
+                className={cn(
+                  'mr-1.5',
+                  focused ? 'text-primary' : 'text-muted-foreground'
+                )}
               />
               <Text
-                className="text-base"
-                style={{
-                  color: focused ? '#6366F1' : '#4A5568',
-                  fontWeight: focused ? '600' : '400'
-                }}
+                className={cn(
+                  'text-base',
+                  focused
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground font-normal'
+                )}
               >
                 {route.name === 'index'
                   ? 'Manual'

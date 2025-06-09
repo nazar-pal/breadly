@@ -13,9 +13,7 @@ export default function AddLayout() {
       tabBar={props => <AddExpenseTabBar {...props} />}
       /* general options */
       screenOptions={{
-        swipeEnabled: true,
-        tabBarIndicatorStyle: { backgroundColor: '#6366F1', height: 2 },
-        tabBarStyle: { backgroundColor: '#FFFFFF' }
+        swipeEnabled: true
       }}
     >
       <TopTabs.Screen name="index" options={{ title: 'Manual' }} />

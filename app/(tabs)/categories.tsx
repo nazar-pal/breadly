@@ -50,28 +50,8 @@ const incomeCategoryIcons: { [key: string]: LucideIcon } = {
   Other: PiggyBank
 }
 
-function CategoriesContent() {
-  const insets = useSafeAreaInsets()
+function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
   const { canNavigate, navigatePrevious, navigateNext } = useCategoryContext()
-
-  // Mock data - in real app these would come from state/API
-  const totalExpenses = 1845
-  const totalIncome = 6750
-
-  const getCategoryIcon = (
-    categoryName: string,
-    type: 'expense' | 'income'
-  ) => {
-    const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
-    const IconComponent = icons[categoryName] || Home
-    iconWithClassName(IconComponent)
-    return (
-      <IconComponent
-        size={20}
-        className={type === 'expense' ? 'text-expense' : 'text-income'}
-      />
-    )
-  }
 
   // Create pan gesture for full-screen swipe support
   const panGesture = Gesture.Pan()
@@ -95,33 +75,59 @@ function CategoriesContent() {
       }
     })
 
+  return <GestureDetector gesture={panGesture}>{children}</GestureDetector>
+}
+
+function CategoriesContent() {
+  const insets = useSafeAreaInsets()
+
+  // Mock data - in real app these would come from state/API
+  const totalExpenses = 1845
+  const totalIncome = 6750
+
+  const getCategoryIcon = (
+    categoryName: string,
+    type: 'expense' | 'income'
+  ) => {
+    const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
+    const IconComponent = icons[categoryName] || Home
+    iconWithClassName(IconComponent)
+    return (
+      <IconComponent
+        size={20}
+        className={type === 'expense' ? 'text-expense' : 'text-income'}
+      />
+    )
+  }
+
   return (
-    <GestureDetector gesture={panGesture}>
-      <View
-        className="bg-background flex-1"
-        style={{
-          paddingTop: insets.top
-        }}
-      >
-        <FinancialHeader
-          totalExpenses={totalExpenses}
-          totalIncome={totalIncome}
-        />
+    <View
+      className="bg-background flex-1"
+      style={{
+        paddingTop: insets.top
+      }}
+      collapsable={false}
+    >
+      <FinancialHeader
+        totalExpenses={totalExpenses}
+        totalIncome={totalIncome}
+      />
 
-        <CategoryGrid getIcon={getCategoryIcon} />
+      <CategoryGrid getIcon={getCategoryIcon} />
 
-        <CalculatorModal />
+      <CalculatorModal />
 
-        <CategoryEditModal />
-      </View>
-    </GestureDetector>
+      <CategoryEditModal />
+    </View>
   )
 }
 
 export default function CategoriesScreen() {
   return (
     <CategoryProvider>
-      <CategoriesContent />
+      <GestureDetectorContainer>
+        <CategoriesContent />
+      </GestureDetectorContainer>
     </CategoryProvider>
   )
 }
