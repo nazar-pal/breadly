@@ -42,12 +42,20 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))'
         },
 
-        // Added colors
-        success: 'var(--success)',
-        income: 'var(--income)',
-        expense: 'var(--expense)',
-        transfer: 'var(--transfer)',
-        savings: 'var(--savings)'
+        // Chart colors
+        chart: {
+          1: 'hsl(var(--chart-1))',
+          2: 'hsl(var(--chart-2))',
+          3: 'hsl(var(--chart-3))',
+          4: 'hsl(var(--chart-4))',
+          5: 'hsl(var(--chart-5))'
+        },
+
+        // Transaction colors
+        income: 'hsl(var(--income))',
+        expense: 'hsl(var(--expense))',
+        transfer: 'hsl(var(--transfer))',
+        savings: 'hsl(var(--savings))'
       },
       borderWidth: {
         hairline: hairlineWidth()

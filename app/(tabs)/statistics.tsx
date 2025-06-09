@@ -216,13 +216,13 @@ export default function StatisticsScreen() {
                 <Text className="text-foreground mb-1 text-base font-semibold">
                   Monthly Savings
                 </Text>
-                <Text className="text-success text-2xl font-bold">
+                <Text className="text-2xl font-bold text-green-500">
                   ${mockStats.currentMonth.savings.toFixed(2)}
                 </Text>
               </View>
               <View className="flex-row items-center gap-1 rounded-lg p-2">
                 <TrendingUp size={16} color="#10B981" />
-                <Text className="text-success text-sm font-semibold">
+                <Text className="text-sm font-semibold text-green-500">
                   {mockStats.currentMonth.savingsRate}% Rate
                 </Text>
               </View>
