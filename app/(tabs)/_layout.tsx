@@ -12,16 +12,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function TabBarIcon({ Icon, focused }: { Icon: any; focused: boolean }) {
   return (
-    <View
-      className={`h-10 w-10 items-center justify-center rounded-[20px] ${
-        focused ? 'bg-old-tab-bar-focus-background' : ''
-      }`}
-    >
-      <Icon
-        size={24}
-        color={focused ? '#6366F1' : '#718096'} // old-tab-bar-active-icon : old-tab-bar-inactive-icon
-        strokeWidth={2}
-      />
+    <View className={`h-10 w-10 items-center justify-center rounded-[20px]`}>
+      <Icon size={24} color={focused ? '#6366F1' : '#718096'} strokeWidth={2} />
     </View>
   )
 }

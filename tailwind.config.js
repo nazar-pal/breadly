@@ -54,7 +54,6 @@ module.exports = {
         'old-secondary': 'var(--old-secondary)',
         'old-success': 'var(--old-success)',
         'old-warning': 'var(--old-warning)',
-        'old-error': 'var(--old-error)',
         'old-info': 'var(--old-info)',
         'old-income': 'var(--old-income)',
         'old-expense': 'var(--old-expense)',
@@ -73,40 +72,6 @@ module.exports = {
           background: 'var(--old-input-background)',
           border: 'var(--old-input-border)',
           placeholder: 'var(--old-input-placeholder)'
-        },
-
-        // Button colors
-        'old-button': {
-          'primary-bg': 'var(--old-button-primary-bg)',
-          'primary-bg-disabled': 'var(--old-button-primary-bg-disabled)',
-          'primary-text': 'var(--old-button-primary-text)',
-          'primary-text-disabled': 'var(--old-button-primary-text-disabled)',
-          'secondary-bg': 'var(--old-button-secondary-bg)',
-          'secondary-border': 'var(--old-button-secondary-border)',
-          'secondary-text': 'var(--old-button-secondary-text)',
-          'destructive-bg': 'var(--old-button-destructive-bg)',
-          'destructive-text': 'var(--old-button-destructive-text)'
-        },
-
-        // Tab bar colors
-        'old-tab-bar': {
-          background: 'var(--old-tab-bar-background)',
-          border: 'var(--old-tab-bar-border)',
-          'active-icon': 'var(--old-tab-bar-active-icon)',
-          'inactive-icon': 'var(--old-tab-bar-inactive-icon)',
-          'active-label': 'var(--old-tab-bar-active-label)',
-          'inactive-label': 'var(--old-tab-bar-inactive-label)',
-          'focus-background': 'var(--old-tab-bar-focus-background)'
-        },
-
-        // Icon background colors
-        'old-icon-bg': {
-          neutral: 'var(--old-icon-background-neutral)',
-          primary: 'var(--old-icon-background-primary)',
-          success: 'var(--old-icon-background-success)',
-          warning: 'var(--old-icon-background-warning)',
-          error: 'var(--old-icon-background-error)',
-          info: 'var(--old-icon-background-info)'
         }
       },
       borderWidth: {

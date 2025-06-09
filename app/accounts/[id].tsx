@@ -50,7 +50,7 @@ export default function AccountDetailsScreen() {
   if (!account) {
     return (
       <View className="bg-old-background flex-1">
-        <Text className="text-old-error mt-10 text-center text-lg">
+        <Text className="text-destructive mt-10 text-center text-lg">
           Account not found
         </Text>
       </View>
