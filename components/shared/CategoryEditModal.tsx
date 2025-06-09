@@ -121,15 +121,15 @@ export default function CategoryEditModal() {
           onPress={handleCloseEditModal}
         />
         <View
-          className="bg-old-background rounded-t-3xl pt-2"
+          className="rounded-t-3xl bg-old-background pt-2"
           style={{
             paddingBottom: insets.bottom + 16,
             maxHeight: SCREEN_HEIGHT * 0.8
           }}
         >
           {/* Header */}
-          <View className="border-old-border flex-row items-center justify-between border-b px-5 py-4">
-            <Text className="text-old-text text-xl font-semibold">
+          <View className="flex-row items-center justify-between border-b border-old-border px-5 py-4">
+            <Text className="text-xl font-semibold text-old-text">
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
             <Pressable onPress={handleCloseEditModal} className="p-1">
@@ -144,11 +144,11 @@ export default function CategoryEditModal() {
           >
             {/* Category Name */}
             <View className="mb-6">
-              <Text className="text-old-text mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Category Name
               </Text>
               <TextInput
-                className="border-old-border bg-old-card text-old-text min-h-[48px] rounded-2xl border px-4 py-3 text-base"
+                className="min-h-[48px] rounded-2xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter category name"
@@ -159,11 +159,11 @@ export default function CategoryEditModal() {
 
             {/* Category Description */}
             <View className="mb-6">
-              <Text className="text-old-text mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Description (Optional)
               </Text>
               <TextInput
-                className="border-old-border bg-old-card text-old-text h-[100px] rounded-2xl border px-4 py-3 text-base"
+                className="h-[100px] rounded-2xl border border-old-border bg-old-card px-4 py-3 text-base text-old-text"
                 style={{ paddingTop: 12 }}
                 value={description}
                 onChangeText={setDescription}
@@ -177,7 +177,7 @@ export default function CategoryEditModal() {
 
             {/* Icon Selection */}
             <View className="mb-6">
-              <Text className="text-old-text mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-old-text">
                 Choose Icon
               </Text>
               <View className="flex-row flex-wrap gap-3 pt-2">
@@ -209,7 +209,7 @@ export default function CategoryEditModal() {
           </ScrollView>
 
           {/* Footer */}
-          <View className="border-old-border-light flex-row gap-3 border-t px-5 pb-2 pt-4">
+          <View className="flex-row gap-3 border-t border-old-border-light px-5 pb-2 pt-4">
             <Pressable
               className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border py-3"
               onPress={handleCloseEditModal}

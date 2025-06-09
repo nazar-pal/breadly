@@ -26,11 +26,11 @@ export default function SettingsScreen() {
 
   return (
     <View
-      className="bg-old-background flex-1"
+      className="flex-1 bg-old-background"
       style={{ paddingTop: insets.top }}
     >
       <View className="px-4 py-4">
-        <Text className="text-old-text text-[28px] font-bold">Settings</Text>
+        <Text className="text-[28px] font-bold text-old-text">Settings</Text>
       </View>
 
       <ScrollView
@@ -48,17 +48,17 @@ export default function SettingsScreen() {
                   <User size={32} color="#1A202C" />
                 </View>
                 <View className="ml-4">
-                  <Text className="text-old-text mb-1 text-lg font-semibold">
+                  <Text className="mb-1 text-lg font-semibold text-old-text">
                     {user?.firstName && user?.lastName
                       ? `${user.firstName} ${user.lastName}`
                       : user?.username || 'User'}
                   </Text>
-                  <Text className="text-old-text-secondary text-sm">
+                  <Text className="text-sm text-old-text-secondary">
                     {user?.emailAddresses[0]?.emailAddress || 'No email'}
                   </Text>
                 </View>
               </View>
-              <View className="bg-old-border my-4 h-px w-full" />
+              <View className="my-4 h-px w-full bg-old-border" />
               <SignOutButton />
             </CardContent>
           </Card>
@@ -68,10 +68,10 @@ export default function SettingsScreen() {
           <Card>
             <CardContent>
               <View className="py-2">
-                <Text className="text-old-text mb-2 text-lg font-semibold">
+                <Text className="mb-2 text-lg font-semibold text-old-text">
                   Sign in to access your account
                 </Text>
-                <Text className="text-old-text-secondary mb-4 text-sm leading-5">
+                <Text className="mb-4 text-sm leading-5 text-old-text-secondary">
                   Sign in or create an account to sync your data across devices
                 </Text>
                 <View className="gap-2">
@@ -91,7 +91,7 @@ export default function SettingsScreen() {
           </Card>
         </SignedOut>
 
-        <Text className="text-old-text my-4 mt-6 text-lg font-semibold">
+        <Text className="my-4 mt-6 text-lg font-semibold text-old-text">
           Preferences
         </Text>
         <Card>
@@ -105,10 +105,10 @@ export default function SettingsScreen() {
                   <DollarSign size={20} color="#F59E0B" />
                 </View>
                 <View>
-                  <Text className="text-old-text text-base">
+                  <Text className="text-base text-old-text">
                     Default Currency
                   </Text>
-                  <Text className="text-old-text-secondary mt-0.5 text-sm">
+                  <Text className="mt-0.5 text-sm text-old-text-secondary">
                     {currency.name} ({currency.symbol})
                   </Text>
                 </View>
@@ -116,14 +116,14 @@ export default function SettingsScreen() {
               <ChevronRight size={20} color="#4A5568" />
             </Pressable>
 
-            <View className="bg-old-border h-px" />
+            <View className="h-px bg-old-border" />
 
             <View className="flex-row items-center justify-between py-3">
               <View className="flex-row items-center">
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
                   <Sun size={20} color="#F59E0B" />
                 </View>
-                <Text className="text-old-text text-base">Light Mode</Text>
+                <Text className="text-base text-old-text">Light Mode</Text>
               </View>
               <Switch
                 value={colorScheme === 'light'}
@@ -135,14 +135,14 @@ export default function SettingsScreen() {
               />
             </View>
 
-            <View className="bg-old-border h-px" />
+            <View className="h-px bg-old-border" />
 
             <View className="flex-row items-center justify-between py-3">
               <View className="flex-row items-center">
                 <View className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]">
                   <Moon size={20} color="#3B82F6" />
                 </View>
-                <Text className="text-old-text text-base">Dark Mode</Text>
+                <Text className="text-base text-old-text">Dark Mode</Text>
               </View>
               <Switch
                 value={colorScheme === 'dark'}
@@ -159,7 +159,7 @@ export default function SettingsScreen() {
         {showCurrencyModal && (
           <Card className="mt-2">
             <CardContent>
-              <Text className="text-old-text mb-3 text-base font-semibold">
+              <Text className="mb-3 text-base font-semibold text-old-text">
                 Select Currency
               </Text>
               {currencies.map(curr => (
@@ -196,7 +196,7 @@ export default function SettingsScreen() {
           </Card>
         )}
 
-        <Text className="text-old-text-secondary mt-6 text-center text-sm">
+        <Text className="mt-6 text-center text-sm text-old-text-secondary">
           Breadly v1.0.0
         </Text>
       </ScrollView>

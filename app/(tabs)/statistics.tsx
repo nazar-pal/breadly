@@ -62,8 +62,8 @@ function StatCard({
   return (
     <Card className="flex-1">
       <CardContent>
-        <Text className="text-old-text-secondary mb-1 text-sm">{title}</Text>
-        <Text className="text-old-text mb-1 text-xl font-bold">
+        <Text className="mb-1 text-sm text-old-text-secondary">{title}</Text>
+        <Text className="mb-1 text-xl font-bold text-old-text">
           ${amount.toFixed(2)}
         </Text>
         {trend !== undefined && (
@@ -80,7 +80,7 @@ function StatCard({
               {Math.abs(trend)}%
             </Text>
             {trendLabel && (
-              <Text className="text-old-text-secondary ml-1 text-xs">
+              <Text className="ml-1 text-xs text-old-text-secondary">
                 {trendLabel}
               </Text>
             )}
@@ -94,24 +94,24 @@ function StatCard({
 function TopTransactions() {
   return (
     <View className="mb-6">
-      <Text className="text-old-text mb-3 text-lg font-semibold">
+      <Text className="mb-3 text-lg font-semibold text-old-text">
         Top Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
         <Card key={transaction.id} className="mb-2">
           <CardContent>
             <View className="flex-row items-center justify-between">
-              <Text className="text-old-expense text-base font-semibold">
+              <Text className="text-base font-semibold text-old-expense">
                 ${transaction.amount.toFixed(2)}
               </Text>
               <View className="bg-old-icon-bg-neutral rounded px-2 py-1">
-                <Text className="text-old-text-secondary text-xs font-medium">
+                <Text className="text-xs font-medium text-old-text-secondary">
                   {transaction.category}
                 </Text>
               </View>
             </View>
             <Text
-              className="text-old-text-secondary mt-1 text-sm"
+              className="mt-1 text-sm text-old-text-secondary"
               numberOfLines={2}
             >
               {transaction.description}
@@ -133,7 +133,7 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text className="text-old-text mb-3 text-lg font-semibold">
+      <Text className="mb-3 text-lg font-semibold text-old-text">
         Top Categories
       </Text>
       <Card>
@@ -147,10 +147,10 @@ function CategoryBreakdown() {
                 style={{ borderBottomColor: '#F7FAFC' }} // old-border-light
               >
                 <View className="mb-2 flex-row justify-between">
-                  <Text className="text-old-text text-sm font-medium">
+                  <Text className="text-sm font-medium text-old-text">
                     {category.name}
                   </Text>
-                  <Text className="text-old-text-secondary text-sm">
+                  <Text className="text-sm text-old-text-secondary">
                     ${category.spent.toFixed(2)}
                   </Text>
                 </View>
@@ -166,7 +166,7 @@ function CategoryBreakdown() {
                     }}
                   />
                 </View>
-                <Text className="text-old-text-secondary text-right text-xs">
+                <Text className="text-right text-xs text-old-text-secondary">
                   {percentage.toFixed(1)}%
                 </Text>
               </View>
@@ -183,11 +183,11 @@ export default function StatisticsScreen() {
 
   return (
     <View
-      className="bg-old-background flex-1"
+      className="flex-1 bg-old-background"
       style={{ paddingTop: insets.top }}
     >
       <View className="px-4 py-4">
-        <Text className="text-old-text text-[28px] font-bold">Statistics</Text>
+        <Text className="text-[28px] font-bold text-old-text">Statistics</Text>
       </View>
 
       <ScrollView
@@ -219,16 +219,16 @@ export default function StatisticsScreen() {
           <CardContent>
             <View className="mb-3 flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="text-old-text mb-1 text-base font-semibold">
+                <Text className="mb-1 text-base font-semibold text-old-text">
                   Monthly Savings
                 </Text>
-                <Text className="text-old-success text-2xl font-bold">
+                <Text className="text-2xl font-bold text-old-success">
                   ${mockStats.currentMonth.savings.toFixed(2)}
                 </Text>
               </View>
               <View className="bg-old-icon-bg-success flex-row items-center gap-1 rounded-lg p-2">
                 <TrendingUp size={16} color="#10B981" />
-                <Text className="text-old-success text-sm font-semibold">
+                <Text className="text-sm font-semibold text-old-success">
                   {mockStats.currentMonth.savingsRate}% Rate
                 </Text>
               </View>

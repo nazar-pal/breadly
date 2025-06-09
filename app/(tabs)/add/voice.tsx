@@ -11,7 +11,7 @@ export default function VoiceScreen() {
       <View className="flex-1 p-4">
         <Card>
           <CardContent className="h-[400px] items-center justify-center">
-            <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-old-icon-bg-warning">
+            <View className="bg-old-icon-bg-warning mb-6 h-20 w-20 items-center justify-center rounded-full">
               <Mic size={48} color="#F59E0B" />
             </View>
             <Text className="mb-2 text-center text-lg font-semibold text-old-text">

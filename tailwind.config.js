@@ -64,15 +64,7 @@ module.exports = {
         'old-border-strong': 'var(--old-border-strong)',
         'old-shadow': 'var(--old-shadow)',
         'old-shadow-light': 'var(--old-shadow-light)',
-        'old-shadow-strong': 'var(--old-shadow-strong)',
-
-        // Input colors
-        'old-input': {
-          DEFAULT: 'var(--old-input-background)',
-          background: 'var(--old-input-background)',
-          border: 'var(--old-input-border)',
-          placeholder: 'var(--old-input-placeholder)'
-        }
+        'old-shadow-strong': 'var(--old-shadow-strong)'
       },
       borderWidth: {
         hairline: hairlineWidth()

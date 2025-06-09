@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
@@ -10,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  TextInput,
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -58,8 +58,10 @@ export default function SignInScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        className="flex-grow justify-center px-4"
+        className="px-4"
         contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
           paddingTop: insets.top + 32,
           paddingBottom: insets.bottom + 32
         }}
@@ -83,18 +85,22 @@ export default function SignInScreen() {
               <Text className="mb-2 text-base font-semibold text-old-text">
                 Email Address
               </Text>
-              <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
-                <Mail size={20} color="#4A5568" style={{ marginRight: 12 }} />
-                <TextInput
-                  className="h-full flex-1 text-base text-old-text"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="email-address"
-                  value={emailAddress}
-                  placeholder="Enter your email"
-                  placeholderTextColor="#A0ADB8"
-                  onChangeText={setEmailAddress}
-                />
+              <View className="flex-row items-center gap-3">
+                <View className="h-14 w-14 items-center justify-center rounded-xl">
+                  <Mail size={20} color="#4A5568" />
+                </View>
+                <View className="flex-1">
+                  <Input
+                    className="h-14 text-old-text"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    value={emailAddress}
+                    placeholder="Enter your email"
+                    placeholderClassName="text-[#A0ADB8]"
+                    onChangeText={setEmailAddress}
+                  />
+                </View>
               </View>
             </View>
 
@@ -102,16 +108,20 @@ export default function SignInScreen() {
               <Text className="mb-2 text-base font-semibold text-old-text">
                 Password
               </Text>
-              <View className="h-14 flex-row items-center rounded-xl border border-old-input-border bg-old-input-background px-4">
-                <Lock size={20} color="#4A5568" style={{ marginRight: 12 }} />
-                <TextInput
-                  className="h-full flex-1 text-base text-old-text"
-                  value={password}
-                  placeholder="Enter your password"
-                  placeholderTextColor="#A0ADB8"
-                  secureTextEntry={true}
-                  onChangeText={setPassword}
-                />
+              <View className="flex-row items-center gap-3">
+                <View className="h-14 w-14 items-center justify-center rounded-xl">
+                  <Lock size={20} color="#4A5568" />
+                </View>
+                <View className="flex-1">
+                  <Input
+                    className="h-14 text-old-text"
+                    value={password}
+                    placeholder="Enter your password"
+                    placeholderClassName="text-[#A0ADB8]"
+                    secureTextEntry={true}
+                    onChangeText={setPassword}
+                  />
+                </View>
               </View>
             </View>
 
