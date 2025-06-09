@@ -1,3 +1,5 @@
+import '@/app/global.css'
+
 import { CurrencyProvider } from '@/context/CurrencyContext'
 import { NAV_THEME } from '@/lib/constants'
 import { useColorScheme } from '@/lib/useColorScheme'
@@ -14,10 +16,9 @@ import {
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import * as React from 'react'
 import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import './global.css'
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -35,7 +36,7 @@ export {
 
 export default function RootLayout() {
   const hasMounted = React.useRef(false)
-  const { isDarkColorScheme } = useColorScheme()
+  const { colorScheme, isDarkColorScheme } = useColorScheme()
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
@@ -64,7 +65,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-              <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+              <StatusBar style={colorScheme} />
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="expenses" />
