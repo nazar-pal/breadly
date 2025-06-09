@@ -24,13 +24,12 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
 
-    /* Colors migrated from theme/colors.ts (lightColors) */
-    --old-primary: #6366f1;
-    --success: #10b981;
-    --income: #10b981;
-    --expense: #ef4444;
-    --transfer: #3b82f6;
-    --savings: #059669;
+    /* Added colors */
+    --success: 160 72.1% 41.4%;
+    --income: 160 72.1% 41.4%;
+    --expense: 0 84.2% 60.2%;
+    --transfer: 217 91.2% 59.8%;
+    --savings: 162 90.6% 35.1%;
   }
 
   .dark:root {
@@ -54,12 +53,11 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    /* Colors migrated from theme/colors.ts (darkColors) */
-    --old-primary: #818cf8;
-    --success: #34d399;
-    --income: #34d399;
-    --expense: #f87171;
-    --transfer: #60a5fa;
-    --savings: #10b981;
+    /* Added colors */
+    --success: 160 64.7% 56.3%;
+    --income: 160 64.7% 56.3%;
+    --expense: 0 91.7% 71.8%;
+    --transfer: 217 92.6% 67.1%;
+    --savings: 160 72.1% 41.4%;
   }
 }

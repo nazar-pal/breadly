@@ -42,8 +42,7 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))'
         },
 
-        // Colors migrated from theme/colors.ts
-        'old-primary': 'var(--old-primary)',
+        // Added colors
         success: 'var(--success)',
         income: 'var(--income)',
         expense: 'var(--expense)',

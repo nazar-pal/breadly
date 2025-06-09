@@ -102,7 +102,7 @@ function TopTransactions() {
               <Text className="text-info text-base font-semibold">
                 ${transaction.amount.toFixed(2)}
               </Text>
-              <View className="bg-old-icon-bg-neutral rounded px-2 py-1">
+              <View className="rounded px-2 py-1">
                 <Text className="text-foreground text-xs font-medium">
                   {transaction.category}
                 </Text>
@@ -157,7 +157,7 @@ function CategoryBreakdown() {
                     className="h-full"
                     style={{
                       width: `${percentage}%`,
-                      backgroundColor: '#6366F1' // old-primary
+                      backgroundColor: '#6366F1'
                     }}
                   />
                 </View>
@@ -220,7 +220,7 @@ export default function StatisticsScreen() {
                   ${mockStats.currentMonth.savings.toFixed(2)}
                 </Text>
               </View>
-              <View className="bg-old-icon-bg-success flex-row items-center gap-1 rounded-lg p-2">
+              <View className="flex-row items-center gap-1 rounded-lg p-2">
                 <TrendingUp size={16} color="#10B981" />
                 <Text className="text-success text-sm font-semibold">
                   {mockStats.currentMonth.savingsRate}% Rate

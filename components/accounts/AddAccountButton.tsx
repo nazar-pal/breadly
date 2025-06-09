@@ -20,15 +20,15 @@ export default function AddAccountButton({
 
   return (
     <Pressable
-      className="border-old-icon-bg-primary bg-card-secondary mb-2 min-h-[60px] w-full rounded-xl border-2 border-dashed p-3"
+      className="-primary bg-card-secondary mb-2 min-h-[60px] w-full rounded-xl border-2 border-dashed p-3"
       style={getCustomShadowStyle()}
       onPress={onPress}
     >
       <View className="flex-row items-center justify-center gap-3">
-        <View className="bg-old-icon-bg-primary h-7 w-7 items-center justify-center rounded-md">
+        <View className="h-7 w-7 items-center justify-center rounded-md">
           <Plus size={16} color="#6366F1" />
         </View>
-        <Text className="text-center text-sm font-semibold text-foreground">
+        <Text className="text-foreground text-center text-sm font-semibold">
           {label}
         </Text>
       </View>

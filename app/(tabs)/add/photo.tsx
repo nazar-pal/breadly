@@ -7,14 +7,14 @@ import { View } from 'react-native'
 
 export default function PhotoScreen() {
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <View className="flex-1 p-4">
         <Card>
           <CardContent className="h-[400px] items-center justify-center">
-            <View className="bg-old-icon-bg-info mb-4 h-20 w-20 items-center justify-center rounded-full">
+            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full">
               <Camera size={48} color="#3B82F6" />
             </View>
-            <Text className="mx-6 text-center text-base font-medium text-foreground">
+            <Text className="text-foreground mx-6 text-center text-base font-medium">
               Take a photo of your receipt for automatic expense entry
             </Text>
           </CardContent>

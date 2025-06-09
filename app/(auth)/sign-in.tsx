@@ -54,7 +54,7 @@ export default function SignInScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-background"
+      className="bg-background flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -68,13 +68,13 @@ export default function SignInScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-8 items-center">
-          <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-old-primary">
+          <View className="mb-6 h-20 w-20 items-center justify-center rounded-full">
             <LogIn size={32} color="#FFFFFF" />
           </View>
-          <Text className="mb-2 text-[28px] font-bold text-foreground">
+          <Text className="text-foreground mb-2 text-[28px] font-bold">
             Welcome Back
           </Text>
-          <Text className="text-center text-base leading-6 text-foreground">
+          <Text className="text-foreground text-center text-base leading-6">
             Sign in to your account to continue
           </Text>
         </View>
@@ -82,7 +82,7 @@ export default function SignInScreen() {
         <Card>
           <CardContent>
             <View className="mb-5">
-              <Text className="mb-2 text-base font-semibold text-foreground">
+              <Text className="text-foreground mb-2 text-base font-semibold">
                 Email Address
               </Text>
               <View className="flex-row items-center gap-3">
@@ -91,7 +91,7 @@ export default function SignInScreen() {
                 </View>
                 <View className="flex-1">
                   <Input
-                    className="h-14 text-foreground"
+                    className="text-foreground h-14"
                     autoCapitalize="none"
                     autoCorrect={false}
                     keyboardType="email-address"
@@ -105,7 +105,7 @@ export default function SignInScreen() {
             </View>
 
             <View className="mb-5">
-              <Text className="mb-2 text-base font-semibold text-foreground">
+              <Text className="text-foreground mb-2 text-base font-semibold">
                 Password
               </Text>
               <View className="flex-row items-center gap-3">
@@ -114,7 +114,7 @@ export default function SignInScreen() {
                 </View>
                 <View className="flex-1">
                   <Input
-                    className="h-14 text-foreground"
+                    className="text-foreground h-14"
                     value={password}
                     placeholder="Enter your password"
                     placeholderClassName="text-[#A0ADB8]"
@@ -137,14 +137,12 @@ export default function SignInScreen() {
         </Card>
 
         <View className="flex-row items-center justify-center">
-          <Text className="text-base text-foreground">
+          <Text className="text-foreground text-base">
             Don&apos;t have an account?{' '}
           </Text>
           <Link href="/sign-up" asChild>
             <Button variant="ghost" className="px-2 py-1">
-              <Text className="text-base font-semibold text-old-primary">
-                Sign Up
-              </Text>
+              <Text className="text-base font-semibold">Sign Up</Text>
             </Button>
           </Link>
         </View>
