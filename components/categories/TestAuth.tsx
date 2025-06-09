@@ -8,20 +8,24 @@ const TestAuth = () => {
   )
 
   if (isLoading) {
-    return <Text>Loading authentication status...</Text>
+    return (
+      <Text className="text-base text-green-600 dark:text-green-400">
+        Loading authentication status...
+      </Text>
+    )
   }
 
   if (isError) {
     console.error('[TestAuth] Query error:', error)
     return (
-      <Text style={{ color: 'red' }}>
+      <Text className="text-base text-red-500 dark:text-red-400">
         Failed to authenticate: {error?.message || 'Network error'}
       </Text>
     )
   }
 
   return (
-    <Text style={{ padding: 10, color: 'green' }}>
+    <Text className="p-2 text-base text-blue-600 dark:text-blue-400">
       Authenticated User ID: {data?.userId || 'Not authenticated'}
     </Text>
   )
