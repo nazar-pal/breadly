@@ -12,7 +12,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md}\"",
     "expo:fix-deps": "npx expo install --fix",
     "expo:doctor": "npx expo-doctor",
     "drizzle:generate": "drizzle-kit generate",
