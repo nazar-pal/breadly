@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View
@@ -57,55 +56,63 @@ export default function SignInScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      className="flex-1"
+      style={{ backgroundColor: colors.background }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + spacing.xl,
-            paddingBottom: insets.bottom + spacing.xl,
-            paddingHorizontal: spacing.md
-          }
-        ]}
+        className="flex-grow justify-center"
+        contentContainerStyle={{
+          paddingTop: insets.top + spacing.xl,
+          paddingBottom: insets.bottom + spacing.xl,
+          paddingHorizontal: spacing.md
+        }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
+        <View className="mb-8 items-center">
           <View
-            style={[styles.iconContainer, { backgroundColor: colors.primary }]}
+            className="mb-6 h-20 w-20 items-center justify-center rounded-full"
+            style={{ backgroundColor: colors.primary }}
           >
             <LogIn size={32} color={colors.textInverse} />
           </View>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            className="mb-2 text-[28px] font-bold"
+            style={{ color: colors.text }}
+          >
             Welcome Back
           </Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text
+            className="text-center text-base leading-6"
+            style={{ color: colors.textSecondary }}
+          >
             Sign in to your account to continue
           </Text>
         </View>
 
-        <Card style={styles.formCard}>
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>
+        <Card className="mb-6">
+          <View className="mb-5">
+            <Text
+              className="mb-2 text-base font-semibold"
+              style={{ color: colors.text }}
+            >
               Email Address
             </Text>
             <View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: colors.input.border,
-                  backgroundColor: colors.input.background
-                }
-              ]}
+              className="h-14 flex-row items-center rounded-xl border px-4"
+              style={{
+                borderColor: colors.input.border,
+                backgroundColor: colors.input.background
+              }}
             >
               <Mail
                 size={20}
                 color={colors.textSecondary}
-                style={styles.inputIcon}
+                style={{ marginRight: 12 }}
               />
               <TextInput
-                style={[styles.input, { color: colors.text }]}
+                className="h-full flex-1 text-base"
+                style={{ color: colors.text }}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -117,24 +124,28 @@ export default function SignInScreen() {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>Password</Text>
+          <View className="mb-5">
+            <Text
+              className="mb-2 text-base font-semibold"
+              style={{ color: colors.text }}
+            >
+              Password
+            </Text>
             <View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: colors.input.border,
-                  backgroundColor: colors.input.background
-                }
-              ]}
+              className="h-14 flex-row items-center rounded-xl border px-4"
+              style={{
+                borderColor: colors.input.border,
+                backgroundColor: colors.input.background
+              }}
             >
               <Lock
                 size={20}
                 color={colors.textSecondary}
-                style={styles.inputIcon}
+                style={{ marginRight: 12 }}
               />
               <TextInput
-                style={[styles.input, { color: colors.text }]}
+                className="h-full flex-1 text-base"
+                style={{ color: colors.text }}
                 value={password}
                 placeholder="Enter your password"
                 placeholderTextColor={colors.input.placeholder}
@@ -148,19 +159,22 @@ export default function SignInScreen() {
             variant="primary"
             onPress={onSignInPress}
             disabled={!emailAddress || !password || isLoading}
-            style={styles.signInButton}
+            className="mt-2"
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
         </Card>
 
-        <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+        <View className="flex-row items-center justify-center">
+          <Text className="text-base" style={{ color: colors.textSecondary }}>
             Don&apos;t have an account?{' '}
           </Text>
           <Link href="/sign-up" asChild>
-            <Button variant="ghost" style={styles.linkButton}>
-              <Text style={[styles.linkText, { color: colors.primary }]}>
+            <Button variant="ghost" className="px-2 py-1">
+              <Text
+                className="text-base font-semibold"
+                style={{ color: colors.primary }}
+              >
                 Sign Up
               </Text>
             </Button>
@@ -170,81 +184,3 @@ export default function SignInScreen() {
     </KeyboardAvoidingView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center'
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    lineHeight: 24
-  },
-  formCard: {
-    marginBottom: 24
-  },
-  inputGroup: {
-    marginBottom: 20
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 56
-  },
-  inputIcon: {
-    marginRight: 12
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    height: '100%'
-  },
-  signInButton: {
-    marginTop: 8
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  footerText: {
-    fontSize: 16
-  },
-  linkButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8
-  },
-  linkText: {
-    fontSize: 16,
-    fontWeight: '600'
-  }
-})

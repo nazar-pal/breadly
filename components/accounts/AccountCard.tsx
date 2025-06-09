@@ -38,11 +38,8 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
   const styles = useThemedStyles(theme => ({
     container: {
-      width: '100%' as const,
-      padding: 12,
-      borderRadius: 12,
+      backgroundColor: theme.colors.card,
       borderLeftWidth: 3,
-      marginBottom: 8,
       ...Platform.select({
         android: {
           elevation: 1
@@ -51,81 +48,6 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           boxShadow: `0px 1px 3px ${theme.colors.shadowLight}`
         }
       })
-    } as const,
-    header: {
-      flexDirection: 'row' as const,
-      alignItems: 'flex-start' as const,
-      marginBottom: 8
-    },
-    iconContainer: {
-      width: 28,
-      height: 28,
-      borderRadius: 6,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      marginRight: 12
-    },
-    headerText: {
-      flex: 1,
-      minWidth: 0 // Ensures text truncation works
-    },
-    name: {
-      fontSize: 16,
-      fontWeight: '600' as const,
-      marginBottom: 1
-    },
-    type: {
-      fontSize: 12,
-      textTransform: 'capitalize' as const
-    },
-    balanceContainer: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const
-    },
-    trendIcon: {
-      marginRight: 2
-    },
-    balance: {
-      fontSize: 16,
-      fontWeight: '700' as const
-    },
-    progressSection: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      marginBottom: 6
-    },
-    progressContainer: {
-      flex: 1,
-      height: 3,
-      borderRadius: 1.5,
-      overflow: 'hidden' as const,
-      marginRight: 8
-    },
-    progressBar: {
-      height: '100%' as const
-    },
-    progressText: {
-      fontSize: 10,
-      fontWeight: '500' as const,
-      minWidth: 30,
-      textAlign: 'right' as const
-    },
-    footer: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const
-    },
-    secondaryInfo: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const
-    },
-    secondaryLabel: {
-      fontSize: 11,
-      marginLeft: 3
-    },
-    secondaryValue: {
-      fontSize: 11,
-      fontWeight: '500' as const
     }
   }))
 
@@ -220,58 +142,66 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
   return (
     <Pressable
+      className="mb-2 w-full rounded-xl p-3"
       style={[
         styles.container,
         {
-          backgroundColor: colors.card,
           borderLeftColor: typeColor
         }
       ]}
       onPress={handlePress}
     >
       {/* Header Row */}
-      <View style={styles.header}>
+      <View className="mb-2 flex-row items-start">
         <View
-          style={[
-            styles.iconContainer,
-            {
-              backgroundColor:
-                colors.iconBackground[
-                  account.type === 'payment'
-                    ? 'primary'
-                    : account.type === 'savings'
-                      ? 'success'
-                      : 'error'
-                ]
-            }
-          ]}
+          className="mr-3 h-7 w-7 items-center justify-center rounded-md"
+          style={{
+            backgroundColor:
+              colors.iconBackground[
+                account.type === 'payment'
+                  ? 'primary'
+                  : account.type === 'savings'
+                    ? 'success'
+                    : 'error'
+              ]
+          }}
         >
           <Icon size={16} color={typeColor} />
         </View>
-        <View style={styles.headerText}>
-          <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+        <View className="min-w-0 flex-1">
+          <Text
+            className="mb-px text-base font-semibold"
+            style={{ color: colors.text }}
+            numberOfLines={1}
+          >
             {account.name}
           </Text>
-          <Text style={[styles.type, { color: colors.textSecondary }]}>
+          <Text
+            className="text-xs capitalize"
+            style={{ color: colors.textSecondary }}
+          >
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
-        <View style={styles.balanceContainer}>
+        <View className="flex-row items-center">
           {account.balance < 0 && account.type === 'payment' && (
             <TrendingDown
               size={12}
               color={colors.error}
-              style={styles.trendIcon}
+              style={{ marginRight: 2 }}
             />
           )}
           {account.balance > 0 && account.type === 'savings' && (
             <TrendingUp
               size={12}
               color={colors.success}
-              style={styles.trendIcon}
+              style={{ marginRight: 2 }}
             />
           )}
-          <Text style={[styles.balance, { color: getBalanceColor() }]}>
+          <Text
+            className="text-base font-bold"
+            style={{ color: getBalanceColor() }}
+          >
             {formatBalance(account.balance)}
           </Text>
         </View>
@@ -279,24 +209,23 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
       {/* Progress Bar */}
       {progress !== null && (
-        <View style={styles.progressSection}>
+        <View className="mb-1.5 flex-row items-center">
           <View
-            style={[
-              styles.progressContainer,
-              { backgroundColor: colors.surfaceSecondary }
-            ]}
+            className="mr-2 h-0.5 flex-1 overflow-hidden rounded-sm"
+            style={{ backgroundColor: colors.surfaceSecondary }}
           >
             <View
-              style={[
-                styles.progressBar,
-                {
-                  width: `${Math.min(progress, 100)}%`,
-                  backgroundColor: typeColor
-                }
-              ]}
+              className="h-full"
+              style={{
+                width: `${Math.min(progress, 100)}%`,
+                backgroundColor: typeColor
+              }}
             />
           </View>
-          <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+          <Text
+            className="min-w-[30px] text-right text-[10px] font-medium"
+            style={{ color: colors.textSecondary }}
+          >
             {progress.toFixed(0)}%
           </Text>
         </View>
@@ -304,17 +233,19 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
       {/* Footer with secondary info */}
       {secondaryInfo && (
-        <View style={styles.footer}>
-          <View style={styles.secondaryInfo}>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center">
             <secondaryInfo.icon size={10} color={colors.textSecondary} />
             <Text
-              style={[styles.secondaryLabel, { color: colors.textSecondary }]}
+              className="ml-1 text-[11px]"
+              style={{ color: colors.textSecondary }}
             >
               {secondaryInfo.label}
             </Text>
           </View>
           <Text
-            style={[styles.secondaryValue, { color: colors.textSecondary }]}
+            className="text-[11px] font-medium"
+            style={{ color: colors.textSecondary }}
           >
             {secondaryInfo.text}
           </Text>

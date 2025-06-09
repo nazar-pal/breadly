@@ -10,7 +10,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View
@@ -99,43 +98,52 @@ export default function EditAccountModal({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.modalContainer}
+        className="flex-1"
       >
         <View
-          style={[styles.modalContent, { backgroundColor: colors.background }]}
+          className="flex-1 rounded-t-3xl"
+          style={{
+            backgroundColor: colors.background,
+            marginTop: SCREEN_HEIGHT * 0.1
+          }}
         >
           <View
-            style={[styles.header, { borderBottomColor: colors.borderLight }]}
+            className="flex-row items-center justify-between border-b px-5 py-4"
+            style={{ borderBottomColor: colors.borderLight }}
           >
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text
+              className="text-lg font-semibold"
+              style={{ color: colors.text }}
+            >
               {getTitle()}
             </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable onPress={onClose} className="rounded p-2">
               <X size={24} color={colors.text} />
             </Pressable>
           </View>
 
           <ScrollView
-            style={styles.form}
+            className="flex-1"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
-              styles.formContent,
+              { padding: 20 },
               { paddingBottom: insets.bottom + 16 }
             ]}
           >
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
                 Account Name
               </Text>
               <TextInput
-                style={[
-                  styles.input,
-                  {
-                    color: colors.text,
-                    backgroundColor: colors.card,
-                    borderColor: colors.border
-                  }
-                ]}
+                className="min-h-[48px] rounded-xl border px-4 py-3 text-base"
+                style={{
+                  color: colors.text,
+                  backgroundColor: colors.card,
+                  borderColor: colors.border
+                }}
                 value={formData.name}
                 onChangeText={text =>
                   setFormData(prev => ({ ...prev, name: text }))
@@ -145,19 +153,22 @@ export default function EditAccountModal({
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
                 Description
               </Text>
               <TextInput
+                className="h-[100px] rounded-xl border px-4 py-3 text-base"
                 style={[
-                  styles.input,
-                  styles.textArea,
                   {
                     color: colors.text,
                     backgroundColor: colors.card,
                     borderColor: colors.border
-                  }
+                  },
+                  { paddingTop: 12 }
                 ]}
                 value={formData.description}
                 onChangeText={text =>
@@ -170,29 +181,27 @@ export default function EditAccountModal({
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
                 Balance
               </Text>
-              <View style={styles.currencyInput}>
+              <View className="flex-row items-center">
                 <Text
-                  style={[
-                    styles.currencySymbol,
-                    { color: colors.textSecondary }
-                  ]}
+                  className="mr-3 text-base"
+                  style={{ color: colors.textSecondary }}
                 >
                   {currency.symbol}
                 </Text>
                 <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      color: colors.text,
-                      backgroundColor: colors.card,
-                      borderColor: colors.border,
-                      flex: 1
-                    }
-                  ]}
+                  className="min-h-[48px] flex-1 rounded-xl border px-4 py-3 text-base"
+                  style={{
+                    color: colors.text,
+                    backgroundColor: colors.card,
+                    borderColor: colors.border
+                  }}
                   value={formData.balance}
                   onChangeText={text =>
                     setFormData(prev => ({ ...prev, balance: text }))
@@ -204,30 +213,29 @@ export default function EditAccountModal({
               </View>
             </View>
 
+            {/* Type-specific fields */}
             {account?.type === 'savings' && (
-              <View style={styles.formGroup}>
-                <Text style={[styles.label, { color: colors.text }]}>
-                  Target Amount (Optional)
+              <View className="mb-6">
+                <Text
+                  className="mb-2 text-base font-semibold"
+                  style={{ color: colors.text }}
+                >
+                  Target Amount
                 </Text>
-                <View style={styles.currencyInput}>
+                <View className="flex-row items-center">
                   <Text
-                    style={[
-                      styles.currencySymbol,
-                      { color: colors.textSecondary }
-                    ]}
+                    className="mr-3 text-base"
+                    style={{ color: colors.textSecondary }}
                   >
                     {currency.symbol}
                   </Text>
                   <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border,
-                        flex: 1
-                      }
-                    ]}
+                    className="min-h-[48px] flex-1 rounded-xl border px-4 py-3 text-base"
+                    style={{
+                      color: colors.text,
+                      backgroundColor: colors.card,
+                      borderColor: colors.border
+                    }}
                     value={formData.targetAmount}
                     onChangeText={text =>
                       setFormData(prev => ({ ...prev, targetAmount: text }))
@@ -242,20 +250,54 @@ export default function EditAccountModal({
 
             {account?.type === 'debt' && (
               <>
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
+                <View className="mb-6">
+                  <Text
+                    className="mb-2 text-base font-semibold"
+                    style={{ color: colors.text }}
+                  >
+                    Initial Amount
+                  </Text>
+                  <View className="flex-row items-center">
+                    <Text
+                      className="mr-3 text-base"
+                      style={{ color: colors.textSecondary }}
+                    >
+                      {currency.symbol}
+                    </Text>
+                    <TextInput
+                      className="min-h-[48px] flex-1 rounded-xl border px-4 py-3 text-base"
+                      style={{
+                        color: colors.text,
+                        backgroundColor: colors.card,
+                        borderColor: colors.border
+                      }}
+                      value={formData.initialAmount}
+                      onChangeText={text =>
+                        setFormData(prev => ({ ...prev, initialAmount: text }))
+                      }
+                      keyboardType="decimal-pad"
+                      placeholder="0.00"
+                      placeholderTextColor={colors.textSecondary}
+                    />
+                  </View>
+                </View>
+
+                <View className="mb-6">
+                  <Text
+                    className="mb-2 text-base font-semibold"
+                    style={{ color: colors.text }}
+                  >
                     Debt Type
                   </Text>
-                  <View style={styles.debtTypeContainer}>
+                  <View className="flex-row gap-3">
                     <Pressable
+                      className="flex-1 flex-row items-center justify-center rounded-xl border py-3"
                       style={[
-                        styles.debtTypeButton,
                         {
                           backgroundColor:
                             formData.debtType === 'owed'
                               ? colors.primary
-                              : colors.surface,
-                          borderWidth: 1,
+                              : colors.card,
                           borderColor:
                             formData.debtType === 'owed'
                               ? colors.primary
@@ -266,29 +308,34 @@ export default function EditAccountModal({
                         setFormData(prev => ({ ...prev, debtType: 'owed' }))
                       }
                     >
+                      {formData.debtType === 'owed' && (
+                        <Check
+                          size={16}
+                          color={colors.textInverse}
+                          style={{ marginRight: 8 }}
+                        />
+                      )}
                       <Text
-                        style={[
-                          styles.debtTypeText,
-                          {
-                            color:
-                              formData.debtType === 'owed'
-                                ? colors.textInverse
-                                : colors.text
-                          }
-                        ]}
+                        className="text-base font-medium"
+                        style={{
+                          color:
+                            formData.debtType === 'owed'
+                              ? colors.textInverse
+                              : colors.text
+                        }}
                       >
                         I Owe
                       </Text>
                     </Pressable>
+
                     <Pressable
+                      className="flex-1 flex-row items-center justify-center rounded-xl border py-3"
                       style={[
-                        styles.debtTypeButton,
                         {
                           backgroundColor:
                             formData.debtType === 'owedTo'
                               ? colors.primary
-                              : colors.surface,
-                          borderWidth: 1,
+                              : colors.card,
                           borderColor:
                             formData.debtType === 'owedTo'
                               ? colors.primary
@@ -299,16 +346,21 @@ export default function EditAccountModal({
                         setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
                       }
                     >
+                      {formData.debtType === 'owedTo' && (
+                        <Check
+                          size={16}
+                          color={colors.textInverse}
+                          style={{ marginRight: 8 }}
+                        />
+                      )}
                       <Text
-                        style={[
-                          styles.debtTypeText,
-                          {
-                            color:
-                              formData.debtType === 'owedTo'
-                                ? colors.textInverse
-                                : colors.text
-                          }
-                        ]}
+                        className="text-base font-medium"
+                        style={{
+                          color:
+                            formData.debtType === 'owedTo'
+                              ? colors.textInverse
+                              : colors.text
+                        }}
                       >
                         Owed to Me
                       </Text>
@@ -316,229 +368,46 @@ export default function EditAccountModal({
                   </View>
                 </View>
 
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Initial Amount
-                  </Text>
-                  <View style={styles.currencyInput}>
-                    <Text
-                      style={[
-                        styles.currencySymbol,
-                        { color: colors.textSecondary }
-                      ]}
-                    >
-                      {currency.symbol}
-                    </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        {
-                          color: colors.text,
-                          backgroundColor: colors.card,
-                          borderColor: colors.border,
-                          flex: 1
-                        }
-                      ]}
-                      value={formData.initialAmount}
-                      onChangeText={text =>
-                        setFormData(prev => ({
-                          ...prev,
-                          initialAmount: text
-                        }))
-                      }
-                      keyboardType="decimal-pad"
-                      placeholder="0.00"
-                      placeholderTextColor={colors.textSecondary}
-                    />
-                  </View>
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Due Date (Optional)
+                <View className="mb-6">
+                  <Text
+                    className="mb-2 text-base font-semibold"
+                    style={{ color: colors.text }}
+                  >
+                    Person/Institution
                   </Text>
                   <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={formData.dueDate}
+                    className="min-h-[48px] rounded-xl border px-4 py-3 text-base"
+                    style={{
+                      color: colors.text,
+                      backgroundColor: colors.card,
+                      borderColor: colors.border
+                    }}
+                    value={formData.person}
                     onChangeText={text =>
-                      setFormData(prev => ({ ...prev, dueDate: text }))
+                      setFormData(prev => ({ ...prev, person: text }))
                     }
-                    placeholder="YYYY-MM-DD"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Interest Rate % (Optional)
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={formData.interestRate}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, interestRate: text }))
-                    }
-                    keyboardType="decimal-pad"
-                    placeholder="0.00"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    {formData.debtType === 'owed'
-                      ? 'Institution/Person'
-                      : 'Person Name'}
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={
-                      formData.debtType === 'owed'
-                        ? formData.institution || formData.person
-                        : formData.person
-                    }
-                    onChangeText={text =>
-                      setFormData(prev => ({
-                        ...prev,
-                        [formData.debtType === 'owed'
-                          ? 'institution'
-                          : 'person']: text
-                      }))
-                    }
-                    placeholder={
-                      formData.debtType === 'owed'
-                        ? 'Enter institution or person name'
-                        : 'Enter person name'
-                    }
+                    placeholder="Enter person or institution name"
                     placeholderTextColor={colors.textSecondary}
                   />
                 </View>
               </>
             )}
-          </ScrollView>
 
-          <View style={[styles.footer, { borderTopColor: colors.borderLight }]}>
-            <Button
-              variant="outline"
-              onPress={onClose}
-              style={{ flex: 1, marginRight: 8 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onPress={handleSave}
-              style={{ flex: 1 }}
-              leftIcon={<Check size={20} color={colors.textInverse} />}
-            >
-              Save
-            </Button>
-          </View>
+            <View className="flex-row gap-3 pt-6">
+              <Button
+                onPress={onClose}
+                variant="secondary"
+                className="flex-[0.4]"
+              >
+                Cancel
+              </Button>
+              <Button onPress={handleSave} className="flex-[0.6]">
+                Save
+              </Button>
+            </View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </Modal>
   )
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: SCREEN_HEIGHT * 0.9
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600'
-  },
-  closeButton: {
-    padding: 4
-  },
-  form: {
-    flex: 1
-  },
-  formContent: {
-    padding: 16
-  },
-  formGroup: {
-    marginBottom: 16
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16
-  },
-  textArea: {
-    height: 100,
-    paddingTop: 12,
-    paddingBottom: 12,
-    textAlignVertical: 'top'
-  },
-  currencyInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  currencySymbol: {
-    fontSize: 20,
-    fontWeight: '600'
-  },
-  debtTypeContainer: {
-    flexDirection: 'row',
-    gap: 8
-  },
-  debtTypeButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  debtTypeText: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  footer: {
-    flexDirection: 'row',
-    padding: 16,
-    borderTopWidth: 1
-  }
-})

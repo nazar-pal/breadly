@@ -3,27 +3,31 @@ import Card from '@/components/ui/Card'
 import { useTheme } from '@/context/ThemeContext'
 import { Mic } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 export default function VoiceScreen() {
   const { colors } = useTheme()
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        <Card style={styles.placeholder}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <View className="flex-1 p-4">
+        <Card className="h-[400px] items-center justify-center">
           <View
-            style={[
-              styles.micIcon,
-              { backgroundColor: colors.iconBackground.warning }
-            ]}
+            className="mb-6 h-20 w-20 items-center justify-center rounded-full"
+            style={{ backgroundColor: colors.iconBackground.warning }}
           >
             <Mic size={48} color={colors.warning} />
           </View>
-          <Text style={[styles.voiceHint, { color: colors.text }]}>
+          <Text
+            className="mb-2 text-center text-lg font-semibold"
+            style={{ color: colors.text }}
+          >
             Tap the microphone and describe your expense
           </Text>
-          <Text style={[styles.example, { color: colors.textSecondary }]}>
+          <Text
+            className="mt-3 text-center italic"
+            style={{ color: colors.textSecondary }}
+          >
             Example: &ldquo;I spent $42.50 on groceries at Whole Foods
             yesterday&rdquo;
           </Text>
@@ -40,37 +44,3 @@ export default function VoiceScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    padding: 16
-  },
-  placeholder: {
-    height: 400,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  micIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24
-  },
-  voiceHint: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 8
-  },
-  example: {
-    marginTop: 12,
-    textAlign: 'center',
-    fontStyle: 'italic'
-  }
-})

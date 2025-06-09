@@ -1,6 +1,6 @@
 import { useTheme } from '@/context/ThemeContext'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import Card from './Card'
 
 interface SummaryCardProps {
@@ -22,31 +22,29 @@ export default function SummaryCard({
   const { colors } = useTheme()
 
   return (
-    <Card variant="elevated" size="md" style={styles.container}>
-      <Text style={[styles.title, { color: colors.textSecondary }]}>
+    <Card variant="elevated" size="md" className="mb-4 flex-1">
+      <Text className="mb-1 text-sm" style={{ color: colors.textSecondary }}>
         {title}
       </Text>
-      <Text style={[styles.amount, { color: colors.text }]}>
+      <Text className="mb-1 text-2xl font-bold" style={{ color: colors.text }}>
         ${amount.toFixed(2)}
       </Text>
       {subtitle && (
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        <Text className="text-xs" style={{ color: colors.textSecondary }}>
           {subtitle}
         </Text>
       )}
       {trend && (
-        <View style={styles.trendContainer}>
+        <View className="mt-2 flex-row items-center">
           <Text
-            style={[
-              styles.trendText,
-              {
-                color: trend.isPositive ? colors.success : colors.error
-              }
-            ]}
+            className="mr-1 text-sm font-semibold"
+            style={{
+              color: trend.isPositive ? colors.success : colors.error
+            }}
           >
             {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.percentage)}%
           </Text>
-          <Text style={[styles.trendLabel, { color: colors.textSecondary }]}>
+          <Text className="text-xs" style={{ color: colors.textSecondary }}>
             vs last {title.toLowerCase()}
           </Text>
         </View>
@@ -54,35 +52,3 @@ export default function SummaryCard({
     </Card>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-    flex: 1
-  },
-  title: {
-    fontSize: 14,
-    marginBottom: 4
-  },
-  amount: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4
-  },
-  subtitle: {
-    fontSize: 12
-  },
-  trendContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8
-  },
-  trendText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginRight: 4
-  },
-  trendLabel: {
-    fontSize: 12
-  }
-})

@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import { Camera, Mic, Pencil } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 
 const ICONS = { index: Pencil, photo: Camera, voice: Mic }
 
@@ -14,19 +14,22 @@ export default function AddExpenseTabBar({
 
   return (
     <View
-      style={[
-        styles.wrapper,
-        {
-          backgroundColor: colors.background,
-          borderBottomColor: colors.borderLight
-        }
-      ]}
+      className="border-b pb-2 pt-12"
+      style={{
+        backgroundColor: colors.background,
+        borderBottomColor: colors.borderLight
+      }}
     >
       {/* Title */}
-      <Text style={[styles.title, { color: colors.text }]}>Add Expense</Text>
+      <Text
+        className="mb-4 px-4 text-[32px] font-bold tracking-tight"
+        style={{ color: colors.text }}
+      >
+        Add Expense
+      </Text>
 
       {/* Mode selector */}
-      <View style={styles.tabsRow}>
+      <View className="flex-row">
         {state.routes.map((route, i) => {
           const focused = state.index === i
           const Icon = ICONS[route.name as keyof typeof ICONS]
@@ -40,8 +43,8 @@ export default function AddExpenseTabBar({
               key={route.key}
               accessibilityRole="button"
               accessibilityState={focused ? { selected: true } : {}}
+              className="flex-1 flex-row items-center justify-center py-3"
               style={[
-                styles.tab,
                 focused && {
                   borderBottomWidth: 2,
                   borderBottomColor: colors.primary
@@ -55,13 +58,11 @@ export default function AddExpenseTabBar({
                 style={{ marginRight: 6 }}
               />
               <Text
-                style={[
-                  styles.label,
-                  {
-                    color: focused ? colors.primary : colors.textSecondary,
-                    fontWeight: focused ? '600' : '400'
-                  }
-                ]}
+                className="text-base"
+                style={{
+                  color: focused ? colors.primary : colors.textSecondary,
+                  fontWeight: focused ? '600' : '400'
+                }}
               >
                 {route.name === 'index'
                   ? 'Manual'
@@ -74,31 +75,3 @@ export default function AddExpenseTabBar({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    paddingTop: 48,
-    paddingBottom: 8,
-    borderBottomWidth: 1
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    marginBottom: 16,
-    letterSpacing: -0.5,
-    paddingHorizontal: 16
-  },
-  tabsRow: {
-    flexDirection: 'row'
-  },
-  tab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12
-  },
-  label: {
-    fontSize: 16
-  }
-})

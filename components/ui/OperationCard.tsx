@@ -11,7 +11,7 @@ import {
   TrendingUp
 } from 'lucide-react-native'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import Card from './Card'
 
 export type OperationType = 'expense' | 'income' | 'debt' | 'other'
@@ -168,66 +168,68 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card variant="elevated" size="sm" style={styles.container}>
-        <View style={styles.content}>
+      <Card variant="elevated" size="sm" className="mb-2 p-3">
+        <View className="flex-row items-center">
           {/* Left: Icon */}
           <View
-            style={[
-              styles.iconContainer,
-              {
-                backgroundColor:
-                  colors.iconBackground[
-                    operation.type === 'income'
-                      ? 'success'
-                      : operation.type === 'debt'
-                        ? operation.debtType === 'paid'
-                          ? 'error'
-                          : 'success'
-                        : operation.type === 'other'
-                          ? operation.transactionType === 'refund'
-                            ? 'success'
-                            : 'primary'
-                          : 'error' // expenses
-                  ]
-              }
-            ]}
+            className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
+            style={{
+              backgroundColor:
+                colors.iconBackground[
+                  operation.type === 'income'
+                    ? 'success'
+                    : operation.type === 'debt'
+                      ? operation.debtType === 'paid'
+                        ? 'error'
+                        : 'success'
+                      : operation.type === 'other'
+                        ? operation.transactionType === 'refund'
+                          ? 'success'
+                          : 'primary'
+                        : 'error' // expenses
+                ]
+            }}
           >
             <IconComponent size={16} color={operationColor} />
           </View>
 
           {/* Middle: Info */}
-          <View style={styles.infoContainer}>
-            <View style={styles.topRow}>
+          <View className="flex-1 gap-1">
+            <View className="flex-row items-center justify-between">
               <Text
-                style={[styles.description, { color: colors.text }]}
+                className="mr-2 flex-1 text-sm font-medium"
+                style={{ color: colors.text }}
                 numberOfLines={1}
               >
                 {operation.description}
               </Text>
-              <Text style={[styles.amount, { color: operationColor }]}>
+              <Text
+                className="text-[15px] font-semibold"
+                style={{ color: operationColor }}
+              >
                 {amountPrefix}${operation.amount.toFixed(2)}
               </Text>
             </View>
 
-            <View style={styles.bottomRow}>
-              <View style={styles.metaInfo}>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-1 flex-row items-center gap-2">
                 <View
-                  style={[
-                    styles.categoryBadge,
-                    { backgroundColor: colors.surfaceSecondary }
-                  ]}
+                  className="rounded px-1.5 py-0.5"
+                  style={{ backgroundColor: colors.surfaceSecondary }}
                 >
                   <Text
-                    style={[styles.categoryText, { color: colors.text }]}
+                    className="text-[11px] font-medium"
+                    style={{ color: colors.text }}
                     numberOfLines={1}
                   >
                     {operation.category}
                   </Text>
                 </View>
-                <View style={styles.dateContainer}>
+                <View className="flex-row items-center gap-1">
                   <Calendar size={12} color={colors.textSecondary} />
                   <Text
-                    style={[styles.dateText, { color: colors.textSecondary }]}
+                    className="text-[11px]"
+                    style={{ color: colors.textSecondary }}
                   >
                     {new Date(operation.date).toLocaleDateString('en-US', {
                       month: 'short',
@@ -237,7 +239,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
                 </View>
               </View>
 
-              <View style={styles.attachments}>
+              <View className="flex-row items-center">
                 {operation.hasPhoto && (
                   <Receipt size={14} color={colors.textSecondary} />
                 )}
@@ -258,7 +260,8 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
             {subtext && (
               <Text
-                style={[styles.subtext, { color: colors.textSecondary }]}
+                className="text-[11px] italic"
+                style={{ color: colors.textSecondary }}
                 numberOfLines={1}
               >
                 {subtext}
@@ -270,77 +273,3 @@ export default function OperationCard({ operation }: OperationCardProps) {
     </Pressable>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 8,
-    padding: 12
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  infoContainer: {
-    flex: 1,
-    gap: 4
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  description: {
-    fontSize: 14,
-    fontWeight: '500',
-    flex: 1,
-    marginRight: 8
-  },
-  amount: {
-    fontSize: 15,
-    fontWeight: '600'
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  metaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flex: 1
-  },
-  categoryBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4
-  },
-  categoryText: {
-    fontSize: 11,
-    fontWeight: '500'
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  dateText: {
-    fontSize: 11
-  },
-  attachments: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  subtext: {
-    fontSize: 11,
-    fontStyle: 'italic'
-  }
-})

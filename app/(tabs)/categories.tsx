@@ -21,7 +21,7 @@ import {
   UtensilsCrossed
 } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -96,13 +96,11 @@ function CategoriesContent() {
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.background,
-            paddingTop: insets.top
-          }
-        ]}
+        className="flex-1"
+        style={{
+          backgroundColor: colors.background,
+          paddingTop: insets.top
+        }}
       >
         <FinancialHeader
           totalExpenses={totalExpenses}
@@ -126,9 +124,3 @@ export default function CategoriesScreen() {
     </CategoryProvider>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-})

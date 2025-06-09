@@ -70,116 +70,25 @@ export default function CategoryEditModal() {
     useState<keyof typeof availableIcons>('Home')
 
   const styles = useThemedStyles(theme => ({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'flex-end' as const
-    },
     modalOverlay: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: theme.colors.shadow
     },
     modalContent: {
-      borderTopLeftRadius: theme.borderRadius.xl,
-      borderTopRightRadius: theme.borderRadius.xl,
-      paddingTop: theme.spacing.sm,
-      minHeight: SCREEN_HEIGHT * 0.6,
       backgroundColor: theme.colors.background
     },
-    header: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const,
-      paddingHorizontal: theme.spacing.lg - 4,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: '600' as const,
-      color: theme.colors.text
-    },
-    closeButton: {
-      padding: theme.spacing.xs
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: theme.spacing.lg - 4
-    },
-    scrollContent: {
-      paddingVertical: theme.spacing.sm
-    },
-    formGroup: {
-      marginBottom: theme.spacing.xl - 8
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600' as const,
-      marginBottom: theme.spacing.sm,
-      color: theme.colors.text
-    },
     input: {
-      borderWidth: 1,
-      borderRadius: theme.borderRadius.md * 1.5,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm * 1.5,
-      fontSize: 16,
-      minHeight: 48,
       color: theme.colors.text,
       backgroundColor: theme.colors.card,
       borderColor: theme.colors.border
     },
-    textArea: {
-      height: 100,
-      paddingTop: theme.spacing.sm * 1.5,
-      textAlignVertical: 'top' as const
-    },
-    iconGrid: {
-      flexDirection: 'row' as const,
-      flexWrap: 'wrap' as const,
-      gap: theme.spacing.sm * 1.5,
-      paddingTop: theme.spacing.sm
-    },
-    iconOption: {
-      width: 56,
-      height: 56,
-      borderRadius: theme.borderRadius.md * 1.5,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      borderWidth: 2
-    },
-    footer: {
-      flexDirection: 'row' as const,
-      paddingHorizontal: theme.spacing.lg - 4,
-      paddingTop: theme.spacing.md,
-      paddingBottom: theme.spacing.sm,
-      gap: theme.spacing.sm * 1.5,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.borderLight
-    },
-    button: {
-      flex: 1,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      paddingVertical: theme.spacing.sm + 6,
-      borderRadius: theme.borderRadius.md * 1.5,
-      gap: theme.spacing.sm,
-      minHeight: 48
-    },
     cancelButton: {
-      flex: 0.4,
       backgroundColor: theme.colors.button.secondaryBg,
       borderWidth: 1,
       borderColor: theme.colors.button.secondaryBorder
     },
     saveButton: {
-      flex: 0.6,
       backgroundColor: theme.colors.button.primaryBg
-    },
-    buttonText: {
-      fontSize: 16,
-      fontWeight: '600' as const
     }
   }))
 
@@ -231,9 +140,10 @@ export default function CategoryEditModal() {
       transparent={true}
       onRequestClose={handleCloseEditModal}
     >
-      <View style={styles.modalContainer}>
+      <View className="flex-1 justify-end">
         <Pressable style={styles.modalOverlay} onPress={handleCloseEditModal} />
         <View
+          className="rounded-t-3xl pt-2"
           style={[
             styles.modalContent,
             {
@@ -243,27 +153,36 @@ export default function CategoryEditModal() {
           ]}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>
+          <View
+            className="flex-row items-center justify-between border-b px-5 py-4"
+            style={{ borderBottomColor: colors.border }}
+          >
+            <Text
+              className="text-xl font-semibold"
+              style={{ color: colors.text }}
+            >
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
-            <Pressable
-              onPress={handleCloseEditModal}
-              style={styles.closeButton}
-            >
+            <Pressable onPress={handleCloseEditModal} className="p-1">
               <X size={24} color={colors.text} />
             </Pressable>
           </View>
 
           <ScrollView
-            style={styles.content}
+            className="flex-1 px-5"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={{ paddingVertical: 8 }}
           >
             {/* Category Name */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Category Name</Text>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
+                Category Name
+              </Text>
               <TextInput
+                className="min-h-[48px] rounded-2xl border px-4 py-3 text-base"
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
@@ -274,10 +193,16 @@ export default function CategoryEditModal() {
             </View>
 
             {/* Category Description */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Description (Optional)</Text>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
+                Description (Optional)
+              </Text>
               <TextInput
-                style={[styles.input, styles.textArea]}
+                className="h-[100px] rounded-2xl border px-4 py-3 text-base"
+                style={[styles.input, { paddingTop: 12 }]}
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Add a description for this category"
@@ -289,9 +214,14 @@ export default function CategoryEditModal() {
             </View>
 
             {/* Icon Selection */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Choose Icon</Text>
-              <View style={styles.iconGrid}>
+            <View className="mb-6">
+              <Text
+                className="mb-2 text-base font-semibold"
+                style={{ color: colors.text }}
+              >
+                Choose Icon
+              </Text>
+              <View className="flex-row flex-wrap gap-3 pt-2">
                 {iconNames.map(iconName => {
                   const IconComponent = availableIcons[iconName]
                   const isSelected = selectedIcon === iconName
@@ -299,17 +229,13 @@ export default function CategoryEditModal() {
                   return (
                     <Pressable
                       key={iconName}
-                      style={[
-                        styles.iconOption,
-                        {
-                          backgroundColor: isSelected
-                            ? colors.iconBackground.primary
-                            : getIconBackgroundColor(),
-                          borderColor: isSelected
-                            ? colors.primary
-                            : 'transparent'
-                        }
-                      ]}
+                      className="h-14 w-14 items-center justify-center rounded-2xl border-2"
+                      style={{
+                        backgroundColor: isSelected
+                          ? colors.iconBackground.primary
+                          : getIconBackgroundColor(),
+                        borderColor: isSelected ? colors.primary : 'transparent'
+                      }}
                       onPress={() => setSelectedIcon(iconName)}
                     >
                       <IconComponent
@@ -324,32 +250,33 @@ export default function CategoryEditModal() {
           </ScrollView>
 
           {/* Footer */}
-          <View style={styles.footer}>
+          <View
+            className="flex-row gap-3 border-t px-5 pb-2 pt-4"
+            style={{ borderTopColor: colors.borderLight }}
+          >
             <Pressable
+              className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl py-3"
               style={styles.cancelButton}
               onPress={handleCloseEditModal}
             >
               <Text
-                style={[
-                  styles.buttonText,
-                  { color: colors.button.secondaryText }
-                ]}
+                className="text-base font-semibold"
+                style={{ color: colors.button.secondaryText }}
               >
                 Cancel
               </Text>
             </Pressable>
 
             <Pressable
+              className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
               style={styles.saveButton}
               onPress={handleSave}
               disabled={!name.trim()}
             >
               <Check size={20} color={colors.button.primaryText} />
               <Text
-                style={[
-                  styles.buttonText,
-                  { color: colors.button.primaryText }
-                ]}
+                className="text-base font-semibold"
+                style={{ color: colors.button.primaryText }}
               >
                 Save Changes
               </Text>

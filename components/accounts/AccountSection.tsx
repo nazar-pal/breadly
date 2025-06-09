@@ -1,7 +1,7 @@
 import { useTheme } from '@/context/ThemeContext'
 import type { Account } from '@/hooks/useAccountManagement'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import AccountCard from './AccountCard'
 import AddAccountButton from './AddAccountButton'
 
@@ -36,9 +36,14 @@ export default function AccountSection({
   }
 
   return (
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>{title}</Text>
-      <View style={styles.accountsGrid}>
+    <View className="mb-8">
+      <Text
+        className="mb-4 text-xl font-bold tracking-tight"
+        style={{ color: colors.text }}
+      >
+        {title}
+      </Text>
+      <View className="flex-col">
         {accounts.map(account => (
           <AccountCard
             key={account.id}
@@ -54,18 +59,3 @@ export default function AccountSection({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginBottom: 32
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 16,
-    letterSpacing: -0.5
-  },
-  accountsGrid: {
-    flexDirection: 'column'
-  }
-})

@@ -8,7 +8,7 @@ import {
   TrendingUp
 } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 interface AccountOperation {
   id: string
@@ -76,57 +76,63 @@ export default function AccountOperationCard({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }]}>
-      <View style={styles.content}>
+    <View
+      className="mb-2 overflow-hidden rounded-lg"
+      style={{ backgroundColor: colors.card }}
+    >
+      <View className="flex-row items-center p-3">
         <View
-          style={[
-            styles.iconContainer,
-            {
-              backgroundColor:
-                colors.iconBackground[
-                  operation.type === 'income'
-                    ? 'success'
-                    : operation.type === 'expense'
-                      ? 'error'
-                      : operation.type === 'payment'
-                        ? 'primary'
-                        : 'info'
-                ]
-            }
-          ]}
+          className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
+          style={{
+            backgroundColor:
+              colors.iconBackground[
+                operation.type === 'income'
+                  ? 'success'
+                  : operation.type === 'expense'
+                    ? 'error'
+                    : operation.type === 'payment'
+                      ? 'primary'
+                      : 'info'
+              ]
+          }}
         >
           <IconComponent size={16} color={operationColor} />
         </View>
 
-        <View style={styles.operationInfo}>
+        <View className="min-w-0 flex-1">
           <Text
-            style={[styles.description, { color: colors.text }]}
+            className="mb-1 text-sm font-medium"
+            style={{ color: colors.text }}
             numberOfLines={1}
           >
             {operation.description}
           </Text>
-          <View style={styles.metaInfo}>
+          <View className="flex-row items-center gap-3">
             <View
-              style={[
-                styles.categoryContainer,
-                { backgroundColor: colors.surfaceSecondary }
-              ]}
+              className="rounded px-1.5 py-0.5"
+              style={{ backgroundColor: colors.surfaceSecondary }}
             >
-              <Text style={[styles.category, { color: colors.textSecondary }]}>
+              <Text
+                className="text-[11px] font-medium"
+                style={{ color: colors.textSecondary }}
+              >
                 {operation.category}
               </Text>
             </View>
-            <View style={styles.dateContainer}>
+            <View className="flex-row items-center gap-1">
               <Calendar size={10} color={colors.textSecondary} />
-              <Text style={[styles.date, { color: colors.textSecondary }]}>
+              <Text
+                className="text-[11px]"
+                style={{ color: colors.textSecondary }}
+              >
                 {formatDate(operation.date)}
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.amountContainer}>
-          <Text style={[styles.amount, { color: operationColor }]}>
+        <View className="items-end">
+          <Text className="text-sm font-bold" style={{ color: operationColor }}>
             {isPositive ? '+' : ''}
             {formatAmount(operation.amount)}
           </Text>
@@ -135,62 +141,3 @@ export default function AccountOperationCard({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 8,
-    marginBottom: 8,
-    overflow: 'hidden'
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12
-  },
-  iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  operationInfo: {
-    flex: 1,
-    minWidth: 0
-  },
-  description: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4
-  },
-  metaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12
-  },
-  categoryContainer: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4
-  },
-  category: {
-    fontSize: 11,
-    fontWeight: '500'
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  date: {
-    fontSize: 11
-  },
-  amountContainer: {
-    alignItems: 'flex-end'
-  },
-  amount: {
-    fontSize: 14,
-    fontWeight: '700'
-  }
-})

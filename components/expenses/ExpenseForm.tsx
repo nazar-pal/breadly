@@ -15,7 +15,6 @@ import {
   Modal,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View
@@ -129,32 +128,32 @@ export default function ExpenseForm({
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
+      className="flex-1"
+      contentContainerStyle={{ padding: 16 }}
       keyboardShouldPersistTaps="handled"
     >
       {/* Form Section */}
-      <View style={styles.formSection}>
-        <View style={[styles.row, styles.topAlignedRow]}>
-          <View style={[styles.formGroup, styles.amountContainer]}>
-            <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
+      <View className="mb-6">
+        <View className="mb-4 flex-row items-start">
+          <View className="mr-3 flex-1">
+            <Text
+              className="mb-2 text-sm font-medium"
+              style={{ color: colors.text }}
+            >
+              Amount
+            </Text>
             <Controller
               control={control}
               name="amount"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
                   <TextInput
-                    style={[
-                      styles.input,
-                      styles.amountInput,
-                      {
-                        color: colors.text,
-                        borderColor: errors.amount
-                          ? colors.error
-                          : colors.border,
-                        backgroundColor: colors.card
-                      }
-                    ]}
+                    className="h-12 rounded-lg border px-4 text-xl font-semibold"
+                    style={{
+                      color: colors.text,
+                      borderColor: errors.amount ? colors.error : colors.border,
+                      backgroundColor: colors.card
+                    }}
                     placeholderTextColor={colors.textSecondary}
                     placeholder="0.00"
                     keyboardType="decimal-pad"
@@ -163,7 +162,10 @@ export default function ExpenseForm({
                     value={value}
                   />
                   {errors.amount && (
-                    <Text style={[styles.errorText, { color: colors.error }]}>
+                    <Text
+                      className="mt-1 text-xs"
+                      style={{ color: colors.error }}
+                    >
                       {errors.amount.message}
                     </Text>
                   )}
@@ -172,22 +174,26 @@ export default function ExpenseForm({
             />
           </View>
 
-          <View style={[styles.formGroup, styles.categoryContainer]}>
-            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+          <View className="flex-[1.2]">
+            <Text
+              className="mb-2 text-sm font-medium"
+              style={{ color: colors.text }}
+            >
+              Category
+            </Text>
             <Pressable
               onPress={() => setShowCategoryPicker(true)}
-              style={[
-                styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border }
-              ]}
+              className="h-12 flex-row items-center justify-between rounded-lg border px-4"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border
+              }}
             >
               <Text
-                style={[
-                  styles.pickerButtonText,
-                  {
-                    color: selectedCategory ? colors.text : colors.textSecondary
-                  }
-                ]}
+                className="flex-1 text-base"
+                style={{
+                  color: selectedCategory ? colors.text : colors.textSecondary
+                }}
                 numberOfLines={1}
               >
                 {selectedCategory || 'Select'}
@@ -195,24 +201,30 @@ export default function ExpenseForm({
               <ChevronDown size={20} color={colors.text} />
             </Pressable>
             {errors.category && (
-              <Text style={[styles.errorText, { color: colors.error }]}>
+              <Text className="mt-1 text-xs" style={{ color: colors.error }}>
                 {errors.category.message}
               </Text>
             )}
           </View>
         </View>
 
-        <View style={[styles.row, styles.bottomAlignedRow]}>
-          <View style={[styles.formGroup, { flex: 1 }]}>
-            <Text style={[styles.label, { color: colors.text }]}>Date</Text>
+        <View className="mb-4 flex-row items-end">
+          <View className="flex-1">
+            <Text
+              className="mb-2 text-sm font-medium"
+              style={{ color: colors.text }}
+            >
+              Date
+            </Text>
             <Pressable
               onPress={() => setShowDatePicker(true)}
-              style={[
-                styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border }
-              ]}
+              className="h-12 flex-row items-center justify-between rounded-lg border px-4"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border
+              }}
             >
-              <Text style={[styles.pickerButtonText, { color: colors.text }]}>
+              <Text className="text-base" style={{ color: colors.text }}>
                 {selectedDate === today ? 'Today' : formatDate(selectedDate)}
               </Text>
               <Calendar size={20} color={colors.text} />
@@ -221,33 +233,29 @@ export default function ExpenseForm({
 
           <Pressable
             onPress={() => setShowDescription(!showDescription)}
-            style={[
-              styles.descriptionToggle,
-              { backgroundColor: colors.iconBackground.neutral }
-            ]}
+            className="ml-3 h-12 w-12 items-center justify-center rounded-lg"
+            style={{ backgroundColor: colors.iconBackground.neutral }}
           >
             <AlignLeft size={20} color={colors.text} />
           </Pressable>
         </View>
 
         {showDescription && (
-          <View style={styles.formGroup}>
+          <View className="mb-4">
             <Controller
               control={control}
               name="description"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    styles.descriptionInput,
-                    {
-                      color: colors.text,
-                      borderColor: errors.description
-                        ? colors.error
-                        : colors.border,
-                      backgroundColor: colors.card
-                    }
-                  ]}
+                  className="h-20 rounded-lg border px-4 py-3 text-base"
+                  style={{
+                    color: colors.text,
+                    borderColor: errors.description
+                      ? colors.error
+                      : colors.border,
+                    backgroundColor: colors.card,
+                    textAlignVertical: 'top'
+                  }}
                   placeholderTextColor={colors.textSecondary}
                   placeholder="What was this expense for?"
                   onBlur={onBlur}
@@ -261,7 +269,7 @@ export default function ExpenseForm({
           </View>
         )}
 
-        <View style={styles.buttonContainer}>
+        <View className="mt-6 flex-row">
           {editingExpenseIndex !== null ? (
             <>
               <Button
@@ -306,48 +314,46 @@ export default function ExpenseForm({
       {/* Added Expenses List */}
       {expenses.length > 0 && (
         <View
-          style={[
-            styles.expensesList,
-            { backgroundColor: colors.surfaceSecondary }
-          ]}
+          className="rounded-lg p-4"
+          style={{ backgroundColor: colors.surfaceSecondary }}
         >
-          <Text style={[styles.expensesListTitle, { color: colors.text }]}>
+          <Text
+            className="mb-3 text-sm font-semibold"
+            style={{ color: colors.text }}
+          >
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
             <Pressable
               key={index}
               onPress={() => handleEditExpense(index)}
-              style={[
-                styles.expenseItem,
-                {
-                  backgroundColor:
-                    editingExpenseIndex === index ? colors.card : 'transparent',
-                  borderRadius: 8,
-                  marginBottom: 8
-                }
-              ]}
+              className="mb-2 rounded-lg p-3"
+              style={{
+                backgroundColor:
+                  editingExpenseIndex === index ? colors.card : 'transparent'
+              }}
             >
-              <View style={styles.expenseItemRow}>
+              <View className="flex-row items-center justify-between">
                 <Text
-                  style={[styles.expenseItemAmount, { color: colors.text }]}
+                  className="text-base font-semibold"
+                  style={{ color: colors.text }}
                 >
                   ${parseFloat(expense.amount).toFixed(2)}
                 </Text>
-                <View style={styles.expenseItemDetails}>
+                <View className="mx-3 flex-1 flex-row items-center justify-end gap-2">
                   <Text
-                    style={[styles.dateText, { color: colors.textSecondary }]}
+                    className="text-xs"
+                    style={{ color: colors.textSecondary }}
                   >
                     {formatDate(expense.date)}
                   </Text>
                   <View
-                    style={[
-                      styles.categoryBadge,
-                      { backgroundColor: colors.card }
-                    ]}
+                    className="rounded px-2 py-1"
+                    style={{ backgroundColor: colors.card }}
                   >
                     <Text
-                      style={[styles.categoryBadgeText, { color: colors.text }]}
+                      className="text-xs font-medium"
+                      style={{ color: colors.text }}
                     >
                       {expense.category}
                     </Text>
@@ -357,10 +363,8 @@ export default function ExpenseForm({
               </View>
               {expense.description && (
                 <Text
-                  style={[
-                    styles.descriptionText,
-                    { color: colors.textSecondary }
-                  ]}
+                  className="mt-2 pl-1 text-[13px]"
+                  style={{ color: colors.textSecondary }}
                   numberOfLines={2}
                 >
                   {expense.description}
@@ -379,17 +383,20 @@ export default function ExpenseForm({
         onRequestClose={() => setShowCategoryPicker(false)}
       >
         <Pressable
-          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
+          className="flex-1 justify-center p-4"
+          style={{ backgroundColor: colors.shadow }}
           onPress={() => setShowCategoryPicker(false)}
         >
           <View
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+            className="max-h-[80%] rounded-xl"
+            style={{ backgroundColor: colors.surface }}
           >
             <Text
-              style={[
-                styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight }
-              ]}
+              className="border-b p-4 text-lg font-semibold"
+              style={{
+                color: colors.text,
+                borderBottomColor: colors.borderLight
+              }}
             >
               Select Category
             </Text>
@@ -397,30 +404,26 @@ export default function ExpenseForm({
               {mockCategories.map(category => (
                 <Pressable
                   key={category.id}
-                  style={[
-                    styles.categoryOption,
-                    {
-                      backgroundColor:
-                        selectedCategory === category.name
-                          ? colors.primary
-                          : 'transparent'
-                    }
-                  ]}
+                  className="p-4"
+                  style={{
+                    backgroundColor:
+                      selectedCategory === category.name
+                        ? colors.primary
+                        : 'transparent'
+                  }}
                   onPress={() => {
                     setValue('category', category.name)
                     setShowCategoryPicker(false)
                   }}
                 >
                   <Text
-                    style={[
-                      styles.categoryOptionText,
-                      {
-                        color:
-                          selectedCategory === category.name
-                            ? colors.textInverse
-                            : colors.text
-                      }
-                    ]}
+                    className="text-base"
+                    style={{
+                      color:
+                        selectedCategory === category.name
+                          ? colors.textInverse
+                          : colors.text
+                    }}
                   >
                     {category.name}
                   </Text>
@@ -439,17 +442,20 @@ export default function ExpenseForm({
         onRequestClose={() => setShowDatePicker(false)}
       >
         <Pressable
-          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
+          className="flex-1 justify-center p-4"
+          style={{ backgroundColor: colors.shadow }}
           onPress={() => setShowDatePicker(false)}
         >
           <View
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+            className="max-h-[80%] rounded-xl"
+            style={{ backgroundColor: colors.surface }}
           >
             <Text
-              style={[
-                styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight }
-              ]}
+              className="border-b p-4 text-lg font-semibold"
+              style={{
+                color: colors.text,
+                borderBottomColor: colors.borderLight
+              }}
             >
               Select Date
             </Text>
@@ -463,30 +469,26 @@ export default function ExpenseForm({
                 return (
                   <Pressable
                     key={dateString}
-                    style={[
-                      styles.dateOption,
-                      {
-                        backgroundColor:
-                          selectedDate === dateString
-                            ? colors.primary
-                            : 'transparent'
-                      }
-                    ]}
+                    className="p-4"
+                    style={{
+                      backgroundColor:
+                        selectedDate === dateString
+                          ? colors.primary
+                          : 'transparent'
+                    }}
                     onPress={() => {
                       setValue('date', dateString)
                       setShowDatePicker(false)
                     }}
                   >
                     <Text
-                      style={[
-                        styles.dateOptionText,
-                        {
-                          color:
-                            selectedDate === dateString
-                              ? colors.textInverse
-                              : colors.text
-                        }
-                      ]}
+                      className="text-base"
+                      style={{
+                        color:
+                          selectedDate === dateString
+                            ? colors.textInverse
+                            : colors.text
+                      }}
                     >
                       {isToday ? 'Today' : formatDate(dateString)}
                     </Text>
@@ -500,158 +502,3 @@ export default function ExpenseForm({
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  contentContainer: {
-    padding: 16
-  },
-  formSection: {
-    marginBottom: 24
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: 16
-  },
-  topAlignedRow: {
-    alignItems: 'flex-start'
-  },
-  bottomAlignedRow: {
-    alignItems: 'flex-end'
-  },
-  formGroup: {
-    flex: 1
-  },
-  amountContainer: {
-    marginRight: 12
-  },
-  categoryContainer: {
-    flex: 1.2
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 8
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16
-  },
-  amountInput: {
-    fontWeight: '600',
-    fontSize: 20
-  },
-  descriptionInput: {
-    height: 80,
-    paddingTop: 12,
-    paddingBottom: 12,
-    textAlignVertical: 'top'
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4
-  },
-  descriptionToggle: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12
-  },
-  pickerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16
-  },
-  pickerButtonText: {
-    fontSize: 16,
-    flex: 1
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16
-  },
-  modalContent: {
-    borderRadius: 12,
-    maxHeight: '80%'
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    padding: 16,
-    borderBottomWidth: 1
-  },
-  categoryOption: {
-    padding: 16
-  },
-  categoryOptionText: {
-    fontSize: 16
-  },
-  dateOption: {
-    padding: 16
-  },
-  dateOptionText: {
-    fontSize: 16
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 24
-  },
-  expensesList: {
-    borderRadius: 8,
-    padding: 16
-  },
-  expensesListTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  expenseItem: {
-    padding: 12
-  },
-  expenseItemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  expenseItemAmount: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  expenseItemDetails: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginHorizontal: 12
-  },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4
-  },
-  categoryBadgeText: {
-    fontSize: 12,
-    fontWeight: '500'
-  },
-  dateText: {
-    fontSize: 12
-  },
-  descriptionText: {
-    fontSize: 13,
-    marginTop: 8,
-    paddingLeft: 4
-  }
-})

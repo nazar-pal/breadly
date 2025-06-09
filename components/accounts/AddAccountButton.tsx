@@ -18,11 +18,10 @@ export default function AddAccountButton({
     theme =>
       ({
         container: {
-          width: '100%',
-          padding: 12,
-          borderRadius: 12,
-          minHeight: 60, // Reduced height for single column
-          marginBottom: 8,
+          backgroundColor: theme.colors.surfaceSecondary,
+          borderStyle: 'dashed',
+          borderWidth: 2,
+          borderColor: theme.colors.iconBackground.primary,
           ...Platform.select({
             android: {
               elevation: 1
@@ -32,50 +31,31 @@ export default function AddAccountButton({
             }
           })
         },
-        content: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12
-        },
         iconContainer: {
-          width: 28,
-          height: 28,
-          borderRadius: 6,
-          alignItems: 'center',
-          justifyContent: 'center'
-        },
-        label: {
-          fontSize: 14,
-          fontWeight: '600',
-          textAlign: 'center'
+          backgroundColor: theme.colors.iconBackground.primary
         }
       }) as const
   )
 
   return (
     <Pressable
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surfaceSecondary,
-          borderStyle: 'dashed',
-          borderWidth: 2,
-          borderColor: colors.iconBackground.primary
-        }
-      ]}
+      className="mb-2 min-h-[60px] w-full rounded-xl p-3"
+      style={styles.container}
       onPress={onPress}
     >
-      <View style={styles.content}>
+      <View className="flex-row items-center justify-center gap-3">
         <View
-          style={[
-            styles.iconContainer,
-            { backgroundColor: colors.iconBackground.primary }
-          ]}
+          className="h-7 w-7 items-center justify-center rounded-md"
+          style={styles.iconContainer}
         >
           <Plus size={16} color={colors.primary} />
         </View>
-        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+        <Text
+          className="text-center text-sm font-semibold"
+          style={{ color: colors.text }}
+        >
+          {label}
+        </Text>
       </View>
     </Pressable>
   )

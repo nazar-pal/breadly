@@ -1,7 +1,7 @@
 import { useTheme } from '@/context/ThemeContext'
 import { CreditCard as Edit2, Trash2 } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import Card from '../ui/Card'
 import IconButton from '../ui/IconButton'
 
@@ -29,12 +29,15 @@ export default function CategoryCard({
   const isOverBudget = type === 'expense' ? percentage > 100 : percentage < 100
 
   return (
-    <Card style={styles.container}>
-      <View style={styles.header}>
-        <Text style={[styles.name, { color: colors.text }]}>
+    <Card className="mb-3">
+      <View className="mb-2 flex-row items-center justify-between">
+        <Text
+          className="text-base font-semibold"
+          style={{ color: colors.text }}
+        >
           {category.name}
         </Text>
-        <View style={styles.actions}>
+        <View className="flex-row">
           <IconButton
             icon={<Edit2 size={16} />}
             variant="ghost"
@@ -51,90 +54,38 @@ export default function CategoryCard({
         </View>
       </View>
 
-      <View style={styles.budgetContainer}>
-        <View style={styles.budgetInfo}>
-          <Text style={[styles.spent, { color: colors.text }]}>
+      <View className="mb-2 flex-row items-center justify-between">
+        <View className="flex-row items-baseline">
+          <Text
+            className="mr-1 text-lg font-semibold"
+            style={{ color: colors.text }}
+          >
             ${category.spent.toFixed(2)}
           </Text>
-          <Text style={[styles.budgetText, { color: colors.textSecondary }]}>
+          <Text className="text-sm" style={{ color: colors.textSecondary }}>
             {type === 'expense' ? 'of' : 'from'} ${category.budget.toFixed(2)}
           </Text>
         </View>
         <Text
-          style={[
-            styles.percentage,
-            { color: isOverBudget ? colors.error : colors.success }
-          ]}
+          className="text-sm font-semibold"
+          style={{ color: isOverBudget ? colors.error : colors.success }}
         >
           {percentage.toFixed(0)}%
         </Text>
       </View>
 
       <View
-        style={[
-          styles.progressBarContainer,
-          { backgroundColor: colors.surfaceSecondary }
-        ]}
+        className="h-2 overflow-hidden rounded"
+        style={{ backgroundColor: colors.surfaceSecondary }}
       >
         <View
-          style={[
-            styles.progressBar,
-            {
-              width: `${Math.min(percentage, 100)}%`,
-              backgroundColor: isOverBudget ? colors.error : colors.success
-            }
-          ]}
+          className="h-full"
+          style={{
+            width: `${Math.min(percentage, 100)}%`,
+            backgroundColor: isOverBudget ? colors.error : colors.success
+          }}
         />
       </View>
     </Card>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 12
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  actions: {
-    flexDirection: 'row'
-  },
-  budgetContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8
-  },
-  budgetInfo: {
-    flexDirection: 'row',
-    alignItems: 'baseline'
-  },
-  spent: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginRight: 4
-  },
-  budgetText: {
-    fontSize: 14
-  },
-  percentage: {
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  progressBarContainer: {
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden'
-  },
-  progressBar: {
-    height: '100%'
-  }
-})

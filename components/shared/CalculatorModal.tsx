@@ -26,17 +26,11 @@ export default function CalculatorModal() {
   } = useCategoryContext()
 
   const styles = useThemedStyles(theme => ({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'flex-end' as const
-    },
     modalOverlay: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: theme.colors.shadow
     },
     modalContent: {
-      borderTopLeftRadius: theme.borderRadius.xl,
-      borderTopRightRadius: theme.borderRadius.xl,
       backgroundColor: theme.colors.background,
       maxHeight: Platform.select({
         ios: SCREEN_HEIGHT * 0.8,
@@ -45,12 +39,7 @@ export default function CalculatorModal() {
       })
     },
     modalHandle: {
-      width: 40,
-      height: 4,
-      backgroundColor: theme.colors.borderStrong,
-      borderRadius: 2,
-      alignSelf: 'center' as const,
-      marginBottom: theme.spacing.md
+      backgroundColor: theme.colors.borderStrong
     }
   }))
 
@@ -63,19 +52,22 @@ export default function CalculatorModal() {
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.modalContainer}
+        className="flex-1 justify-end"
       >
         <Pressable style={styles.modalOverlay} onPress={handleCloseModal} />
         <View
+          className="rounded-t-3xl pt-6"
           style={[
             styles.modalContent,
             {
-              paddingTop: 24,
               paddingBottom: insets.bottom
             }
           ]}
         >
-          <View style={styles.modalHandle} />
+          <View
+            className="mb-4 h-1 w-10 self-center rounded-full"
+            style={styles.modalHandle}
+          />
           {selectedCategory && (
             <QuickCalculator
               type={currentType}

@@ -26,11 +26,6 @@ export default function CategoryCard({
 
   const styles = useThemedStyles(theme => ({
     categoryCard: {
-      width: '47%' as const,
-      padding: theme.spacing.sm * 1.5,
-      borderRadius: theme.borderRadius.md * 2,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
       backgroundColor: theme.colors.card,
       opacity: isPressed ? 0.7 : 1,
       transform: [{ scale: isPressed ? 0.98 : 1 }],
@@ -42,26 +37,6 @@ export default function CategoryCard({
           boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px ${theme.colors.shadow}${isPressed ? '80' : ''}`
         }
       })
-    },
-    iconContainer: {
-      width: 36,
-      height: 36,
-      borderRadius: theme.borderRadius.md + 2,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const
-    },
-    categoryContent: {
-      marginLeft: theme.spacing.sm * 1.5,
-      flex: 1
-    },
-    categoryName: {
-      fontSize: 14,
-      fontWeight: '600' as const,
-      marginBottom: 2,
-      color: theme.colors.text
-    },
-    categoryAmount: {
-      fontSize: 13
     }
   }))
 
@@ -95,6 +70,7 @@ export default function CategoryCard({
 
   return (
     <Pressable
+      className="w-[47%] flex-row items-center rounded-2xl p-3"
       style={styles.categoryCard}
       onPress={() => onPress(name)}
       onLongPress={handleLongPress}
@@ -103,18 +79,20 @@ export default function CategoryCard({
       delayLongPress={500}
     >
       <View
-        style={[
-          styles.iconContainer,
-          { backgroundColor: getIconBackgroundColor() }
-        ]}
+        className="h-9 w-9 items-center justify-center rounded-lg"
+        style={{ backgroundColor: getIconBackgroundColor() }}
       >
         {icon}
       </View>
-      <View style={styles.categoryContent}>
-        <Text numberOfLines={1} style={styles.categoryName}>
+      <View className="ml-3 flex-1">
+        <Text
+          numberOfLines={1}
+          className="mb-0.5 text-sm font-semibold"
+          style={{ color: colors.text }}
+        >
           {name}
         </Text>
-        <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
+        <Text className="text-[13px]" style={{ color: getAmountColor() }}>
           ${amount.toFixed(2)}
         </Text>
       </View>

@@ -5,7 +5,7 @@ import { useTheme } from '@/context/ThemeContext'
 import { mockAccounts } from '@/data/mockAccounts'
 import { useAccountManagement } from '@/hooks/useAccountManagement'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountsScreen() {
@@ -22,10 +22,11 @@ export default function AccountsScreen() {
 
   return (
     <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top }
-      ]}
+      className="flex-1"
+      style={{
+        backgroundColor: colors.background,
+        paddingTop: insets.top
+      }}
     >
       <AccountsHeader />
 
@@ -44,9 +45,3 @@ export default function AccountsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-})

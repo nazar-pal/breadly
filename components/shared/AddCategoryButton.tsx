@@ -16,11 +16,6 @@ export default function AddCategoryButton({
 
   const styles = useThemedStyles(theme => ({
     categoryCard: {
-      width: '47%' as const,
-      padding: theme.spacing.sm * 1.5,
-      borderRadius: theme.borderRadius.md * 2,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
       backgroundColor: theme.colors.surfaceSecondary,
       borderStyle: 'dashed' as const,
       borderWidth: 1,
@@ -33,26 +28,23 @@ export default function AddCategoryButton({
           boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
         }
       })
-    },
-    addButtonContent: {
-      flex: 1,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      gap: theme.spacing.sm
-    },
-    addButtonText: {
-      fontSize: 14,
-      fontWeight: '500' as const,
-      color: theme.colors.textSecondary
     }
   }))
 
   return (
-    <Pressable style={styles.categoryCard} onPress={onPress}>
-      <View style={styles.addButtonContent}>
+    <Pressable
+      className="w-[47%] flex-row items-center rounded-2xl p-3"
+      style={styles.categoryCard}
+      onPress={onPress}
+    >
+      <View className="flex-1 flex-row items-center justify-center gap-2">
         <Plus size={20} color={colors.textSecondary} />
-        <Text style={styles.addButtonText}>{label}</Text>
+        <Text
+          className="text-sm font-medium"
+          style={{ color: colors.textSecondary }}
+        >
+          {label}
+        </Text>
       </View>
     </Pressable>
   )

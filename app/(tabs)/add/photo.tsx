@@ -3,36 +3,30 @@ import Card from '@/components/ui/Card'
 import { useTheme } from '@/context/ThemeContext'
 import { Camera, Upload } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 export default function PhotoScreen() {
   const { colors } = useTheme()
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        <Card style={styles.cameraPlaceholder}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <View className="flex-1 p-4">
+        <Card className="h-[400px] items-center justify-center">
           <View
-            style={[
-              styles.cameraIcon,
-              { backgroundColor: colors.iconBackground.info }
-            ]}
+            className="mb-4 h-20 w-20 items-center justify-center rounded-full"
+            style={{ backgroundColor: colors.iconBackground.info }}
           >
             <Camera size={48} color={colors.info} />
           </View>
           <Text
-            style={[
-              styles.placeholderText,
-              {
-                color: colors.textSecondary
-              }
-            ]}
+            className="mx-6 text-center text-base font-medium"
+            style={{ color: colors.textSecondary }}
           >
             Take a photo of your receipt for automatic expense entry
           </Text>
         </Card>
 
-        <View style={styles.actionButtons}>
+        <View className="mt-4 flex-row">
           <Button
             variant="primary"
             leftIcon={<Camera size={20} color={colors.textInverse} />}
@@ -52,36 +46,3 @@ export default function PhotoScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    padding: 16
-  },
-  cameraPlaceholder: {
-    height: 400,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  cameraIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16
-  },
-  placeholderText: {
-    textAlign: 'center',
-    marginHorizontal: 24,
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    marginTop: 16
-  }
-})

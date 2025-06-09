@@ -19,7 +19,7 @@ import {
   Wallet
 } from 'lucide-react-native'
 import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AccountDetailsScreen() {
@@ -50,8 +50,11 @@ export default function AccountDetailsScreen() {
 
   if (!account) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.error }]}>
+      <View className="flex-1" style={{ backgroundColor: colors.background }}>
+        <Text
+          className="mt-10 text-center text-lg"
+          style={{ color: colors.error }}
+        >
           Account not found
         </Text>
       </View>
@@ -113,38 +116,43 @@ export default function AccountDetailsScreen() {
   const progress = getProgressPercentage()
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 }
-        ]}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: insets.bottom + 20
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Account Header Card */}
-        <Card style={[styles.headerCard, { borderLeftColor: typeColor }]}>
-          <View style={styles.accountHeader}>
+        <Card
+          className="mb-6 border-l-4"
+          style={{ borderLeftColor: typeColor }}
+        >
+          <View className="mb-3 flex-row items-center">
             <View
-              style={[
-                styles.iconContainer,
-                {
-                  backgroundColor:
-                    account.type === 'savings'
-                      ? colors.iconBackground.success
-                      : account.type === 'debt'
-                        ? colors.iconBackground.error
-                        : colors.iconBackground.primary
-                }
-              ]}
+              className="mr-3 h-12 w-12 items-center justify-center rounded-xl"
+              style={{
+                backgroundColor:
+                  account.type === 'savings'
+                    ? colors.iconBackground.success
+                    : account.type === 'debt'
+                      ? colors.iconBackground.error
+                      : colors.iconBackground.primary
+              }}
             >
               <Icon size={24} color={typeColor} />
             </View>
-            <View style={styles.accountInfo}>
-              <Text style={[styles.accountName, { color: colors.text }]}>
+            <View className="flex-1">
+              <Text
+                className="mb-0.5 text-xl font-bold"
+                style={{ color: colors.text }}
+              >
                 {account.name}
               </Text>
               <Text
-                style={[styles.accountType, { color: colors.textSecondary }]}
+                className="text-sm capitalize"
+                style={{ color: colors.textSecondary }}
               >
                 {account.type.charAt(0).toUpperCase() + account.type.slice(1)}{' '}
                 Account
@@ -160,19 +168,26 @@ export default function AccountDetailsScreen() {
             </Button>
           </View>
 
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
+          <Text
+            className="mb-4 text-sm leading-5"
+            style={{ color: colors.textSecondary }}
+          >
             {account.description}
           </Text>
 
           {/* Balance Section */}
-          <View style={styles.balanceSection}>
+          <View className="mb-4">
             <Text
-              style={[styles.balanceLabel, { color: colors.textSecondary }]}
+              className="mb-1 text-sm"
+              style={{ color: colors.textSecondary }}
             >
               Current Balance
             </Text>
-            <View style={styles.balanceRow}>
-              <Text style={[styles.balance, { color: typeColor }]}>
+            <View className="flex-row items-center gap-2">
+              <Text
+                className="text-[32px] font-extrabold"
+                style={{ color: typeColor }}
+              >
                 {account.balance < 0 && account.type === 'payment' ? '-' : ''}
                 {formatBalance(account.balance)}
               </Text>
@@ -187,78 +202,87 @@ export default function AccountDetailsScreen() {
 
           {/* Progress Section */}
           {progress !== null && (
-            <View style={styles.progressSection}>
-              <View style={styles.progressHeader}>
+            <View className="mb-4">
+              <View className="mb-2 flex-row items-center justify-between">
                 <Text
-                  style={[
-                    styles.progressLabel,
-                    { color: colors.textSecondary }
-                  ]}
+                  className="text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   {account.type === 'savings'
                     ? 'Savings Progress'
                     : 'Repayment Progress'}
                 </Text>
-                <Text style={[styles.progressText, { color: colors.text }]}>
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: colors.text }}
+                >
                   {progress.toFixed(1)}%
                 </Text>
               </View>
               <View
-                style={[
-                  styles.progressBar,
-                  { backgroundColor: colors.borderLight }
-                ]}
+                className="h-1.5 overflow-hidden rounded-sm"
+                style={{ backgroundColor: colors.borderLight }}
               >
                 <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: `${Math.min(progress, 100)}%`,
-                      backgroundColor: typeColor
-                    }
-                  ]}
+                  className="h-full"
+                  style={{
+                    width: `${Math.min(progress, 100)}%`,
+                    backgroundColor: typeColor
+                  }}
                 />
               </View>
             </View>
           )}
 
           {/* Additional Info */}
-          <View style={styles.additionalInfo}>
+          <View className="gap-3">
             {account.type === 'savings' && account.targetAmount && (
-              <View style={styles.infoRow}>
+              <View className="flex-row items-center gap-2">
                 <Target size={16} color={colors.textSecondary} />
                 <Text
-                  style={[styles.infoLabel, { color: colors.textSecondary }]}
+                  className="flex-1 text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   Target Amount
                 </Text>
-                <Text style={[styles.infoValue, { color: colors.text }]}>
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: colors.text }}
+                >
                   {formatBalance(account.targetAmount)}
                 </Text>
               </View>
             )}
             {account.type === 'debt' && account.dueDate && (
-              <View style={styles.infoRow}>
+              <View className="flex-row items-center gap-2">
                 <Calendar size={16} color={colors.textSecondary} />
                 <Text
-                  style={[styles.infoLabel, { color: colors.textSecondary }]}
+                  className="flex-1 text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   Due Date
                 </Text>
-                <Text style={[styles.infoValue, { color: colors.text }]}>
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: colors.text }}
+                >
                   {new Date(account.dueDate).toLocaleDateString()}
                 </Text>
               </View>
             )}
             {account.type === 'debt' && account.interestRate && (
-              <View style={styles.infoRow}>
+              <View className="flex-row items-center gap-2">
                 <DollarSign size={16} color={colors.textSecondary} />
                 <Text
-                  style={[styles.infoLabel, { color: colors.textSecondary }]}
+                  className="flex-1 text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   Interest Rate
                 </Text>
-                <Text style={[styles.infoValue, { color: colors.text }]}>
+                <Text
+                  className="text-sm font-semibold"
+                  style={{ color: colors.text }}
+                >
                   {account.interestRate}%
                 </Text>
               </View>
@@ -267,8 +291,11 @@ export default function AccountDetailsScreen() {
         </Card>
 
         {/* Recent Operations */}
-        <View style={styles.operationsSection}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View className="mb-5">
+          <Text
+            className="mb-4 text-xl font-bold tracking-tight"
+            style={{ color: colors.text }}
+          >
             Recent Activity
           </Text>
           {accountOperations.length > 0 ? (
@@ -278,10 +305,8 @@ export default function AccountDetailsScreen() {
           ) : (
             <Card>
               <Text
-                style={[
-                  styles.noOperationsText,
-                  { color: colors.textSecondary }
-                ]}
+                className="text-center text-sm italic"
+                style={{ color: colors.textSecondary }}
               >
                 No recent activity for this account
               </Text>
@@ -299,121 +324,3 @@ export default function AccountDetailsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  scrollContent: {
-    padding: 16
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 40
-  },
-  headerCard: {
-    borderLeftWidth: 4,
-    marginBottom: 24
-  },
-  accountHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  accountInfo: {
-    flex: 1
-  },
-  accountName: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 2
-  },
-  accountType: {
-    fontSize: 14,
-    textTransform: 'capitalize'
-  },
-  description: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 16
-  },
-  balanceSection: {
-    marginBottom: 16
-  },
-  balanceLabel: {
-    fontSize: 14,
-    marginBottom: 4
-  },
-  balanceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  balance: {
-    fontSize: 32,
-    fontWeight: '800'
-  },
-  progressSection: {
-    marginBottom: 16
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8
-  },
-  progressLabel: {
-    fontSize: 14
-  },
-  progressText: {
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  progressBar: {
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden'
-  },
-  progressFill: {
-    height: '100%'
-  },
-  additionalInfo: {
-    gap: 12
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  infoLabel: {
-    fontSize: 14,
-    flex: 1
-  },
-  infoValue: {
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  operationsSection: {
-    marginBottom: 20
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 16,
-    letterSpacing: -0.5
-  },
-  noOperationsText: {
-    textAlign: 'center',
-    fontSize: 14,
-    fontStyle: 'italic'
-  }
-})

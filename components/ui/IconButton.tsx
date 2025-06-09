@@ -22,41 +22,11 @@ export interface IconButtonProps extends TouchableOpacityProps {
   icon: React.ReactNode
   variant?: IconButtonVariant
   size?: IconButtonSize
+  className?: string
 }
 
-const createStyles = ({ colors, borderRadius }: ThemedStylesProps) =>
+const createStyles = ({ colors }: ThemedStylesProps) =>
   StyleSheet.create({
-    button: {
-      alignItems: 'center',
-      justifyContent: 'center'
-    } as ViewStyle,
-
-    // Size variants
-    sizeExtraSmall: {
-      width: 24,
-      height: 24
-    } as ViewStyle,
-
-    sizeSmall: {
-      width: 32,
-      height: 32
-    } as ViewStyle,
-
-    sizeMedium: {
-      width: 40,
-      height: 40
-    } as ViewStyle,
-
-    sizeLarge: {
-      width: 48,
-      height: 48
-    } as ViewStyle,
-
-    sizeExtraLarge: {
-      width: 56,
-      height: 56
-    } as ViewStyle,
-
     // Background variants
     primaryButton: {
       backgroundColor: colors.button.primaryBg
@@ -89,11 +59,6 @@ const createStyles = ({ colors, borderRadius }: ThemedStylesProps) =>
     disabledButton: {
       backgroundColor: colors.button.primaryBgDisabled,
       borderColor: colors.button.primaryBgDisabled
-    } as ViewStyle,
-
-    iconContainer: {
-      alignItems: 'center',
-      justifyContent: 'center'
     } as ViewStyle
   })
 
@@ -103,23 +68,24 @@ export default function IconButton({
   size = 'md',
   style,
   disabled,
+  className = '',
   ...props
 }: IconButtonProps) {
   const styles = useThemedStyles(createStyles)
   const { colors } = useThemedStyles(({ colors }) => ({ colors }))
 
-  const getSizeStyle = () => {
+  const getSizeClassName = () => {
     switch (size) {
       case 'xs':
-        return styles.sizeExtraSmall
+        return 'w-6 h-6'
       case 'sm':
-        return styles.sizeSmall
+        return 'w-8 h-8'
       case 'lg':
-        return styles.sizeLarge
+        return 'w-12 h-12'
       case 'xl':
-        return styles.sizeExtraLarge
+        return 'w-14 h-14'
       default:
-        return styles.sizeMedium
+        return 'w-10 h-10'
     }
   }
 
@@ -180,7 +146,8 @@ export default function IconButton({
     }
   }
 
-  const buttonStyles = [styles.button, getSizeStyle(), getVariantStyle(), style]
+  const baseClassName =
+    `items-center justify-center ${getSizeClassName()} ${className}`.trim()
 
   // Clone the icon with the appropriate color and size
   const iconWithProps = React.isValidElement(icon)
@@ -193,12 +160,13 @@ export default function IconButton({
 
   return (
     <TouchableOpacity
-      style={buttonStyles}
+      className={baseClassName}
+      style={[getVariantStyle(), style]}
       disabled={disabled}
       activeOpacity={disabled ? 1 : 0.8}
       {...props}
     >
-      <View style={styles.iconContainer}>{iconWithProps}</View>
+      <View className="items-center justify-center">{iconWithProps}</View>
     </TouchableOpacity>
   )
 }

@@ -1,6 +1,6 @@
 import type { Account } from '@/hooks/useAccountManagement'
 import React from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AccountSection from './AccountSection'
 
@@ -23,10 +23,10 @@ export default function AccountsList({
 
   return (
     <ScrollView
-      style={styles.content}
+      className="flex-1"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[
-        styles.scrollContent,
+        { paddingHorizontal: 16, paddingTop: 8 },
         { paddingBottom: insets.bottom + 20 }
       ]}
     >
@@ -56,13 +56,3 @@ export default function AccountsList({
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8
-  }
-})

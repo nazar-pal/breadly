@@ -1,8 +1,8 @@
-import React from 'react'
-import { View, Alert, StyleSheet } from 'react-native'
-import { useTheme } from '@/context/ThemeContext'
 import ExpenseForm from '@/components/expenses/ExpenseForm'
+import { useTheme } from '@/context/ThemeContext'
 import { router } from 'expo-router'
+import React from 'react'
+import { Alert, View } from 'react-native'
 
 export default function ManualScreen() {
   const { colors } = useTheme()
@@ -14,14 +14,8 @@ export default function ManualScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ExpenseForm onSubmit={handleSubmit} />
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-})

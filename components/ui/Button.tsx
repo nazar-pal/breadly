@@ -28,33 +28,11 @@ interface ButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode
   fullWidth?: boolean
   style?: ViewStyle | ViewStyle[]
+  className?: string
 }
 
-const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
+const createStyles = ({ colors }: ThemedStylesProps) =>
   StyleSheet.create({
-    button: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: borderRadius.md
-    } as ViewStyle,
-
-    // Size variants
-    sizeSmall: {
-      height: 32,
-      paddingHorizontal: spacing.md
-    } as ViewStyle,
-
-    sizeMedium: {
-      height: 40,
-      paddingHorizontal: spacing.md
-    } as ViewStyle,
-
-    sizeLarge: {
-      height: 48,
-      paddingHorizontal: spacing.lg
-    } as ViewStyle,
-
     // Background variants
     primaryButton: {
       backgroundColor: colors.button.primaryBg
@@ -85,25 +63,7 @@ const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
       borderColor: colors.button.primaryBgDisabled
     } as ViewStyle,
 
-    // Text variants
-    textSmall: {
-      fontSize: 12,
-      fontWeight: '600',
-      textAlign: 'center'
-    } as TextStyle,
-
-    textMedium: {
-      fontSize: 14,
-      fontWeight: '600',
-      textAlign: 'center'
-    } as TextStyle,
-
-    textLarge: {
-      fontSize: 16,
-      fontWeight: '600',
-      textAlign: 'center'
-    } as TextStyle,
-
+    // Text color variants
     primaryText: {
       color: colors.button.primaryText
     } as TextStyle,
@@ -126,26 +86,7 @@ const createStyles = ({ colors, spacing, borderRadius }: ThemedStylesProps) =>
 
     disabledText: {
       color: colors.button.primaryTextDisabled
-    } as TextStyle,
-
-    // Layout helpers
-    fullWidth: {
-      width: '100%'
-    } as ViewStyle,
-
-    contentContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center'
-    } as ViewStyle,
-
-    iconLeft: {
-      marginRight: spacing.xs
-    } as ViewStyle,
-
-    iconRight: {
-      marginLeft: spacing.xs
-    } as ViewStyle
+    } as TextStyle
   })
 
 export default function Button({
@@ -158,18 +99,30 @@ export default function Button({
   fullWidth = false,
   style,
   disabled,
+  className = '',
   ...props
 }: ButtonProps) {
   const styles = useThemedStyles(createStyles)
 
-  const getSizeStyle = () => {
+  const getSizeClassName = () => {
     switch (size) {
       case 'sm':
-        return styles.sizeSmall
+        return 'h-8 px-3'
       case 'lg':
-        return styles.sizeLarge
+        return 'h-12 px-4'
       default:
-        return styles.sizeMedium
+        return 'h-10 px-3'
+    }
+  }
+
+  const getTextSizeClassName = () => {
+    switch (size) {
+      case 'sm':
+        return 'text-xs'
+      case 'lg':
+        return 'text-base'
+      default:
+        return 'text-sm'
     }
   }
 
@@ -189,17 +142,6 @@ export default function Button({
         return styles.destructiveButton
       default:
         return styles.primaryButton
-    }
-  }
-
-  const getTextSizeStyle = () => {
-    switch (size) {
-      case 'sm':
-        return styles.textSmall
-      case 'lg':
-        return styles.textLarge
-      default:
-        return styles.textMedium
     }
   }
 
@@ -241,39 +183,35 @@ export default function Button({
     }
   }
 
-  const buttonStyles = [
-    styles.button,
-    getSizeStyle(),
-    getVariantStyle(),
-    fullWidth && styles.fullWidth,
-    style
-  ]
-
-  const textStyles = [getTextSizeStyle(), getTextVariantStyle()]
+  const baseClassName =
+    `flex-row items-center justify-center rounded-md ${getSizeClassName()} ${fullWidth ? 'w-full' : ''} ${className}`.trim()
 
   return (
     <Pressable
+      className={baseClassName}
       style={({ pressed }) => [
-        ...buttonStyles,
-        pressed && !disabled && { opacity: 0.8 }
+        getVariantStyle(),
+        pressed && !disabled && { opacity: 0.8 },
+        style
       ]}
       disabled={disabled || loading}
       {...props}
     >
-      <View style={styles.contentContainer}>
-        {leftIcon && !loading && (
-          <View style={styles.iconLeft}>{leftIcon}</View>
-        )}
+      <View className="flex-row items-center justify-center">
+        {leftIcon && !loading && <View className="mr-1">{leftIcon}</View>}
 
         {loading ? (
           <ActivityIndicator size="small" color={getLoadingColor()} />
         ) : (
-          <Text style={textStyles}>{children}</Text>
+          <Text
+            className={`${getTextSizeClassName()} text-center font-semibold`}
+            style={getTextVariantStyle()}
+          >
+            {children}
+          </Text>
         )}
 
-        {rightIcon && !loading && (
-          <View style={styles.iconRight}>{rightIcon}</View>
-        )}
+        {rightIcon && !loading && <View className="ml-1">{rightIcon}</View>}
       </View>
     </Pressable>
   )

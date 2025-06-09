@@ -37,36 +37,6 @@ const createThemedStyles = ({
   borderRadius
 }: ThemedStylesProps) =>
   StyleSheet.create({
-    container: {
-      flex: 1
-    },
-    loadingContainer: {
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    header: {
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.md
-    },
-    screenTitle: {
-      fontSize: 28,
-      fontWeight: '700',
-      color: colors.text
-    },
-    scrollContent: {
-      paddingHorizontal: spacing.md
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginVertical: spacing.md,
-      color: colors.text
-    },
-    separator: {
-      height: 1,
-      width: '100%',
-      backgroundColor: colors.border
-    },
     authButtons: {
       gap: spacing.sm
     }
@@ -96,11 +66,8 @@ export default function SettingsScreen() {
   if (isLoading) {
     return (
       <View
-        style={[
-          themedStyles.container,
-          themedStyles.loadingContainer,
-          { backgroundColor: colors.background, paddingTop: insets.top }
-        ]}
+        className="flex-1 items-center justify-center"
+        style={{ backgroundColor: colors.background, paddingTop: insets.top }}
       >
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
@@ -109,48 +76,51 @@ export default function SettingsScreen() {
 
   return (
     <View
-      style={[
-        themedStyles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top }
-      ]}
+      className="flex-1"
+      style={{ backgroundColor: colors.background, paddingTop: insets.top }}
     >
-      <View style={themedStyles.header}>
-        <Text style={themedStyles.screenTitle}>Settings</Text>
+      <View className="px-4 py-4">
+        <Text className="text-[28px] font-bold" style={{ color: colors.text }}>
+          Settings
+        </Text>
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          themedStyles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl }
-        ]}
+        contentContainerStyle={{
+          paddingHorizontal: spacing.md,
+          paddingBottom: insets.bottom + spacing.xl
+        }}
       >
         <SignedIn>
           <Card>
-            <View style={styles.accountSection}>
+            <View className="mb-4 flex-row items-center">
               <View
-                style={[
-                  styles.avatarPlaceholder,
-                  { backgroundColor: colors.iconBackground.neutral }
-                ]}
+                className="h-[60px] w-[60px] items-center justify-center rounded-[30px]"
+                style={{ backgroundColor: colors.iconBackground.neutral }}
               >
                 <User size={32} color={colors.text} />
               </View>
-              <View style={styles.accountInfo}>
-                <Text style={[styles.userName, { color: colors.text }]}>
+              <View className="ml-4">
+                <Text
+                  className="mb-1 text-lg font-semibold"
+                  style={{ color: colors.text }}
+                >
                   {user?.firstName && user?.lastName
                     ? `${user.firstName} ${user.lastName}`
                     : user?.username || 'User'}
                 </Text>
                 <Text
-                  style={[styles.userEmail, { color: colors.textSecondary }]}
+                  className="text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   {user?.emailAddresses[0]?.emailAddress || 'No email'}
                 </Text>
               </View>
             </View>
             <View
-              style={[themedStyles.separator, { marginVertical: spacing.md }]}
+              className="my-4 h-px w-full"
+              style={{ backgroundColor: colors.border }}
             />
             <SignOutButton />
           </Card>
@@ -158,12 +128,16 @@ export default function SettingsScreen() {
 
         <SignedOut>
           <Card>
-            <View style={styles.authSection}>
-              <Text style={[styles.authTitle, { color: colors.text }]}>
+            <View className="py-2">
+              <Text
+                className="mb-2 text-lg font-semibold"
+                style={{ color: colors.text }}
+              >
                 Sign in to access your account
               </Text>
               <Text
-                style={[styles.authSubtitle, { color: colors.textSecondary }]}
+                className="mb-4 text-sm leading-5"
+                style={{ color: colors.textSecondary }}
               >
                 Sign in or create an account to sync your data across devices
               </Text>
@@ -179,32 +153,31 @@ export default function SettingsScreen() {
           </Card>
         </SignedOut>
 
-        <Text style={[themedStyles.sectionTitle, { marginTop: spacing.lg }]}>
+        <Text
+          className="my-4 mt-6 text-lg font-semibold"
+          style={{ color: colors.text }}
+        >
           Preferences
         </Text>
         <Card>
           <Pressable
-            style={styles.settingItem}
+            className="flex-row items-center justify-between py-3"
             onPress={() => setShowCurrencyModal(!showCurrencyModal)}
           >
-            <View style={styles.settingLeft}>
+            <View className="flex-1 flex-row items-center">
               <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.warning }
-                ]}
+                className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+                style={{ backgroundColor: colors.iconBackground.warning }}
               >
                 <DollarSign size={20} color={colors.warning} />
               </View>
               <View>
-                <Text style={[styles.settingText, { color: colors.text }]}>
+                <Text className="text-base" style={{ color: colors.text }}>
                   Default Currency
                 </Text>
                 <Text
-                  style={[
-                    styles.settingSubtext,
-                    { color: colors.textSecondary }
-                  ]}
+                  className="mt-0.5 text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
                   {currency.name} ({currency.symbol})
                 </Text>
@@ -213,21 +186,17 @@ export default function SettingsScreen() {
             <ChevronRight size={20} color={colors.textSecondary} />
           </Pressable>
 
-          <View
-            style={[styles.separator, { backgroundColor: colors.border }]}
-          />
+          <View className="h-px" style={{ backgroundColor: colors.border }} />
 
-          <View style={styles.settingItem}>
-            <View style={styles.settingLeft}>
+          <View className="flex-row items-center justify-between py-3">
+            <View className="flex-row items-center">
               <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.warning }
-                ]}
+                className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+                style={{ backgroundColor: colors.iconBackground.warning }}
               >
                 <Sun size={20} color={colors.warning} />
               </View>
-              <Text style={[styles.settingText, { color: colors.text }]}>
+              <Text className="text-base" style={{ color: colors.text }}>
                 Light Mode
               </Text>
             </View>
@@ -241,21 +210,17 @@ export default function SettingsScreen() {
             />
           </View>
 
-          <View
-            style={[styles.separator, { backgroundColor: colors.border }]}
-          />
+          <View className="h-px" style={{ backgroundColor: colors.border }} />
 
-          <View style={styles.settingItem}>
-            <View style={styles.settingLeft}>
+          <View className="flex-row items-center justify-between py-3">
+            <View className="flex-row items-center">
               <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.info }
-                ]}
+                className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+                style={{ backgroundColor: colors.iconBackground.info }}
               >
                 <Moon size={20} color={colors.info} />
               </View>
-              <Text style={[styles.settingText, { color: colors.text }]}>
+              <Text className="text-base" style={{ color: colors.text }}>
                 Dark Mode
               </Text>
             </View>
@@ -269,21 +234,17 @@ export default function SettingsScreen() {
             />
           </View>
 
-          <View
-            style={[styles.separator, { backgroundColor: colors.border }]}
-          />
+          <View className="h-px" style={{ backgroundColor: colors.border }} />
 
-          <View style={styles.settingItem}>
-            <View style={styles.settingLeft}>
+          <View className="flex-row items-center justify-between py-3">
+            <View className="flex-row items-center">
               <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: colors.iconBackground.primary }
-                ]}
+                className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+                style={{ backgroundColor: colors.iconBackground.primary }}
               >
                 <Smartphone size={20} color={colors.primary} />
               </View>
-              <Text style={[styles.settingText, { color: colors.text }]}>
+              <Text className="text-base" style={{ color: colors.text }}>
                 Use System Settings
               </Text>
             </View>
@@ -299,41 +260,39 @@ export default function SettingsScreen() {
         </Card>
 
         {showCurrencyModal && (
-          <Card style={styles.currencyModal}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+          <Card className="mt-2">
+            <Text
+              className="mb-3 text-base font-semibold"
+              style={{ color: colors.text }}
+            >
               Select Currency
             </Text>
             {currencies.map(curr => (
               <Pressable
                 key={curr.code}
-                style={[
-                  styles.currencyOption,
-                  curr.code === currency.code && {
-                    backgroundColor: colors.primary
-                  }
-                ]}
+                className="mb-1 flex-row items-center justify-between rounded-lg p-3"
+                style={
+                  curr.code === currency.code
+                    ? { backgroundColor: colors.primary }
+                    : undefined
+                }
                 onPress={() => {
                   setCurrency(curr)
                   setShowCurrencyModal(false)
                 }}
               >
                 <Text
-                  style={[
-                    styles.currencyText,
-                    {
-                      color:
-                        curr.code === currency.code ? '#FFFFFF' : colors.text
-                    }
-                  ]}
+                  className="text-base"
+                  style={{
+                    color: curr.code === currency.code ? '#FFFFFF' : colors.text
+                  }}
                 >
                   {curr.symbol} - {curr.name}
                 </Text>
                 {curr.code === currency.code && (
                   <View
-                    style={[
-                      styles.selectedIndicator,
-                      { backgroundColor: '#FFFFFF' }
-                    ]}
+                    className="rounded-1 h-2 w-2"
+                    style={{ backgroundColor: '#FFFFFF' }}
                   />
                 )}
               </Pressable>
@@ -342,10 +301,8 @@ export default function SettingsScreen() {
         )}
 
         <Text
-          style={[
-            styles.versionText,
-            { color: colors.textSecondary, marginTop: spacing.xl }
-          ]}
+          className="mt-6 text-center text-sm"
+          style={{ color: colors.textSecondary }}
         >
           Breadly v1.0.0
         </Text>
@@ -353,129 +310,3 @@ export default function SettingsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: '700'
-  },
-  scrollContent: {
-    paddingHorizontal: 16
-  },
-  accountSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16
-  },
-  avatarPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  accountInfo: {
-    marginLeft: 16
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4
-  },
-  userEmail: {
-    fontSize: 14
-  },
-  authSection: {
-    paddingVertical: 8
-  },
-  authTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8
-  },
-  authSubtitle: {
-    fontSize: 14,
-    marginBottom: 16,
-    lineHeight: 20
-  },
-  authButtons: {
-    gap: 12
-  },
-  authButton: {
-    marginBottom: 0
-  },
-  separator: {
-    height: 1,
-    width: '100%'
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginVertical: 16
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  settingText: {
-    fontSize: 16
-  },
-  settingSubtext: {
-    fontSize: 14,
-    marginTop: 2
-  },
-  versionText: {
-    textAlign: 'center',
-    fontSize: 14
-  },
-  currencyModal: {
-    marginTop: 8
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  currencyOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 4
-  },
-  currencyText: {
-    fontSize: 16
-  },
-  selectedIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4
-  }
-})

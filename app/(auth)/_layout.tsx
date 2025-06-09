@@ -12,7 +12,7 @@ export default function AuthRoutesLayout() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <Stack
         screenOptions={{
           headerShown: true,

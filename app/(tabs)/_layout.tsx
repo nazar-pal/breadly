@@ -8,7 +8,7 @@ import {
   Settings,
   Wallet
 } from 'lucide-react-native'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function TabBarIcon({
@@ -24,12 +24,8 @@ function TabBarIcon({
 }) {
   return (
     <View
-      style={[
-        styles.iconContainer,
-        focused && {
-          backgroundColor: focusBackgroundColor
-        }
-      ]}
+      className="h-10 w-10 items-center justify-center rounded-[20px]"
+      style={focused ? { backgroundColor: focusBackgroundColor } : undefined}
     >
       <Icon size={24} color={color} strokeWidth={2} />
     </View>
@@ -158,13 +154,3 @@ export default function TabLayout() {
     </Tabs>
   )
 }
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 40,
-    height: 40,
-    borderRadius: 20
-  }
-})

@@ -8,7 +8,7 @@ import {
   mockOtherTransactions
 } from '@/data/mockData'
 import React, { useMemo, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
@@ -70,48 +70,45 @@ export default function OperationsScreen() {
 
   return (
     <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top }
-      ]}
+      className="flex-1"
+      style={{
+        backgroundColor: colors.background,
+        paddingTop: insets.top
+      }}
     >
-      <View style={styles.header}>
-        <Text style={[styles.screenTitle, { color: colors.text }]}>
+      <View className="px-4 py-4">
+        <Text className="text-[28px] font-bold" style={{ color: colors.text }}>
           Operations
         </Text>
       </View>
 
       {/* Filter Tabs */}
-      <View style={styles.filtersContainer}>
+      <View className="mb-4 px-4">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
+          contentContainerStyle={{ paddingVertical: 8 }}
         >
           {filterButtons.map(filter => (
             <Pressable
               key={filter.key}
-              style={[
-                styles.filterButton,
-                {
-                  backgroundColor:
-                    activeFilter === filter.key
-                      ? colors.primary
-                      : colors.surfaceSecondary
-                }
-              ]}
+              className="mr-2 min-w-[80px] items-center rounded-[20px] px-4 py-2"
+              style={{
+                backgroundColor:
+                  activeFilter === filter.key
+                    ? colors.primary
+                    : colors.surfaceSecondary
+              }}
               onPress={() => setActiveFilter(filter.key as FilterType)}
             >
               <Text
-                style={[
-                  styles.filterButtonText,
-                  {
-                    color:
-                      activeFilter === filter.key
-                        ? colors.textInverse
-                        : colors.text
-                  }
-                ]}
+                className="text-sm font-medium"
+                style={{
+                  color:
+                    activeFilter === filter.key
+                      ? colors.textInverse
+                      : colors.text
+                }}
               >
                 {filter.label} ({filter.count})
               </Text>
@@ -122,15 +119,18 @@ export default function OperationsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl }
-        ]}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: insets.bottom + spacing.xl
+        }}
       >
         {/* Today's Operations */}
         {todaysOperations.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <View className="mb-6">
+            <Text
+              className="mb-3 text-lg font-semibold"
+              style={{ color: colors.text }}
+            >
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
@@ -143,8 +143,11 @@ export default function OperationsScreen() {
         )}
 
         {/* All Operations */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View className="mb-6">
+          <Text
+            className="mb-3 text-lg font-semibold"
+            style={{ color: colors.text }}
+          >
             {activeFilter === 'all'
               ? 'All Operations'
               : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
@@ -159,7 +162,8 @@ export default function OperationsScreen() {
           ) : (
             <Card>
               <Text
-                style={{ color: colors.textSecondary, textAlign: 'center' }}
+                className="text-center"
+                style={{ color: colors.textSecondary }}
               >
                 No operations found for the selected filter
               </Text>
@@ -170,47 +174,3 @@ export default function OperationsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: '700'
-  },
-  filtersContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16
-  },
-  filtersContent: {
-    paddingVertical: 8
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    minWidth: 80,
-    alignItems: 'center'
-  },
-  filterButtonText: {
-    fontSize: 14,
-    fontWeight: '500'
-  },
-  scrollContent: {
-    paddingHorizontal: 16
-  },
-  section: {
-    marginBottom: 24
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12
-  }
-})

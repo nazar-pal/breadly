@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext'
 import { useRouter } from 'expo-router'
 import { ArrowRight, Calendar, Mic, Receipt } from 'lucide-react-native'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import Card from './Card'
 
 interface ExpenseCardProps {
@@ -27,36 +27,42 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card variant="elevated" size="md" style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.leftContent}>
-            <Text style={[styles.amount, { color: colors.text }]}>
+      <Card variant="elevated" size="md" className="mb-3">
+        <View className="min-h-[80px] flex-row items-start justify-between">
+          <View className="mr-4 flex-1">
+            <Text
+              className="mb-1 text-lg font-semibold"
+              style={{ color: colors.text }}
+            >
               ${expense.amount.toFixed(2)}
             </Text>
             <Text
-              style={[styles.description, { color: colors.textSecondary }]}
+              className="mb-2 flex-wrap text-sm"
+              style={{ color: colors.textSecondary }}
               numberOfLines={2}
             >
               {expense.description}
             </Text>
-            <View style={styles.metaContainer}>
+            <View className="flex-row flex-wrap items-center">
               <View
-                style={[
-                  styles.categoryBadge,
-                  { backgroundColor: colors.surfaceSecondary }
-                ]}
+                className="mr-2 rounded px-2 py-1"
+                style={{ backgroundColor: colors.surfaceSecondary }}
               >
-                <Text style={[styles.categoryText, { color: colors.text }]}>
+                <Text
+                  className="text-xs font-medium"
+                  style={{ color: colors.text }}
+                >
                   {expense.category}
                 </Text>
               </View>
-              <View style={[styles.dateContainer, { marginLeft: spacing.sm }]}>
+              <View
+                className="flex-row items-center"
+                style={{ marginLeft: spacing.sm }}
+              >
                 <Calendar size={14} color={colors.textSecondary} />
                 <Text
-                  style={[
-                    styles.dateText,
-                    { color: colors.textSecondary, marginLeft: 4 }
-                  ]}
+                  className="ml-1 text-xs"
+                  style={{ color: colors.textSecondary }}
                 >
                   {expense.date}
                 </Text>
@@ -64,8 +70,8 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
             </View>
           </View>
 
-          <View style={styles.rightContent}>
-            <View style={styles.iconContainer}>
+          <View className="items-end justify-between">
+            <View className="mb-3 flex-row">
               {expense.hasPhoto && (
                 <Receipt
                   size={16}
@@ -84,58 +90,3 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
     </Pressable>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 12
-  },
-  content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    minHeight: 80
-  },
-  leftContent: {
-    flex: 1,
-    marginRight: 16
-  },
-  rightContent: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between'
-  },
-  amount: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4
-  },
-  description: {
-    fontSize: 14,
-    marginBottom: 8,
-    flexWrap: 'wrap'
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap'
-  },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4
-  },
-  categoryText: {
-    fontSize: 12,
-    fontWeight: '500'
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  dateText: {
-    fontSize: 12
-  },
-  iconContainer: {
-    flexDirection: 'row',
-    marginBottom: 12
-  }
-})

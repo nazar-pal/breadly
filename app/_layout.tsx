@@ -44,7 +44,7 @@ export default function RootLayout() {
       tokenCache={tokenCache}
       __experimental_resourceCache={resourceCache}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView className="flex-1">
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <ThemeProvider>

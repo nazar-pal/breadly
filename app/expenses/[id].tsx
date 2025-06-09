@@ -4,7 +4,7 @@ import { mockExpenses } from '@/data/mockData'
 import { useLocalSearchParams } from 'expo-router'
 import { Calendar, Mic, Tag } from 'lucide-react-native'
 import React from 'react'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, ScrollView, Text, View } from 'react-native'
 
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -19,8 +19,11 @@ export default function ExpenseDetailsScreen() {
 
   if (!expense) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.error }]}>
+      <View className="flex-1" style={{ backgroundColor: colors.background }}>
+        <Text
+          className="mt-10 text-center text-lg"
+          style={{ color: colors.error }}
+        >
           Expense not found
         </Text>
       </View>
@@ -29,67 +32,94 @@ export default function ExpenseDetailsScreen() {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.contentContainer}
+      className="flex-1"
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16 }}
     >
-      <View style={styles.amountContainer}>
-        <Text style={[styles.amountLabel, { color: colors.textSecondary }]}>
+      <View className="mb-6 items-center">
+        <Text
+          className="mb-2 text-base"
+          style={{ color: colors.textSecondary }}
+        >
           Amount
         </Text>
-        <Text style={[styles.amount, { color: colors.expense }]}>
+        <Text
+          className="text-[48px] font-bold"
+          style={{ color: colors.expense }}
+        >
           ${expense.amount.toFixed(2)}
         </Text>
       </View>
 
-      <Card style={styles.detailsCard}>
-        <View style={styles.detailRow}>
+      <Card className="mb-4">
+        <View className="flex-row items-center py-3">
           <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.iconBackground.info }
-            ]}
+            className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+            style={{ backgroundColor: colors.iconBackground.info }}
           >
             <Calendar size={20} color={colors.info} />
           </View>
           <View>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+            <Text
+              className="mb-1 text-sm"
+              style={{ color: colors.textSecondary }}
+            >
               Date
             </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
+            <Text
+              className="text-base font-medium"
+              style={{ color: colors.text }}
+            >
               {expense.date}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.separator, { backgroundColor: colors.border }]} />
+        <View
+          className="h-px w-full"
+          style={{ backgroundColor: colors.border }}
+        />
 
-        <View style={styles.detailRow}>
+        <View className="flex-row items-center py-3">
           <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.iconBackground.primary }
-            ]}
+            className="mr-3 h-10 w-10 items-center justify-center rounded-[20px]"
+            style={{ backgroundColor: colors.iconBackground.primary }}
           >
             <Tag size={20} color={colors.primary} />
           </View>
           <View>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+            <Text
+              className="mb-1 text-sm"
+              style={{ color: colors.textSecondary }}
+            >
               Category
             </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
+            <Text
+              className="text-base font-medium"
+              style={{ color: colors.text }}
+            >
               {expense.category}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.separator, { backgroundColor: colors.border }]} />
+        <View
+          className="h-px w-full"
+          style={{ backgroundColor: colors.border }}
+        />
 
-        <View style={styles.detailRow}>
-          <View style={styles.descriptionContainer}>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+        <View className="flex-row py-3">
+          <View className="flex-1">
+            <Text
+              className="mb-1 text-sm"
+              style={{ color: colors.textSecondary }}
+            >
               Description
             </Text>
-            <Text style={[styles.descriptionText, { color: colors.text }]}>
+            <Text
+              className="text-base leading-6"
+              style={{ color: colors.text }}
+            >
               {expense.description ?? 'No description provided'}
             </Text>
           </View>
@@ -97,19 +127,20 @@ export default function ExpenseDetailsScreen() {
       </Card>
 
       {expense.hasPhoto && (
-        <Card style={styles.attachmentCard}>
-          <Text style={[styles.attachmentTitle, { color: colors.text }]}>
+        <Card className="mb-4">
+          <Text
+            className="mb-3 text-base font-semibold"
+            style={{ color: colors.text }}
+          >
             Receipt Photo
           </Text>
           <View
-            style={[
-              styles.receiptContainer,
-              { backgroundColor: colors.surfaceSecondary }
-            ]}
+            className="h-[200px] overflow-hidden rounded-lg"
+            style={{ backgroundColor: colors.surfaceSecondary }}
           >
             <Image
               source={{ uri: receiptImageUrl }}
-              style={styles.receiptImage}
+              className="h-full w-full"
               resizeMode="contain"
             />
           </View>
@@ -117,18 +148,19 @@ export default function ExpenseDetailsScreen() {
       )}
 
       {expense.hasVoice && (
-        <Card style={styles.attachmentCard}>
-          <Text style={[styles.attachmentTitle, { color: colors.text }]}>
+        <Card className="mb-4">
+          <Text
+            className="mb-3 text-base font-semibold"
+            style={{ color: colors.text }}
+          >
             Voice Memo
           </Text>
           <View
-            style={[
-              styles.voiceMemoContainer,
-              { backgroundColor: colors.iconBackground.warning }
-            ]}
+            className="flex-row items-center rounded-lg p-3"
+            style={{ backgroundColor: colors.iconBackground.warning }}
           >
-            <Mic size={24} color={colors.warning} style={{ marginRight: 8 }} />
-            <Text style={[styles.voiceMemoText, { color: colors.text }]}>
+            <Mic size={24} color={colors.warning} className="mr-2" />
+            <Text className="text-base" style={{ color: colors.text }}>
               Voice Memo (00:12)
             </Text>
           </View>
@@ -137,90 +169,3 @@ export default function ExpenseDetailsScreen() {
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  contentContainer: {
-    padding: 16
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 40
-  },
-  amountContainer: {
-    alignItems: 'center',
-    marginBottom: 24
-  },
-  amountLabel: {
-    fontSize: 16,
-    marginBottom: 8
-  },
-  amount: {
-    fontSize: 48,
-    fontWeight: '700'
-  },
-  detailsCard: {
-    marginBottom: 16
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  detailLabel: {
-    fontSize: 14,
-    marginBottom: 4
-  },
-  detailValue: {
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  separator: {
-    height: 1,
-    width: '100%'
-  },
-  descriptionContainer: {
-    flex: 1
-  },
-  descriptionText: {
-    fontSize: 16,
-    lineHeight: 24
-  },
-  attachmentCard: {
-    marginBottom: 16
-  },
-  attachmentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  receiptContainer: {
-    height: 200,
-    overflow: 'hidden',
-    borderRadius: 8
-  },
-  receiptImage: {
-    width: '100%',
-    height: '100%'
-  },
-  voiceMemoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 8
-  },
-  voiceMemoText: {
-    fontSize: 16
-  }
-})

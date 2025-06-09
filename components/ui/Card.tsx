@@ -19,34 +19,12 @@ interface CardProps extends ViewProps {
   size?: CardSize
   noPadding?: boolean
   padded?: boolean
+  className?: string
 }
 
-const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
+const createStyles = ({ colors }: ThemedStylesProps) =>
   StyleSheet.create({
-    card: {
-      borderRadius: borderRadius.md,
-      overflow: 'hidden',
-      width: '100%'
-    } as ViewStyle,
-
-    // Size variants
-    sizeSmall: {
-      padding: spacing.sm
-    } as ViewStyle,
-
-    sizeMedium: {
-      padding: spacing.md
-    } as ViewStyle,
-
-    sizeLarge: {
-      padding: spacing.lg
-    } as ViewStyle,
-
-    sizeExtraLarge: {
-      padding: spacing.xl
-    } as ViewStyle,
-
-    // Background variants
+    // Background variants with theme colors
     elevatedCard: {
       backgroundColor: colors.card,
       ...Platform.select({
@@ -117,10 +95,6 @@ const createStyles = ({ colors, borderRadius, spacing }: ThemedStylesProps) =>
           boxShadow: `0px 4px 12px ${colors.shadowStrong}`
         }
       })
-    } as ViewStyle,
-
-    noPadding: {
-      padding: 0
     } as ViewStyle
   })
 
@@ -131,23 +105,24 @@ export default function Card({
   size = 'md',
   noPadding = false,
   padded,
+  className = '',
   ...props
 }: CardProps) {
   const styles = useThemedStyles(createStyles)
 
-  const getSizeStyle = () => {
+  const getSizeClassName = () => {
     const shouldHavePadding = padded !== undefined ? padded : !noPadding
-    if (!shouldHavePadding) return styles.noPadding
+    if (!shouldHavePadding) return ''
 
     switch (size) {
       case 'sm':
-        return styles.sizeSmall
+        return 'p-2' // spacing.sm
       case 'lg':
-        return styles.sizeLarge
+        return 'p-4' // spacing.lg
       case 'xl':
-        return styles.sizeExtraLarge
+        return 'p-6' // spacing.xl
       default:
-        return styles.sizeMedium
+        return 'p-3' // spacing.md
     }
   }
 
@@ -172,10 +147,15 @@ export default function Card({
     }
   }
 
-  const cardStyles = [styles.card, getVariantStyle(), getSizeStyle(), style]
+  const baseClassName =
+    `rounded-md overflow-hidden w-full ${getSizeClassName()} ${className}`.trim()
 
   return (
-    <View style={cardStyles} {...props}>
+    <View
+      className={baseClassName}
+      style={[getVariantStyle(), style]}
+      {...props}
+    >
       {children}
     </View>
   )

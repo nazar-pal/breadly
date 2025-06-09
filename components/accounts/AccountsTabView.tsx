@@ -71,24 +71,6 @@ export default function AccountsTabView({
   const styles = useThemedStyles(
     theme =>
       ({
-        container: {
-          flex: 1
-        },
-        tabBar: {
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-          paddingVertical: 12,
-          gap: 8
-        },
-        tab: {
-          flex: 1,
-          paddingVertical: 10,
-          paddingHorizontal: 16,
-          borderRadius: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 40
-        },
         activeTab: {
           ...Platform.select({
             android: {
@@ -98,29 +80,6 @@ export default function AccountsTabView({
               boxShadow: `0px 2px 4px ${theme.colors.shadow}`
             }
           })
-        },
-        tabContent: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8
-        },
-        tabText: {
-          fontSize: 14,
-          fontWeight: '500',
-          textAlign: 'center'
-        },
-        activeTabText: {
-          fontWeight: '600'
-        },
-        contentContainer: {
-          flex: 1
-        },
-        scrollView: {
-          flex: 1
-        },
-        scrollContent: {
-          paddingHorizontal: 16,
-          paddingTop: 8
         }
       }) as const
   )
@@ -131,10 +90,10 @@ export default function AccountsTabView({
 
     return (
       <ScrollView
-        style={styles.scrollView}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          styles.scrollContent,
+          { paddingHorizontal: 16, paddingTop: 8 },
           { paddingBottom: insets.bottom + 20 }
         ]}
       >
@@ -150,9 +109,12 @@ export default function AccountsTabView({
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       {/* Tab Navigation */}
-      <View style={[styles.tabBar, { backgroundColor: colors.background }]}>
+      <View
+        className="flex-row gap-2 px-5 py-3"
+        style={{ backgroundColor: colors.background }}
+      >
         {tabs.map(tab => {
           const IconComponent = tab.icon
           const isActive = activeTab === tab.key
@@ -161,8 +123,8 @@ export default function AccountsTabView({
           return (
             <Pressable
               key={tab.key}
+              className="min-h-[40px] flex-1 items-center justify-center rounded-2xl px-4 py-2.5"
               style={[
-                styles.tab,
                 { backgroundColor: colors.surfaceSecondary },
                 isActive && [
                   styles.activeTab,
@@ -181,15 +143,14 @@ export default function AccountsTabView({
               ]}
               onPress={() => handleTabPress(tab.key)}
             >
-              <View style={styles.tabContent}>
+              <View className="flex-row items-center gap-2">
                 <IconComponent size={18} color={iconColor} />
                 <Text
+                  className="text-center text-sm font-medium"
                   style={[
-                    styles.tabText,
                     { color: colors.textSecondary },
                     isActive && [
-                      styles.activeTabText,
-                      { color: colors.textInverse }
+                      { fontWeight: '600', color: colors.textInverse }
                     ]
                   ]}
                 >
@@ -203,7 +164,7 @@ export default function AccountsTabView({
 
       {/* Tab Content with Swipe Gesture */}
       <GestureDetector gesture={panGesture}>
-        <View style={styles.contentContainer}>{renderTabContent()}</View>
+        <View className="flex-1">{renderTabContent()}</View>
       </GestureDetector>
     </View>
   )
