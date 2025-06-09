@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreditCard as Edit2, Trash2 } from 'lucide-react-native'
 import React from 'react'
 import { Text, View } from 'react-native'
-import IconButton from '../ui-old/IconButton'
 
 interface CategoryCardProps {
   category: {
@@ -33,19 +33,22 @@ export default function CategoryCard({
             {category.name}
           </Text>
           <View className="flex-row">
-            <IconButton
-              icon={<Edit2 size={16} />}
+            <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onPress={() => onEdit(category.id)}
-              className="mr-1"
-            />
-            <IconButton
-              icon={<Trash2 size={16} />}
+              className="mr-1 h-8 w-8 items-center justify-center"
+            >
+              <Edit2 size={16} color="#1A202C" />
+            </Button>
+            <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onPress={() => onDelete(category.id)}
-            />
+              className="h-8 w-8 items-center justify-center"
+            >
+              <Trash2 size={16} color="#1A202C" />
+            </Button>
           </View>
         </View>
 
