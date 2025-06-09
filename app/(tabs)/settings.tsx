@@ -8,6 +8,7 @@ import {
   type ThemePreference,
   type ThemedStylesProps
 } from '@/context/ThemeContext'
+import { useColorScheme } from '@/lib/useColorScheme'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
 import { Link } from 'expo-router'
 import {
@@ -43,8 +44,10 @@ const createThemedStyles = ({
   })
 
 export default function SettingsScreen() {
-  const { colors, spacing, preference, setThemePreference, isLoading } =
-    useTheme()
+  const { colors, spacing, preference, isLoading } = useTheme()
+
+  const { setColorScheme } = useColorScheme()
+
   const { currency, setCurrency } = useCurrency()
   const { user } = useUser()
   const insets = useSafeAreaInsets()
@@ -55,7 +58,7 @@ export default function SettingsScreen() {
   // Handle theme preference change
   const handleThemeChange = async (newPreference: ThemePreference) => {
     try {
-      await setThemePreference(newPreference)
+      setColorScheme(newPreference)
     } catch (error) {
       console.error('Failed to update theme:', error)
       // You might want to show an error toast here
