@@ -19,7 +19,7 @@ interface AccountOperation {
   type: 'expense' | 'income' | 'payment' | 'transfer'
 }
 
-interface AccountOperationCardProps {
+interface AccountTransactionItemProps {
   operation: AccountOperation
 }
 
@@ -61,9 +61,9 @@ const getIconBackgroundColor = (type: string) => {
   }
 }
 
-export default function AccountOperationCard({
+export default function AccountTransactionItem({
   operation
-}: AccountOperationCardProps) {
+}: AccountTransactionItemProps) {
   const IconComponent = getOperationIcon(operation.type)
   const operationColor = getOperationColor(operation.type, operation.amount)
   const iconBgColor = getIconBackgroundColor(operation.type)
@@ -86,7 +86,7 @@ export default function AccountOperationCard({
   }
 
   return (
-    <View className="mb-2 overflow-hidden rounded-lg bg-old-card">
+    <View className="bg-old-card mb-2 overflow-hidden rounded-lg">
       <View className="flex-row items-center p-3">
         <View
           className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
@@ -97,20 +97,20 @@ export default function AccountOperationCard({
 
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-1 text-sm font-medium text-old-text"
+            className="text-old-text mb-1 text-sm font-medium"
             numberOfLines={1}
           >
             {operation.description}
           </Text>
           <View className="flex-row items-center gap-3">
-            <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
-              <Text className="text-[11px] font-medium text-old-text-secondary">
+            <View className="bg-old-surface-secondary rounded px-1.5 py-0.5">
+              <Text className="text-old-text-secondary text-[11px] font-medium">
                 {operation.category}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
               <Calendar size={10} color="#4A5568" />
-              <Text className="text-[11px] text-old-text-secondary">
+              <Text className="text-old-text-secondary text-[11px]">
                 {formatDate(operation.date)}
               </Text>
             </View>

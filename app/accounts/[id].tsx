@@ -1,4 +1,4 @@
-import AccountOperationCard from '@/components/accounts/AccountOperationCard'
+import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -49,8 +49,8 @@ export default function AccountDetailsScreen() {
 
   if (!account) {
     return (
-      <View className="flex-1 bg-old-background">
-        <Text className="mt-10 text-center text-lg text-old-error">
+      <View className="bg-old-background flex-1">
+        <Text className="text-old-error mt-10 text-center text-lg">
           Account not found
         </Text>
       </View>
@@ -124,7 +124,7 @@ export default function AccountDetailsScreen() {
   const progress = getProgressPercentage()
 
   return (
-    <View className="flex-1 bg-old-background">
+    <View className="bg-old-background flex-1">
       <ScrollView
         contentContainerStyle={{
           padding: 16,
@@ -146,10 +146,10 @@ export default function AccountDetailsScreen() {
                 <Icon size={24} color={typeColor} />
               </View>
               <View className="flex-1">
-                <Text className="mb-0.5 text-xl font-bold text-old-text">
+                <Text className="text-old-text mb-0.5 text-xl font-bold">
                   {account.name}
                 </Text>
-                <Text className="text-sm capitalize text-old-text-secondary">
+                <Text className="text-old-text-secondary text-sm capitalize">
                   {account.type.charAt(0).toUpperCase() + account.type.slice(1)}{' '}
                   Account
                 </Text>
@@ -164,13 +164,13 @@ export default function AccountDetailsScreen() {
               </Button>
             </View>
 
-            <Text className="mb-4 text-sm leading-5 text-old-text-secondary">
+            <Text className="text-old-text-secondary mb-4 text-sm leading-5">
               {account.description}
             </Text>
 
             {/* Balance Section */}
             <View className="mb-4">
-              <Text className="mb-1 text-sm text-old-text-secondary">
+              <Text className="text-old-text-secondary mb-1 text-sm">
                 Current Balance
               </Text>
               <View className="flex-row items-center gap-2">
@@ -194,16 +194,16 @@ export default function AccountDetailsScreen() {
             {progress !== null && (
               <View className="mb-4">
                 <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="text-sm text-old-text-secondary">
+                  <Text className="text-old-text-secondary text-sm">
                     {account.type === 'savings'
                       ? 'Savings Progress'
                       : 'Repayment Progress'}
                   </Text>
-                  <Text className="text-sm font-semibold text-old-text">
+                  <Text className="text-old-text text-sm font-semibold">
                     {progress.toFixed(1)}%
                   </Text>
                 </View>
-                <View className="h-1.5 overflow-hidden rounded-sm bg-old-border-light">
+                <View className="bg-old-border-light h-1.5 overflow-hidden rounded-sm">
                   <View
                     className="h-full"
                     style={{
@@ -220,10 +220,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'savings' && account.targetAmount && (
                 <View className="flex-row items-center gap-2">
                   <Target size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-old-text-secondary">
+                  <Text className="text-old-text-secondary flex-1 text-sm">
                     Target Amount
                   </Text>
-                  <Text className="text-sm font-semibold text-old-text">
+                  <Text className="text-old-text text-sm font-semibold">
                     {formatBalance(account.targetAmount)}
                   </Text>
                 </View>
@@ -231,10 +231,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'debt' && account.dueDate && (
                 <View className="flex-row items-center gap-2">
                   <Calendar size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-old-text-secondary">
+                  <Text className="text-old-text-secondary flex-1 text-sm">
                     Due Date
                   </Text>
-                  <Text className="text-sm font-semibold text-old-text">
+                  <Text className="text-old-text text-sm font-semibold">
                     {new Date(account.dueDate).toLocaleDateString()}
                   </Text>
                 </View>
@@ -242,10 +242,10 @@ export default function AccountDetailsScreen() {
               {account.type === 'debt' && account.interestRate && (
                 <View className="flex-row items-center gap-2">
                   <DollarSign size={16} color="#4A5568" />
-                  <Text className="flex-1 text-sm text-old-text-secondary">
+                  <Text className="text-old-text-secondary flex-1 text-sm">
                     Interest Rate
                   </Text>
-                  <Text className="text-sm font-semibold text-old-text">
+                  <Text className="text-old-text text-sm font-semibold">
                     {account.interestRate}%
                   </Text>
                 </View>
@@ -256,17 +256,20 @@ export default function AccountDetailsScreen() {
 
         {/* Recent Operations */}
         <View className="mb-5">
-          <Text className="mb-4 text-xl font-bold tracking-tight text-old-text">
+          <Text className="text-old-text mb-4 text-xl font-bold tracking-tight">
             Recent Activity
           </Text>
           {accountOperations.length > 0 ? (
             accountOperations.map(operation => (
-              <AccountOperationCard key={operation.id} operation={operation} />
+              <AccountTransactionItem
+                key={operation.id}
+                operation={operation}
+              />
             ))
           ) : (
             <Card>
               <CardContent>
-                <Text className="text-center text-sm italic text-old-text-secondary">
+                <Text className="text-old-text-secondary text-center text-sm italic">
                   No recent activity for this account
                 </Text>
               </CardContent>

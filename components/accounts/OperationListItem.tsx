@@ -152,7 +152,7 @@ const getIconBackgroundColor = (operation: Operation) => {
   }
 }
 
-export default function OperationCard({ operation }: OperationCardProps) {
+export default function OperationListItem({ operation }: OperationCardProps) {
   const router = useRouter()
 
   const IconComponent = getOperationIcon(operation)
@@ -199,7 +199,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
             <View className="flex-1 gap-1">
               <View className="flex-row items-center justify-between">
                 <Text
-                  className="mr-2 flex-1 text-sm font-medium text-old-text"
+                  className="text-old-text mr-2 flex-1 text-sm font-medium"
                   numberOfLines={1}
                 >
                   {operation.description}
@@ -214,9 +214,9 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
               <View className="flex-row items-center justify-between">
                 <View className="flex-1 flex-row items-center gap-2">
-                  <View className="rounded bg-old-surface-secondary px-1.5 py-0.5">
+                  <View className="bg-old-surface-secondary rounded px-1.5 py-0.5">
                     <Text
-                      className="text-[11px] font-medium text-old-text"
+                      className="text-old-text text-[11px] font-medium"
                       numberOfLines={1}
                     >
                       {operation.category}
@@ -224,7 +224,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
                   </View>
                   <View className="flex-row items-center gap-1">
                     <Calendar size={12} color="#4A5568" />
-                    <Text className="text-[11px] text-old-text-secondary">
+                    <Text className="text-old-text-secondary text-[11px]">
                       {new Date(operation.date).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric'
@@ -248,7 +248,7 @@ export default function OperationCard({ operation }: OperationCardProps) {
 
               {subtext && (
                 <Text
-                  className="text-[11px] italic text-old-text-secondary"
+                  className="text-old-text-secondary text-[11px] italic"
                   numberOfLines={1}
                 >
                   {subtext}

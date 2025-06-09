@@ -1,4 +1,6 @@
-import OperationCard, { Operation } from '@/components/OperationCard'
+import OperationListItem, {
+  Operation
+} from '@/components/accounts/OperationListItem'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   mockDebtOperations,
@@ -68,13 +70,13 @@ export default function OperationsScreen() {
 
   return (
     <View
-      className="flex-1 bg-old-background"
+      className="bg-old-background flex-1"
       style={{
         paddingTop: insets.top
       }}
     >
       <View className="px-4 py-4">
-        <Text className="text-[28px] font-bold text-old-text">Operations</Text>
+        <Text className="text-old-text text-[28px] font-bold">Operations</Text>
       </View>
 
       {/* Filter Tabs */}
@@ -122,11 +124,11 @@ export default function OperationsScreen() {
         {/* Today's Operations */}
         {todaysOperations.length > 0 && (
           <View className="mb-6">
-            <Text className="mb-3 text-lg font-semibold text-old-text">
+            <Text className="text-old-text mb-3 text-lg font-semibold">
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
-              <OperationCard
+              <OperationListItem
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
               />
@@ -136,14 +138,14 @@ export default function OperationsScreen() {
 
         {/* All Operations */}
         <View className="mb-6">
-          <Text className="mb-3 text-lg font-semibold text-old-text">
+          <Text className="text-old-text mb-3 text-lg font-semibold">
             {activeFilter === 'all'
               ? 'All Operations'
               : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
           </Text>
           {filteredOperations.length > 0 ? (
             filteredOperations.map(operation => (
-              <OperationCard
+              <OperationListItem
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
               />
@@ -151,7 +153,7 @@ export default function OperationsScreen() {
           ) : (
             <Card>
               <CardContent>
-                <Text className="text-center text-old-text-secondary">
+                <Text className="text-old-text-secondary text-center">
                   No operations found for the selected filter
                 </Text>
               </CardContent>
