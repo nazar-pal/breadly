@@ -3,6 +3,7 @@ import CategoryEditModal from '@/components/shared/CategoryEditModal'
 import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
 import { CategoryProvider, useCategoryContext } from '@/context/CategoryContext'
+import { iconWithClassName } from '@/lib/icons/iconWithClassName'
 import {
   Briefcase,
   Building,
@@ -12,6 +13,7 @@ import {
   Film,
   Heart,
   Home,
+  LucideIcon,
   PiggyBank,
   Shirt,
   Target,
@@ -26,7 +28,7 @@ import { runOnJS } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Map category names to icons for expenses
-const categoryIcons: { [key: string]: React.ComponentType<any> } = {
+const categoryIcons: { [key: string]: LucideIcon } = {
   Coffee: Coffee,
   Dining: UtensilsCrossed,
   Entertainment: Film,
@@ -38,7 +40,7 @@ const categoryIcons: { [key: string]: React.ComponentType<any> } = {
 }
 
 // Map income category names to icons
-const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
+const incomeCategoryIcons: { [key: string]: LucideIcon } = {
   Salary: Briefcase,
   Freelance: DollarSign,
   Investment: TrendingUp,
@@ -62,11 +64,13 @@ function CategoriesContent() {
   ) => {
     const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
     const IconComponent = icons[categoryName] || Home
-
-    // Use semantic colors based on category type
-    const iconColor = type === 'expense' ? '#EF4444' : '#10B981'
-
-    return <IconComponent size={20} color={iconColor} />
+    iconWithClassName(IconComponent)
+    return (
+      <IconComponent
+        size={20}
+        className={type === 'expense' ? 'text-expense' : 'text-income'}
+      />
+    )
   }
 
   // Create pan gesture for full-screen swipe support
@@ -94,7 +98,7 @@ function CategoriesContent() {
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        className="flex-1 bg-background"
+        className="bg-background flex-1"
         style={{
           paddingTop: insets.top
         }}
