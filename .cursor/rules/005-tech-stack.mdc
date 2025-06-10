@@ -11,21 +11,22 @@ version: 1.0.0
 
 # Core Technology Stack (MVP)
 
--   **Mobile**: Expo SDK (latest stable), React Native (aligned with Expo).
--   **Language**: TypeScript.
--   **API**: tRPC.
--   **State / Queries**: TanStack Query v5.
--   **Validation**: Zod.
--   **Database**: PostgreSQL (Neon) via Drizzle ORM.
--   **Forms**: React Hook Form + Zod resolver.
--   **Auth**: Clerk.
--   **Files**: UploadThing.
--   **Dates**: `date-fns`.
--   **AI**: Vercel AI SDK; model IDs via env vars.
--   **Styling**: Custom theme system (see `015-styling-and-theme.mdc`).
--   **Navigation**: Expo router.
--   **Images**: `expo-image`.
--   **Lists**: `@shopify/flash-list`.
--   **Animations**: `react-native-reanimated`.
--   **Local Storage**: `@react-native-async-storage/async-storage`.
--   **Avoid**: React Server Components, Server Actions, and `React.Suspense` for data fetching in this MVP.
+- **Mobile**: Expo SDK (latest stable), React Native (aligned with Expo).  
+- **Language**: TypeScript.  
+- **API**: tRPC.  
+- **State / Queries**: TanStack Query v5.  
+- **Validation**: Zod.  
+- **Database**: PostgreSQL (Neon) via Drizzle ORM.  
+- **Forms**: React Hook Form + Zod resolver.  
+- **Auth**: Clerk.  
+- **Files**: UploadThing.  
+- **Dates**: `date-fns`.  
+- **AI**: Vercel AI SDK; model IDs via env vars.  
+- **Styling**: nativewind (fully Tailwind-compatible; if unfamiliar, treat as Tailwind).  
+- **UI Components**: react-native-reusables (similar to shadcn; if unfamiliar, treat as shadcn).  
+- **Navigation**: Expo router.  
+- **Images**: `expo-image`.  
+- **Lists**: `@shopify/flash-list`.  
+- **Animations**: `react-native-reanimated`.  
+- **Local Storage**: `@react-native-async-storage/async-storage`.  
+- **Avoid**: React Server Components, Server Actions, and `React.Suspense` for data fetching in this MVP.
