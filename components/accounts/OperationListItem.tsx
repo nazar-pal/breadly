@@ -177,7 +177,7 @@ export default function OperationListItem({ operation }: OperationCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card className="bg-card/50 mb-2 border-0">
+      <Card className="mb-2 border-0 bg-card/50">
         <CardContent className="p-3">
           <View className="flex-row items-center">
             <View
@@ -192,7 +192,7 @@ export default function OperationListItem({ operation }: OperationCardProps) {
             <View className="flex-1 gap-1">
               <View className="flex-row items-center justify-between">
                 <Text
-                  className="text-foreground mr-2 flex-1 text-sm font-medium"
+                  className="mr-2 flex-1 text-sm font-medium text-foreground"
                   numberOfLines={1}
                 >
                   {operation.description}
@@ -206,9 +206,9 @@ export default function OperationListItem({ operation }: OperationCardProps) {
 
               <View className="flex-row items-center justify-between">
                 <View className="flex-1 flex-row items-center gap-2">
-                  <View className="bg-muted/50 rounded px-1.5 py-0.5">
+                  <View className="rounded bg-muted/50 px-1.5 py-0.5">
                     <Text
-                      className="text-muted-foreground text-[11px] font-medium"
+                      className="text-[11px] font-medium text-muted-foreground"
                       numberOfLines={1}
                     >
                       {operation.category}
@@ -216,7 +216,7 @@ export default function OperationListItem({ operation }: OperationCardProps) {
                   </View>
                   <View className="flex-row items-center gap-1">
                     <Calendar size={12} className="text-muted-foreground" />
-                    <Text className="text-muted-foreground text-[11px]">
+                    <Text className="text-[11px] text-muted-foreground">
                       {formatDate(operation.date)}
                     </Text>
                   </View>
@@ -227,17 +227,17 @@ export default function OperationListItem({ operation }: OperationCardProps) {
                     <Receipt size={14} className="text-muted-foreground" />
                   )}
                   {operation.hasVoice && (
-                    <Mic size={14} className="text-muted-foreground ml-1" />
+                    <Mic size={14} className="ml-1 text-muted-foreground" />
                   )}
                   <ArrowRight
                     size={14}
-                    className="text-muted-foreground ml-1"
+                    className="ml-1 text-muted-foreground"
                   />
                 </View>
               </View>
 
               {subtext && (
-                <Text className="text-muted-foreground text-xs">{subtext}</Text>
+                <Text className="text-xs text-muted-foreground">{subtext}</Text>
               )}
             </View>
           </View>

@@ -29,16 +29,16 @@ export function AuthInput({
 }: AuthInputProps) {
   return (
     <View className="mb-5">
-      <Text className="text-foreground mb-2 text-base font-semibold">
+      <Text className="mb-2 text-base font-semibold text-foreground">
         {label}
       </Text>
       <View className="flex-row items-center gap-3">
-        <View className="bg-secondary h-14 w-14 items-center justify-center rounded-full">
+        <View className="h-14 w-14 items-center justify-center rounded-full bg-secondary">
           <Icon size={20} className="text-muted-foreground" />
         </View>
         <View className="flex-1">
           <Input
-            className="bg-secondary text-foreground h-14 rounded-xl border-0"
+            className="h-14 rounded-xl border-0 bg-secondary text-foreground"
             value={value}
             placeholder={placeholder}
             placeholderClassName="text-muted-foreground"

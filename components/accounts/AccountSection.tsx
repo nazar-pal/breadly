@@ -27,7 +27,7 @@ export default function AccountSection({
 }: AccountSectionProps) {
   return (
     <View className="mb-8">
-      <Text className="text-foreground mb-4 text-xl font-bold tracking-tight">
+      <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
         {title}
       </Text>
       <View className="flex-col">

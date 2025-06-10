@@ -22,7 +22,7 @@ interface SettingsSectionProps {
 function SettingsSection({ title, children, className }: SettingsSectionProps) {
   return (
     <View className={className}>
-      <Text className="text-foreground mb-4 text-lg font-semibold">
+      <Text className="mb-4 text-lg font-semibold text-foreground">
         {title}
       </Text>
       <Card>
@@ -61,13 +61,13 @@ function SettingsItem({
         onPress={onPress}
       >
         <View className="flex-1 flex-row items-center">
-          <View className="bg-secondary mr-3 h-10 w-10 items-center justify-center rounded-full">
+          <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-secondary">
             {icon}
           </View>
           <View>
-            <Text className="text-foreground text-base">{title}</Text>
+            <Text className="text-base text-foreground">{title}</Text>
             {subtitle && (
-              <Text className="text-muted-foreground mt-0.5 text-sm">
+              <Text className="mt-0.5 text-sm text-muted-foreground">
                 {subtitle}
               </Text>
             )}
@@ -75,7 +75,7 @@ function SettingsItem({
         </View>
         {rightElement}
       </Container>
-      {showBorder && <View className="bg-border h-px" />}
+      {showBorder && <View className="h-px bg-border" />}
     </>
   )
 }
@@ -89,9 +89,9 @@ export default function SettingsScreen() {
   const [showCurrencyModal, setShowCurrencyModal] = React.useState(false)
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-4 py-4">
-        <Text className="text-foreground text-3xl font-bold">Settings</Text>
+        <Text className="text-3xl font-bold text-foreground">Settings</Text>
       </View>
 
       <ScrollView
@@ -104,21 +104,21 @@ export default function SettingsScreen() {
         <SignedIn>
           <SettingsSection title="Account">
             <View className="mb-4 flex-row items-center">
-              <View className="bg-secondary h-[60px] w-[60px] items-center justify-center rounded-full">
+              <View className="h-[60px] w-[60px] items-center justify-center rounded-full bg-secondary">
                 <User size={32} className="text-foreground" />
               </View>
               <View className="ml-4">
-                <Text className="text-foreground mb-1 text-lg font-semibold">
+                <Text className="mb-1 text-lg font-semibold text-foreground">
                   {user?.firstName && user?.lastName
                     ? `${user.firstName} ${user.lastName}`
                     : user?.username || 'User'}
                 </Text>
-                <Text className="text-muted-foreground text-sm">
+                <Text className="text-sm text-muted-foreground">
                   {user?.emailAddresses[0]?.emailAddress || 'No email'}
                 </Text>
               </View>
             </View>
-            <View className="bg-border my-4 h-px w-full" />
+            <View className="my-4 h-px w-full bg-border" />
             <SignOutButton />
           </SettingsSection>
         </SignedIn>
@@ -126,10 +126,10 @@ export default function SettingsScreen() {
         <SignedOut>
           <SettingsSection title="Account">
             <View className="py-2">
-              <Text className="text-foreground mb-2 text-lg font-semibold">
+              <Text className="mb-2 text-lg font-semibold text-foreground">
                 Sign in to access your account
               </Text>
-              <Text className="text-muted-foreground mb-4 text-sm leading-5">
+              <Text className="mb-4 text-sm leading-5 text-muted-foreground">
                 Sign in or create an account to sync your data across devices
               </Text>
               <View className="gap-2">
@@ -190,7 +190,7 @@ export default function SettingsScreen() {
         {showCurrencyModal && (
           <Card className="mt-2">
             <CardContent>
-              <Text className="text-foreground mb-3 text-base font-semibold">
+              <Text className="mb-3 text-base font-semibold text-foreground">
                 Select Currency
               </Text>
               {currencies.map(curr => (
@@ -216,7 +216,7 @@ export default function SettingsScreen() {
                     {curr.symbol} - {curr.name}
                   </Text>
                   {curr.code === currency.code && (
-                    <View className="bg-primary-foreground h-2 w-2 rounded-full" />
+                    <View className="h-2 w-2 rounded-full bg-primary-foreground" />
                   )}
                 </Pressable>
               ))}
@@ -224,7 +224,7 @@ export default function SettingsScreen() {
           </Card>
         )}
 
-        <Text className="text-muted-foreground mt-6 text-center text-sm">
+        <Text className="mt-6 text-center text-sm text-muted-foreground">
           Breadly v1.0.0
         </Text>
       </ScrollView>

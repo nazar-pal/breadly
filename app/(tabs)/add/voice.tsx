@@ -7,17 +7,17 @@ import { View } from 'react-native'
 
 export default function VoiceScreen() {
   return (
-    <View className="bg-background flex-1">
+    <View className="flex-1 bg-background">
       <View className="flex-1 p-4">
         <Card>
           <CardContent className="h-[400px] items-center justify-center p-6">
-            <View className="bg-primary/10 mb-6 h-20 w-20 items-center justify-center rounded-full">
+            <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <Mic size={48} className="text-primary" />
             </View>
-            <Text className="text-foreground mb-2 text-center text-lg font-semibold">
+            <Text className="mb-2 text-center text-lg font-semibold text-foreground">
               Tap the microphone and describe your expense
             </Text>
-            <Text className="text-muted-foreground mt-3 text-center italic">
+            <Text className="mt-3 text-center italic text-muted-foreground">
               Example: &ldquo;I spent $42.50 on groceries at Whole Foods
               yesterday&rdquo;
             </Text>
@@ -25,7 +25,7 @@ export default function VoiceScreen() {
         </Card>
 
         <Button size="lg" className="mx-auto mt-6">
-          <Mic size={20} className="text-primary-foreground mr-2" />
+          <Mic size={20} className="mr-2 text-primary-foreground" />
           <Text className="text-primary-foreground">Start Recording</Text>
         </Button>
       </View>

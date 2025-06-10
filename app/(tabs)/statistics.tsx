@@ -83,7 +83,7 @@ function StatCard({
     <Card className="flex-1">
       <CardContent className="p-4">
         <View className="mb-3 flex-row items-center justify-between gap-2">
-          <Text className="text-muted-foreground text-sm font-medium">
+          <Text className="text-sm font-medium text-muted-foreground">
             {title}
           </Text>
           {Icon && (
@@ -92,7 +92,7 @@ function StatCard({
             </View>
           )}
         </View>
-        <Text className="text-foreground mb-2 text-2xl font-bold">
+        <Text className="mb-2 text-2xl font-bold text-foreground">
           ${amount.toFixed(2)}
         </Text>
         {trend !== undefined && (
@@ -110,7 +110,7 @@ function StatCard({
               {Math.abs(trend)}%
             </Text>
             {trendLabel && (
-              <Text className="text-muted-foreground ml-1 text-xs">
+              <Text className="ml-1 text-xs text-muted-foreground">
                 {trendLabel}
               </Text>
             )}
@@ -124,7 +124,7 @@ function StatCard({
 function TopTransactions() {
   return (
     <View className="mb-6">
-      <Text className="text-foreground mb-4 text-lg font-semibold">
+      <Text className="mb-4 text-lg font-semibold text-foreground">
         Recent Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
@@ -132,14 +132,14 @@ function TopTransactions() {
           <CardContent className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
-                <Text className="text-foreground text-base font-semibold">
+                <Text className="text-base font-semibold text-foreground">
                   {transaction.description}
                 </Text>
-                <Text className="text-muted-foreground mt-1 text-sm">
+                <Text className="mt-1 text-sm text-muted-foreground">
                   {transaction.category}
                 </Text>
               </View>
-              <Text className="text-primary text-base font-semibold">
+              <Text className="text-base font-semibold text-primary">
                 ${transaction.amount.toFixed(2)}
               </Text>
             </View>
@@ -160,7 +160,7 @@ function CategoryBreakdown() {
 
   return (
     <View className="mb-6">
-      <Text className="text-foreground mb-4 text-lg font-semibold">
+      <Text className="mb-4 text-lg font-semibold text-foreground">
         Spending by Category
       </Text>
       <Card>
@@ -173,19 +173,19 @@ function CategoryBreakdown() {
                 className={cn(
                   'py-3',
                   index !== topCategories.length - 1 &&
-                    'border-border/10 border-b'
+                    'border-b border-border/10'
                 )}
               >
                 <View className="mb-2 flex-row justify-between">
                   <View className="flex-1">
-                    <Text className="text-foreground text-sm font-medium">
+                    <Text className="text-sm font-medium text-foreground">
                       {category.name}
                     </Text>
-                    <Text className="text-muted-foreground text-xs">
+                    <Text className="text-xs text-muted-foreground">
                       ${category.spent.toFixed(2)}
                     </Text>
                   </View>
-                  <Text className="text-foreground text-sm font-medium">
+                  <Text className="text-sm font-medium text-foreground">
                     {percentage.toFixed(1)}%
                   </Text>
                 </View>
@@ -207,15 +207,15 @@ export default function StatisticsScreen() {
   const insets = useSafeAreaInsets()
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <View className="border-border/10 border-b px-4 py-4">
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+      <View className="border-b border-border/10 px-4 py-4">
         <View className="flex-row items-center justify-between">
-          <Text className="text-foreground text-2xl font-bold">Statistics</Text>
-          <View className="bg-primary/10 rounded-full p-2">
+          <Text className="text-2xl font-bold text-foreground">Statistics</Text>
+          <View className="rounded-full bg-primary/10 p-2">
             <Calendar size={20} className="text-primary" />
           </View>
         </View>
-        <Text className="text-muted-foreground mt-1 text-sm">
+        <Text className="mt-1 text-sm text-muted-foreground">
           Track your financial progress
         </Text>
       </View>
@@ -251,23 +251,23 @@ export default function StatisticsScreen() {
           <CardContent className="p-4">
             <View className="mb-3 flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="text-foreground mb-1 text-base font-semibold">
+                <Text className="mb-1 text-base font-semibold text-foreground">
                   Monthly Savings
                 </Text>
-                <Text className="text-income text-2xl font-bold">
+                <Text className="text-2xl font-bold text-income">
                   ${mockStats.currentMonth.savings.toFixed(2)}
                 </Text>
               </View>
-              <View className="bg-income/10 rounded-full p-2">
+              <View className="rounded-full bg-income/10 p-2">
                 <TrendingUp size={20} className="text-income" />
               </View>
             </View>
             <View className="mt-4">
               <View className="mb-2 flex-row items-center justify-between">
-                <Text className="text-muted-foreground text-sm">
+                <Text className="text-sm text-muted-foreground">
                   Savings Rate
                 </Text>
-                <Text className="text-income text-sm font-medium">
+                <Text className="text-sm font-medium text-income">
                   {mockStats.currentMonth.savingsRate}%
                 </Text>
               </View>

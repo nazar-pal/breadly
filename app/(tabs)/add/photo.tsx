@@ -7,14 +7,14 @@ import { View } from 'react-native'
 
 export default function PhotoScreen() {
   return (
-    <View className="bg-background flex-1">
+    <View className="flex-1 bg-background">
       <View className="flex-1 p-4">
         <Card>
           <CardContent className="h-[400px] items-center justify-center p-6">
-            <View className="bg-primary/10 mb-6 h-20 w-20 items-center justify-center rounded-full">
+            <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <Camera size={48} className="text-primary" />
             </View>
-            <Text className="text-foreground mx-6 text-center text-base font-medium">
+            <Text className="mx-6 text-center text-base font-medium text-foreground">
               Take a photo of your receipt for automatic expense entry
             </Text>
           </CardContent>
@@ -22,11 +22,11 @@ export default function PhotoScreen() {
 
         <View className="mt-4 flex-row gap-2">
           <Button className="flex-1">
-            <Camera size={20} className="text-primary-foreground mr-2" />
+            <Camera size={20} className="mr-2 text-primary-foreground" />
             <Text className="text-primary-foreground">Take Photo</Text>
           </Button>
           <Button variant="outline" className="flex-1">
-            <Upload size={20} className="text-foreground mr-2" />
+            <Upload size={20} className="mr-2 text-foreground" />
             <Text className="text-foreground">Upload</Text>
           </Button>
         </View>

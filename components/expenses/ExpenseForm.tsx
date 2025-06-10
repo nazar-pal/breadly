@@ -41,9 +41,9 @@ function FormField({
 }) {
   return (
     <View className="mb-4">
-      <Text className="text-foreground mb-2 text-sm font-medium">{label}</Text>
+      <Text className="mb-2 text-sm font-medium text-foreground">{label}</Text>
       {children}
-      {error && <Text className="text-destructive mt-1 text-xs">{error}</Text>}
+      {error && <Text className="mt-1 text-xs text-destructive">{error}</Text>}
     </View>
   )
 }
@@ -75,15 +75,15 @@ function ExpenseListItem({
       )}
     >
       <View className="flex-row items-center justify-between">
-        <Text className="text-expense text-base font-semibold">
+        <Text className="text-base font-semibold text-expense">
           ${parseFloat(expense.amount).toFixed(2)}
         </Text>
         <View className="mx-3 flex-1 flex-row items-center justify-end gap-2">
-          <Text className="text-muted-foreground text-xs">
+          <Text className="text-xs text-muted-foreground">
             {formatDate(expense.date)}
           </Text>
-          <View className="bg-muted rounded px-2 py-1">
-            <Text className="text-foreground text-xs font-medium">
+          <View className="rounded bg-muted px-2 py-1">
+            <Text className="text-xs font-medium text-foreground">
               {expense.category}
             </Text>
           </View>
@@ -92,7 +92,7 @@ function ExpenseListItem({
       </View>
       {expense.description && (
         <Text
-          className="text-muted-foreground mt-2 pl-1 text-[13px]"
+          className="mt-2 pl-1 text-[13px] text-muted-foreground"
           numberOfLines={2}
         >
           {expense.description}
@@ -206,7 +206,7 @@ export default function ExpenseForm({
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
                     className={cn(
-                      'bg-card text-foreground h-12 rounded-lg border px-4 text-xl font-semibold',
+                      'h-12 rounded-lg border bg-card px-4 text-xl font-semibold text-foreground',
                       errors.amount ? 'border-destructive' : 'border-border'
                     )}
                     placeholder="0.00"
@@ -225,7 +225,7 @@ export default function ExpenseForm({
             <FormField label="Category" error={errors.category?.message}>
               <Pressable
                 onPress={() => setShowCategoryPicker(true)}
-                className="border-border bg-card h-12 flex-row items-center justify-between rounded-lg border px-4"
+                className="h-12 flex-row items-center justify-between rounded-lg border border-border bg-card px-4"
               >
                 <Text
                   className={cn(
@@ -249,9 +249,9 @@ export default function ExpenseForm({
             <FormField label="Date">
               <Pressable
                 onPress={() => setShowDatePicker(true)}
-                className="border-border bg-card h-12 flex-row items-center justify-between rounded-lg border px-4"
+                className="h-12 flex-row items-center justify-between rounded-lg border border-border bg-card px-4"
               >
-                <Text className="text-foreground text-base">
+                <Text className="text-base text-foreground">
                   {selectedDate === today ? 'Today' : formatDate(selectedDate)}
                 </Text>
                 <Calendar size={20} className="text-foreground" />
@@ -261,7 +261,7 @@ export default function ExpenseForm({
 
           <Pressable
             onPress={() => setShowDescription(!showDescription)}
-            className="bg-muted ml-3 h-12 w-12 items-center justify-center rounded-lg"
+            className="ml-3 h-12 w-12 items-center justify-center rounded-lg bg-muted"
           >
             <AlignLeft size={20} className="text-foreground" />
           </Pressable>
@@ -275,7 +275,7 @@ export default function ExpenseForm({
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   className={cn(
-                    'border-border bg-card text-foreground h-20 rounded-lg border px-4 py-3 text-base',
+                    'h-20 rounded-lg border border-border bg-card px-4 py-3 text-base text-foreground',
                     errors.description && 'border-destructive'
                   )}
                   placeholder="What was this expense for?"
@@ -300,7 +300,7 @@ export default function ExpenseForm({
                 onPress={handleCancelEdit}
                 className="mr-2 flex-1"
               >
-                <X size={20} className="text-foreground mr-2" />
+                <X size={20} className="mr-2 text-foreground" />
                 <Text className="text-foreground">Cancel</Text>
               </Button>
               <Button
@@ -318,7 +318,7 @@ export default function ExpenseForm({
                 onPress={handleSubmit(handleAddExpense)}
                 className="mr-2 flex-1"
               >
-                <Plus size={20} className="text-foreground mr-2" />
+                <Plus size={20} className="mr-2 text-foreground" />
                 <Text className="text-foreground">Add Another</Text>
               </Button>
               <Button
@@ -338,8 +338,8 @@ export default function ExpenseForm({
 
       {/* Added Expenses List */}
       {expenses.length > 0 && (
-        <View className="bg-muted rounded-lg p-4">
-          <Text className="text-foreground mb-3 text-sm font-semibold">
+        <View className="rounded-lg bg-muted p-4">
+          <Text className="mb-3 text-sm font-semibold text-foreground">
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
@@ -364,8 +364,8 @@ export default function ExpenseForm({
           className="flex-1 justify-center bg-black/10 p-4"
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View className="bg-card max-h-[80%] rounded-xl">
-            <Text className="border-border text-foreground border-b p-4 text-lg font-semibold">
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b border-border p-4 text-lg font-semibold text-foreground">
               Select Category
             </Text>
             <ScrollView>
@@ -409,8 +409,8 @@ export default function ExpenseForm({
           className="flex-1 justify-center bg-black/10 p-4"
           onPress={() => setShowDatePicker(false)}
         >
-          <View className="bg-card max-h-[80%] rounded-xl">
-            <Text className="border-border text-foreground border-b p-4 text-lg font-semibold">
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b border-border p-4 text-lg font-semibold text-foreground">
               Select Date
             </Text>
             <ScrollView>

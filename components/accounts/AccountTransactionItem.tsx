@@ -92,7 +92,7 @@ export default function AccountTransactionItem({
   }
 
   return (
-    <View className="bg-card/50 mb-2 overflow-hidden rounded-lg">
+    <View className="mb-2 overflow-hidden rounded-lg bg-card/50">
       <View className="flex-row items-center p-3">
         <View
           className={cn(
@@ -105,20 +105,20 @@ export default function AccountTransactionItem({
 
         <View className="min-w-0 flex-1">
           <Text
-            className="text-foreground mb-1 text-sm font-medium"
+            className="mb-1 text-sm font-medium text-foreground"
             numberOfLines={1}
           >
             {operation.description}
           </Text>
           <View className="flex-row items-center gap-3">
-            <View className="bg-muted/50 rounded px-1.5 py-0.5">
-              <Text className="text-muted-foreground text-[11px] font-medium">
+            <View className="rounded bg-muted/50 px-1.5 py-0.5">
+              <Text className="text-[11px] font-medium text-muted-foreground">
                 {operation.category}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
               <Calendar size={10} className="text-muted-foreground" />
-              <Text className="text-muted-foreground text-[11px]">
+              <Text className="text-[11px] text-muted-foreground">
                 {formatDate(operation.date)}
               </Text>
             </View>

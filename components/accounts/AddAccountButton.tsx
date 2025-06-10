@@ -15,7 +15,7 @@ export default function AddAccountButton({
   return (
     <Pressable
       className={cn(
-        'bg-card mb-2 min-h-[60px] w-full rounded-xl border-2 border-dashed p-3',
+        'mb-2 min-h-[60px] w-full rounded-xl border-2 border-dashed bg-card p-3',
         Platform.OS === 'android' ? 'shadow' : 'shadow-sm'
       )}
       onPress={onPress}
@@ -24,7 +24,7 @@ export default function AddAccountButton({
         <View className="h-7 w-7 items-center justify-center rounded-md">
           <Plus size={16} className="text-primary" />
         </View>
-        <Text className="text-foreground text-center text-sm font-semibold">
+        <Text className="text-center text-sm font-semibold text-foreground">
           {label}
         </Text>
       </View>

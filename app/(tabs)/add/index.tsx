@@ -18,7 +18,7 @@ export default function ManualScreen() {
   }
 
   return (
-    <View className="bg-background flex-1 p-4">
+    <View className="flex-1 bg-background p-4">
       <ExpenseForm onSubmit={handleSubmit} />
     </View>
   )

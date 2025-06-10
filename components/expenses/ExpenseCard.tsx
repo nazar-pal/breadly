@@ -37,24 +37,24 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
       <Card className="mb-3">
         <CardContent className="min-h-[80px] flex-row items-start justify-between">
           <View className="mr-4 flex-1">
-            <Text className="text-expense mb-1 text-lg font-semibold">
+            <Text className="mb-1 text-lg font-semibold text-expense">
               {formatCurrency(expense.amount)}
             </Text>
             <Text
-              className="text-foreground mb-2 flex-wrap text-sm"
+              className="mb-2 flex-wrap text-sm text-foreground"
               numberOfLines={2}
             >
               {expense.description}
             </Text>
             <View className="flex-row flex-wrap items-center">
-              <View className="bg-muted mr-2 rounded px-2 py-1">
-                <Text className="text-foreground text-xs font-medium">
+              <View className="mr-2 rounded bg-muted px-2 py-1">
+                <Text className="text-xs font-medium text-foreground">
                   {expense.category}
                 </Text>
               </View>
               <View className="ml-2 flex-row items-center">
                 <Calendar size={14} className="text-muted-foreground" />
-                <Text className="text-muted-foreground ml-1 text-xs">
+                <Text className="ml-1 text-xs text-muted-foreground">
                   {expense.date}
                 </Text>
               </View>
@@ -64,7 +64,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
           <View className="items-end justify-between">
             <View className="mb-3 flex-row">
               {expense.hasPhoto && (
-                <Receipt size={16} className="text-muted-foreground mr-2" />
+                <Receipt size={16} className="mr-2 text-muted-foreground" />
               )}
               {expense.hasVoice && (
                 <Mic size={16} className="text-muted-foreground" />

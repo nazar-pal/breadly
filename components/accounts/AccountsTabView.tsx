@@ -107,7 +107,7 @@ export default function AccountsTabView({
   return (
     <View className="flex-1">
       {/* Tab Navigation */}
-      <View className="bg-background flex-row gap-2 px-5 py-3">
+      <View className="flex-row gap-2 bg-background px-5 py-3">
         {tabs.map(tab => {
           const IconComponent = tab.icon
           const isActive = activeTab === tab.key

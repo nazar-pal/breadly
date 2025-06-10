@@ -69,7 +69,7 @@ function DebtTypeButton({
       onPress={onPress}
     >
       {isSelected && (
-        <Check size={16} className="text-primary-foreground mr-2" />
+        <Check size={16} className="mr-2 text-primary-foreground" />
       )}
       <Text
         className={cn(
@@ -104,16 +104,16 @@ function FormInput({
 }) {
   return (
     <View className="mb-6">
-      <Text className="text-foreground mb-2 text-base font-semibold">
+      <Text className="mb-2 text-base font-semibold text-foreground">
         {label}
       </Text>
       <View className="flex-row items-center">
         {prefix && (
-          <Text className="text-foreground mr-3 text-base">{prefix}</Text>
+          <Text className="mr-3 text-base text-foreground">{prefix}</Text>
         )}
         <TextInput
           className={cn(
-            'border-border bg-card text-foreground flex-1 rounded-xl border px-4 py-3 text-base',
+            'flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground',
             multiline ? 'h-[100px] pt-3' : 'min-h-[48px]'
           )}
           value={value}
@@ -192,14 +192,14 @@ export default function EditAccountModal({
         className="flex-1"
       >
         <View
-          className="bg-background flex-1 rounded-t-3xl"
+          className="flex-1 rounded-t-3xl bg-background"
           style={{
             marginTop: SCREEN_HEIGHT * 0.1
           }}
         >
-          <View className="border-border border-b px-5 py-4">
+          <View className="border-b border-border px-5 py-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-foreground text-lg font-semibold">
+              <Text className="text-lg font-semibold text-foreground">
                 {getTitle()}
               </Text>
               <Pressable
@@ -277,7 +277,7 @@ export default function EditAccountModal({
                 />
 
                 <View className="mb-6">
-                  <Text className="text-foreground mb-2 text-base font-semibold">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
                     Debt Type
                   </Text>
                   <View className="flex-row gap-3">

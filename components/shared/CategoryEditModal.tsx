@@ -121,15 +121,15 @@ export default function CategoryEditModal() {
           onPress={handleCloseEditModal}
         />
         <View
-          className="bg-background rounded-t-3xl pt-2"
+          className="rounded-t-3xl bg-background pt-2"
           style={{
             paddingBottom: insets.bottom + 16,
             maxHeight: SCREEN_HEIGHT * 0.8
           }}
         >
           {/* Header */}
-          <View className="border-border flex-row items-center justify-between border-b px-5 py-4">
-            <Text className="text-foreground text-xl font-semibold">
+          <View className="flex-row items-center justify-between border-b border-border px-5 py-4">
+            <Text className="text-xl font-semibold text-foreground">
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
             <Pressable onPress={handleCloseEditModal} className="p-1">
@@ -144,11 +144,11 @@ export default function CategoryEditModal() {
           >
             {/* Category Name */}
             <View className="mb-6">
-              <Text className="text-foreground mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Category Name
               </Text>
               <TextInput
-                className="border-border bg-card text-foreground min-h-[48px] rounded-2xl border px-4 py-3 text-base"
+                className="min-h-[48px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter category name"
@@ -159,11 +159,11 @@ export default function CategoryEditModal() {
 
             {/* Category Description */}
             <View className="mb-6">
-              <Text className="text-foreground mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Description (Optional)
               </Text>
               <TextInput
-                className="border-border bg-card text-foreground h-[100px] rounded-2xl border px-4 py-3 text-base"
+                className="h-[100px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
                 style={{ paddingTop: 12 }}
                 value={description}
                 onChangeText={setDescription}
@@ -177,7 +177,7 @@ export default function CategoryEditModal() {
 
             {/* Icon Selection */}
             <View className="mb-6">
-              <Text className="text-foreground mb-2 text-base font-semibold">
+              <Text className="mb-2 text-base font-semibold text-foreground">
                 Choose Icon
               </Text>
               <View className="flex-row flex-wrap gap-3 pt-2">

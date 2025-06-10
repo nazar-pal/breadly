@@ -26,7 +26,7 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'native:h-12 border-input bg-background text-muted-foreground web:ring-offset-background web:focus:ring-ring flex h-10 flex-row items-center justify-between rounded-md border px-3 py-2 text-sm web:focus:outline-none web:focus:ring-2 web:focus:ring-offset-2 [&>span]:line-clamp-1',
+        'native:h-12 flex h-10 flex-row items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground web:ring-offset-background web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 [&>span]:line-clamp-1',
         props.disabled && 'opacity-50 web:cursor-not-allowed',
         className
       )}
@@ -109,7 +109,7 @@ function SelectContent({
         <Animated.View className="z-50" entering={FadeIn} exiting={FadeOut}>
           <SelectPrimitive.Content
             className={cn(
-              'border-border bg-popover shadow-foreground/10 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] rounded-md border px-1 py-2 shadow-md',
+              'relative z-50 max-h-96 min-w-[8rem] rounded-md border border-border bg-popover px-1 py-2 shadow-md shadow-foreground/10 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
               position === 'popper' &&
                 'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
               open
@@ -147,7 +147,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       className={cn(
-        'native:pb-2 native:pl-10 native:text-base text-popover-foreground py-1.5 pl-8 pr-2 text-sm font-semibold',
+        'native:pb-2 native:pl-10 native:text-base py-1.5 pl-8 pr-2 text-sm font-semibold text-popover-foreground',
         className
       )}
       {...props}
@@ -165,7 +165,7 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        'web:group native:py-2 native:pl-10 active:bg-accent web:hover:bg-accent/50 web:focus:bg-accent relative flex w-full flex-row items-center rounded-sm py-1.5 pl-8 pr-2 web:cursor-default web:select-none web:outline-none',
+        'web:group native:py-2 native:pl-10 relative flex w-full flex-row items-center rounded-sm py-1.5 pl-8 pr-2 active:bg-accent web:cursor-default web:select-none web:outline-none web:hover:bg-accent/50 web:focus:bg-accent',
         props.disabled && 'opacity-50 web:pointer-events-none',
         className
       )}
@@ -180,7 +180,7 @@ function SelectItem({
           />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className="native:text-lg native:text-base text-popover-foreground web:group-focus:text-accent-foreground text-sm" />
+      <SelectPrimitive.ItemText className="native:text-lg native:text-base text-sm text-popover-foreground web:group-focus:text-accent-foreground" />
     </SelectPrimitive.Item>
   )
 }
@@ -193,7 +193,7 @@ function SelectSeparator({
 }) {
   return (
     <SelectPrimitive.Separator
-      className={cn('bg-muted -mx-1 my-1 h-px', className)}
+      className={cn('-mx-1 my-1 h-px bg-muted', className)}
       {...props}
     />
   )

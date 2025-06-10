@@ -15,11 +15,11 @@ export default function AddExpenseTabBar({
 
   return (
     <View
-      className="bg-background border-border border-b"
+      className="border-b border-border bg-background"
       style={{ paddingTop: insets.top }}
     >
       {/* Title */}
-      <Text className="text-foreground px-4 pb-4 text-[32px] font-bold tracking-tight">
+      <Text className="px-4 pb-4 text-[32px] font-bold tracking-tight text-foreground">
         Add Expense
       </Text>
 
@@ -40,7 +40,7 @@ export default function AddExpenseTabBar({
               accessibilityState={focused ? { selected: true } : {}}
               className={cn(
                 'flex-1 flex-row items-center justify-center py-3',
-                focused && 'border-primary border-b-2'
+                focused && 'border-b-2 border-primary'
               )}
               onPress={onPress}
             >
@@ -55,8 +55,8 @@ export default function AddExpenseTabBar({
                 className={cn(
                   'text-base',
                   focused
-                    ? 'text-primary font-semibold'
-                    : 'text-muted-foreground font-normal'
+                    ? 'font-semibold text-primary'
+                    : 'font-normal text-muted-foreground'
                 )}
               >
                 {route.name === 'index'

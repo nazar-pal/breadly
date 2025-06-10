@@ -146,12 +146,12 @@ export default function SignUpScreen() {
       </AuthCard>
 
       <View className="mt-6 flex-row items-center justify-center">
-        <Text className="text-muted-foreground text-base">
+        <Text className="text-base text-muted-foreground">
           Already have an account?{' '}
         </Text>
         <Link href="/sign-in" asChild>
           <Button variant="ghost" className="px-2 py-1">
-            <Text className="text-primary text-base font-semibold">
+            <Text className="text-base font-semibold text-primary">
               Sign In
             </Text>
           </Button>

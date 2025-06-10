@@ -21,7 +21,7 @@ export default function AuthRoutesLayout() {
       // Redirect to home if user is signed in and tries to access auth screens
       router.replace('/')
     }
-  }, [isSignedIn, segments, isLoaded])
+  }, [isSignedIn, segments, isLoaded, router])
 
   return (
     <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>

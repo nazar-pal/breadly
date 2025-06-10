@@ -23,15 +23,15 @@ function DetailItem({
   return (
     <>
       <View className="flex-row items-center py-3">
-        <View className="bg-primary/10 mr-3 h-10 w-10 items-center justify-center rounded-2xl">
+        <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
           {icon}
         </View>
         <View className="flex-1">
-          <Text className="text-muted-foreground mb-1 text-sm">{label}</Text>
-          <Text className="text-foreground text-base font-medium">{value}</Text>
+          <Text className="mb-1 text-sm text-muted-foreground">{label}</Text>
+          <Text className="text-base font-medium text-foreground">{value}</Text>
         </View>
       </View>
-      {showBorder && <View className="bg-border h-px w-full" />}
+      {showBorder && <View className="h-px w-full bg-border" />}
     </>
   )
 }
@@ -49,8 +49,8 @@ export default function ExpenseDetailsScreen() {
 
   if (!expense) {
     return (
-      <View className="bg-background flex-1">
-        <Text className="text-destructive mt-10 text-center text-lg">
+      <View className="flex-1 bg-background">
+        <Text className="mt-10 text-center text-lg text-destructive">
           Expense not found
         </Text>
       </View>
@@ -59,7 +59,7 @@ export default function ExpenseDetailsScreen() {
 
   return (
     <ScrollView
-      className="bg-background flex-1"
+      className="flex-1 bg-background"
       contentContainerStyle={{
         padding: 16,
         paddingBottom: insets.bottom + 16
@@ -68,10 +68,10 @@ export default function ExpenseDetailsScreen() {
       {/* Amount Card */}
       <Card className="mb-4 overflow-hidden">
         <CardContent className="items-center py-8">
-          <Text className="text-muted-foreground mb-2 text-base">
+          <Text className="mb-2 text-base text-muted-foreground">
             Total Amount
           </Text>
-          <Text className="text-primary mb-1 text-[48px] font-extrabold tracking-tight">
+          <Text className="mb-1 text-[48px] font-extrabold tracking-tight text-primary">
             ${expense.amount.toFixed(2)}
           </Text>
         </CardContent>
@@ -111,7 +111,7 @@ export default function ExpenseDetailsScreen() {
             <CardTitle>Receipt Photo</CardTitle>
           </CardHeader>
           <CardContent>
-            <View className="bg-secondary overflow-hidden rounded-lg">
+            <View className="overflow-hidden rounded-lg bg-secondary">
               <Image
                 source={{ uri: receiptImageUrl }}
                 className="h-[250px] w-full"
@@ -129,15 +129,15 @@ export default function ExpenseDetailsScreen() {
             <CardTitle>Voice Memo</CardTitle>
           </CardHeader>
           <CardContent>
-            <View className="bg-secondary/50 flex-row items-center rounded-lg p-4">
-              <View className="bg-primary/10 mr-3 h-10 w-10 items-center justify-center rounded-full">
+            <View className="flex-row items-center rounded-lg bg-secondary/50 p-4">
+              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Mic size={20} className="text-primary" />
               </View>
               <View>
-                <Text className="text-foreground text-base font-medium">
+                <Text className="text-base font-medium text-foreground">
                   Voice Memo
                 </Text>
-                <Text className="text-muted-foreground text-sm">
+                <Text className="text-sm text-muted-foreground">
                   Duration: 00:12
                 </Text>
               </View>

@@ -11,7 +11,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
   return (
     <KeyboardAvoidingView
-      className="bg-background flex-1"
+      className="flex-1 bg-background"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView

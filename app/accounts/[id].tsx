@@ -66,8 +66,8 @@ function InfoItem({ icon, label, value }: InfoItemProps) {
   return (
     <View className="flex-row items-center gap-2 py-2">
       {icon}
-      <Text className="text-muted-foreground flex-1 text-sm">{label}</Text>
-      <Text className="text-foreground text-sm font-semibold">{value}</Text>
+      <Text className="flex-1 text-sm text-muted-foreground">{label}</Text>
+      <Text className="text-sm font-semibold text-foreground">{value}</Text>
     </View>
   )
 }
@@ -101,8 +101,8 @@ function AccountHeader({
           <Icon size={28} className={colorClass} />
         </View>
         <View>
-          <Text className="text-foreground text-2xl font-bold">{name}</Text>
-          <Text className="text-muted-foreground text-base">{type}</Text>
+          <Text className="text-2xl font-bold text-foreground">{name}</Text>
+          <Text className="text-base text-muted-foreground">{type}</Text>
         </View>
       </View>
       <Pressable
@@ -111,7 +111,7 @@ function AccountHeader({
           'h-9 w-9 items-center justify-center rounded-full',
           'bg-background/80',
           'active:bg-muted',
-          'border-border/30 border'
+          'border border-border/30'
         )}
       >
         <Edit2 size={16} className="text-muted-foreground" />
@@ -145,9 +145,9 @@ function BalanceCard({
   }
 
   return (
-    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+    <Card className="mb-4 border-0 bg-card/50 shadow-none">
       <CardContent className="py-6">
-        <Text className="text-muted-foreground mb-2 text-sm">
+        <Text className="mb-2 text-sm text-muted-foreground">
           Current Balance
         </Text>
         <View className="flex-row items-center gap-2">
@@ -168,7 +168,7 @@ function BalanceCard({
           )}
         </View>
         {description && (
-          <Text className="text-muted-foreground mt-4 text-sm leading-relaxed">
+          <Text className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {description}
           </Text>
         )}
@@ -191,17 +191,17 @@ function ProgressCard({
   bgColorClass
 }: ProgressCardProps) {
   return (
-    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+    <Card className="mb-4 border-0 bg-card/50 shadow-none">
       <CardContent className="py-6">
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-foreground text-base font-medium">
+          <Text className="text-base font-medium text-foreground">
             {type === 'savings' ? 'Savings Progress' : 'Repayment Progress'}
           </Text>
           <Text className={cn('text-2xl font-bold', colorClass)}>
             {progress.toFixed(1)}%
           </Text>
         </View>
-        <View className="bg-secondary h-2 overflow-hidden rounded-full">
+        <View className="h-2 overflow-hidden rounded-full bg-secondary">
           <View
             className={cn('h-full', bgColorClass)}
             style={{
@@ -228,7 +228,7 @@ function DetailsCard({ account, formatBalance }: DetailsCardProps) {
   }
 
   return (
-    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+    <Card className="mb-4 border-0 bg-card/50 shadow-none">
       <CardHeader>
         <CardTitle>Account Details</CardTitle>
       </CardHeader>
@@ -267,7 +267,7 @@ function ActivitySection({ operations }: ActivitySectionProps) {
   return (
     <View className="mt-8">
       <View className="mb-4">
-        <Text className="text-foreground text-xl font-semibold">
+        <Text className="text-xl font-semibold text-foreground">
           Recent Activity
         </Text>
       </View>
@@ -278,7 +278,7 @@ function ActivitySection({ operations }: ActivitySectionProps) {
           ))
         ) : (
           <View className="py-8">
-            <Text className="text-muted-foreground text-center text-sm">
+            <Text className="text-center text-sm text-muted-foreground">
               No recent activity for this account
             </Text>
           </View>
@@ -313,8 +313,8 @@ export default function AccountDetailsScreen() {
 
   if (!account) {
     return (
-      <View className="bg-background flex-1">
-        <Text className="text-destructive mt-10 text-center text-lg">
+      <View className="flex-1 bg-background">
+        <Text className="mt-10 text-center text-lg text-destructive">
           Account not found
         </Text>
       </View>
@@ -349,7 +349,7 @@ export default function AccountDetailsScreen() {
   }
 
   return (
-    <View className="bg-background flex-1">
+    <View className="flex-1 bg-background">
       <ScrollView
         contentContainerStyle={{
           padding: 16,

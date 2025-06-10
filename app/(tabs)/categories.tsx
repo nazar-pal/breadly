@@ -102,7 +102,7 @@ function CategoriesContent() {
 
   return (
     <View
-      className="bg-background flex-1"
+      className="flex-1 bg-background"
       style={{
         paddingTop: insets.top
       }}

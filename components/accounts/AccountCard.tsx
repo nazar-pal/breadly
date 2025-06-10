@@ -166,21 +166,21 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         </View>
         <View className="min-w-0 flex-1">
           <Text
-            className="text-foreground mb-px text-base font-semibold"
+            className="mb-px text-base font-semibold text-foreground"
             numberOfLines={1}
           >
             {account.name}
           </Text>
-          <Text className="text-foreground text-xs capitalize">
+          <Text className="text-xs capitalize text-foreground">
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
         <View className="flex-row items-center">
           {isNegativePayment && (
-            <TrendingDown size={12} className="text-account-debt mr-0.5" />
+            <TrendingDown size={12} className="mr-0.5 text-account-debt" />
           )}
           {isPositiveSavings && (
-            <TrendingDown size={12} className="text-account-savings mr-0.5" />
+            <TrendingDown size={12} className="mr-0.5 text-account-savings" />
           )}
           <Text
             className={cn(
@@ -204,7 +204,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         <View className="mb-1.5">
           <Progress
             value={progress}
-            className="bg-muted h-1"
+            className="h-1 bg-muted"
             indicatorClassName={config.progressClass}
           />
         </View>
@@ -215,11 +215,11 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
             <secondaryInfo.icon size={10} className="text-muted-foreground" />
-            <Text className="text-foreground ml-1 text-[11px]">
+            <Text className="ml-1 text-[11px] text-foreground">
               {secondaryInfo.label}
             </Text>
           </View>
-          <Text className="text-foreground text-[11px] font-medium">
+          <Text className="text-[11px] font-medium text-foreground">
             {secondaryInfo.text}
           </Text>
         </View>

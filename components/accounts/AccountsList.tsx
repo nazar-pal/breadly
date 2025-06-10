@@ -34,7 +34,7 @@ export default function AccountsList({
 
   return (
     <ScrollView
-      className="bg-background flex-1"
+      className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{
         paddingHorizontal: 16,
