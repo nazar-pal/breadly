@@ -1,46 +1,183 @@
-export { AlignLeft } from './AlignLeft'
-export { ArrowDown } from './ArrowDown'
-export { ArrowRight } from './ArrowRight'
-export { ArrowUp } from './ArrowUp'
-export { Banknote } from './Banknote'
-export { Calendar } from './Calendar'
-export { Camera } from './Camera'
-export { ChartBar } from './ChartBar'
-export { ChartLine } from './ChartLine'
-export { Check } from './Check'
-export { ChevronDown } from './ChevronDown'
-export { ChevronLeft } from './ChevronLeft'
-export { ChevronRight } from './ChevronRight'
-export { ChevronUp } from './ChevronUp'
-export { CirclePlus } from './CirclePlus'
-export { CreditCard } from './CreditCard'
-export { DollarSign } from './DollarSign'
-export { Edit2 } from './Edit2'
-export { List } from './List'
-export { Lock } from './Lock'
-export { LogIn } from './LogIn'
-export { LogOut } from './LogOut'
-export { Mail } from './Mail'
-export { MessageSquare } from './MessageSquare'
-export { Mic } from './Mic'
-export { Moon } from './Moon'
-export { MoonStar } from './MoonStar'
-export { Pencil } from './Pencil'
-export { PiggyBank } from './PiggyBank'
-export { Plus } from './Plus'
-export { Receipt } from './Receipt'
-export { RefreshCw } from './RefreshCw'
-export { Save } from './Save'
-export { Settings } from './Settings'
-export { Shield } from './Shield'
-export { Sun } from './Sun'
-export { Tag } from './Tag'
-export { Target } from './Target'
-export { Trash2 } from './Trash2'
-export { TrendingDown } from './TrendingDown'
-export { TrendingUp } from './TrendingUp'
-export { Upload } from './Upload'
-export { User } from './User'
-export { UserPlus } from './UserPlus'
-export { Wallet } from './Wallet'
-export { X } from './X'
+import {
+  AlignLeft,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  Banknote,
+  Briefcase,
+  Building,
+  Bus,
+  Calendar,
+  Camera,
+  ChartBar,
+  ChartLine,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  CirclePlus,
+  Coffee,
+  CreditCard,
+  DollarSign,
+  Edit2,
+  Film,
+  Heart,
+  Home,
+  List,
+  Lock,
+  LogIn,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Mic,
+  Moon,
+  MoonStar,
+  Pencil,
+  PiggyBank,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
+  Shirt,
+  Sun,
+  Tag,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  User,
+  UserPlus,
+  Users,
+  UtensilsCrossed,
+  Wallet,
+  X
+} from 'lucide-react-native'
+import { iconWithClassName } from './iconWithClassName'
+
+// Process all icons with className support
+const icons = [
+  AlignLeft,
+  ArrowDown,
+  ArrowRight,
+  Shirt,
+  Users,
+  ArrowUp,
+  Banknote,
+  Calendar,
+  Camera,
+  Film,
+  Home,
+  Heart,
+  Coffee,
+  Building,
+  Bus,
+  Briefcase,
+  ChartBar,
+  ChartLine,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  CirclePlus,
+  CreditCard,
+  DollarSign,
+  Edit2,
+  List,
+  Lock,
+  LogIn,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Mic,
+  Moon,
+  MoonStar,
+  Pencil,
+  PiggyBank,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
+  Sun,
+  Tag,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  User,
+  UserPlus,
+  Wallet,
+  UtensilsCrossed,
+  X
+]
+
+icons.forEach(icon => {
+  iconWithClassName(icon)
+})
+
+// Export all icons
+export {
+  AlignLeft,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  Banknote,
+  Briefcase,
+  Building,
+  Bus,
+  Calendar,
+  Camera,
+  ChartBar,
+  ChartLine,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  CirclePlus,
+  Coffee,
+  CreditCard,
+  DollarSign,
+  Edit2,
+  Film,
+  Heart,
+  Home,
+  List,
+  Lock,
+  LogIn,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Mic,
+  Moon,
+  MoonStar,
+  Pencil,
+  PiggyBank,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
+  Shirt,
+  Sun,
+  Tag,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  User,
+  UserPlus,
+  Users,
+  UtensilsCrossed,
+  Wallet,
+  X
+}
