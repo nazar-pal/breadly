@@ -19,33 +19,42 @@ interface ExpenseCardProps {
 export default function ExpenseCard({ expense }: ExpenseCardProps) {
   const router = useRouter()
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount)
+  }
+
   const handlePress = () => {
     router.push(`/expenses/${expense.id}`)
   }
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={handlePress} className="active:opacity-80">
       <Card className="mb-3">
         <CardContent className="min-h-[80px] flex-row items-start justify-between">
           <View className="mr-4 flex-1">
-            <Text className="mb-1 text-lg font-semibold text-foreground">
-              ${expense.amount.toFixed(2)}
+            <Text className="text-expense mb-1 text-lg font-semibold">
+              {formatCurrency(expense.amount)}
             </Text>
             <Text
-              className="mb-2 flex-wrap text-sm text-foreground"
+              className="text-foreground mb-2 flex-wrap text-sm"
               numberOfLines={2}
             >
               {expense.description}
             </Text>
             <View className="flex-row flex-wrap items-center">
-              <View className="bg-card-secondary mr-2 rounded px-2 py-1">
-                <Text className="text-xs font-medium text-foreground">
+              <View className="bg-muted mr-2 rounded px-2 py-1">
+                <Text className="text-foreground text-xs font-medium">
                   {expense.category}
                 </Text>
               </View>
               <View className="ml-2 flex-row items-center">
-                <Calendar size={14} color="#4A5568" />
-                <Text className="ml-1 text-xs text-foreground">
+                <Calendar size={14} className="text-muted-foreground" />
+                <Text className="text-muted-foreground ml-1 text-xs">
                   {expense.date}
                 </Text>
               </View>
@@ -55,11 +64,13 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
           <View className="items-end justify-between">
             <View className="mb-3 flex-row">
               {expense.hasPhoto && (
-                <Receipt size={16} color="#4A5568" style={{ marginRight: 8 }} />
+                <Receipt size={16} className="text-muted-foreground mr-2" />
               )}
-              {expense.hasVoice && <Mic size={16} color="#4A5568" />}
+              {expense.hasVoice && (
+                <Mic size={16} className="text-muted-foreground" />
+              )}
             </View>
-            <ArrowRight size={20} color="#6366F1" />
+            <ArrowRight size={20} className="text-primary" />
           </View>
         </CardContent>
       </Card>
