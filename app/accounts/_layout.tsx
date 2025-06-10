@@ -7,15 +7,7 @@ export default function AccountsLayout() {
         name="[id]"
         options={{
           title: 'Account Details',
-          headerBackTitle: 'Back',
-          headerStyle: {
-            backgroundColor: '#FFFFFF'
-          },
-          headerTintColor: '#6366F1',
-          headerTitleStyle: {
-            color: '#1A202C',
-            fontWeight: '600'
-          }
+          headerBackTitle: 'Back'
         }}
       />
     </Stack>

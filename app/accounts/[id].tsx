@@ -1,7 +1,6 @@
 import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { mockAccounts } from '@/data/mockAccounts'
 import { mockAccountOperations } from '@/data/mockData'
@@ -17,10 +16,277 @@ import {
   TrendingUp,
   Wallet
 } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+interface AccountTypeConfig {
+  colorClass: string
+  bgColorClass: string
+  icon: typeof Wallet
+  label: string
+}
+
+const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
+  payment: {
+    colorClass: 'text-primary',
+    bgColorClass: 'bg-primary/10',
+    icon: Wallet,
+    label: 'Payment Account'
+  },
+  credit: {
+    colorClass: 'text-primary',
+    bgColorClass: 'bg-primary/10',
+    icon: CreditCard,
+    label: 'Credit Card'
+  },
+  savings: {
+    colorClass: 'text-success',
+    bgColorClass: 'bg-success/10',
+    icon: PiggyBank,
+    label: 'Savings Account'
+  },
+  debt: {
+    colorClass: 'text-destructive',
+    bgColorClass: 'bg-destructive/10',
+    icon: DollarSign,
+    label: 'Debt Account'
+  }
+}
+
+interface InfoItemProps {
+  icon: React.ReactNode
+  label: string
+  value: string
+}
+
+function InfoItem({ icon, label, value }: InfoItemProps) {
+  return (
+    <View className="flex-row items-center gap-2 py-2">
+      {icon}
+      <Text className="text-muted-foreground flex-1 text-sm">{label}</Text>
+      <Text className="text-foreground text-sm font-semibold">{value}</Text>
+    </View>
+  )
+}
+
+interface AccountHeaderProps {
+  name: string
+  type: string
+  icon: typeof Wallet
+  colorClass: string
+  bgColorClass: string
+  onEdit: () => void
+}
+
+function AccountHeader({
+  name,
+  type,
+  icon: Icon,
+  colorClass,
+  bgColorClass,
+  onEdit
+}: AccountHeaderProps) {
+  return (
+    <View className="mb-6 flex-row items-center justify-between">
+      <View className="flex-row items-center">
+        <View
+          className={cn(
+            'mr-3 h-14 w-14 items-center justify-center rounded-2xl',
+            bgColorClass
+          )}
+        >
+          <Icon size={28} className={colorClass} />
+        </View>
+        <View>
+          <Text className="text-foreground text-2xl font-bold">{name}</Text>
+          <Text className="text-muted-foreground text-base">{type}</Text>
+        </View>
+      </View>
+      <Pressable
+        onPress={onEdit}
+        className={cn(
+          'h-9 w-9 items-center justify-center rounded-full',
+          'bg-background/80',
+          'active:bg-muted',
+          'border-border/30 border'
+        )}
+      >
+        <Edit2 size={16} className="text-muted-foreground" />
+      </Pressable>
+    </View>
+  )
+}
+
+interface BalanceCardProps {
+  balance: number
+  colorClass: string
+  type: string
+  description?: string
+  currency: string
+}
+
+function BalanceCard({
+  balance,
+  colorClass,
+  type,
+  description,
+  currency
+}: BalanceCardProps) {
+  const formatBalance = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Math.abs(amount))
+  }
+
+  return (
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+      <CardContent className="py-6">
+        <Text className="text-muted-foreground mb-2 text-sm">
+          Current Balance
+        </Text>
+        <View className="flex-row items-center gap-2">
+          <Text
+            className={cn(
+              'text-[40px] font-extrabold leading-none tracking-tight',
+              colorClass
+            )}
+          >
+            {balance < 0 && type === 'payment' ? '-' : ''}
+            {formatBalance(balance)}
+          </Text>
+          {balance > 0 && type === 'savings' && (
+            <TrendingUp size={24} className="text-success" />
+          )}
+          {balance < 0 && type === 'payment' && (
+            <TrendingDown size={24} className="text-destructive" />
+          )}
+        </View>
+        {description && (
+          <Text className="text-muted-foreground mt-4 text-sm leading-relaxed">
+            {description}
+          </Text>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+interface ProgressCardProps {
+  progress: number
+  type: string
+  colorClass: string
+  bgColorClass: string
+}
+
+function ProgressCard({
+  progress,
+  type,
+  colorClass,
+  bgColorClass
+}: ProgressCardProps) {
+  return (
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+      <CardContent className="py-6">
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text className="text-foreground text-base font-medium">
+            {type === 'savings' ? 'Savings Progress' : 'Repayment Progress'}
+          </Text>
+          <Text className={cn('text-2xl font-bold', colorClass)}>
+            {progress.toFixed(1)}%
+          </Text>
+        </View>
+        <View className="bg-secondary h-2 overflow-hidden rounded-full">
+          <View
+            className={cn('h-full', bgColorClass)}
+            style={{
+              width: `${Math.min(progress, 100)}%`
+            }}
+          />
+        </View>
+      </CardContent>
+    </Card>
+  )
+}
+
+interface DetailsCardProps {
+  account: any
+  formatBalance: (amount: number) => string
+}
+
+function DetailsCard({ account, formatBalance }: DetailsCardProps) {
+  if (
+    !(account.type === 'savings' && account.targetAmount) &&
+    !(account.type === 'debt' && (account.dueDate || account.interestRate))
+  ) {
+    return null
+  }
+
+  return (
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
+      <CardHeader>
+        <CardTitle>Account Details</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {account.type === 'savings' && account.targetAmount && (
+          <InfoItem
+            icon={<Target size={18} className="text-muted-foreground" />}
+            label="Target Amount"
+            value={formatBalance(account.targetAmount)}
+          />
+        )}
+        {account.type === 'debt' && account.dueDate && (
+          <InfoItem
+            icon={<Calendar size={18} className="text-muted-foreground" />}
+            label="Due Date"
+            value={new Date(account.dueDate).toLocaleDateString()}
+          />
+        )}
+        {account.type === 'debt' && account.interestRate && (
+          <InfoItem
+            icon={<DollarSign size={18} className="text-muted-foreground" />}
+            label="Interest Rate"
+            value={`${account.interestRate}%`}
+          />
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+interface ActivitySectionProps {
+  operations: typeof mockAccountOperations
+}
+
+function ActivitySection({ operations }: ActivitySectionProps) {
+  return (
+    <View className="mt-8">
+      <View className="mb-4">
+        <Text className="text-foreground text-xl font-semibold">
+          Recent Activity
+        </Text>
+      </View>
+      <View>
+        {operations.length > 0 ? (
+          operations.map(operation => (
+            <AccountTransactionItem key={operation.id} operation={operation} />
+          ))
+        ) : (
+          <View className="py-8">
+            <Text className="text-muted-foreground text-center text-sm">
+              No recent activity for this account
+            </Text>
+          </View>
+        )}
+      </View>
+    </View>
+  )
+}
 
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -33,7 +299,6 @@ export default function AccountDetailsScreen() {
     handleCloseModal
   } = useAccountManagement()
 
-  // Find the account
   const allAccounts = [
     ...mockAccounts.payment,
     ...mockAccounts.savings,
@@ -41,11 +306,10 @@ export default function AccountDetailsScreen() {
   ]
   const account = allAccounts.find(acc => acc.id === id)
 
-  // Get account operations
   const accountOperations = mockAccountOperations
     .filter(op => op.accountId === id)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 10) // Show last 10 operations
+    .slice(0, 10)
 
   if (!account) {
     return (
@@ -57,43 +321,22 @@ export default function AccountDetailsScreen() {
     )
   }
 
-  const getAccountIcon = () => {
-    switch (account.type) {
-      case 'payment':
-        return account.name.toLowerCase().includes('credit')
-          ? CreditCard
-          : Wallet
-      case 'savings':
-        return PiggyBank
-      case 'debt':
-        return DollarSign
-      default:
-        return Wallet
-    }
-  }
+  const accountType = account.name.toLowerCase().includes('credit')
+    ? 'credit'
+    : account.type
+  const {
+    colorClass,
+    bgColorClass,
+    icon: Icon,
+    label
+  } = ACCOUNT_TYPES[accountType]
 
-  const getTypeColor = () => {
-    switch (account.type) {
-      case 'payment':
-        return '#6366F1' // colors.primary
-      case 'savings':
-        return '#10B981' // colors.success
-      case 'debt':
-        return '#EF4444' // colors.error
-      default:
-        return '#6366F1' // colors.primary
-    }
-  }
-
-  const getIconBackgroundColor = () => {
-    switch (account.type) {
-      case 'savings':
-        return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
-      case 'debt':
-        return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
-      default:
-        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-    }
+  let progress = null
+  if (account.type === 'savings' && account.targetAmount) {
+    progress = (account.balance / account.targetAmount) * 100
+  } else if (account.type === 'debt' && account.initialAmount) {
+    progress =
+      ((account.initialAmount - account.balance) / account.initialAmount) * 100
   }
 
   const formatBalance = (amount: number) => {
@@ -105,24 +348,6 @@ export default function AccountDetailsScreen() {
     }).format(Math.abs(amount))
   }
 
-  const getProgressPercentage = () => {
-    if (account.type === 'savings' && account.targetAmount) {
-      return (account.balance / account.targetAmount) * 100
-    }
-    if (account.type === 'debt' && account.initialAmount) {
-      return (
-        ((account.initialAmount - account.balance) / account.initialAmount) *
-        100
-      )
-    }
-    return null
-  }
-
-  const Icon = getAccountIcon()
-  const typeColor = getTypeColor()
-  const iconBgColor = getIconBackgroundColor()
-  const progress = getProgressPercentage()
-
   return (
     <View className="bg-background flex-1">
       <ScrollView
@@ -132,150 +357,35 @@ export default function AccountDetailsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Account Header Card */}
-        <Card
-          className="mb-6 border-l-4"
-          style={{ borderLeftColor: typeColor }}
-        >
-          <CardContent>
-            <View className="mb-3 flex-row items-center">
-              <View
-                className="mr-3 h-12 w-12 items-center justify-center rounded-xl"
-                style={{ backgroundColor: iconBgColor }}
-              >
-                <Icon size={24} color={typeColor} />
-              </View>
-              <View className="flex-1">
-                <Text className="text-foreground mb-0.5 text-xl font-bold">
-                  {account.name}
-                </Text>
-                <Text className="text-foreground text-sm capitalize">
-                  {account.type.charAt(0).toUpperCase() + account.type.slice(1)}{' '}
-                  Account
-                </Text>
-              </View>
-              <Button
-                variant="outline"
-                size="sm"
-                onPress={() => handleEditAccount(account)}
-              >
-                <Edit2 size={16} color="#1A202C" style={{ marginRight: 8 }} />
-                <Text>Edit</Text>
-              </Button>
-            </View>
+        <AccountHeader
+          name={account.name}
+          type={label}
+          icon={Icon}
+          colorClass={colorClass}
+          bgColorClass={bgColorClass}
+          onEdit={() => handleEditAccount(account)}
+        />
 
-            <Text className="text-foreground mb-4 text-sm leading-5">
-              {account.description}
-            </Text>
+        <BalanceCard
+          balance={account.balance}
+          colorClass={colorClass}
+          type={account.type}
+          description={account.description}
+          currency={account.currency}
+        />
 
-            {/* Balance Section */}
-            <View className="mb-4">
-              <Text className="text-foreground mb-1 text-sm">
-                Current Balance
-              </Text>
-              <View className="flex-row items-center gap-2">
-                <Text
-                  className="text-[32px] font-extrabold"
-                  style={{ color: typeColor }}
-                >
-                  {account.balance < 0 && account.type === 'payment' ? '-' : ''}
-                  {formatBalance(account.balance)}
-                </Text>
-                {account.balance > 0 && account.type === 'savings' && (
-                  <TrendingUp size={20} color="#10B981" />
-                )}
-                {account.balance < 0 && account.type === 'payment' && (
-                  <TrendingDown size={20} color="#EF4444" />
-                )}
-              </View>
-            </View>
+        {progress !== null && (
+          <ProgressCard
+            progress={progress}
+            type={account.type}
+            colorClass={colorClass}
+            bgColorClass={bgColorClass}
+          />
+        )}
 
-            {/* Progress Section */}
-            {progress !== null && (
-              <View className="mb-4">
-                <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="text-foreground text-sm">
-                    {account.type === 'savings'
-                      ? 'Savings Progress'
-                      : 'Repayment Progress'}
-                  </Text>
-                  <Text className="text-foreground text-sm font-semibold">
-                    {progress.toFixed(1)}%
-                  </Text>
-                </View>
-                <View className="bg-border-light h-1.5 overflow-hidden rounded-sm">
-                  <View
-                    className="h-full"
-                    style={{
-                      width: `${Math.min(progress, 100)}%`,
-                      backgroundColor: typeColor
-                    }}
-                  />
-                </View>
-              </View>
-            )}
+        <DetailsCard account={account} formatBalance={formatBalance} />
 
-            {/* Additional Info */}
-            <View className="gap-3">
-              {account.type === 'savings' && account.targetAmount && (
-                <View className="flex-row items-center gap-2">
-                  <Target size={16} color="#4A5568" />
-                  <Text className="text-foreground flex-1 text-sm">
-                    Target Amount
-                  </Text>
-                  <Text className="text-foreground text-sm font-semibold">
-                    {formatBalance(account.targetAmount)}
-                  </Text>
-                </View>
-              )}
-              {account.type === 'debt' && account.dueDate && (
-                <View className="flex-row items-center gap-2">
-                  <Calendar size={16} color="#4A5568" />
-                  <Text className="text-foreground flex-1 text-sm">
-                    Due Date
-                  </Text>
-                  <Text className="text-foreground text-sm font-semibold">
-                    {new Date(account.dueDate).toLocaleDateString()}
-                  </Text>
-                </View>
-              )}
-              {account.type === 'debt' && account.interestRate && (
-                <View className="flex-row items-center gap-2">
-                  <DollarSign size={16} color="#4A5568" />
-                  <Text className="text-foreground flex-1 text-sm">
-                    Interest Rate
-                  </Text>
-                  <Text className="text-foreground text-sm font-semibold">
-                    {account.interestRate}%
-                  </Text>
-                </View>
-              )}
-            </View>
-          </CardContent>
-        </Card>
-
-        {/* Recent Operations */}
-        <View className="mb-5">
-          <Text className="text-foreground mb-4 text-xl font-bold tracking-tight">
-            Recent Activity
-          </Text>
-          {accountOperations.length > 0 ? (
-            accountOperations.map(operation => (
-              <AccountTransactionItem
-                key={operation.id}
-                operation={operation}
-              />
-            ))
-          ) : (
-            <Card>
-              <CardContent>
-                <Text className="text-foreground text-center text-sm italic">
-                  No recent activity for this account
-                </Text>
-              </CardContent>
-            </Card>
-          )}
-        </View>
+        <ActivitySection operations={accountOperations} />
       </ScrollView>
 
       <EditAccountModal
