@@ -1,33 +1,40 @@
-import { useTheme } from '@/context/ThemeContext'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
+import { ChevronLeft } from '@/lib/icons'
 import { useAuth } from '@clerk/clerk-expo'
-import { Redirect, Stack } from 'expo-router'
+import { Slot, useRouter, useSegments } from 'expo-router'
+import { useEffect } from 'react'
 import { View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AuthRoutesLayout() {
-  const { isSignedIn } = useAuth()
-  const { colors } = useTheme()
+  const { isSignedIn, isLoaded } = useAuth()
 
-  if (isSignedIn) {
-    return <Redirect href={'/'} />
-  }
+  const segments = useSegments()
+  const router = useRouter()
+  const insets = useSafeAreaInsets()
+
+  useEffect(() => {
+    if (!isLoaded) return
+
+    if (isSignedIn) {
+      // Redirect to home if user is signed in and tries to access auth screens
+      router.replace('/')
+    }
+  }, [isSignedIn, segments, isLoaded, router])
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <Stack
-        screenOptions={{
-          headerShown: true,
-          headerBackTitle: 'Back',
-          headerStyle: {
-            backgroundColor: colors.surface
-          },
-          headerTintColor: colors.primary,
-          headerTitleStyle: {
-            color: colors.text,
-            fontWeight: '600'
-          },
-          contentStyle: { backgroundColor: colors.background }
-        }}
-      />
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+      <Button
+        variant="ghost"
+        className="h-10 w-10 items-center justify-center rounded-full p-0"
+        onPress={() => router.push('/(tabs)/settings')}
+      >
+        <ChevronLeft className="text-foreground" size={24} />
+        <Text className="text-foreground">Back to settings</Text>
+      </Button>
+
+      <Slot />
     </View>
   )
 }

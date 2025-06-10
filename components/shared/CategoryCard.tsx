@@ -1,4 +1,3 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import React, { useState } from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
@@ -21,17 +20,11 @@ export default function CategoryCard({
   onPress,
   onLongPress
 }: CategoryCardProps) {
-  const { colors } = useTheme()
   const [isPressed, setIsPressed] = useState(false)
 
-  const styles = useThemedStyles(theme => ({
-    categoryCard: {
-      width: '47%' as const,
-      padding: theme.spacing.sm * 1.5,
-      borderRadius: theme.borderRadius.md * 2,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      backgroundColor: theme.colors.card,
+  const getCardStyle = () => {
+    return {
+      backgroundColor: '#FFFFFF', // colors.card
       opacity: isPressed ? 0.7 : 1,
       transform: [{ scale: isPressed ? 0.98 : 1 }],
       ...Platform.select({
@@ -39,44 +32,24 @@ export default function CategoryCard({
           elevation: isPressed ? 1 : 2
         },
         default: {
-          boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px ${theme.colors.shadow}${isPressed ? '80' : ''}`
+          boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px rgba(0, 0, 0, 0.1)${isPressed ? '80' : ''}`
         }
       })
-    },
-    iconContainer: {
-      width: 36,
-      height: 36,
-      borderRadius: theme.borderRadius.md + 2,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const
-    },
-    categoryContent: {
-      marginLeft: theme.spacing.sm * 1.5,
-      flex: 1
-    },
-    categoryName: {
-      fontSize: 14,
-      fontWeight: '600' as const,
-      marginBottom: 2,
-      color: theme.colors.text
-    },
-    categoryAmount: {
-      fontSize: 13
     }
-  }))
+  }
 
   const getAmountColor = () => {
     if (type === 'income') {
-      return amount > 0 ? colors.success : colors.textSecondary
+      return amount > 0 ? '#10B981' : '#4A5568' // colors.success : colors.textSecondary
     }
-    return amount > 0 ? colors.text : colors.textSecondary
+    return amount > 0 ? '#1A202C' : '#4A5568' // colors.text : colors.textSecondary
   }
 
   const getIconBackgroundColor = () => {
     if (type === 'income') {
-      return colors.iconBackground.success
+      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
     }
-    return colors.iconBackground.neutral
+    return '#F1F5F9' // colors.iconBackground.neutral
   }
 
   const handleLongPress = () => {
@@ -95,7 +68,8 @@ export default function CategoryCard({
 
   return (
     <Pressable
-      style={styles.categoryCard}
+      className="w-[47%] flex-row items-center rounded-2xl p-3"
+      style={getCardStyle()}
       onPress={() => onPress(name)}
       onLongPress={handleLongPress}
       onPressIn={handlePressIn}
@@ -103,18 +77,19 @@ export default function CategoryCard({
       delayLongPress={500}
     >
       <View
-        style={[
-          styles.iconContainer,
-          { backgroundColor: getIconBackgroundColor() }
-        ]}
+        className="h-9 w-9 items-center justify-center rounded-lg"
+        style={{ backgroundColor: getIconBackgroundColor() }}
       >
         {icon}
       </View>
-      <View style={styles.categoryContent}>
-        <Text numberOfLines={1} style={styles.categoryName}>
+      <View className="ml-3 flex-1">
+        <Text
+          numberOfLines={1}
+          className="mb-0.5 text-sm font-semibold text-foreground"
+        >
           {name}
         </Text>
-        <Text style={[styles.categoryAmount, { color: getAmountColor() }]}>
+        <Text className="text-[13px]" style={{ color: getAmountColor() }}>
           ${amount.toFixed(2)}
         </Text>
       </View>

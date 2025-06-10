@@ -1,27 +1,25 @@
-import React from 'react'
-import { View, Alert, StyleSheet } from 'react-native'
-import { useTheme } from '@/context/ThemeContext'
 import ExpenseForm from '@/components/expenses/ExpenseForm'
 import { router } from 'expo-router'
+import React from 'react'
+import { Alert, View } from 'react-native'
+
+interface ExpenseFormData {
+  amount: string
+  category: string
+  date: string
+  description?: string
+}
 
 export default function ManualScreen() {
-  const { colors } = useTheme()
-
-  function handleSubmit(data: any) {
+  const handleSubmit = (data: ExpenseFormData) => {
     // TODO: persist data
     Alert.alert('Success', 'Expense saved!')
-    router.push('/') // back to dashboard
+    router.push('/(tabs)') // back to dashboard
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View className="flex-1 bg-background p-4">
       <ExpenseForm onSubmit={handleSubmit} />
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-})

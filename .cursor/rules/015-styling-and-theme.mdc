@@ -4,7 +4,7 @@ globs:
 alwaysApply: false
 ---
 ---
-description: "Guidelines for using the project's theme system and styling conventions (MVP Essentials)."
+description: "Guidelines for using nativewind utility classes and styling conventions (MVP Essentials)."
 globs: ["**/*.tsx", "**/*.ts"]
 alwaysApply: true
 version: 1.0.0
@@ -12,47 +12,59 @@ version: 1.0.0
 
 # 015: Styling and Theme Usage (MVP Essentials)
 
-## 1. Core Principle: Theme System First
-Always use theme tokens. Avoid hard-coding colors, spacing, border-radius, font sizes.
-**Context**: `context/ThemeContext.tsx`, **Files**: `theme/` (colors, tokens, etc.)
+1. Core Principle: nativewind Utility-First  
+Always use nativewind (Tailwind-compatible) utility classes. Do not use theme tokens, custom style objects, or StyleSheet for theme-dependent styles.
 
-## 2. Import & Usage
-```typescript
-import { useTheme, useThemedStyles } from '@/context/ThemeContext';
+2. Import & Usage  
+No imports for theme context or styled hooks. Apply classes directly in JSX:  
+  <View className="p-4 bg-background dark:bg-background text-foreground">…</View>  
 
-// Recommended:
-const styles = useThemedStyles(theme => ({
-  container: { padding: theme.spacing.md, backgroundColor: theme.colors.background },
-  text: { fontSize: theme.fontSizes.body, color: theme.colors.text },
-}));
+3. Available Color Classes  
+Light + dark mode support via `dark:` prefix. Do not invent new color names.  
 
-// Direct access (less common for style blocks):
-// const { colors } = useTheme();
-```
+  bg-background      text-foreground  
+  bg-card            text-card-foreground  
+  bg-popover         text-popover-foreground  
+  bg-primary         text-primary-foreground  
+  bg-secondary       text-secondary-foreground  
+  bg-muted           text-muted-foreground  
+  bg-accent          text-accent-foreground  
+  bg-destructive     text-destructive-foreground  
+  border-border      bg-input      ring-ring  
 
-## 3. Key Tokens (Examples)
--   **Spacing**: `theme.spacing.xs` (4px), `.sm` (8px), `.md` (16px), `.lg` (24px), `.xl` (32px).
--   **Colors**:
-    -   Backgrounds: `colors.background`, `colors.surface`
-    -   Text: `colors.text`, `colors.textSecondary`
-    -   Brand: `colors.primary`, `colors.secondary`
-    -   Semantic: `colors.success`, `colors.error`
--   **Border Radius**: `theme.borderRadius.sm` (4px), `.md` (8px), `.lg` (16px).
--   **Typography**: `theme.fontSizes.body`, `theme.fontWeights.normal` (Define in `theme/tokens.ts`).
+  bg-chart-1 … bg-chart-5  
+  bg-income, bg-expense, bg-transfer, bg-savings  
+  bg-account-payment, bg-account-savings, bg-account-debt  
 
-## 4. TypeScript: `as const`
-For string literals in styles: `flexDirection: 'row' as const`.
+4. Spacing, Typography & Layout  
+Use standard Tailwind classes:  
+  - Spacing: p-*, m-*, px-*, py-* (e.g. p-4 = 16px)  
+  - Typography: text-xs, text-sm, text-base, text-lg, font-normal, font-medium  
+  - Borders & Radius: border, border-2, rounded-sm, rounded-md, rounded-lg  
 
-## 5. Platform Styles & Hairline
--   `Platform.select({...})` for minor OS-specific styles.
--   `borderBottomWidth: StyleSheet.hairlineWidth` for thin borders.
+5. Responsive & Dark Mode  
+  - Responsive prefixes: sm:, md:, lg:, xl: (e.g. md:p-6)  
+  - Dark mode: prefix with `dark:` (e.g. dark:bg-card)  
 
-## 6. Anti-Patterns (Avoid)
-❌ Hard-coded values: `backgroundColor: '#FFF'`, `padding: 16`.
-❌ Static `StyleSheet.create()` for themed styles.
+6. Layout Primitives  
+  - Flex: flex, flex-row, flex-col, items-center, justify-between  
+  - Grid: grid, grid-cols-*, gap-*  
 
-## 7. Modern Approach (Follow)
-✅ Use semantic color/spacing tokens: `colors.surface`, `theme.spacing.md`.
-✅ Use `useThemedStyles`.
-✅ Type-safe with `as const`.
-✅ Basic Accessibility: Ensure text has good contrast with its background via theme colors.
+7. Images & Lists  
+  - Images: <Image className="w-full h-48 object-cover rounded-md" …/>  
+  - FlashList items: wrap container in utility classes; keep renderItem light  
+
+8. Animations  
+Use `react-native-reanimated` hooks; apply nativewind classes for transforms (e.g. `rotate-45`, `scale-95`) in animated styles.
+
+9. Accessibility  
+  - Ensure contrast: use provided text-foreground on bg-* classes  
+  - Touch targets: min-w-[44px], min-h-[44px]  
+  - Provide accessibilityLabel on icon-only controls  
+
+10. Anti-Patterns (Avoid)  
+  ❌ Inline style objects for theme colors  
+  ❌ Static StyleSheet.create for themed styles  
+  ❌ Hard-coded hex values or px units  
+
+All styling must use nativewind utility classes. When in doubt, refer to Tailwind docs and apply the same patterns.

@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import DateRangeModal from './DateRangeModal'
@@ -13,7 +12,6 @@ export default function FinancialHeader({
   totalExpenses,
   totalIncome
 }: FinancialHeaderProps) {
-  const { colors } = useTheme()
   const {
     activeTab,
     setActiveTab,
@@ -30,161 +28,91 @@ export default function FinancialHeader({
     handleDateRangeModalClose
   } = useCategoryContext()
 
-  const styles = useThemedStyles(theme => ({
-    header: {
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm
-    },
-    topRow: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const,
-      marginBottom: theme.spacing.sm
-    },
-    leftSection: {
-      flex: 1
-    },
-    balanceLabel: {
-      fontSize: 12,
-      color: theme.colors.textSecondary,
-      marginBottom: 2
-    },
-    balanceAmount: {
-      fontSize: 24,
-      fontWeight: '700' as const
-    },
-    rightSection: {
-      alignItems: 'flex-end' as const
-    },
-    dateRange: {
-      fontSize: 14,
-      fontWeight: '600' as const,
-      color: theme.colors.text,
-      textAlign: 'right' as const
-    },
-    modeIndicator: {
-      fontSize: 10,
-      color: theme.colors.textSecondary,
-      textTransform: 'uppercase' as const,
-      letterSpacing: 0.5,
-      marginTop: 1
-    },
-    tabContainer: {
-      flexDirection: 'row' as const,
-      gap: theme.spacing.sm,
-      marginTop: theme.spacing.xs
-    },
-    tab: {
-      flex: 1,
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.sm,
-      borderRadius: theme.borderRadius.md,
-      alignItems: 'center' as const,
-      backgroundColor: 'transparent',
-      marginBottom: theme.spacing.xs,
-      marginTop: theme.spacing.sm
-    },
-    activeTab: {
-      backgroundColor: theme.colors.iconBackground.primary,
-      borderWidth: 1,
-      borderColor: theme.colors.primary
-    },
-    tabText: {
-      fontSize: 16,
-      fontWeight: '600' as const,
-      marginBottom: 1
-    },
-    tabAmount: {
-      fontSize: 14,
-      fontWeight: '500' as const
-    }
-  }))
-
   const netBalance = totalIncome - totalExpenses
 
   return (
-    <View style={styles.header}>
+    <View className="px-4 py-2">
       {/* Top Row: Balance and Date Range */}
-      <View style={styles.topRow}>
-        <View style={styles.leftSection}>
-          <Text style={styles.balanceLabel}>Net Balance</Text>
+      <View className="mb-2 flex-row items-center justify-between">
+        <View className="flex-1">
+          <Text className="mb-0.5 text-xs text-foreground">Net Balance</Text>
           <Text
-            style={[
-              styles.balanceAmount,
-              {
-                color: netBalance >= 0 ? colors.success : colors.error
-              }
-            ]}
+            className="text-2xl font-bold"
+            style={{
+              color: netBalance >= 0 ? '#10B981' : '#EF4444'
+            }}
           >
             ${Math.abs(netBalance).toFixed(2)}
           </Text>
         </View>
 
-        <Pressable onPress={handleDateRangePress} style={styles.rightSection}>
-          <Text style={styles.dateRange}>{formattedRange}</Text>
-          <Text style={styles.modeIndicator}>{getModeDisplayName(mode)}</Text>
+        <Pressable onPress={handleDateRangePress} className="items-end">
+          <Text className="text-right text-sm font-semibold text-foreground">
+            {formattedRange}
+          </Text>
+          <Text className="mt-0.5 text-[10px] uppercase tracking-wider text-foreground">
+            {getModeDisplayName(mode)}
+          </Text>
         </Pressable>
       </View>
 
       {/* Tab Navigation */}
-      <View style={styles.tabContainer}>
+      <View className="mt-1 flex-row gap-2">
         <Pressable
-          style={[styles.tab, activeTab === 'expenses' && styles.activeTab]}
+          className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
+          style={{
+            backgroundColor:
+              activeTab === 'expenses'
+                ? 'rgba(99, 102, 241, 0.1)'
+                : 'transparent',
+            borderWidth: activeTab === 'expenses' ? 1 : 0,
+            borderColor: activeTab === 'expenses' ? '#6366F1' : 'transparent'
+          }}
           onPress={() => setActiveTab('expenses')}
         >
           <Text
-            style={[
-              styles.tabText,
-              {
-                color:
-                  activeTab === 'expenses'
-                    ? colors.primary
-                    : colors.textSecondary
-              }
-            ]}
+            className="mb-0.5 text-base font-semibold"
+            style={{
+              color: activeTab === 'expenses' ? '#6366F1' : '#4A5568'
+            }}
           >
             Expenses
           </Text>
           <Text
-            style={[
-              styles.tabAmount,
-              {
-                color:
-                  activeTab === 'expenses' ? colors.error : colors.textSecondary
-              }
-            ]}
+            className="text-sm font-medium"
+            style={{
+              color: activeTab === 'expenses' ? '#EF4444' : '#4A5568'
+            }}
           >
             ${totalExpenses.toFixed(2)}
           </Text>
         </Pressable>
 
         <Pressable
-          style={[styles.tab, activeTab === 'incomes' && styles.activeTab]}
+          className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
+          style={{
+            backgroundColor:
+              activeTab === 'incomes'
+                ? 'rgba(99, 102, 241, 0.1)'
+                : 'transparent',
+            borderWidth: activeTab === 'incomes' ? 1 : 0,
+            borderColor: activeTab === 'incomes' ? '#6366F1' : 'transparent'
+          }}
           onPress={() => setActiveTab('incomes')}
         >
           <Text
-            style={[
-              styles.tabText,
-              {
-                color:
-                  activeTab === 'incomes'
-                    ? colors.primary
-                    : colors.textSecondary
-              }
-            ]}
+            className="mb-0.5 text-base font-semibold"
+            style={{
+              color: activeTab === 'incomes' ? '#6366F1' : '#4A5568'
+            }}
           >
             Income
           </Text>
           <Text
-            style={[
-              styles.tabAmount,
-              {
-                color:
-                  activeTab === 'incomes'
-                    ? colors.success
-                    : colors.textSecondary
-              }
-            ]}
+            className="text-sm font-medium"
+            style={{
+              color: activeTab === 'incomes' ? '#10B981' : '#4A5568'
+            }}
           >
             ${totalIncome.toFixed(2)}
           </Text>

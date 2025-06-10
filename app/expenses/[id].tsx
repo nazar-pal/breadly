@@ -1,14 +1,44 @@
-import Card from '@/components/ui/Card'
-import { useTheme } from '@/context/ThemeContext'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Text } from '@/components/ui/text'
 import { mockExpenses } from '@/data/mockData'
+import { Calendar, Mic, Tag } from '@/lib/icons'
 import { useLocalSearchParams } from 'expo-router'
-import { Calendar, Mic, Tag } from 'lucide-react-native'
 import React from 'react'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+interface DetailItemProps {
+  icon: React.ReactNode
+  label: string
+  value: string
+  showBorder?: boolean
+}
+
+function DetailItem({
+  icon,
+  label,
+  value,
+  showBorder = true
+}: DetailItemProps) {
+  return (
+    <>
+      <View className="flex-row items-center py-3">
+        <View className="mr-3 h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
+          {icon}
+        </View>
+        <View className="flex-1">
+          <Text className="mb-1 text-sm text-muted-foreground">{label}</Text>
+          <Text className="text-base font-medium text-foreground">{value}</Text>
+        </View>
+      </View>
+      {showBorder && <View className="h-px w-full bg-border" />}
+    </>
+  )
+}
 
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
 
   // Find the expense with the matching ID
   const expense = mockExpenses.find(e => e.id === id)
@@ -19,8 +49,8 @@ export default function ExpenseDetailsScreen() {
 
   if (!expense) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.error }]}>
+      <View className="flex-1 bg-background">
+        <Text className="mt-10 text-center text-lg text-destructive">
           Expense not found
         </Text>
       </View>
@@ -29,198 +59,92 @@ export default function ExpenseDetailsScreen() {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.contentContainer}
+      className="flex-1 bg-background"
+      contentContainerStyle={{
+        padding: 16,
+        paddingBottom: insets.bottom + 16
+      }}
     >
-      <View style={styles.amountContainer}>
-        <Text style={[styles.amountLabel, { color: colors.textSecondary }]}>
-          Amount
-        </Text>
-        <Text style={[styles.amount, { color: colors.expense }]}>
-          ${expense.amount.toFixed(2)}
-        </Text>
-      </View>
-
-      <Card style={styles.detailsCard}>
-        <View style={styles.detailRow}>
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.iconBackground.info }
-            ]}
-          >
-            <Calendar size={20} color={colors.info} />
-          </View>
-          <View>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
-              Date
-            </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
-              {expense.date}
-            </Text>
-          </View>
-        </View>
-
-        <View style={[styles.separator, { backgroundColor: colors.border }]} />
-
-        <View style={styles.detailRow}>
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: colors.iconBackground.primary }
-            ]}
-          >
-            <Tag size={20} color={colors.primary} />
-          </View>
-          <View>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
-              Category
-            </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
-              {expense.category}
-            </Text>
-          </View>
-        </View>
-
-        <View style={[styles.separator, { backgroundColor: colors.border }]} />
-
-        <View style={styles.detailRow}>
-          <View style={styles.descriptionContainer}>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
-              Description
-            </Text>
-            <Text style={[styles.descriptionText, { color: colors.text }]}>
-              {expense.description ?? 'No description provided'}
-            </Text>
-          </View>
-        </View>
+      {/* Amount Card */}
+      <Card className="mb-4 overflow-hidden">
+        <CardContent className="items-center py-8">
+          <Text className="mb-2 text-base text-muted-foreground">
+            Total Amount
+          </Text>
+          <Text className="mb-1 text-[48px] font-extrabold tracking-tight text-primary">
+            ${expense.amount.toFixed(2)}
+          </Text>
+        </CardContent>
       </Card>
 
+      {/* Details Card */}
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Expense Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DetailItem
+            icon={<Calendar size={20} className="text-primary" />}
+            label="Date"
+            value={expense.date}
+          />
+
+          <DetailItem
+            icon={<Tag size={20} className="text-primary" />}
+            label="Category"
+            value={expense.category}
+          />
+
+          <DetailItem
+            icon={<Tag size={20} className="text-primary" />}
+            label="Description"
+            value={expense.description ?? 'No description provided'}
+            showBorder={false}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Receipt Photo */}
       {expense.hasPhoto && (
-        <Card style={styles.attachmentCard}>
-          <Text style={[styles.attachmentTitle, { color: colors.text }]}>
-            Receipt Photo
-          </Text>
-          <View
-            style={[
-              styles.receiptContainer,
-              { backgroundColor: colors.surfaceSecondary }
-            ]}
-          >
-            <Image
-              source={{ uri: receiptImageUrl }}
-              style={styles.receiptImage}
-              resizeMode="contain"
-            />
-          </View>
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle>Receipt Photo</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <View className="overflow-hidden rounded-lg bg-secondary">
+              <Image
+                source={{ uri: receiptImageUrl }}
+                className="h-[250px] w-full"
+                resizeMode="cover"
+              />
+            </View>
+          </CardContent>
         </Card>
       )}
 
+      {/* Voice Memo */}
       {expense.hasVoice && (
-        <Card style={styles.attachmentCard}>
-          <Text style={[styles.attachmentTitle, { color: colors.text }]}>
-            Voice Memo
-          </Text>
-          <View
-            style={[
-              styles.voiceMemoContainer,
-              { backgroundColor: colors.iconBackground.warning }
-            ]}
-          >
-            <Mic size={24} color={colors.warning} style={{ marginRight: 8 }} />
-            <Text style={[styles.voiceMemoText, { color: colors.text }]}>
-              Voice Memo (00:12)
-            </Text>
-          </View>
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle>Voice Memo</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <View className="flex-row items-center rounded-lg bg-secondary/50 p-4">
+              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Mic size={20} className="text-primary" />
+              </View>
+              <View>
+                <Text className="text-base font-medium text-foreground">
+                  Voice Memo
+                </Text>
+                <Text className="text-sm text-muted-foreground">
+                  Duration: 00:12
+                </Text>
+              </View>
+            </View>
+          </CardContent>
         </Card>
       )}
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  contentContainer: {
-    padding: 16
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 40
-  },
-  amountContainer: {
-    alignItems: 'center',
-    marginBottom: 24
-  },
-  amountLabel: {
-    fontSize: 16,
-    marginBottom: 8
-  },
-  amount: {
-    fontSize: 48,
-    fontWeight: '700'
-  },
-  detailsCard: {
-    marginBottom: 16
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12
-  },
-  detailLabel: {
-    fontSize: 14,
-    marginBottom: 4
-  },
-  detailValue: {
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  separator: {
-    height: 1,
-    width: '100%'
-  },
-  descriptionContainer: {
-    flex: 1
-  },
-  descriptionText: {
-    fontSize: 16,
-    lineHeight: 24
-  },
-  attachmentCard: {
-    marginBottom: 16
-  },
-  attachmentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  receiptContainer: {
-    height: 200,
-    overflow: 'hidden',
-    borderRadius: 8
-  },
-  receiptImage: {
-    width: '100%',
-    height: '100%'
-  },
-  voiceMemoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 8
-  },
-  voiceMemoText: {
-    fontSize: 16
-  }
-})

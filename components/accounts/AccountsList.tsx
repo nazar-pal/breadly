@@ -1,6 +1,6 @@
 import type { Account } from '@/hooks/useAccountManagement'
 import React from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AccountSection from './AccountSection'
 
@@ -14,6 +14,17 @@ interface AccountsListProps {
   onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
 }
 
+interface SectionConfig {
+  type: 'payment' | 'savings' | 'debt'
+  title: string
+}
+
+const SECTIONS: SectionConfig[] = [
+  { type: 'payment', title: 'Payment Accounts' },
+  { type: 'savings', title: 'Savings Accounts' },
+  { type: 'debt', title: 'Debt Accounts' }
+]
+
 export default function AccountsList({
   accounts,
   onEditAccount,
@@ -23,46 +34,24 @@ export default function AccountsList({
 
   return (
     <ScrollView
-      style={styles.content}
+      className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[
-        styles.scrollContent,
-        { paddingBottom: insets.bottom + 20 }
-      ]}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingTop: 8,
+        paddingBottom: insets.bottom + 20
+      }}
     >
-      <AccountSection
-        title="Payment Accounts"
-        accounts={accounts.payment}
-        accountType="payment"
-        onEditAccount={onEditAccount}
-        onAddAccount={onAddAccount}
-      />
-
-      <AccountSection
-        title="Savings Accounts"
-        accounts={accounts.savings}
-        accountType="savings"
-        onEditAccount={onEditAccount}
-        onAddAccount={onAddAccount}
-      />
-
-      <AccountSection
-        title="Debt Accounts"
-        accounts={accounts.debt}
-        accountType="debt"
-        onEditAccount={onEditAccount}
-        onAddAccount={onAddAccount}
-      />
+      {SECTIONS.map(section => (
+        <AccountSection
+          key={section.type}
+          title={section.title}
+          accounts={accounts[section.type]}
+          accountType={section.type}
+          onEditAccount={onEditAccount}
+          onAddAccount={onAddAccount}
+        />
+      ))}
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8
-  }
-})

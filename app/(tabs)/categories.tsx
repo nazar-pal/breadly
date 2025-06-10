@@ -1,10 +1,9 @@
-import TestAuth from '@/components/categories/TestAuth'
 import CalculatorModal from '@/components/shared/CalculatorModal'
 import CategoryEditModal from '@/components/shared/CategoryEditModal'
 import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
 import { CategoryProvider, useCategoryContext } from '@/context/CategoryContext'
-import { useTheme } from '@/context/ThemeContext'
+import { iconWithClassName } from '@/lib/icons/iconWithClassName'
 import {
   Briefcase,
   Building,
@@ -14,6 +13,7 @@ import {
   Film,
   Heart,
   Home,
+  LucideIcon,
   PiggyBank,
   Shirt,
   Target,
@@ -22,13 +22,13 @@ import {
   UtensilsCrossed
 } from 'lucide-react-native'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Map category names to icons for expenses
-const categoryIcons: { [key: string]: React.ComponentType<any> } = {
+const categoryIcons: { [key: string]: LucideIcon } = {
   Coffee: Coffee,
   Dining: UtensilsCrossed,
   Entertainment: Film,
@@ -40,7 +40,7 @@ const categoryIcons: { [key: string]: React.ComponentType<any> } = {
 }
 
 // Map income category names to icons
-const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
+const incomeCategoryIcons: { [key: string]: LucideIcon } = {
   Salary: Briefcase,
   Freelance: DollarSign,
   Investment: TrendingUp,
@@ -50,27 +50,8 @@ const incomeCategoryIcons: { [key: string]: React.ComponentType<any> } = {
   Other: PiggyBank
 }
 
-function CategoriesContent() {
-  const { colors } = useTheme()
-  const insets = useSafeAreaInsets()
+function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
   const { canNavigate, navigatePrevious, navigateNext } = useCategoryContext()
-
-  // Mock data - in real app these would come from state/API
-  const totalExpenses = 1845
-  const totalIncome = 6750
-
-  const getCategoryIcon = (
-    categoryName: string,
-    type: 'expense' | 'income'
-  ) => {
-    const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
-    const IconComponent = icons[categoryName] || Home
-
-    // Use semantic colors based on category type
-    const iconColor = type === 'expense' ? colors.expense : colors.income
-
-    return <IconComponent size={20} color={iconColor} />
-  }
 
   // Create pan gesture for full-screen swipe support
   const panGesture = Gesture.Pan()
@@ -94,44 +75,59 @@ function CategoriesContent() {
       }
     })
 
+  return <GestureDetector gesture={panGesture}>{children}</GestureDetector>
+}
+
+function CategoriesContent() {
+  const insets = useSafeAreaInsets()
+
+  // Mock data - in real app these would come from state/API
+  const totalExpenses = 1845
+  const totalIncome = 6750
+
+  const getCategoryIcon = (
+    categoryName: string,
+    type: 'expense' | 'income'
+  ) => {
+    const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
+    const IconComponent = icons[categoryName] || Home
+    iconWithClassName(IconComponent)
+    return (
+      <IconComponent
+        size={20}
+        className={type === 'expense' ? 'text-expense' : 'text-income'}
+      />
+    )
+  }
+
   return (
-    <GestureDetector gesture={panGesture}>
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.background,
-            paddingTop: insets.top
-          }
-        ]}
-      >
-        <FinancialHeader
-          totalExpenses={totalExpenses}
-          totalIncome={totalIncome}
-        />
+    <View
+      className="flex-1 bg-background"
+      style={{
+        paddingTop: insets.top
+      }}
+      collapsable={false}
+    >
+      <FinancialHeader
+        totalExpenses={totalExpenses}
+        totalIncome={totalIncome}
+      />
 
-        <TestAuth />
+      <CategoryGrid getIcon={getCategoryIcon} />
 
-        <CategoryGrid getIcon={getCategoryIcon} />
+      <CalculatorModal />
 
-        <CalculatorModal />
-
-        <CategoryEditModal />
-      </View>
-    </GestureDetector>
+      <CategoryEditModal />
+    </View>
   )
 }
 
 export default function CategoriesScreen() {
   return (
     <CategoryProvider>
-      <CategoriesContent />
+      <GestureDetectorContainer>
+        <CategoriesContent />
+      </GestureDetectorContainer>
     </CategoryProvider>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-})

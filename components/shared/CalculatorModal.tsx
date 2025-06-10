@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useThemedStyles } from '@/context/ThemeContext'
 import React from 'react'
 import {
   Dimensions,
@@ -7,7 +6,6 @@ import {
   Modal,
   Platform,
   Pressable,
-  StyleSheet,
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -25,34 +23,15 @@ export default function CalculatorModal() {
     handleCloseModal
   } = useCategoryContext()
 
-  const styles = useThemedStyles(theme => ({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'flex-end' as const
-    },
-    modalOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      borderTopLeftRadius: theme.borderRadius.xl,
-      borderTopRightRadius: theme.borderRadius.xl,
-      backgroundColor: theme.colors.background,
-      maxHeight: Platform.select({
-        ios: SCREEN_HEIGHT * 0.8,
-        android: SCREEN_HEIGHT * 0.8,
-        web: SCREEN_HEIGHT * 0.8
-      })
-    },
-    modalHandle: {
-      width: 40,
-      height: 4,
-      backgroundColor: theme.colors.borderStrong,
-      borderRadius: 2,
-      alignSelf: 'center' as const,
-      marginBottom: theme.spacing.md
-    }
-  }))
+  const getModalContentStyle = () => ({
+    backgroundColor: '#F5F5F5', // colors.background
+    maxHeight: Platform.select({
+      ios: SCREEN_HEIGHT * 0.8,
+      android: SCREEN_HEIGHT * 0.8,
+      web: SCREEN_HEIGHT * 0.8
+    }),
+    paddingBottom: insets.bottom
+  })
 
   return (
     <Modal
@@ -63,19 +42,18 @@ export default function CalculatorModal() {
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.modalContainer}
+        className="flex-1 justify-end"
       >
-        <Pressable style={styles.modalOverlay} onPress={handleCloseModal} />
-        <View
-          style={[
-            styles.modalContent,
-            {
-              paddingTop: 24,
-              paddingBottom: insets.bottom
-            }
-          ]}
-        >
-          <View style={styles.modalHandle} />
+        <Pressable
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }} // colors.shadow
+          onPress={handleCloseModal}
+        />
+        <View className="rounded-t-3xl pt-6" style={getModalContentStyle()}>
+          <View
+            className="mb-4 h-1 w-10 self-center rounded-full"
+            style={{ backgroundColor: '#CBD5E0' }} // colors.borderStrong
+          />
           {selectedCategory && (
             <QuickCalculator
               type={currentType}

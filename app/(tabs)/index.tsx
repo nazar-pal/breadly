@@ -1,64 +1,55 @@
-import Card from '@/components/ui/Card'
-import OperationCard, { Operation } from '@/components/ui/OperationCard'
-import { useTheme } from '@/context/ThemeContext'
+import OperationListItem, {
+  Operation
+} from '@/components/accounts/OperationListItem'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   mockDebtOperations,
   mockExpenses,
   mockIncomes,
   mockOtherTransactions
 } from '@/data/mockData'
-import React, { useMemo, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { cn } from '@/lib/utils'
+import React, { useState } from 'react'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
 
 export default function OperationsScreen() {
-  const { colors, spacing } = useTheme()
   const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
   // Combine all operations with type information
-  const allOperations: Operation[] = useMemo(() => {
-    const expenses = mockExpenses.map(expense => ({
+  const allOperations: Operation[] = [
+    ...mockExpenses.map(expense => ({
       ...expense,
       type: 'expense' as const
-    }))
-
-    const incomes = mockIncomes.map(income => ({
+    })),
+    ...mockIncomes.map(income => ({
       ...income,
       type: 'income' as const
-    }))
-
-    const debts = mockDebtOperations.map(debt => ({
+    })),
+    ...mockDebtOperations.map(debt => ({
       ...debt,
       type: 'debt' as const
-    }))
-
-    const others = mockOtherTransactions.map(transaction => ({
+    })),
+    ...mockOtherTransactions.map(transaction => ({
       ...transaction,
       type: 'other' as const
     }))
-
-    // Combine and sort by date (newest first)
-    return [...expenses, ...incomes, ...debts, ...others].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    )
-  }, [])
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   // Filter operations based on active filter
-  const filteredOperations = useMemo(() => {
-    if (activeFilter === 'all') {
-      return allOperations
-    }
-    return allOperations.filter(operation => operation.type === activeFilter)
-  }, [allOperations, activeFilter])
+  const filteredOperations =
+    activeFilter === 'all'
+      ? allOperations
+      : allOperations.filter(operation => operation.type === activeFilter)
 
   // Get today's operations
-  const todaysOperations = useMemo(() => {
-    const today = '2025-03-01' // Current mock date
-    return filteredOperations.filter(operation => operation.date === today)
-  }, [filteredOperations])
+  const today = '2025-03-01' // Current mock date
+  const todaysOperations = filteredOperations.filter(
+    operation => operation.date === today
+  )
 
   const filterButtons = [
     { key: 'all', label: 'All', count: allOperations.length },
@@ -70,48 +61,38 @@ export default function OperationsScreen() {
 
   return (
     <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top }
-      ]}
+      className="flex-1 bg-background"
+      style={{
+        paddingTop: insets.top
+      }}
     >
-      <View style={styles.header}>
-        <Text style={[styles.screenTitle, { color: colors.text }]}>
-          Operations
-        </Text>
+      <View className="px-4 py-4">
+        <Text className="text-3xl font-bold text-foreground">Operations</Text>
       </View>
 
       {/* Filter Tabs */}
-      <View style={styles.filtersContainer}>
+      <View className="mb-4 px-4">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
+          contentContainerStyle={{ paddingVertical: 8 }}
         >
           {filterButtons.map(filter => (
             <Pressable
               key={filter.key}
-              style={[
-                styles.filterButton,
-                {
-                  backgroundColor:
-                    activeFilter === filter.key
-                      ? colors.primary
-                      : colors.surfaceSecondary
-                }
-              ]}
+              className={cn(
+                'mr-2 min-w-[80px] items-center rounded-full px-4 py-2',
+                activeFilter === filter.key ? 'bg-primary' : 'bg-secondary'
+              )}
               onPress={() => setActiveFilter(filter.key as FilterType)}
             >
               <Text
-                style={[
-                  styles.filterButtonText,
-                  {
-                    color:
-                      activeFilter === filter.key
-                        ? colors.textInverse
-                        : colors.text
-                  }
-                ]}
+                className={cn(
+                  'text-sm font-medium',
+                  activeFilter === filter.key
+                    ? 'text-primary-foreground'
+                    : 'text-foreground'
+                )}
               >
                 {filter.label} ({filter.count})
               </Text>
@@ -122,19 +103,19 @@ export default function OperationsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl }
-        ]}
+        className="px-4"
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 32
+        }}
       >
         {/* Today's Operations */}
         {todaysOperations.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <View className="mb-6">
+            <Text className="mb-3 text-lg font-semibold text-foreground">
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
-              <OperationCard
+              <OperationListItem
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
               />
@@ -143,26 +124,26 @@ export default function OperationsScreen() {
         )}
 
         {/* All Operations */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View className="mb-6">
+          <Text className="mb-3 text-lg font-semibold text-foreground">
             {activeFilter === 'all'
               ? 'All Operations'
               : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
           </Text>
           {filteredOperations.length > 0 ? (
             filteredOperations.map(operation => (
-              <OperationCard
+              <OperationListItem
                 key={`${operation.type}-${operation.id}`}
                 operation={operation}
               />
             ))
           ) : (
             <Card>
-              <Text
-                style={{ color: colors.textSecondary, textAlign: 'center' }}
-              >
-                No operations found for the selected filter
-              </Text>
+              <CardContent>
+                <Text className="text-center text-foreground">
+                  No operations found for the selected filter
+                </Text>
+              </CardContent>
             </Card>
           )}
         </View>
@@ -170,47 +151,3 @@ export default function OperationsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: '700'
-  },
-  filtersContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16
-  },
-  filtersContent: {
-    paddingVertical: 8
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    minWidth: 80,
-    alignItems: 'center'
-  },
-  filterButtonText: {
-    fontSize: 14,
-    fontWeight: '500'
-  },
-  scrollContent: {
-    paddingHorizontal: 16
-  },
-  section: {
-    marginBottom: 24
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12
-  }
-})

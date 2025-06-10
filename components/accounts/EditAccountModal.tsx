@@ -1,7 +1,8 @@
-import Button from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useCurrency } from '@/context/CurrencyContext'
-import { useTheme } from '@/context/ThemeContext'
-import { Check, X } from 'lucide-react-native'
+import { Check, X } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
@@ -10,8 +11,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
-  Text,
   TextInput,
   View
 } from 'react-native'
@@ -26,28 +25,119 @@ interface EditAccountModalProps {
   onClose: () => void
 }
 
+interface FormData {
+  name: string
+  description: string
+  balance: string
+  targetAmount: string
+  initialAmount: string
+  dueDate: string
+  interestRate: string
+  institution: string
+  person: string
+  debtType: 'owed' | 'owedTo'
+}
+
+const DEFAULT_FORM_DATA: FormData = {
+  name: '',
+  description: '',
+  balance: '',
+  targetAmount: '',
+  initialAmount: '',
+  dueDate: '',
+  interestRate: '',
+  institution: '',
+  person: '',
+  debtType: 'owed'
+}
+
+function DebtTypeButton({
+  label,
+  isSelected,
+  onPress
+}: {
+  label: string
+  isSelected: boolean
+  onPress: () => void
+}) {
+  return (
+    <Pressable
+      className={cn(
+        'flex-1 flex-row items-center justify-center rounded-xl border py-3',
+        isSelected ? 'border-primary bg-primary' : 'border-border bg-card'
+      )}
+      onPress={onPress}
+    >
+      {isSelected && (
+        <Check size={16} className="mr-2 text-primary-foreground" />
+      )}
+      <Text
+        className={cn(
+          'text-base font-medium',
+          isSelected ? 'text-primary-foreground' : 'text-foreground'
+        )}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  )
+}
+
+function FormInput({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType = 'default',
+  multiline = false,
+  numberOfLines,
+  prefix
+}: {
+  label: string
+  value: string
+  onChangeText: (text: string) => void
+  placeholder: string
+  keyboardType?: 'default' | 'decimal-pad'
+  multiline?: boolean
+  numberOfLines?: number
+  prefix?: string
+}) {
+  return (
+    <View className="mb-6">
+      <Text className="mb-2 text-base font-semibold text-foreground">
+        {label}
+      </Text>
+      <View className="flex-row items-center">
+        {prefix && (
+          <Text className="mr-3 text-base text-foreground">{prefix}</Text>
+        )}
+        <TextInput
+          className={cn(
+            'flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground',
+            multiline ? 'h-[100px] pt-3' : 'min-h-[48px]'
+          )}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor="hsl(var(--muted-foreground))"
+          keyboardType={keyboardType}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+        />
+      </View>
+    </View>
+  )
+}
+
 export default function EditAccountModal({
   visible,
   account,
   onSave,
   onClose
 }: EditAccountModalProps) {
-  const { colors } = useTheme()
   const { currency } = useCurrency()
   const insets = useSafeAreaInsets()
-
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    balance: '',
-    targetAmount: '',
-    initialAmount: '',
-    dueDate: '',
-    interestRate: '',
-    institution: '',
-    person: '',
-    debtType: 'owed'
-  })
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
 
   useEffect(() => {
     if (account) {
@@ -99,446 +189,145 @@ export default function EditAccountModal({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.modalContainer}
+        className="flex-1"
       >
         <View
-          style={[styles.modalContent, { backgroundColor: colors.background }]}
+          className="flex-1 rounded-t-3xl bg-background"
+          style={{
+            marginTop: SCREEN_HEIGHT * 0.1
+          }}
         >
-          <View
-            style={[styles.header, { borderBottomColor: colors.borderLight }]}
-          >
-            <Text style={[styles.title, { color: colors.text }]}>
-              {getTitle()}
-            </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <X size={24} color={colors.text} />
-            </Pressable>
+          <View className="border-b border-border px-5 py-4">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-lg font-semibold text-foreground">
+                {getTitle()}
+              </Text>
+              <Pressable
+                onPress={onClose}
+                className="rounded p-2 active:opacity-70"
+              >
+                <X size={24} className="text-foreground" />
+              </Pressable>
+            </View>
           </View>
 
           <ScrollView
-            style={styles.form}
+            className="flex-1"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={[
-              styles.formContent,
-              { paddingBottom: insets.bottom + 16 }
-            ]}
+            contentContainerStyle={{
+              padding: 20,
+              paddingBottom: insets.bottom + 16
+            }}
           >
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Account Name
-              </Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  {
-                    color: colors.text,
-                    backgroundColor: colors.card,
-                    borderColor: colors.border
-                  }
-                ]}
-                value={formData.name}
-                onChangeText={text =>
-                  setFormData(prev => ({ ...prev, name: text }))
-                }
-                placeholder="Enter account name"
-                placeholderTextColor={colors.textSecondary}
-              />
-            </View>
+            <FormInput
+              label="Account Name"
+              value={formData.name}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, name: text }))
+              }
+              placeholder="Enter account name"
+            />
 
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Description
-              </Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  styles.textArea,
-                  {
-                    color: colors.text,
-                    backgroundColor: colors.card,
-                    borderColor: colors.border
-                  }
-                ]}
-                value={formData.description}
-                onChangeText={text =>
-                  setFormData(prev => ({ ...prev, description: text }))
-                }
-                placeholder="Enter description"
-                placeholderTextColor={colors.textSecondary}
-                multiline
-                numberOfLines={3}
-              />
-            </View>
+            <FormInput
+              label="Description"
+              value={formData.description}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, description: text }))
+              }
+              placeholder="Enter description"
+              multiline
+              numberOfLines={3}
+            />
 
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colors.text }]}>
-                Balance
-              </Text>
-              <View style={styles.currencyInput}>
-                <Text
-                  style={[
-                    styles.currencySymbol,
-                    { color: colors.textSecondary }
-                  ]}
-                >
-                  {currency.symbol}
-                </Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      color: colors.text,
-                      backgroundColor: colors.card,
-                      borderColor: colors.border,
-                      flex: 1
-                    }
-                  ]}
-                  value={formData.balance}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, balance: text }))
-                  }
-                  keyboardType="decimal-pad"
-                  placeholder="0.00"
-                  placeholderTextColor={colors.textSecondary}
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Balance"
+              value={formData.balance}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, balance: text }))
+              }
+              placeholder="0.00"
+              keyboardType="decimal-pad"
+              prefix={currency.symbol}
+            />
 
             {account?.type === 'savings' && (
-              <View style={styles.formGroup}>
-                <Text style={[styles.label, { color: colors.text }]}>
-                  Target Amount (Optional)
-                </Text>
-                <View style={styles.currencyInput}>
-                  <Text
-                    style={[
-                      styles.currencySymbol,
-                      { color: colors.textSecondary }
-                    ]}
-                  >
-                    {currency.symbol}
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border,
-                        flex: 1
-                      }
-                    ]}
-                    value={formData.targetAmount}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, targetAmount: text }))
-                    }
-                    keyboardType="decimal-pad"
-                    placeholder="0.00"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
-              </View>
+              <FormInput
+                label="Target Amount"
+                value={formData.targetAmount}
+                onChangeText={text =>
+                  setFormData(prev => ({ ...prev, targetAmount: text }))
+                }
+                placeholder="0.00"
+                keyboardType="decimal-pad"
+                prefix={currency.symbol}
+              />
             )}
 
             {account?.type === 'debt' && (
               <>
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
+                <FormInput
+                  label="Initial Amount"
+                  value={formData.initialAmount}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, initialAmount: text }))
+                  }
+                  placeholder="0.00"
+                  keyboardType="decimal-pad"
+                  prefix={currency.symbol}
+                />
+
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
                     Debt Type
                   </Text>
-                  <View style={styles.debtTypeContainer}>
-                    <Pressable
-                      style={[
-                        styles.debtTypeButton,
-                        {
-                          backgroundColor:
-                            formData.debtType === 'owed'
-                              ? colors.primary
-                              : colors.surface,
-                          borderWidth: 1,
-                          borderColor:
-                            formData.debtType === 'owed'
-                              ? colors.primary
-                              : colors.border
-                        }
-                      ]}
+                  <View className="flex-row gap-3">
+                    <DebtTypeButton
+                      label="I Owe"
+                      isSelected={formData.debtType === 'owed'}
                       onPress={() =>
                         setFormData(prev => ({ ...prev, debtType: 'owed' }))
                       }
-                    >
-                      <Text
-                        style={[
-                          styles.debtTypeText,
-                          {
-                            color:
-                              formData.debtType === 'owed'
-                                ? colors.textInverse
-                                : colors.text
-                          }
-                        ]}
-                      >
-                        I Owe
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.debtTypeButton,
-                        {
-                          backgroundColor:
-                            formData.debtType === 'owedTo'
-                              ? colors.primary
-                              : colors.surface,
-                          borderWidth: 1,
-                          borderColor:
-                            formData.debtType === 'owedTo'
-                              ? colors.primary
-                              : colors.border
-                        }
-                      ]}
+                    />
+                    <DebtTypeButton
+                      label="Owed to Me"
+                      isSelected={formData.debtType === 'owedTo'}
                       onPress={() =>
                         setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
                       }
-                    >
-                      <Text
-                        style={[
-                          styles.debtTypeText,
-                          {
-                            color:
-                              formData.debtType === 'owedTo'
-                                ? colors.textInverse
-                                : colors.text
-                          }
-                        ]}
-                      >
-                        Owed to Me
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Initial Amount
-                  </Text>
-                  <View style={styles.currencyInput}>
-                    <Text
-                      style={[
-                        styles.currencySymbol,
-                        { color: colors.textSecondary }
-                      ]}
-                    >
-                      {currency.symbol}
-                    </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        {
-                          color: colors.text,
-                          backgroundColor: colors.card,
-                          borderColor: colors.border,
-                          flex: 1
-                        }
-                      ]}
-                      value={formData.initialAmount}
-                      onChangeText={text =>
-                        setFormData(prev => ({
-                          ...prev,
-                          initialAmount: text
-                        }))
-                      }
-                      keyboardType="decimal-pad"
-                      placeholder="0.00"
-                      placeholderTextColor={colors.textSecondary}
                     />
                   </View>
                 </View>
 
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Due Date (Optional)
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={formData.dueDate}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, dueDate: text }))
-                    }
-                    placeholder="YYYY-MM-DD"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    Interest Rate % (Optional)
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={formData.interestRate}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, interestRate: text }))
-                    }
-                    keyboardType="decimal-pad"
-                    placeholder="0.00"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={[styles.label, { color: colors.text }]}>
-                    {formData.debtType === 'owed'
-                      ? 'Institution/Person'
-                      : 'Person Name'}
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        color: colors.text,
-                        backgroundColor: colors.card,
-                        borderColor: colors.border
-                      }
-                    ]}
-                    value={
-                      formData.debtType === 'owed'
-                        ? formData.institution || formData.person
-                        : formData.person
-                    }
-                    onChangeText={text =>
-                      setFormData(prev => ({
-                        ...prev,
-                        [formData.debtType === 'owed'
-                          ? 'institution'
-                          : 'person']: text
-                      }))
-                    }
-                    placeholder={
-                      formData.debtType === 'owed'
-                        ? 'Enter institution or person name'
-                        : 'Enter person name'
-                    }
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                </View>
+                <FormInput
+                  label="Person/Institution"
+                  value={formData.person}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, person: text }))
+                  }
+                  placeholder="Enter person or institution name"
+                />
               </>
             )}
-          </ScrollView>
 
-          <View style={[styles.footer, { borderTopColor: colors.borderLight }]}>
-            <Button
-              variant="outline"
-              onPress={onClose}
-              style={{ flex: 1, marginRight: 8 }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onPress={handleSave}
-              style={{ flex: 1 }}
-              leftIcon={<Check size={20} color={colors.textInverse} />}
-            >
-              Save
-            </Button>
-          </View>
+            <View className="flex-row gap-3 pt-6">
+              <Button
+                onPress={onClose}
+                variant="secondary"
+                className="flex-[0.4]"
+              >
+                <Text className="text-foreground">Cancel</Text>
+              </Button>
+              <Button
+                onPress={handleSave}
+                variant="default"
+                className="flex-[0.6]"
+              >
+                <Text className="text-primary-foreground">Save</Text>
+              </Button>
+            </View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </Modal>
   )
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: SCREEN_HEIGHT * 0.9
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600'
-  },
-  closeButton: {
-    padding: 4
-  },
-  form: {
-    flex: 1
-  },
-  formContent: {
-    padding: 16
-  },
-  formGroup: {
-    marginBottom: 16
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16
-  },
-  textArea: {
-    height: 100,
-    paddingTop: 12,
-    paddingBottom: 12,
-    textAlignVertical: 'top'
-  },
-  currencyInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  currencySymbol: {
-    fontSize: 20,
-    fontWeight: '600'
-  },
-  debtTypeContainer: {
-    flexDirection: 'row',
-    gap: 8
-  },
-  debtTypeButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  debtTypeText: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  footer: {
-    flexDirection: 'row',
-    padding: 16,
-    borderTopWidth: 1
-  }
-})

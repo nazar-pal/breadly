@@ -11,9 +11,9 @@ version: 1.0.0
 
 # Development Conventions (MVP)
 
--   **Package Manager**: `pnpm` (commit `pnpm-lock.yaml`).
+-   **Package Manager**: `npm`.
 -   **Node**: Version in `.nvmrc` (≥20). Use `nvm use`.
--   **Expo**: Start with `pnpm start`.
+-   **Expo**: Start with `npm run start`.
 -   **Environment Variables**:
     -   Use `.env` files (ensure `.env` is in `.gitignore`) for local development.
     -   Define a Zod schema (e.g., in `env.ts`) for validation (T3.env style).
@@ -22,6 +22,6 @@ version: 1.0.0
 -   **Git**: Conventional Commits; squash-merge PRs.
 -   **Language**: English in code, comments, commits.
 -   **Scripts (Essential)**:
-    -   `pnpm lint` → ESLint + Prettier check.
-    -   `pnpm typecheck` → `tsc --noEmit`.
+    -   `npm run lint` → ESLint + Prettier check.
+    -   `npm run typecheck` → `tsc --noEmit`.
 -   **Builds/Updates**: Use EAS Build, EAS Submit, EAS Update.

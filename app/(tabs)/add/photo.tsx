@@ -1,87 +1,36 @@
-import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
-import { useTheme } from '@/context/ThemeContext'
-import { Camera, Upload } from 'lucide-react-native'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Text } from '@/components/ui/text'
+import { Camera, Upload } from '@/lib/icons'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { View } from 'react-native'
 
 export default function PhotoScreen() {
-  const { colors } = useTheme()
-
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        <Card style={styles.cameraPlaceholder}>
-          <View
-            style={[
-              styles.cameraIcon,
-              { backgroundColor: colors.iconBackground.info }
-            ]}
-          >
-            <Camera size={48} color={colors.info} />
-          </View>
-          <Text
-            style={[
-              styles.placeholderText,
-              {
-                color: colors.textSecondary
-              }
-            ]}
-          >
-            Take a photo of your receipt for automatic expense entry
-          </Text>
+    <View className="flex-1 bg-background">
+      <View className="flex-1 p-4">
+        <Card>
+          <CardContent className="h-[400px] items-center justify-center p-6">
+            <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+              <Camera size={48} className="text-primary" />
+            </View>
+            <Text className="mx-6 text-center text-base font-medium text-foreground">
+              Take a photo of your receipt for automatic expense entry
+            </Text>
+          </CardContent>
         </Card>
 
-        <View style={styles.actionButtons}>
-          <Button
-            variant="primary"
-            leftIcon={<Camera size={20} color={colors.textInverse} />}
-            style={{ flex: 1, marginRight: 8 }}
-          >
-            Take Photo
+        <View className="mt-4 flex-row gap-2">
+          <Button className="flex-1">
+            <Camera size={20} className="mr-2 text-primary-foreground" />
+            <Text className="text-primary-foreground">Take Photo</Text>
           </Button>
-          <Button
-            variant="outline"
-            leftIcon={<Upload size={20} color={colors.text} />}
-            style={{ flex: 1 }}
-          >
-            Upload
+          <Button variant="outline" className="flex-1">
+            <Upload size={20} className="mr-2 text-foreground" />
+            <Text className="text-foreground">Upload</Text>
           </Button>
         </View>
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    padding: 16
-  },
-  cameraPlaceholder: {
-    height: 400,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  cameraIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16
-  },
-  placeholderText: {
-    textAlign: 'center',
-    marginHorizontal: 24,
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    marginTop: 16
-  }
-})

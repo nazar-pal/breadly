@@ -1,6 +1,5 @@
-import { useTheme } from '@/context/ThemeContext'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 interface AccountsHeaderProps {
   title?: string
@@ -9,23 +8,11 @@ interface AccountsHeaderProps {
 export default function AccountsHeader({
   title = 'Accounts'
 }: AccountsHeaderProps) {
-  const { colors } = useTheme()
-
   return (
-    <View style={styles.header}>
-      <Text style={[styles.screenTitle, { color: colors.text }]}>{title}</Text>
+    <View className="bg-background px-4 py-3">
+      <Text className="text-[32px] font-extrabold tracking-tighter text-foreground">
+        {title}
+      </Text>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12
-  },
-  screenTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -1
-  }
-})

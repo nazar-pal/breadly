@@ -14,8 +14,8 @@ version: 1.0.0
 
 After AI edits:
 
-1.  **Lint & Format**: Run `pnpm lint`. Fix errors.
-2.  **Type Check**: Run `pnpm typecheck`. Fix errors.
+1.  **Lint & Format**: Run `npm run lint`. Fix errors.
+2.  **Type Check**: Run `npm run typecheck`. Fix errors.
 3.  **Review Logic**:
     -   Does it meet the prompt's requirements?
     -   Does it follow project rules (theme, naming, etc.)?

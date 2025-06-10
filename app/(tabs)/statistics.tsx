@@ -1,9 +1,17 @@
-import Card from '@/components/ui/Card'
-import { useTheme } from '@/context/ThemeContext'
+import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { mockCategories } from '@/data/mockData'
-import { ArrowDown, ArrowUp, TrendingUp } from 'lucide-react-native'
+import {
+  ArrowDown,
+  ArrowUp,
+  Calendar,
+  DollarSign,
+  TrendingUp
+} from '@/lib/icons'
+import { cn } from '@/lib/utils'
+import { LucideIcon } from 'lucide-react-native'
 import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Mock data for statistics
@@ -46,86 +54,96 @@ function StatCard({
   amount,
   trend,
   trendLabel,
-  type = 'neutral'
+  variant = 'default',
+  icon: Icon
 }: {
   title: string
   amount: number
   trend?: number
   trendLabel?: string
-  type?: 'success' | 'error' | 'neutral'
+  variant?: 'default' | 'income' | 'expense'
+  icon?: LucideIcon
 }) {
-  const { colors } = useTheme()
-
-  const getTrendColor = () => {
-    if (type === 'success')
-      return trend && trend > 0 ? colors.success : colors.error
-    if (type === 'error')
-      return trend && trend > 0 ? colors.error : colors.success
-    return trend && trend > 0 ? colors.success : colors.error
+  const variants = {
+    default: {
+      trend: trend && trend > 0 ? 'text-income' : 'text-expense',
+      icon: 'bg-primary/10 text-primary'
+    },
+    income: {
+      trend: 'text-income',
+      icon: 'bg-income/10 text-income'
+    },
+    expense: {
+      trend: 'text-expense',
+      icon: 'bg-expense/10 text-expense'
+    }
   }
 
   return (
-    <Card style={styles.statCard}>
-      <Text style={[styles.statTitle, { color: colors.textSecondary }]}>
-        {title}
-      </Text>
-      <Text style={[styles.statAmount, { color: colors.text }]}>
-        ${amount.toFixed(2)}
-      </Text>
-      {trend !== undefined && (
-        <View style={styles.trendContainer}>
-          {trend > 0 ? (
-            <ArrowUp size={16} color={getTrendColor()} />
-          ) : (
-            <ArrowDown size={16} color={getTrendColor()} />
-          )}
-          <Text style={[styles.trendText, { color: getTrendColor() }]}>
-            {Math.abs(trend)}%
+    <Card className="flex-1">
+      <CardContent className="p-4">
+        <View className="mb-3 flex-row items-center justify-between gap-2">
+          <Text className="text-sm font-medium text-muted-foreground">
+            {title}
           </Text>
-          {trendLabel && (
-            <Text style={[styles.trendLabel, { color: colors.textSecondary }]}>
-              {trendLabel}
-            </Text>
+          {Icon && (
+            <View className={cn('rounded-full p-2', variants[variant].icon)}>
+              <Icon size={14} className={variants[variant].icon} />
+            </View>
           )}
         </View>
-      )}
+        <Text className="mb-2 text-2xl font-bold text-foreground">
+          ${amount.toFixed(2)}
+        </Text>
+        {trend !== undefined && (
+          <View className="flex-row items-center gap-1">
+            <View className={cn('rounded-full p-1')}>
+              {trend > 0 ? (
+                <ArrowUp size={12} className={variants[variant].trend} />
+              ) : (
+                <ArrowDown size={12} className={variants[variant].trend} />
+              )}
+            </View>
+            <Text
+              className={cn('text-sm font-semibold', variants[variant].trend)}
+            >
+              {Math.abs(trend)}%
+            </Text>
+            {trendLabel && (
+              <Text className="ml-1 text-xs text-muted-foreground">
+                {trendLabel}
+              </Text>
+            )}
+          </View>
+        )}
+      </CardContent>
     </Card>
   )
 }
 
 function TopTransactions() {
-  const { colors } = useTheme()
-
   return (
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-        Top Transactions
+    <View className="mb-6">
+      <Text className="mb-4 text-lg font-semibold text-foreground">
+        Recent Transactions
       </Text>
       {mockStats.topTransactions.map(transaction => (
-        <Card key={transaction.id} style={styles.transactionCard}>
-          <View style={styles.transactionHeader}>
-            <Text style={[styles.transactionAmount, { color: colors.expense }]}>
-              ${transaction.amount.toFixed(2)}
-            </Text>
-            <View
-              style={[
-                styles.categoryBadge,
-                { backgroundColor: colors.iconBackground.neutral }
-              ]}
-            >
-              <Text
-                style={[styles.categoryText, { color: colors.textSecondary }]}
-              >
-                {transaction.category}
+        <Card key={transaction.id} className="mb-3">
+          <CardContent className="p-4">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-1">
+                <Text className="text-base font-semibold text-foreground">
+                  {transaction.description}
+                </Text>
+                <Text className="mt-1 text-sm text-muted-foreground">
+                  {transaction.category}
+                </Text>
+              </View>
+              <Text className="text-base font-semibold text-primary">
+                ${transaction.amount.toFixed(2)}
               </Text>
             </View>
-          </View>
-          <Text
-            style={[styles.transactionDesc, { color: colors.textSecondary }]}
-            numberOfLines={2}
-          >
-            {transaction.description}
-          </Text>
+          </CardContent>
         </Card>
       ))}
     </View>
@@ -133,8 +151,6 @@ function TopTransactions() {
 }
 
 function CategoryBreakdown() {
-  const { colors } = useTheme()
-
   // Get top 5 categories by spent amount
   const topCategories = [...mockCategories]
     .sort((a, b) => b.spent - a.spent)
@@ -143,153 +159,137 @@ function CategoryBreakdown() {
   const totalSpent = topCategories.reduce((sum, cat) => sum + cat.spent, 0)
 
   return (
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-        Top Categories
+    <View className="mb-6">
+      <Text className="mb-4 text-lg font-semibold text-foreground">
+        Spending by Category
       </Text>
       <Card>
-        {topCategories.map((category, index) => {
-          const percentage = (category.spent / totalSpent) * 100
-          return (
-            <View
-              key={category.id}
-              style={[
-                styles.categoryRow,
-                { borderBottomColor: colors.borderLight }
-              ]}
-            >
-              <View style={styles.categoryInfo}>
-                <Text style={[styles.categoryName, { color: colors.text }]}>
-                  {category.name}
-                </Text>
-                <Text
-                  style={[
-                    styles.categoryAmount,
-                    { color: colors.textSecondary }
-                  ]}
-                >
-                  ${category.spent.toFixed(2)}
-                </Text>
-              </View>
+        <CardContent className="p-4">
+          {topCategories.map((category, index) => {
+            const percentage = (category.spent / totalSpent) * 100
+            return (
               <View
-                style={[
-                  styles.percentageBar,
-                  { backgroundColor: colors.borderLight }
-                ]}
+                key={category.id}
+                className={cn(
+                  'py-3',
+                  index !== topCategories.length - 1 &&
+                    'border-b border-border/10'
+                )}
               >
-                <View
-                  style={[
-                    styles.percentageFill,
-                    {
-                      width: `${percentage}%`,
-                      backgroundColor: colors.primary
-                    }
-                  ]}
+                <View className="mb-2 flex-row justify-between">
+                  <View className="flex-1">
+                    <Text className="text-sm font-medium text-foreground">
+                      {category.name}
+                    </Text>
+                    <Text className="text-xs text-muted-foreground">
+                      ${category.spent.toFixed(2)}
+                    </Text>
+                  </View>
+                  <Text className="text-sm font-medium text-foreground">
+                    {percentage.toFixed(1)}%
+                  </Text>
+                </View>
+                <Progress
+                  value={percentage}
+                  className="h-2"
+                  indicatorClassName="bg-primary"
                 />
               </View>
-              <Text
-                style={[styles.percentageText, { color: colors.textSecondary }]}
-              >
-                {percentage.toFixed(1)}%
-              </Text>
-            </View>
-          )
-        })}
+            )
+          })}
+        </CardContent>
       </Card>
     </View>
   )
 }
 
 export default function StatisticsScreen() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top }
-      ]}
-    >
-      <View style={styles.header}>
-        <Text style={[styles.screenTitle, { color: colors.text }]}>
-          Statistics
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+      <View className="border-b border-border/10 px-4 py-4">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-2xl font-bold text-foreground">Statistics</Text>
+          <View className="rounded-full bg-primary/10 p-2">
+            <Calendar size={20} className="text-primary" />
+          </View>
+        </View>
+        <Text className="mt-1 text-sm text-muted-foreground">
+          Track your financial progress
         </Text>
       </View>
 
       <ScrollView
-        style={styles.content}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 16 }
-        ]}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: insets.bottom + 16
+        }}
       >
-        <View style={styles.statsGrid}>
+        <View className="mb-4 flex-row gap-3">
           <StatCard
             title="Monthly Income"
             amount={mockStats.currentMonth.income}
             trend={8.5}
             trendLabel="vs last month"
-            type="success"
+            variant="income"
+            icon={DollarSign}
           />
           <StatCard
             title="Monthly Expenses"
             amount={mockStats.currentMonth.expenses}
             trend={12.5}
             trendLabel="vs last month"
-            type="error"
+            variant="expense"
+            icon={DollarSign}
           />
         </View>
 
-        <Card style={styles.savingsCard}>
-          <View style={styles.savingsHeader}>
-            <View style={styles.savingsInfo}>
-              <Text style={[styles.savingsTitle, { color: colors.text }]}>
-                Monthly Savings
-              </Text>
-              <Text style={[styles.savingsAmount, { color: colors.success }]}>
-                ${mockStats.currentMonth.savings.toFixed(2)}
-              </Text>
+        <Card className="mb-4">
+          <CardContent className="p-4">
+            <View className="mb-3 flex-row items-start justify-between">
+              <View className="flex-1">
+                <Text className="mb-1 text-base font-semibold text-foreground">
+                  Monthly Savings
+                </Text>
+                <Text className="text-2xl font-bold text-income">
+                  ${mockStats.currentMonth.savings.toFixed(2)}
+                </Text>
+              </View>
+              <View className="rounded-full bg-income/10 p-2">
+                <TrendingUp size={20} className="text-income" />
+              </View>
             </View>
-            <View
-              style={[
-                styles.savingsRateContainer,
-                { backgroundColor: colors.iconBackground.success }
-              ]}
-            >
-              <TrendingUp size={16} color={colors.success} />
-              <Text style={[styles.savingsRate, { color: colors.success }]}>
-                {mockStats.currentMonth.savingsRate}% Rate
-              </Text>
+            <View className="mt-4">
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="text-sm text-muted-foreground">
+                  Savings Rate
+                </Text>
+                <Text className="text-sm font-medium text-income">
+                  {mockStats.currentMonth.savingsRate}%
+                </Text>
+              </View>
+              <Progress
+                value={mockStats.currentMonth.savingsRate}
+                className="h-2"
+                indicatorClassName="bg-income"
+              />
             </View>
-          </View>
-          <View
-            style={[
-              styles.savingsProgress,
-              { backgroundColor: colors.borderLight }
-            ]}
-          >
-            <View
-              style={[
-                styles.savingsProgressFill,
-                {
-                  width: `${mockStats.currentMonth.savingsRate}%`,
-                  backgroundColor: colors.success
-                }
-              ]}
-            />
-          </View>
+          </CardContent>
         </Card>
 
-        <View style={styles.statsGrid}>
+        <View className="mb-6 flex-row gap-3">
           <StatCard
             title="Budget Remaining"
             amount={mockStats.currentMonth.budgetRemaining}
+            variant="default"
           />
           <StatCard
             title="Avg. Monthly"
             amount={mockStats.currentMonth.averageMonthlySpending}
+            variant="default"
           />
         </View>
 
@@ -300,156 +300,3 @@ export default function StatisticsScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: '700'
-  },
-  content: {
-    flex: 1
-  },
-  scrollContent: {
-    padding: 16
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16
-  },
-  statCard: {
-    flex: 1
-  },
-  statTitle: {
-    fontSize: 14,
-    marginBottom: 4
-  },
-  statAmount: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 4
-  },
-  trendContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  trendText: {
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  trendLabel: {
-    fontSize: 12,
-    marginLeft: 4
-  },
-  savingsCard: {
-    marginBottom: 16
-  },
-  savingsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12
-  },
-  savingsInfo: {
-    flex: 1
-  },
-  savingsTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4
-  },
-  savingsAmount: {
-    fontSize: 24,
-    fontWeight: '700'
-  },
-  savingsRateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    borderRadius: 8,
-    gap: 4
-  },
-  savingsRate: {
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  savingsProgress: {
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden'
-  },
-  savingsProgressFill: {
-    height: '100%'
-  },
-  section: {
-    marginBottom: 24
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  categoryRow: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'transparent' // Will be set dynamically
-  },
-  categoryInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8
-  },
-  categoryName: {
-    fontSize: 14,
-    fontWeight: '500'
-  },
-  categoryAmount: {
-    fontSize: 14
-  },
-  percentageBar: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: 4
-  },
-  percentageFill: {
-    height: '100%'
-  },
-  percentageText: {
-    fontSize: 12,
-    textAlign: 'right'
-  },
-  transactionCard: {
-    marginBottom: 8
-  },
-  transactionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4
-  },
-  transactionAmount: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4
-  },
-  categoryText: {
-    fontSize: 12,
-    fontWeight: '500'
-  },
-  transactionDesc: {
-    fontSize: 14
-  }
-})

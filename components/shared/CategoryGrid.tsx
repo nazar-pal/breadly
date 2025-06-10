@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useThemedStyles } from '@/context/ThemeContext'
 import React from 'react'
 import { ScrollView } from 'react-native'
 import AddCategoryButton from './AddCategoryButton'
@@ -18,22 +17,15 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
     handleCategoryLongPress
   } = useCategoryContext()
 
-  const styles = useThemedStyles(theme => ({
-    scrollView: {
-      flex: 1
-    },
-    gridContainer: {
-      padding: theme.spacing.md,
-      flexDirection: 'row' as const,
-      flexWrap: 'wrap' as const,
-      gap: theme.spacing.sm * 1.5
-    }
-  }))
-
   return (
     <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.gridContainer}
+      className="flex-1"
+      contentContainerStyle={{
+        padding: 16,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 12
+      }}
     >
       {currentCategories.map(category => {
         const amount =

@@ -1,27 +1,17 @@
-import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
-import { useTheme } from '@/context/ThemeContext'
+import { AuthCard } from '@/components/auth/AuthCard'
+import { AuthInput } from '@/components/auth/AuthInput'
+import { AuthLayout } from '@/components/auth/AuthLayout'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
+import { Lock, LogIn, Mail } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import { useSignIn } from '@clerk/clerk-expo'
-import { Link, useRouter } from 'expo-router'
-import { Lock, LogIn, Mail } from 'lucide-react-native'
+import { Link } from 'expo-router'
 import React from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Alert, View } from 'react-native'
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn()
-  const router = useRouter()
-  const { colors, spacing } = useTheme()
-  const insets = useSafeAreaInsets()
 
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -39,7 +29,7 @@ export default function SignInScreen() {
 
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId })
-        router.replace('/')
+        // The auth layout will handle the redirect to home
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2))
         Alert.alert('Error', 'Something went wrong. Please try again.')
@@ -56,195 +46,57 @@ export default function SignInScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + spacing.xl,
-            paddingBottom: insets.bottom + spacing.xl,
-            paddingHorizontal: spacing.md
-          }
-        ]}
-        showsVerticalScrollIndicator={false}
+    <AuthLayout>
+      <AuthCard
+        icon={<LogIn size={32} className="text-primary-foreground" />}
+        title="Welcome Back"
+        subtitle="Sign in to your account to continue"
       >
-        <View style={styles.header}>
-          <View
-            style={[styles.iconContainer, { backgroundColor: colors.primary }]}
-          >
-            <LogIn size={32} color={colors.textInverse} />
-          </View>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Welcome Back
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Sign in to your account to continue
-          </Text>
-        </View>
+        <AuthInput
+          label="Email Address"
+          icon={Mail}
+          value={emailAddress}
+          onChangeText={setEmailAddress}
+          placeholder="Enter your email"
+          keyboardType="email-address"
+        />
 
-        <Card style={styles.formCard}>
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>
-              Email Address
-            </Text>
-            <View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: colors.input.border,
-                  backgroundColor: colors.input.background
-                }
-              ]}
-            >
-              <Mail
-                size={20}
-                color={colors.textSecondary}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                value={emailAddress}
-                placeholder="Enter your email"
-                placeholderTextColor={colors.input.placeholder}
-                onChangeText={setEmailAddress}
-              />
-            </View>
-          </View>
+        <AuthInput
+          label="Password"
+          icon={Lock}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Enter your password"
+          secureTextEntry
+        />
 
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>Password</Text>
-            <View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: colors.input.border,
-                  backgroundColor: colors.input.background
-                }
-              ]}
-            >
-              <Lock
-                size={20}
-                color={colors.textSecondary}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
-                value={password}
-                placeholder="Enter your password"
-                placeholderTextColor={colors.input.placeholder}
-                secureTextEntry={true}
-                onChangeText={setPassword}
-              />
-            </View>
-          </View>
-
-          <Button
-            variant="primary"
-            onPress={onSignInPress}
-            disabled={!emailAddress || !password || isLoading}
-            style={styles.signInButton}
-          >
+        <Button
+          variant="default"
+          onPress={onSignInPress}
+          disabled={!emailAddress || !password || isLoading}
+          className={cn(
+            'mt-2 h-14 w-full rounded-xl',
+            isLoading && 'opacity-50'
+          )}
+        >
+          <Text className="text-base font-semibold">
             {isLoading ? 'Signing In...' : 'Sign In'}
-          </Button>
-        </Card>
-
-        <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-            Don&apos;t have an account?{' '}
           </Text>
-          <Link href="/sign-up" asChild>
-            <Button variant="ghost" style={styles.linkButton}>
-              <Text style={[styles.linkText, { color: colors.primary }]}>
-                Sign Up
-              </Text>
-            </Button>
-          </Link>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </Button>
+      </AuthCard>
+
+      <View className="mt-6 flex-row items-center justify-center">
+        <Text className="text-base text-muted-foreground">
+          Don&apos;t have an account?{' '}
+        </Text>
+        <Link href="/sign-up" asChild>
+          <Button variant="ghost" className="px-2 py-1">
+            <Text className="text-base font-semibold text-primary">
+              Sign Up
+            </Text>
+          </Button>
+        </Link>
+      </View>
+    </AuthLayout>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center'
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    lineHeight: 24
-  },
-  formCard: {
-    marginBottom: 24
-  },
-  inputGroup: {
-    marginBottom: 20
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 56
-  },
-  inputIcon: {
-    marginRight: 12
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    height: '100%'
-  },
-  signInButton: {
-    marginTop: 8
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  footerText: {
-    fontSize: 16
-  },
-  linkButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8
-  },
-  linkText: {
-    fontSize: 16,
-    fontWeight: '600'
-  }
-})

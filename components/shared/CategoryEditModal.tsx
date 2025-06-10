@@ -1,5 +1,4 @@
 import { useCategoryContext } from '@/context/CategoryContext'
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import {
   Briefcase,
   Building,
@@ -17,14 +16,13 @@ import {
   Users,
   UtensilsCrossed,
   X
-} from 'lucide-react-native'
+} from '@/lib/icons'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
   Modal,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View
@@ -54,7 +52,6 @@ const availableIcons = {
 const iconNames = Object.keys(availableIcons) as (keyof typeof availableIcons)[]
 
 export default function CategoryEditModal() {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const {
     editModalVisible,
@@ -68,120 +65,6 @@ export default function CategoryEditModal() {
   const [description, setDescription] = useState('')
   const [selectedIcon, setSelectedIcon] =
     useState<keyof typeof availableIcons>('Home')
-
-  const styles = useThemedStyles(theme => ({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'flex-end' as const
-    },
-    modalOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.shadow
-    },
-    modalContent: {
-      borderTopLeftRadius: theme.borderRadius.xl,
-      borderTopRightRadius: theme.borderRadius.xl,
-      paddingTop: theme.spacing.sm,
-      minHeight: SCREEN_HEIGHT * 0.6,
-      backgroundColor: theme.colors.background
-    },
-    header: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const,
-      paddingHorizontal: theme.spacing.lg - 4,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: '600' as const,
-      color: theme.colors.text
-    },
-    closeButton: {
-      padding: theme.spacing.xs
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: theme.spacing.lg - 4
-    },
-    scrollContent: {
-      paddingVertical: theme.spacing.sm
-    },
-    formGroup: {
-      marginBottom: theme.spacing.xl - 8
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600' as const,
-      marginBottom: theme.spacing.sm,
-      color: theme.colors.text
-    },
-    input: {
-      borderWidth: 1,
-      borderRadius: theme.borderRadius.md * 1.5,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm * 1.5,
-      fontSize: 16,
-      minHeight: 48,
-      color: theme.colors.text,
-      backgroundColor: theme.colors.card,
-      borderColor: theme.colors.border
-    },
-    textArea: {
-      height: 100,
-      paddingTop: theme.spacing.sm * 1.5,
-      textAlignVertical: 'top' as const
-    },
-    iconGrid: {
-      flexDirection: 'row' as const,
-      flexWrap: 'wrap' as const,
-      gap: theme.spacing.sm * 1.5,
-      paddingTop: theme.spacing.sm
-    },
-    iconOption: {
-      width: 56,
-      height: 56,
-      borderRadius: theme.borderRadius.md * 1.5,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      borderWidth: 2
-    },
-    footer: {
-      flexDirection: 'row' as const,
-      paddingHorizontal: theme.spacing.lg - 4,
-      paddingTop: theme.spacing.md,
-      paddingBottom: theme.spacing.sm,
-      gap: theme.spacing.sm * 1.5,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.borderLight
-    },
-    button: {
-      flex: 1,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      paddingVertical: theme.spacing.sm + 6,
-      borderRadius: theme.borderRadius.md * 1.5,
-      gap: theme.spacing.sm,
-      minHeight: 48
-    },
-    cancelButton: {
-      flex: 0.4,
-      backgroundColor: theme.colors.button.secondaryBg,
-      borderWidth: 1,
-      borderColor: theme.colors.button.secondaryBorder
-    },
-    saveButton: {
-      flex: 0.6,
-      backgroundColor: theme.colors.button.primaryBg
-    },
-    buttonText: {
-      fontSize: 16,
-      fontWeight: '600' as const
-    }
-  }))
 
   useEffect(() => {
     if (categoryToEdit) {
@@ -217,9 +100,9 @@ export default function CategoryEditModal() {
 
   const getIconBackgroundColor = () => {
     if (currentType === 'income') {
-      return colors.iconBackground.success
+      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
     }
-    return colors.iconBackground.neutral
+    return '#F1F5F9' // colors.iconBackground.neutral
   }
 
   if (!categoryToEdit) return null
@@ -231,57 +114,61 @@ export default function CategoryEditModal() {
       transparent={true}
       onRequestClose={handleCloseEditModal}
     >
-      <View style={styles.modalContainer}>
-        <Pressable style={styles.modalOverlay} onPress={handleCloseEditModal} />
+      <View className="flex-1 justify-end">
+        <Pressable
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+          onPress={handleCloseEditModal}
+        />
         <View
-          style={[
-            styles.modalContent,
-            {
-              paddingBottom: insets.bottom + 16,
-              maxHeight: SCREEN_HEIGHT * 0.8
-            }
-          ]}
+          className="rounded-t-3xl bg-background pt-2"
+          style={{
+            paddingBottom: insets.bottom + 16,
+            maxHeight: SCREEN_HEIGHT * 0.8
+          }}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>
+          <View className="flex-row items-center justify-between border-b border-border px-5 py-4">
+            <Text className="text-xl font-semibold text-foreground">
               Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
-            <Pressable
-              onPress={handleCloseEditModal}
-              style={styles.closeButton}
-            >
-              <X size={24} color={colors.text} />
+            <Pressable onPress={handleCloseEditModal} className="p-1">
+              <X size={24} color="#1A202C" />
             </Pressable>
           </View>
 
           <ScrollView
-            style={styles.content}
+            className="flex-1 px-5"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={{ paddingVertical: 8 }}
           >
             {/* Category Name */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Category Name</Text>
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                Category Name
+              </Text>
               <TextInput
-                style={styles.input}
+                className="min-h-[48px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter category name"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor="#4A5568"
                 autoFocus
               />
             </View>
 
             {/* Category Description */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Description (Optional)</Text>
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                Description (Optional)
+              </Text>
               <TextInput
-                style={[styles.input, styles.textArea]}
+                className="h-[100px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                style={{ paddingTop: 12 }}
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Add a description for this category"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor="#4A5568"
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
@@ -289,9 +176,11 @@ export default function CategoryEditModal() {
             </View>
 
             {/* Icon Selection */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Choose Icon</Text>
-              <View style={styles.iconGrid}>
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                Choose Icon
+              </Text>
+              <View className="flex-row flex-wrap gap-3 pt-2">
                 {iconNames.map(iconName => {
                   const IconComponent = availableIcons[iconName]
                   const isSelected = selectedIcon === iconName
@@ -299,22 +188,18 @@ export default function CategoryEditModal() {
                   return (
                     <Pressable
                       key={iconName}
-                      style={[
-                        styles.iconOption,
-                        {
-                          backgroundColor: isSelected
-                            ? colors.iconBackground.primary
-                            : getIconBackgroundColor(),
-                          borderColor: isSelected
-                            ? colors.primary
-                            : 'transparent'
-                        }
-                      ]}
+                      className="h-14 w-14 items-center justify-center rounded-2xl border-2"
+                      style={{
+                        backgroundColor: isSelected
+                          ? 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+                          : getIconBackgroundColor(),
+                        borderColor: isSelected ? '#6366F1' : 'transparent' // colors.primary
+                      }}
                       onPress={() => setSelectedIcon(iconName)}
                     >
                       <IconComponent
                         size={24}
-                        color={isSelected ? colors.primary : colors.text}
+                        color={isSelected ? '#6366F1' : '#1A202C'} // colors.primary : colors.text
                       />
                     </Pressable>
                   )
@@ -324,35 +209,21 @@ export default function CategoryEditModal() {
           </ScrollView>
 
           {/* Footer */}
-          <View style={styles.footer}>
+          <View className="border-border-light flex-row gap-3 border-t px-5 pb-2 pt-4">
             <Pressable
-              style={styles.cancelButton}
+              className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border py-3"
               onPress={handleCloseEditModal}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  { color: colors.button.secondaryText }
-                ]}
-              >
-                Cancel
-              </Text>
+              <Text className="text-base font-semibold">Cancel</Text>
             </Pressable>
 
             <Pressable
-              style={styles.saveButton}
+              className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
               onPress={handleSave}
               disabled={!name.trim()}
             >
-              <Check size={20} color={colors.button.primaryText} />
-              <Text
-                style={[
-                  styles.buttonText,
-                  { color: colors.button.primaryText }
-                ]}
-              >
-                Save Changes
-              </Text>
+              <Check size={20} color="#FFFFFF" />
+              <Text className="text-base font-semibold">Save Changes</Text>
             </Pressable>
           </View>
         </View>

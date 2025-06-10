@@ -1,17 +1,9 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
+import { Progress } from '@/components/ui/progress'
+import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
-import {
-  Banknote as BanknoteIcon,
-  Calendar,
-  CreditCard,
-  PiggyBank,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet
-} from 'lucide-react-native'
 import React from 'react'
-import { Platform, Pressable, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 
 interface AccountCardProps {
   account: {
@@ -32,137 +24,64 @@ interface AccountCardProps {
   onPress?: () => void
 }
 
-export default function AccountCard({ account, onPress }: AccountCardProps) {
-  const { colors } = useTheme()
-  const router = useRouter()
+interface AccountTypeConfig {
+  icon: typeof DollarSign
+  colorClass: string
+  bgColorClass: string
+  borderColorClass: string
+  progressClass: string
+}
 
-  const styles = useThemedStyles(theme => ({
-    container: {
-      width: '100%' as const,
-      padding: 12,
-      borderRadius: 12,
-      borderLeftWidth: 3,
-      marginBottom: 8,
-      ...Platform.select({
-        android: {
-          elevation: 1
-        },
-        default: {
-          boxShadow: `0px 1px 3px ${theme.colors.shadowLight}`
-        }
-      })
-    } as const,
-    header: {
-      flexDirection: 'row' as const,
-      alignItems: 'flex-start' as const,
-      marginBottom: 8
-    },
-    iconContainer: {
-      width: 28,
-      height: 28,
-      borderRadius: 6,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      marginRight: 12
-    },
-    headerText: {
-      flex: 1,
-      minWidth: 0 // Ensures text truncation works
-    },
-    name: {
-      fontSize: 16,
-      fontWeight: '600' as const,
-      marginBottom: 1
-    },
-    type: {
-      fontSize: 12,
-      textTransform: 'capitalize' as const
-    },
-    balanceContainer: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const
-    },
-    trendIcon: {
-      marginRight: 2
-    },
-    balance: {
-      fontSize: 16,
-      fontWeight: '700' as const
-    },
-    progressSection: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      marginBottom: 6
-    },
-    progressContainer: {
-      flex: 1,
-      height: 3,
-      borderRadius: 1.5,
-      overflow: 'hidden' as const,
-      marginRight: 8
-    },
-    progressBar: {
-      height: '100%' as const
-    },
-    progressText: {
-      fontSize: 10,
-      fontWeight: '500' as const,
-      minWidth: 30,
-      textAlign: 'right' as const
-    },
-    footer: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'center' as const
-    },
-    secondaryInfo: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const
-    },
-    secondaryLabel: {
-      fontSize: 11,
-      marginLeft: 3
-    },
-    secondaryValue: {
-      fontSize: 11,
-      fontWeight: '500' as const
-    }
-  }))
+const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
+  payment: {
+    icon: DollarSign,
+    colorClass: 'text-account-payment',
+    bgColorClass: 'bg-account-payment/10',
+    borderColorClass: 'border-l-account-payment',
+    progressClass: 'bg-account-payment'
+  },
+  credit: {
+    icon: CreditCard,
+    colorClass: 'text-account-payment',
+    bgColorClass: 'bg-account-payment/10',
+    borderColorClass: 'border-l-account-payment',
+    progressClass: 'bg-account-payment'
+  },
+  savings: {
+    icon: PiggyBank,
+    colorClass: 'text-account-savings',
+    bgColorClass: 'bg-account-savings/10',
+    borderColorClass: 'border-l-account-savings',
+    progressClass: 'bg-account-savings'
+  },
+  debt: {
+    icon: DollarSign,
+    colorClass: 'text-account-debt',
+    bgColorClass: 'bg-account-debt/10',
+    borderColorClass: 'border-l-account-debt',
+    progressClass: 'bg-account-debt'
+  }
+}
+
+export default function AccountCard({ account, onPress }: AccountCardProps) {
+  const router = useRouter()
 
   const handlePress = () => {
     router.push(`/accounts/${account.id}` as any)
   }
 
-  const getIcon = () => {
-    switch (account.type) {
-      case 'payment':
-        return account.name.toLowerCase().includes('credit')
-          ? CreditCard
-          : Wallet
-      case 'savings':
-        return PiggyBank
-      case 'debt':
-        return BanknoteIcon
-      default:
-        return Wallet
+  const getAccountConfig = () => {
+    if (
+      account.type === 'payment' &&
+      account.name.toLowerCase().includes('credit')
+    ) {
+      return ACCOUNT_TYPES.credit
     }
+    return ACCOUNT_TYPES[account.type]
   }
 
-  const getTypeColor = () => {
-    switch (account.type) {
-      case 'payment':
-        return colors.primary
-      case 'savings':
-        return colors.success
-      case 'debt':
-        return colors.error
-      default:
-        return colors.primary
-    }
-  }
-
-  const Icon = getIcon()
-  const typeColor = getTypeColor()
+  const config = getAccountConfig()
+  const Icon = config.icon
 
   const getProgressPercentage = () => {
     if (account.type === 'savings' && account.targetAmount) {
@@ -174,17 +93,16 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         100
       )
     }
+    if (account.type === 'payment') {
+      // For payment accounts, show percentage of positive balance
+      const maxBalance = Math.max(account.balance, 0)
+      const threshold = 1000 // Example threshold, adjust as needed
+      return Math.min((maxBalance / threshold) * 100, 100)
+    }
     return null
   }
 
   const progress = getProgressPercentage()
-
-  const getBalanceColor = () => {
-    if (account.type === 'debt') {
-      return account.debtType === 'owed' ? colors.error : colors.success
-    }
-    return account.balance >= 0 ? colors.text : colors.error
-  }
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -198,14 +116,14 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const getSecondaryInfo = () => {
     if (account.type === 'savings' && account.targetAmount) {
       return {
-        icon: Target,
+        icon: DollarSign,
         text: formatBalance(account.targetAmount),
         label: 'Target'
       }
     }
     if (account.type === 'debt' && account.dueDate) {
       return {
-        icon: Calendar,
+        icon: DollarSign,
         text: new Date(account.dueDate).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric'
@@ -213,65 +131,69 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         label: 'Due'
       }
     }
+    if (account.type === 'payment' && account.institution) {
+      return {
+        icon: DollarSign,
+        text: account.institution,
+        label: 'Institution'
+      }
+    }
     return null
   }
 
   const secondaryInfo = getSecondaryInfo()
+  const isNegativePayment = account.balance < 0 && account.type === 'payment'
+  const isPositiveSavings = account.balance > 0 && account.type === 'savings'
 
   return (
     <Pressable
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.card,
-          borderLeftColor: typeColor
-        }
-      ]}
+      className={cn(
+        'mb-2 w-full rounded-xl p-3 shadow-sm shadow-slate-500/50',
+        'border-l-[3px]',
+        config.borderColorClass
+      )}
       onPress={handlePress}
     >
       {/* Header Row */}
-      <View style={styles.header}>
+      <View className="mb-2 flex-row items-start">
         <View
-          style={[
-            styles.iconContainer,
-            {
-              backgroundColor:
-                colors.iconBackground[
-                  account.type === 'payment'
-                    ? 'primary'
-                    : account.type === 'savings'
-                      ? 'success'
-                      : 'error'
-                ]
-            }
-          ]}
+          className={cn(
+            'mr-3 h-7 w-7 items-center justify-center rounded-md',
+            config.bgColorClass
+          )}
         >
-          <Icon size={16} color={typeColor} />
+          <Icon size={16} className={config.colorClass} />
         </View>
-        <View style={styles.headerText}>
-          <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+        <View className="min-w-0 flex-1">
+          <Text
+            className="mb-px text-base font-semibold text-foreground"
+            numberOfLines={1}
+          >
             {account.name}
           </Text>
-          <Text style={[styles.type, { color: colors.textSecondary }]}>
+          <Text className="text-xs capitalize text-foreground">
             {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
           </Text>
         </View>
-        <View style={styles.balanceContainer}>
-          {account.balance < 0 && account.type === 'payment' && (
-            <TrendingDown
-              size={12}
-              color={colors.error}
-              style={styles.trendIcon}
-            />
+        <View className="flex-row items-center">
+          {isNegativePayment && (
+            <TrendingDown size={12} className="mr-0.5 text-account-debt" />
           )}
-          {account.balance > 0 && account.type === 'savings' && (
-            <TrendingUp
-              size={12}
-              color={colors.success}
-              style={styles.trendIcon}
-            />
+          {isPositiveSavings && (
+            <TrendingDown size={12} className="mr-0.5 text-account-savings" />
           )}
-          <Text style={[styles.balance, { color: getBalanceColor() }]}>
+          <Text
+            className={cn(
+              'text-base font-bold',
+              account.type === 'debt'
+                ? account.debtType === 'owed'
+                  ? 'text-account-debt'
+                  : 'text-account-savings'
+                : account.balance >= 0
+                  ? 'text-foreground'
+                  : 'text-account-debt'
+            )}
+          >
             {formatBalance(account.balance)}
           </Text>
         </View>
@@ -279,43 +201,25 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
       {/* Progress Bar */}
       {progress !== null && (
-        <View style={styles.progressSection}>
-          <View
-            style={[
-              styles.progressContainer,
-              { backgroundColor: colors.surfaceSecondary }
-            ]}
-          >
-            <View
-              style={[
-                styles.progressBar,
-                {
-                  width: `${Math.min(progress, 100)}%`,
-                  backgroundColor: typeColor
-                }
-              ]}
-            />
-          </View>
-          <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-            {progress.toFixed(0)}%
-          </Text>
+        <View className="mb-1.5">
+          <Progress
+            value={progress}
+            className="h-1 bg-muted"
+            indicatorClassName={config.progressClass}
+          />
         </View>
       )}
 
       {/* Footer with secondary info */}
       {secondaryInfo && (
-        <View style={styles.footer}>
-          <View style={styles.secondaryInfo}>
-            <secondaryInfo.icon size={10} color={colors.textSecondary} />
-            <Text
-              style={[styles.secondaryLabel, { color: colors.textSecondary }]}
-            >
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center">
+            <secondaryInfo.icon size={10} className="text-muted-foreground" />
+            <Text className="ml-1 text-[11px] text-foreground">
               {secondaryInfo.label}
             </Text>
           </View>
-          <Text
-            style={[styles.secondaryValue, { color: colors.textSecondary }]}
-          >
+          <Text className="text-[11px] font-medium text-foreground">
             {secondaryInfo.text}
           </Text>
         </View>

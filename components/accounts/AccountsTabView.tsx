@@ -1,6 +1,5 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
 import type { Account } from '@/hooks/useAccountManagement'
-import { CreditCard, PiggyBank, Receipt } from 'lucide-react-native'
+import { CreditCard, PiggyBank, Receipt } from '@/lib/icons'
 import React, { useState } from 'react'
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -32,7 +31,6 @@ export default function AccountsTabView({
   onEditAccount,
   onAddAccount
 }: AccountsTabViewProps) {
-  const { colors } = useTheme()
   const insets = useSafeAreaInsets()
   const [activeTab, setActiveTab] = useState<TabType>('payment')
 
@@ -68,62 +66,19 @@ export default function AccountsTabView({
       }
     })
 
-  const styles = useThemedStyles(
-    theme =>
-      ({
-        container: {
-          flex: 1
+  const getActiveTabStyle = () => {
+    return {
+      backgroundColor: '#6366F1', // colors.primary
+      ...Platform.select({
+        android: {
+          elevation: 3
         },
-        tabBar: {
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-          paddingVertical: 12,
-          gap: 8
-        },
-        tab: {
-          flex: 1,
-          paddingVertical: 10,
-          paddingHorizontal: 16,
-          borderRadius: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 40
-        },
-        activeTab: {
-          ...Platform.select({
-            android: {
-              elevation: 3
-            },
-            default: {
-              boxShadow: `0px 2px 4px ${theme.colors.shadow}`
-            }
-          })
-        },
-        tabContent: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8
-        },
-        tabText: {
-          fontSize: 14,
-          fontWeight: '500',
-          textAlign: 'center'
-        },
-        activeTabText: {
-          fontWeight: '600'
-        },
-        contentContainer: {
-          flex: 1
-        },
-        scrollView: {
-          flex: 1
-        },
-        scrollContent: {
-          paddingHorizontal: 16,
-          paddingTop: 8
+        default: {
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' // colors.shadow
         }
-      }) as const
-  )
+      })
+    }
+  }
 
   const renderTabContent = () => {
     const tabAccounts = accounts[activeTab]
@@ -131,10 +86,10 @@ export default function AccountsTabView({
 
     return (
       <ScrollView
-        style={styles.scrollView}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          styles.scrollContent,
+          { paddingHorizontal: 16, paddingTop: 8 },
           { paddingBottom: insets.bottom + 20 }
         ]}
       >
@@ -150,48 +105,29 @@ export default function AccountsTabView({
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       {/* Tab Navigation */}
-      <View style={[styles.tabBar, { backgroundColor: colors.background }]}>
+      <View className="flex-row gap-2 bg-background px-5 py-3">
         {tabs.map(tab => {
           const IconComponent = tab.icon
           const isActive = activeTab === tab.key
-          const iconColor = isActive ? colors.textInverse : colors.textSecondary
+          const iconColor = isActive ? '#FFFFFF' : '#4A5568' // colors.textInverse : colors.textSecondary
 
           return (
             <Pressable
               key={tab.key}
-              style={[
-                styles.tab,
-                { backgroundColor: colors.surfaceSecondary },
-                isActive && [
-                  styles.activeTab,
-                  {
-                    backgroundColor: colors.primary,
-                    ...Platform.select({
-                      android: {
-                        elevation: 3
-                      },
-                      default: {
-                        boxShadow: `0px 2px 4px ${colors.shadow}`
-                      }
-                    })
-                  }
-                ]
-              ]}
+              className="bg-card-secondary min-h-[40px] flex-1 items-center justify-center rounded-2xl px-4 py-2.5"
+              style={isActive ? getActiveTabStyle() : undefined}
               onPress={() => handleTabPress(tab.key)}
             >
-              <View style={styles.tabContent}>
+              <View className="flex-row items-center gap-2">
                 <IconComponent size={18} color={iconColor} />
                 <Text
-                  style={[
-                    styles.tabText,
-                    { color: colors.textSecondary },
-                    isActive && [
-                      styles.activeTabText,
-                      { color: colors.textInverse }
-                    ]
-                  ]}
+                  className="text-center text-sm font-medium"
+                  style={{
+                    color: isActive ? '#FFFFFF' : '#4A5568', // colors.textInverse : colors.textSecondary
+                    fontWeight: isActive ? '600' : '400'
+                  }}
                 >
                   {tab.title}
                 </Text>
@@ -203,7 +139,7 @@ export default function AccountsTabView({
 
       {/* Tab Content with Swipe Gesture */}
       <GestureDetector gesture={panGesture}>
-        <View style={styles.contentContainer}>{renderTabContent()}</View>
+        <View className="flex-1">{renderTabContent()}</View>
       </GestureDetector>
     </View>
   )
