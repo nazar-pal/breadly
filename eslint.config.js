@@ -13,7 +13,8 @@ module.exports = defineConfig([
       'react-compiler': eslintPluginReactCompiler
     },
     rules: {
-      'react-compiler/react-compiler': 'warn'
+      'react-compiler/react-compiler': 'warn',
+      'prettier/prettier': 'warn'
     }
   },
   {

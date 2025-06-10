@@ -24,7 +24,7 @@ export default function AuthRoutesLayout() {
   }, [isSignedIn, segments, isLoaded, router])
 
   return (
-    <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <Button
         variant="ghost"
         className="h-10 w-10 items-center justify-center rounded-full p-0"
