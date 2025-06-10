@@ -1,7 +1,9 @@
+import { Progress } from '@/components/ui/progress'
 import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
 import React from 'react'
-import { Platform, Pressable, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 
 interface AccountCardProps {
   account: {
@@ -22,73 +24,64 @@ interface AccountCardProps {
   onPress?: () => void
 }
 
+interface AccountTypeConfig {
+  icon: typeof DollarSign
+  colorClass: string
+  bgColorClass: string
+  borderColorClass: string
+  progressClass: string
+}
+
+const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
+  payment: {
+    icon: DollarSign,
+    colorClass: 'text-account-payment',
+    bgColorClass: 'bg-account-payment/10',
+    borderColorClass: 'border-l-account-payment',
+    progressClass: 'bg-account-payment'
+  },
+  credit: {
+    icon: CreditCard,
+    colorClass: 'text-account-payment',
+    bgColorClass: 'bg-account-payment/10',
+    borderColorClass: 'border-l-account-payment',
+    progressClass: 'bg-account-payment'
+  },
+  savings: {
+    icon: PiggyBank,
+    colorClass: 'text-account-savings',
+    bgColorClass: 'bg-account-savings/10',
+    borderColorClass: 'border-l-account-savings',
+    progressClass: 'bg-account-savings'
+  },
+  debt: {
+    icon: DollarSign,
+    colorClass: 'text-account-debt',
+    bgColorClass: 'bg-account-debt/10',
+    borderColorClass: 'border-l-account-debt',
+    progressClass: 'bg-account-debt'
+  }
+}
+
 export default function AccountCard({ account, onPress }: AccountCardProps) {
   const router = useRouter()
-
-  const getCardStyle = () => {
-    return {
-      backgroundColor: '#FFFFFF', // colors.card
-      borderLeftWidth: 3,
-      borderLeftColor: getTypeColor(),
-      ...Platform.select({
-        android: {
-          elevation: 1
-        },
-        default: {
-          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)' // colors.shadowLight
-        }
-      })
-    }
-  }
 
   const handlePress = () => {
     router.push(`/accounts/${account.id}` as any)
   }
 
-  const getIcon = () => {
-    switch (account.type) {
-      case 'payment':
-        return account.name.toLowerCase().includes('credit')
-          ? CreditCard
-          : DollarSign
-      case 'savings':
-        return PiggyBank
-      case 'debt':
-        return DollarSign
-      default:
-        return DollarSign
+  const getAccountConfig = () => {
+    if (
+      account.type === 'payment' &&
+      account.name.toLowerCase().includes('credit')
+    ) {
+      return ACCOUNT_TYPES.credit
     }
+    return ACCOUNT_TYPES[account.type]
   }
 
-  const getTypeColor = () => {
-    switch (account.type) {
-      case 'payment':
-        return '#6366F1' // colors.primary
-      case 'savings':
-        return '#10B981' // colors.success
-      case 'debt':
-        return '#EF4444' // colors.error
-      default:
-        return '#6366F1' // colors.primary
-    }
-  }
-
-  const getIconBackgroundColor = () => {
-    switch (account.type) {
-      case 'payment':
-        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-      case 'savings':
-        return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
-      case 'debt':
-        return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
-      default:
-        return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-    }
-  }
-
-  const Icon = getIcon()
-  const typeColor = getTypeColor()
-  const iconBgColor = getIconBackgroundColor()
+  const config = getAccountConfig()
+  const Icon = config.icon
 
   const getProgressPercentage = () => {
     if (account.type === 'savings' && account.targetAmount) {
@@ -100,17 +93,16 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         100
       )
     }
+    if (account.type === 'payment') {
+      // For payment accounts, show percentage of positive balance
+      const maxBalance = Math.max(account.balance, 0)
+      const threshold = 1000 // Example threshold, adjust as needed
+      return Math.min((maxBalance / threshold) * 100, 100)
+    }
     return null
   }
 
   const progress = getProgressPercentage()
-
-  const getBalanceColor = () => {
-    if (account.type === 'debt') {
-      return account.debtType === 'owed' ? '#EF4444' : '#10B981' // colors.error : colors.success
-    }
-    return account.balance >= 0 ? '#1A202C' : '#EF4444' // colors.text : colors.error
-  }
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -139,24 +131,38 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
         label: 'Due'
       }
     }
+    if (account.type === 'payment' && account.institution) {
+      return {
+        icon: DollarSign,
+        text: account.institution,
+        label: 'Institution'
+      }
+    }
     return null
   }
 
   const secondaryInfo = getSecondaryInfo()
+  const isNegativePayment = account.balance < 0 && account.type === 'payment'
+  const isPositiveSavings = account.balance > 0 && account.type === 'savings'
 
   return (
     <Pressable
-      className="mb-2 w-full rounded-xl p-3"
-      style={getCardStyle()}
+      className={cn(
+        'mb-2 w-full rounded-xl p-3 shadow-sm shadow-slate-500/50',
+        'border-l-[3px]',
+        config.borderColorClass
+      )}
       onPress={handlePress}
     >
       {/* Header Row */}
       <View className="mb-2 flex-row items-start">
         <View
-          className="mr-3 h-7 w-7 items-center justify-center rounded-md"
-          style={{ backgroundColor: iconBgColor }}
+          className={cn(
+            'mr-3 h-7 w-7 items-center justify-center rounded-md',
+            config.bgColorClass
+          )}
         >
-          <Icon size={16} color={typeColor} />
+          <Icon size={16} className={config.colorClass} />
         </View>
         <View className="min-w-0 flex-1">
           <Text
@@ -170,23 +176,23 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
           </Text>
         </View>
         <View className="flex-row items-center">
-          {account.balance < 0 && account.type === 'payment' && (
-            <TrendingDown
-              size={12}
-              color="#EF4444" // colors.error
-              style={{ marginRight: 2 }}
-            />
+          {isNegativePayment && (
+            <TrendingDown size={12} className="text-account-debt mr-0.5" />
           )}
-          {account.balance > 0 && account.type === 'savings' && (
-            <TrendingDown
-              size={12}
-              color="#10B981" // colors.success
-              style={{ marginRight: 2 }}
-            />
+          {isPositiveSavings && (
+            <TrendingDown size={12} className="text-account-savings mr-0.5" />
           )}
           <Text
-            className="text-base font-bold"
-            style={{ color: getBalanceColor() }}
+            className={cn(
+              'text-base font-bold',
+              account.type === 'debt'
+                ? account.debtType === 'owed'
+                  ? 'text-account-debt'
+                  : 'text-account-savings'
+                : account.balance >= 0
+                  ? 'text-foreground'
+                  : 'text-account-debt'
+            )}
           >
             {formatBalance(account.balance)}
           </Text>
@@ -195,19 +201,12 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
 
       {/* Progress Bar */}
       {progress !== null && (
-        <View className="mb-1.5 flex-row items-center">
-          <View className="bg-card-secondary mr-2 h-0.5 flex-1 overflow-hidden rounded-sm">
-            <View
-              className="h-full"
-              style={{
-                width: `${Math.min(progress, 100)}%`,
-                backgroundColor: typeColor
-              }}
-            />
-          </View>
-          <Text className="text-foreground min-w-[30px] text-right text-[10px] font-medium">
-            {progress.toFixed(0)}%
-          </Text>
+        <View className="mb-1.5">
+          <Progress
+            value={progress}
+            className="bg-muted h-1"
+            indicatorClassName={config.progressClass}
+          />
         </View>
       )}
 
@@ -215,7 +214,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       {secondaryInfo && (
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <secondaryInfo.icon size={10} color="#4A5568" />
+            <secondaryInfo.icon size={10} className="text-muted-foreground" />
             <Text className="text-foreground ml-1 text-[11px]">
               {secondaryInfo.label}
             </Text>

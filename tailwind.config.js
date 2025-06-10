@@ -55,7 +55,14 @@ module.exports = {
         income: 'hsl(var(--income))',
         expense: 'hsl(var(--expense))',
         transfer: 'hsl(var(--transfer))',
-        savings: 'hsl(var(--savings))'
+        savings: 'hsl(var(--savings))',
+
+        // Account type colors
+        account: {
+          payment: 'hsl(var(--account-payment))',
+          savings: 'hsl(var(--account-savings))',
+          debt: 'hsl(var(--account-debt))'
+        }
       },
       borderWidth: {
         hairline: hairlineWidth()

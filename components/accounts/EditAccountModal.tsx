@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useCurrency } from '@/context/CurrencyContext'
 import { Check, X } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import React, { useEffect, useState } from 'react'
 import {
   Dimensions,
@@ -24,6 +25,110 @@ interface EditAccountModalProps {
   onClose: () => void
 }
 
+interface FormData {
+  name: string
+  description: string
+  balance: string
+  targetAmount: string
+  initialAmount: string
+  dueDate: string
+  interestRate: string
+  institution: string
+  person: string
+  debtType: 'owed' | 'owedTo'
+}
+
+const DEFAULT_FORM_DATA: FormData = {
+  name: '',
+  description: '',
+  balance: '',
+  targetAmount: '',
+  initialAmount: '',
+  dueDate: '',
+  interestRate: '',
+  institution: '',
+  person: '',
+  debtType: 'owed'
+}
+
+function DebtTypeButton({
+  label,
+  isSelected,
+  onPress
+}: {
+  label: string
+  isSelected: boolean
+  onPress: () => void
+}) {
+  return (
+    <Pressable
+      className={cn(
+        'flex-1 flex-row items-center justify-center rounded-xl border py-3',
+        isSelected ? 'border-primary bg-primary' : 'border-border bg-card'
+      )}
+      onPress={onPress}
+    >
+      {isSelected && (
+        <Check size={16} className="text-primary-foreground mr-2" />
+      )}
+      <Text
+        className={cn(
+          'text-base font-medium',
+          isSelected ? 'text-primary-foreground' : 'text-foreground'
+        )}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  )
+}
+
+function FormInput({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType = 'default',
+  multiline = false,
+  numberOfLines,
+  prefix
+}: {
+  label: string
+  value: string
+  onChangeText: (text: string) => void
+  placeholder: string
+  keyboardType?: 'default' | 'decimal-pad'
+  multiline?: boolean
+  numberOfLines?: number
+  prefix?: string
+}) {
+  return (
+    <View className="mb-6">
+      <Text className="text-foreground mb-2 text-base font-semibold">
+        {label}
+      </Text>
+      <View className="flex-row items-center">
+        {prefix && (
+          <Text className="text-foreground mr-3 text-base">{prefix}</Text>
+        )}
+        <TextInput
+          className={cn(
+            'border-border bg-card text-foreground flex-1 rounded-xl border px-4 py-3 text-base',
+            multiline ? 'h-[100px] pt-3' : 'min-h-[48px]'
+          )}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor="hsl(var(--muted-foreground))"
+          keyboardType={keyboardType}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+        />
+      </View>
+    </View>
+  )
+}
+
 export default function EditAccountModal({
   visible,
   account,
@@ -32,19 +137,7 @@ export default function EditAccountModal({
 }: EditAccountModalProps) {
   const { currency } = useCurrency()
   const insets = useSafeAreaInsets()
-
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    balance: '',
-    targetAmount: '',
-    initialAmount: '',
-    dueDate: '',
-    interestRate: '',
-    institution: '',
-    person: '',
-    debtType: 'owed'
-  })
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
 
   useEffect(() => {
     if (account) {
@@ -99,222 +192,120 @@ export default function EditAccountModal({
         className="flex-1"
       >
         <View
-          className="flex-1 rounded-t-3xl bg-background"
+          className="bg-background flex-1 rounded-t-3xl"
           style={{
             marginTop: SCREEN_HEIGHT * 0.1
           }}
         >
-          <View className="border-border-light flex-row items-center justify-between border-b px-5 py-4">
-            <Text className="text-lg font-semibold text-foreground">
-              {getTitle()}
-            </Text>
-            <Pressable onPress={onClose} className="rounded p-2">
-              <X size={24} color="#1A202C" />
-            </Pressable>
+          <View className="border-border border-b px-5 py-4">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-foreground text-lg font-semibold">
+                {getTitle()}
+              </Text>
+              <Pressable
+                onPress={onClose}
+                className="rounded p-2 active:opacity-70"
+              >
+                <X size={24} className="text-foreground" />
+              </Pressable>
+            </View>
           </View>
 
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={[
-              { padding: 20 },
-              { paddingBottom: insets.bottom + 16 }
-            ]}
+            contentContainerStyle={{
+              padding: 20,
+              paddingBottom: insets.bottom + 16
+            }}
           >
-            <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-foreground">
-                Account Name
-              </Text>
-              <TextInput
-                className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                value={formData.name}
-                onChangeText={text =>
-                  setFormData(prev => ({ ...prev, name: text }))
-                }
-                placeholder="Enter account name"
-                placeholderTextColor="#4A5568"
-              />
-            </View>
+            <FormInput
+              label="Account Name"
+              value={formData.name}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, name: text }))
+              }
+              placeholder="Enter account name"
+            />
 
-            <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-foreground">
-                Description
-              </Text>
-              <TextInput
-                className="h-[100px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                style={{ paddingTop: 12 }}
-                value={formData.description}
-                onChangeText={text =>
-                  setFormData(prev => ({ ...prev, description: text }))
-                }
-                placeholder="Enter description"
-                placeholderTextColor="#4A5568"
-                multiline
-                numberOfLines={3}
-              />
-            </View>
+            <FormInput
+              label="Description"
+              value={formData.description}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, description: text }))
+              }
+              placeholder="Enter description"
+              multiline
+              numberOfLines={3}
+            />
 
-            <View className="mb-6">
-              <Text className="mb-2 text-base font-semibold text-foreground">
-                Balance
-              </Text>
-              <View className="flex-row items-center">
-                <Text className="mr-3 text-base text-foreground">
-                  {currency.symbol}
-                </Text>
-                <TextInput
-                  className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                  value={formData.balance}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, balance: text }))
-                  }
-                  keyboardType="decimal-pad"
-                  placeholder="0.00"
-                  placeholderTextColor="#4A5568"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Balance"
+              value={formData.balance}
+              onChangeText={text =>
+                setFormData(prev => ({ ...prev, balance: text }))
+              }
+              placeholder="0.00"
+              keyboardType="decimal-pad"
+              prefix={currency.symbol}
+            />
 
-            {/* Type-specific fields */}
             {account?.type === 'savings' && (
-              <View className="mb-6">
-                <Text className="mb-2 text-base font-semibold text-foreground">
-                  Target Amount
-                </Text>
-                <View className="flex-row items-center">
-                  <Text className="mr-3 text-base text-foreground">
-                    {currency.symbol}
-                  </Text>
-                  <TextInput
-                    className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                    value={formData.targetAmount}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, targetAmount: text }))
-                    }
-                    keyboardType="decimal-pad"
-                    placeholder="0.00"
-                    placeholderTextColor="#4A5568"
-                  />
-                </View>
-              </View>
+              <FormInput
+                label="Target Amount"
+                value={formData.targetAmount}
+                onChangeText={text =>
+                  setFormData(prev => ({ ...prev, targetAmount: text }))
+                }
+                placeholder="0.00"
+                keyboardType="decimal-pad"
+                prefix={currency.symbol}
+              />
             )}
 
             {account?.type === 'debt' && (
               <>
+                <FormInput
+                  label="Initial Amount"
+                  value={formData.initialAmount}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, initialAmount: text }))
+                  }
+                  placeholder="0.00"
+                  keyboardType="decimal-pad"
+                  prefix={currency.symbol}
+                />
+
                 <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-foreground">
-                    Initial Amount
+                  <Text className="text-foreground mb-2 text-base font-semibold">
+                    Debt Type
                   </Text>
-                  <View className="flex-row items-center">
-                    <Text className="mr-3 text-base text-foreground">
-                      {currency.symbol}
-                    </Text>
-                    <TextInput
-                      className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                      value={formData.initialAmount}
-                      onChangeText={text =>
-                        setFormData(prev => ({ ...prev, initialAmount: text }))
+                  <View className="flex-row gap-3">
+                    <DebtTypeButton
+                      label="I Owe"
+                      isSelected={formData.debtType === 'owed'}
+                      onPress={() =>
+                        setFormData(prev => ({ ...prev, debtType: 'owed' }))
                       }
-                      keyboardType="decimal-pad"
-                      placeholder="0.00"
-                      placeholderTextColor="#4A5568"
+                    />
+                    <DebtTypeButton
+                      label="Owed to Me"
+                      isSelected={formData.debtType === 'owedTo'}
+                      onPress={() =>
+                        setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
+                      }
                     />
                   </View>
                 </View>
 
-                <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-foreground">
-                    Debt Type
-                  </Text>
-                  <View className="flex-row gap-3">
-                    <Pressable
-                      className="flex-1 flex-row items-center justify-center rounded-xl border py-3"
-                      style={{
-                        backgroundColor:
-                          formData.debtType === 'owed'
-                            ? '#6366F1' // colors.primary
-                            : '#FFFFFF', // colors.card
-                        borderColor:
-                          formData.debtType === 'owed'
-                            ? '#6366F1' // colors.primary
-                            : '#E2E8F0' // colors.border
-                      }}
-                      onPress={() =>
-                        setFormData(prev => ({ ...prev, debtType: 'owed' }))
-                      }
-                    >
-                      {formData.debtType === 'owed' && (
-                        <Check
-                          size={16}
-                          color="#FFFFFF" // colors.textInverse
-                          style={{ marginRight: 8 }}
-                        />
-                      )}
-                      <Text
-                        className="text-base font-medium"
-                        style={{
-                          color:
-                            formData.debtType === 'owed'
-                              ? '#FFFFFF' // colors.textInverse
-                              : '#1A202C' // colors.text
-                        }}
-                      >
-                        I Owe
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
-                      className="flex-1 flex-row items-center justify-center rounded-xl border py-3"
-                      style={{
-                        backgroundColor:
-                          formData.debtType === 'owedTo'
-                            ? '#6366F1' // colors.primary
-                            : '#FFFFFF', // colors.card
-                        borderColor:
-                          formData.debtType === 'owedTo'
-                            ? '#6366F1' // colors.primary
-                            : '#E2E8F0' // colors.border
-                      }}
-                      onPress={() =>
-                        setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
-                      }
-                    >
-                      {formData.debtType === 'owedTo' && (
-                        <Check
-                          size={16}
-                          color="#FFFFFF" // colors.textInverse
-                          style={{ marginRight: 8 }}
-                        />
-                      )}
-                      <Text
-                        className="text-base font-medium"
-                        style={{
-                          color:
-                            formData.debtType === 'owedTo'
-                              ? '#FFFFFF' // colors.textInverse
-                              : '#1A202C' // colors.text
-                        }}
-                      >
-                        Owed to Me
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-foreground">
-                    Person/Institution
-                  </Text>
-                  <TextInput
-                    className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                    value={formData.person}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, person: text }))
-                    }
-                    placeholder="Enter person or institution name"
-                    placeholderTextColor="#4A5568"
-                  />
-                </View>
+                <FormInput
+                  label="Person/Institution"
+                  value={formData.person}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, person: text }))
+                  }
+                  placeholder="Enter person or institution name"
+                />
               </>
             )}
 
@@ -324,14 +315,14 @@ export default function EditAccountModal({
                 variant="secondary"
                 className="flex-[0.4]"
               >
-                <Text>Cancel</Text>
+                <Text className="text-foreground">Cancel</Text>
               </Button>
               <Button
                 onPress={handleSave}
                 variant="default"
                 className="flex-[0.6]"
               >
-                <Text>Save</Text>
+                <Text className="text-primary-foreground">Save</Text>
               </Button>
             </View>
           </ScrollView>

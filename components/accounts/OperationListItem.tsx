@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
 import {
   ArrowRight,
@@ -57,112 +58,104 @@ interface OperationCardProps {
   operation: Operation
 }
 
-const getOperationIcon = (operation: Operation) => {
-  switch (operation.type) {
-    case 'income':
-      return TrendingUp
-    case 'debt':
-      return operation.debtType === 'paid' ? TrendingDown : TrendingUp
-    case 'other':
-      switch (operation.transactionType) {
-        case 'fee':
-          return CreditCard
-        case 'refund':
-          return TrendingUp
-        case 'exchange':
-          return RefreshCw
-        default:
-          return CreditCard
-      }
-    default:
-      return TrendingDown // expenses
+interface OperationConfig {
+  icon: typeof TrendingUp
+  colorClass: string
+  bgColorClass: string
+  prefix: string
+  subtext?: (operation: Operation) => string | null
+}
+
+const OPERATION_CONFIGS: Record<string, OperationConfig> = {
+  income: {
+    icon: TrendingUp,
+    colorClass: 'text-success',
+    bgColorClass: 'bg-success/10',
+    prefix: '+'
+  },
+  expense: {
+    icon: TrendingDown,
+    colorClass: 'text-destructive',
+    bgColorClass: 'bg-destructive/10',
+    prefix: '-'
+  },
+  'debt-paid': {
+    icon: TrendingDown,
+    colorClass: 'text-destructive',
+    bgColorClass: 'bg-destructive/10',
+    prefix: '-',
+    subtext: op =>
+      op.type === 'debt' && op.creditor
+        ? `Paid to ${op.creditor}`
+        : 'Debt Payment'
+  },
+  'debt-received': {
+    icon: TrendingUp,
+    colorClass: 'text-success',
+    bgColorClass: 'bg-success/10',
+    prefix: '+',
+    subtext: op =>
+      op.type === 'debt' && op.debtor
+        ? `Received from ${op.debtor}`
+        : 'Debt Received'
+  },
+  'other-fee': {
+    icon: CreditCard,
+    colorClass: 'text-primary',
+    bgColorClass: 'bg-primary/10',
+    prefix: '-',
+    subtext: () => 'Transaction Fee'
+  },
+  'other-refund': {
+    icon: TrendingUp,
+    colorClass: 'text-success',
+    bgColorClass: 'bg-success/10',
+    prefix: '+',
+    subtext: () => 'Refund Received'
+  },
+  'other-exchange': {
+    icon: RefreshCw,
+    colorClass: 'text-primary',
+    bgColorClass: 'bg-primary/10',
+    prefix: '-',
+    subtext: () => 'Currency Exchange'
   }
 }
 
-const getOperationColor = (operation: Operation) => {
+const getOperationConfig = (operation: Operation): OperationConfig => {
   switch (operation.type) {
     case 'income':
-      return '#10B981' // colors.success
-    case 'debt':
-      return operation.debtType === 'paid' ? '#EF4444' : '#10B981' // colors.error : colors.success
-    case 'other':
-      return operation.transactionType === 'refund'
-        ? '#10B981' // colors.success
-        : '#6366F1' // colors.primary
-    default:
-      return '#EF4444' // colors.error (expenses)
-  }
-}
-
-const getAmountPrefix = (operation: Operation) => {
-  switch (operation.type) {
-    case 'income':
-      return '+'
-    case 'debt':
-      return operation.debtType === 'paid' ? '-' : '+'
-    case 'other':
-      return operation.transactionType === 'refund' ? '+' : '-'
-    default:
-      return '-' // expenses
-  }
-}
-
-const getOperationSubtext = (operation: Operation) => {
-  switch (operation.type) {
-    case 'debt':
-      if (operation.debtType === 'paid') {
-        return operation.creditor
-          ? `Paid to ${operation.creditor}`
-          : 'Debt Payment'
-      } else {
-        return operation.debtor
-          ? `Received from ${operation.debtor}`
-          : 'Debt Received'
-      }
-    case 'other':
-      switch (operation.transactionType) {
-        case 'fee':
-          return 'Transaction Fee'
-        case 'refund':
-          return 'Refund Received'
-        case 'exchange':
-          return 'Currency Exchange'
-        default:
-          return 'Other Transaction'
-      }
-    default:
-      return null
-  }
-}
-
-const getIconBackgroundColor = (operation: Operation) => {
-  switch (operation.type) {
-    case 'income':
-      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+      return OPERATION_CONFIGS.income
+    case 'expense':
+      return OPERATION_CONFIGS.expense
     case 'debt':
       return operation.debtType === 'paid'
-        ? 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
-        : 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
+        ? OPERATION_CONFIGS['debt-paid']
+        : OPERATION_CONFIGS['debt-received']
     case 'other':
-      return operation.transactionType === 'refund'
-        ? 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
-        : 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+      return (
+        OPERATION_CONFIGS[`other-${operation.transactionType}`] ||
+        OPERATION_CONFIGS['other-fee']
+      )
     default:
-      return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error (expenses)
+      return OPERATION_CONFIGS.expense
   }
 }
 
 export default function OperationListItem({ operation }: OperationCardProps) {
   const router = useRouter()
+  const config = getOperationConfig(operation)
+  const IconComponent = config.icon
+  const subtext = config.subtext?.(operation)
 
-  const IconComponent = getOperationIcon(operation)
-  const operationColor = getOperationColor(operation)
-  const amountPrefix = getAmountPrefix(operation)
-  const subtext = getOperationSubtext(operation)
-  const iconBgColor = getIconBackgroundColor(operation)
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    })
+  }
 
   const handlePress = () => {
-    // Route based on operation type
     switch (operation.type) {
       case 'expense':
         router.push(`/expenses/${operation.id}`)
@@ -184,75 +177,67 @@ export default function OperationListItem({ operation }: OperationCardProps) {
 
   return (
     <Pressable onPress={handlePress}>
-      <Card className="mb-2">
+      <Card className="bg-card/50 mb-2 border-0">
         <CardContent className="p-3">
           <View className="flex-row items-center">
-            {/* Left: Icon */}
             <View
-              className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
-              style={{ backgroundColor: iconBgColor }}
+              className={cn(
+                'mr-3 h-8 w-8 items-center justify-center rounded-lg',
+                config.bgColorClass
+              )}
             >
-              <IconComponent size={16} color={operationColor} />
+              <IconComponent size={16} className={config.colorClass} />
             </View>
 
-            {/* Middle: Info */}
             <View className="flex-1 gap-1">
               <View className="flex-row items-center justify-between">
                 <Text
-                  className="mr-2 flex-1 text-sm font-medium text-foreground"
+                  className="text-foreground mr-2 flex-1 text-sm font-medium"
                   numberOfLines={1}
                 >
                   {operation.description}
                 </Text>
                 <Text
-                  className="text-[15px] font-semibold"
-                  style={{ color: operationColor }}
+                  className={cn('text-[15px] font-semibold', config.colorClass)}
                 >
-                  {amountPrefix}${operation.amount.toFixed(2)}
+                  {config.prefix}${operation.amount.toFixed(2)}
                 </Text>
               </View>
 
               <View className="flex-row items-center justify-between">
                 <View className="flex-1 flex-row items-center gap-2">
-                  <View className="bg-card-secondary rounded px-1.5 py-0.5">
+                  <View className="bg-muted/50 rounded px-1.5 py-0.5">
                     <Text
-                      className="text-[11px] font-medium text-foreground"
+                      className="text-muted-foreground text-[11px] font-medium"
                       numberOfLines={1}
                     >
                       {operation.category}
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-1">
-                    <Calendar size={12} color="#4A5568" />
-                    <Text className="text-[11px] text-foreground">
-                      {new Date(operation.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                      })}
+                    <Calendar size={12} className="text-muted-foreground" />
+                    <Text className="text-muted-foreground text-[11px]">
+                      {formatDate(operation.date)}
                     </Text>
                   </View>
                 </View>
 
                 <View className="flex-row items-center">
-                  {operation.hasPhoto && <Receipt size={14} color="#4A5568" />}
+                  {operation.hasPhoto && (
+                    <Receipt size={14} className="text-muted-foreground" />
+                  )}
                   {operation.hasVoice && (
-                    <Mic size={14} color="#4A5568" style={{ marginLeft: 4 }} />
+                    <Mic size={14} className="text-muted-foreground ml-1" />
                   )}
                   <ArrowRight
                     size={14}
-                    color="#4A5568"
-                    style={{ marginLeft: 4 }}
+                    className="text-muted-foreground ml-1"
                   />
                 </View>
               </View>
 
               {subtext && (
-                <Text
-                  className="text-[11px] italic text-foreground"
-                  numberOfLines={1}
-                >
-                  {subtext}
-                </Text>
+                <Text className="text-muted-foreground text-xs">{subtext}</Text>
               )}
             </View>
           </View>

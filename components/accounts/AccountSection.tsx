@@ -12,6 +12,12 @@ interface AccountSectionProps {
   onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
 }
 
+const ADD_BUTTON_LABELS: Record<string, string> = {
+  payment: 'Add Payment',
+  savings: 'Add Savings',
+  debt: 'Add Debt'
+}
+
 export default function AccountSection({
   title,
   accounts,
@@ -19,22 +25,9 @@ export default function AccountSection({
   onEditAccount,
   onAddAccount
 }: AccountSectionProps) {
-  const getAddButtonLabel = () => {
-    switch (accountType) {
-      case 'payment':
-        return 'Add Payment'
-      case 'savings':
-        return 'Add Savings'
-      case 'debt':
-        return 'Add Debt'
-      default:
-        return 'Add Account'
-    }
-  }
-
   return (
     <View className="mb-8">
-      <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
+      <Text className="text-foreground mb-4 text-xl font-bold tracking-tight">
         {title}
       </Text>
       <View className="flex-col">
@@ -47,7 +40,7 @@ export default function AccountSection({
         ))}
         <AddAccountButton
           onPress={() => onAddAccount(accountType)}
-          label={getAddButtonLabel()}
+          label={ADD_BUTTON_LABELS[accountType] || 'Add Account'}
         />
       </View>
     </View>

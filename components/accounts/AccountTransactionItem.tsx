@@ -6,6 +6,7 @@ import {
   TrendingDown,
   TrendingUp
 } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import React from 'react'
 import { Text, View } from 'react-native'
 
@@ -23,50 +24,55 @@ interface AccountTransactionItemProps {
   operation: AccountOperation
 }
 
-const getOperationIcon = (type: string) => {
-  switch (type) {
-    case 'income':
-      return TrendingUp
-    case 'expense':
-      return TrendingDown
-    case 'payment':
-      return CreditCard
-    case 'transfer':
-      return RefreshCw
-    default:
-      return ArrowDown
+type OperationType = AccountOperation['type']
+
+interface OperationConfig {
+  icon: typeof TrendingUp
+  colorClass: string
+  bgColorClass: string
+}
+
+const OPERATION_CONFIGS: Record<OperationType, OperationConfig> = {
+  income: {
+    icon: TrendingUp,
+    colorClass: 'text-success',
+    bgColorClass: 'bg-success/10'
+  },
+  expense: {
+    icon: TrendingDown,
+    colorClass: 'text-destructive',
+    bgColorClass: 'bg-destructive/10'
+  },
+  payment: {
+    icon: CreditCard,
+    colorClass: 'text-primary',
+    bgColorClass: 'bg-primary/10'
+  },
+  transfer: {
+    icon: RefreshCw,
+    colorClass: 'text-info',
+    bgColorClass: 'bg-info/10'
   }
 }
 
-const getOperationColor = (type: string, amount: number) => {
-  if (amount > 0) {
-    return '#10B981' // colors.success
-  } else {
-    return '#EF4444' // colors.error
-  }
-}
-
-const getIconBackgroundColor = (type: string) => {
-  switch (type) {
-    case 'income':
-      return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
-    case 'expense':
-      return 'rgba(239, 68, 68, 0.1)' // colors.iconBackground.error
-    case 'payment':
-      return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-    case 'transfer':
-      return 'rgba(59, 130, 246, 0.1)' // colors.iconBackground.info
-    default:
-      return 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-  }
+const getOperationConfig = (type: OperationType): OperationConfig => {
+  return (
+    OPERATION_CONFIGS[type] || {
+      icon: ArrowDown,
+      colorClass: 'text-primary',
+      bgColorClass: 'bg-primary/10'
+    }
+  )
 }
 
 export default function AccountTransactionItem({
   operation
 }: AccountTransactionItemProps) {
-  const IconComponent = getOperationIcon(operation.type)
-  const operationColor = getOperationColor(operation.type, operation.amount)
-  const iconBgColor = getIconBackgroundColor(operation.type)
+  const {
+    icon: IconComponent,
+    colorClass,
+    bgColorClass
+  } = getOperationConfig(operation.type)
   const isPositive = operation.amount > 0
 
   const formatAmount = (amount: number) => {
@@ -86,31 +92,33 @@ export default function AccountTransactionItem({
   }
 
   return (
-    <View className="mb-2 overflow-hidden rounded-lg bg-card">
+    <View className="bg-card/50 mb-2 overflow-hidden rounded-lg">
       <View className="flex-row items-center p-3">
         <View
-          className="mr-3 h-8 w-8 items-center justify-center rounded-lg"
-          style={{ backgroundColor: iconBgColor }}
+          className={cn(
+            'mr-3 h-8 w-8 items-center justify-center rounded-lg',
+            bgColorClass
+          )}
         >
-          <IconComponent size={16} color={operationColor} />
+          <IconComponent size={16} className={colorClass} />
         </View>
 
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-1 text-sm font-medium text-foreground"
+            className="text-foreground mb-1 text-sm font-medium"
             numberOfLines={1}
           >
             {operation.description}
           </Text>
           <View className="flex-row items-center gap-3">
-            <View className="bg-card-secondary rounded px-1.5 py-0.5">
-              <Text className="text-[11px] font-medium text-foreground">
+            <View className="bg-muted/50 rounded px-1.5 py-0.5">
+              <Text className="text-muted-foreground text-[11px] font-medium">
                 {operation.category}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
-              <Calendar size={10} color="#4A5568" />
-              <Text className="text-[11px] text-foreground">
+              <Calendar size={10} className="text-muted-foreground" />
+              <Text className="text-muted-foreground text-[11px]">
                 {formatDate(operation.date)}
               </Text>
             </View>
@@ -118,7 +126,12 @@ export default function AccountTransactionItem({
         </View>
 
         <View className="items-end">
-          <Text className="text-sm font-bold" style={{ color: operationColor }}>
+          <Text
+            className={cn(
+              'text-sm font-bold',
+              isPositive ? 'text-success' : 'text-destructive'
+            )}
+          >
             {isPositive ? '+' : ''}
             {formatAmount(operation.amount)}
           </Text>
