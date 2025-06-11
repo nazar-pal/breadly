@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native'
-import * as z from 'zod'
+import * as z from 'zod/v4'
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
