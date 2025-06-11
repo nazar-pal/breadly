@@ -36,7 +36,7 @@ export {
 
 export default function RootLayout() {
   const hasMounted = React.useRef(false)
-  const { colorScheme, isDarkColorScheme } = useColorScheme()
+  const { isDarkColorScheme } = useColorScheme()
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
@@ -65,7 +65,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-              <StatusBar style={colorScheme} />
+              <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="expenses" />
