@@ -32,52 +32,54 @@ export default function BaseAccountModal({
   const insets = useSafeAreaInsets()
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+    <View>
+      <Modal
+        visible={visible}
+        transparent
+        animationType="slide"
+        onRequestClose={onClose}
       >
-        <View
-          className="flex-1 rounded-t-3xl bg-background"
-          style={{
-            marginTop: SCREEN_HEIGHT * 0.1
-          }}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1"
         >
-          {/* Header */}
-          <View className="border-b border-border px-5 py-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-xl font-semibold text-foreground">
-                {title}
-              </Text>
-              <Pressable onPress={onClose} className="p-1">
-                <X size={24} className="text-foreground" />
-              </Pressable>
+          <View
+            className="flex-1 rounded-t-3xl bg-background"
+            style={{
+              marginTop: SCREEN_HEIGHT * 0.1
+            }}
+          >
+            {/* Header */}
+            <View className="border-b border-border px-5 py-4">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-xl font-semibold text-foreground">
+                  {title}
+                </Text>
+                <Pressable onPress={onClose} className="p-1">
+                  <X size={24} className="text-foreground" />
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Content */}
+            <ScrollView
+              className="flex-1 px-5"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingVertical: 16 }}
+            >
+              {children}
+            </ScrollView>
+
+            {/* Footer */}
+            <View
+              className="flex-row gap-3 border-t border-border px-5 py-4"
+              style={{ paddingBottom: insets.bottom + 16 }}
+            >
+              {footerContent}
             </View>
           </View>
-
-          {/* Content */}
-          <ScrollView
-            className="flex-1 px-5"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingVertical: 16 }}
-          >
-            {children}
-          </ScrollView>
-
-          {/* Footer */}
-          <View
-            className="flex-row gap-3 border-t border-border px-5 py-4"
-            style={{ paddingBottom: insets.bottom + 16 }}
-          >
-            {footerContent}
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+        </KeyboardAvoidingView>
+      </Modal>
+    </View>
   )
 }
