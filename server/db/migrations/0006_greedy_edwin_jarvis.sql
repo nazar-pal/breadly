@@ -1,0 +1,1 @@
+ALTER TABLE "accounts" ALTER COLUMN "currency_id" SET DEFAULT 'USD';

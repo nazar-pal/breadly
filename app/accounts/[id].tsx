@@ -1,25 +1,23 @@
 import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { mockAccounts } from '@/data/mockAccounts'
-import { mockAccountOperations } from '@/data/mockData'
-import { useAccountManagement } from '@/hooks/useAccountManagement'
+import { useAccounts } from '@/hooks/useAccounts'
+import { useAccountsUI } from '@/hooks/useAccountsUI'
 import {
-  Calendar,
   CreditCard,
   DollarSign,
   Edit2,
   PiggyBank,
-  Target,
+  Trash2,
   TrendingDown,
   TrendingUp,
   Wallet
 } from '@/lib/icons'
 import { cn } from '@/lib/utils'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import React from 'react'
-import { Pressable, ScrollView, View } from 'react-native'
+import { Alert, Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface AccountTypeConfig {
@@ -42,7 +40,7 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
     icon: CreditCard,
     label: 'Credit Card'
   },
-  savings: {
+  saving: {
     colorClass: 'text-success',
     bgColorClass: 'bg-success/10',
     icon: PiggyBank,
@@ -79,6 +77,7 @@ interface AccountHeaderProps {
   colorClass: string
   bgColorClass: string
   onEdit: () => void
+  onDelete: () => void
 }
 
 function AccountHeader({
@@ -87,7 +86,8 @@ function AccountHeader({
   icon: Icon,
   colorClass,
   bgColorClass,
-  onEdit
+  onEdit,
+  onDelete
 }: AccountHeaderProps) {
   return (
     <View className="mb-6 flex-row items-center justify-between">
@@ -105,17 +105,30 @@ function AccountHeader({
           <Text className="text-base text-muted-foreground">{type}</Text>
         </View>
       </View>
-      <Pressable
-        onPress={onEdit}
-        className={cn(
-          'h-9 w-9 items-center justify-center rounded-full',
-          'bg-background/80',
-          'active:bg-muted',
-          'border border-border/30'
-        )}
-      >
-        <Edit2 size={16} className="text-muted-foreground" />
-      </Pressable>
+      <View className="flex-row gap-2">
+        <Pressable
+          onPress={onEdit}
+          className={cn(
+            'h-9 w-9 items-center justify-center rounded-full',
+            'bg-background/80',
+            'active:bg-muted',
+            'border border-border/30'
+          )}
+        >
+          <Edit2 size={16} className="text-muted-foreground" />
+        </Pressable>
+        <Pressable
+          onPress={onDelete}
+          className={cn(
+            'h-9 w-9 items-center justify-center rounded-full',
+            'bg-destructive/10',
+            'active:bg-destructive/20',
+            'border border-destructive/30'
+          )}
+        >
+          <Trash2 size={16} className="text-destructive" />
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -160,7 +173,7 @@ function BalanceCard({
             {balance < 0 && type === 'payment' ? '-' : ''}
             {formatBalance(balance)}
           </Text>
-          {balance > 0 && type === 'savings' && (
+          {balance > 0 && type === 'saving' && (
             <TrendingUp size={24} className="text-success" />
           )}
           {balance < 0 && type === 'payment' && (
@@ -195,7 +208,7 @@ function ProgressCard({
       <CardContent className="py-6">
         <View className="mb-4 flex-row items-center justify-between">
           <Text className="text-base font-medium text-foreground">
-            {type === 'savings' ? 'Savings Progress' : 'Repayment Progress'}
+            {type === 'saving' ? 'Savings Progress' : 'Repayment Progress'}
           </Text>
           <Text className={cn('text-2xl font-bold', colorClass)}>
             {progress.toFixed(1)}%
@@ -220,47 +233,53 @@ interface DetailsCardProps {
 }
 
 function DetailsCard({ account, formatBalance }: DetailsCardProps) {
-  if (
-    !(account.type === 'savings' && account.targetAmount) &&
-    !(account.type === 'debt' && (account.dueDate || account.interestRate))
-  ) {
-    return null
-  }
+  // For now, we'll hide the details card since our current Account interface
+  // doesn't include targetAmount, dueDate, or interestRate fields
+  // TODO: Add these fields to the account schema when needed
+  return null
 
-  return (
-    <Card className="mb-4 border-0 bg-card/50 shadow-none">
-      <CardHeader>
-        <CardTitle>Account Details</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {account.type === 'savings' && account.targetAmount && (
-          <InfoItem
-            icon={<Target size={18} className="text-muted-foreground" />}
-            label="Target Amount"
-            value={formatBalance(account.targetAmount)}
-          />
-        )}
-        {account.type === 'debt' && account.dueDate && (
-          <InfoItem
-            icon={<Calendar size={18} className="text-muted-foreground" />}
-            label="Due Date"
-            value={new Date(account.dueDate).toLocaleDateString()}
-          />
-        )}
-        {account.type === 'debt' && account.interestRate && (
-          <InfoItem
-            icon={<DollarSign size={18} className="text-muted-foreground" />}
-            label="Interest Rate"
-            value={`${account.interestRate}%`}
-          />
-        )}
-      </CardContent>
-    </Card>
-  )
+  // Original logic - commented out until we add these fields to the schema:
+  // if (
+  //   !(account.type === 'savings' && account.targetAmount) &&
+  //   !(account.type === 'debt' && (account.dueDate || account.interestRate))
+  // ) {
+  //   return null
+  // }
+
+  // return (
+  //   <Card className="mb-4 border-0 bg-card/50 shadow-none">
+  //     <CardHeader>
+  //       <CardTitle>Account Details</CardTitle>
+  //     </CardHeader>
+  //     <CardContent>
+  //       {account.type === 'savings' && account.targetAmount && (
+  //         <InfoItem
+  //           icon={<Target size={18} className="text-muted-foreground" />}
+  //           label="Target Amount"
+  //           value={formatBalance(account.targetAmount)}
+  //         />
+  //       )}
+  //       {account.type === 'debt' && account.dueDate && (
+  //         <InfoItem
+  //           icon={<Calendar size={18} className="text-muted-foreground" />}
+  //           label="Due Date"
+  //           value={new Date(account.dueDate).toLocaleDateString()}
+  //         />
+  //       )}
+  //       {account.type === 'debt' && account.interestRate && (
+  //         <InfoItem
+  //           icon={<DollarSign size={18} className="text-muted-foreground" />}
+  //           label="Interest Rate"
+  //           value={`${account.interestRate}%`}
+  //         />
+  //       )}
+  //     </CardContent>
+  //   </Card>
+  // )
 }
 
 interface ActivitySectionProps {
-  operations: typeof mockAccountOperations
+  operations: any[]
 }
 
 function ActivitySection({ operations }: ActivitySectionProps) {
@@ -273,8 +292,8 @@ function ActivitySection({ operations }: ActivitySectionProps) {
       </View>
       <View>
         {operations.length > 0 ? (
-          operations.map(operation => (
-            <AccountTransactionItem key={operation.id} operation={operation} />
+          operations.map((operation, index) => (
+            <AccountTransactionItem key={index} operation={operation} />
           ))
         ) : (
           <View className="py-8">
@@ -290,26 +309,29 @@ function ActivitySection({ operations }: ActivitySectionProps) {
 
 export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const router = useRouter()
   const insets = useSafeAreaInsets()
+  const { accounts, isLoading, deleteAccount } = useAccounts()
   const {
     editModalVisible,
     selectedAccount,
     handleEditAccount,
-    handleSaveAccount,
     handleCloseModal
-  } = useAccountManagement()
+  } = useAccountsUI()
 
-  const allAccounts = [
-    ...mockAccounts.payment,
-    ...mockAccounts.savings,
-    ...mockAccounts.debt
-  ]
-  const account = allAccounts.find(acc => acc.id === id)
+  const account = accounts.find(acc => acc.id === id)
 
-  const accountOperations = mockAccountOperations
-    .filter(op => op.accountId === id)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 10)
+  // For now, we'll use empty array for operations until transactions are implemented
+  const accountOperations: any[] = []
+  const hasTransactions = accountOperations.length > 0
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <Text className="text-lg text-muted-foreground">Loading...</Text>
+      </View>
+    )
+  }
 
   if (!account) {
     return (
@@ -331,18 +353,25 @@ export default function AccountDetailsScreen() {
     label
   } = ACCOUNT_TYPES[accountType]
 
+  // Convert balance from string to number
+  const balanceAmount = parseFloat(account.balance) || 0
+
+  // For now, disable progress calculation since targetAmount and initialAmount
+  // don't exist in our current schema
   let progress = null
-  if (account.type === 'savings' && account.targetAmount) {
-    progress = (account.balance / account.targetAmount) * 100
-  } else if (account.type === 'debt' && account.initialAmount) {
-    progress =
-      ((account.initialAmount - account.balance) / account.initialAmount) * 100
-  }
+  // TODO: Add targetAmount and initialAmount fields to account schema when needed
+  // if (account.type === 'saving' && account.targetAmount) {
+  //   progress = (balanceAmount / parseFloat(account.targetAmount)) * 100
+  // } else if (account.type === 'debt' && account.initialAmount) {
+  //   progress =
+  //     ((parseFloat(account.initialAmount) - balanceAmount) / parseFloat(account.initialAmount)) * 100
+  // }
 
   const formatBalance = (amount: number) => {
+    const currency = account.currencyId || 'USD'
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: account.currency,
+      currency: currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(Math.abs(amount))
@@ -364,14 +393,48 @@ export default function AccountDetailsScreen() {
           colorClass={colorClass}
           bgColorClass={bgColorClass}
           onEdit={() => handleEditAccount(account)}
+          onDelete={() => {
+            // For now, we'll use Alert.alert for the delete confirmation
+            Alert.alert(
+              'Delete Account',
+              `Are you sure you want to delete the account "${account.name}"? This action cannot be undone.`,
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel'
+                },
+                {
+                  text: 'Delete',
+                  style: 'destructive',
+                  onPress: () => {
+                    deleteAccount.mutate(
+                      { id: account.id },
+                      {
+                        onSuccess: () => {
+                          router.back()
+                        },
+                        onError: error => {
+                          Alert.alert(
+                            'Error',
+                            'Failed to delete account. Please try again.',
+                            [{ text: 'OK' }]
+                          )
+                        }
+                      }
+                    )
+                  }
+                }
+              ]
+            )
+          }}
         />
 
         <BalanceCard
-          balance={account.balance}
+          balance={balanceAmount}
           colorClass={colorClass}
           type={account.type}
-          description={account.description}
-          currency={account.currency}
+          description={account.description || undefined}
+          currency={account.currencyId || 'USD'}
         />
 
         {progress !== null && (
@@ -391,7 +454,7 @@ export default function AccountDetailsScreen() {
       <EditAccountModal
         visible={editModalVisible}
         account={selectedAccount}
-        onSave={handleSaveAccount}
+        accountType={selectedAccount?.type || 'payment'}
         onClose={handleCloseModal}
       />
     </View>

@@ -1,21 +1,30 @@
 import AccountSection from '@/components/accounts/AccountSection'
 import EditAccountModal from '@/components/accounts/EditAccountModal'
-import { mockAccounts } from '@/data/mockAccounts'
-import { useAccountManagement } from '@/hooks/useAccountManagement'
+import { useAccounts } from '@/hooks/useAccounts'
+import { useAccountsUI } from '@/hooks/useAccountsUI'
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SavingsScreen() {
   const insets = useSafeAreaInsets()
+  const { savingAccounts, isLoading } = useAccounts()
   const {
     editModalVisible,
     selectedAccount,
+    selectedAccountType,
     handleEditAccount,
     handleAddAccount,
-    handleSaveAccount,
     handleCloseModal
-  } = useAccountManagement()
+  } = useAccountsUI()
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
 
   return (
     <View className="flex-1 bg-background">
@@ -29,8 +38,8 @@ export default function SavingsScreen() {
       >
         <AccountSection
           title="Savings Accounts"
-          accounts={mockAccounts.savings}
-          accountType="savings"
+          accounts={savingAccounts}
+          accountType="saving"
           onEditAccount={handleEditAccount}
           onAddAccount={handleAddAccount}
         />
@@ -39,7 +48,7 @@ export default function SavingsScreen() {
       <EditAccountModal
         visible={editModalVisible}
         account={selectedAccount}
-        onSave={handleSaveAccount}
+        accountType={selectedAccount?.type || selectedAccountType}
         onClose={handleCloseModal}
       />
     </View>

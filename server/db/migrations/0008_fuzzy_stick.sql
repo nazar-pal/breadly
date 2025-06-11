@@ -1,0 +1,1 @@
+ALTER TABLE "accounts" ALTER COLUMN "debt_is_owed_to_me" DROP DEFAULT;

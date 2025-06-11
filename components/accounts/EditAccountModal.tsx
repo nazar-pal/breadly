@@ -1,9 +1,7 @@
-import { Button } from '@/components/ui/button'
-import { Text } from '@/components/ui/text'
-import { useCurrency } from '@/context/CurrencyContext'
+import { Account, useAccounts } from '@/hooks/useAccounts'
 import { Check, X } from '@/lib/icons'
-import { cn } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -11,6 +9,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Text,
   TextInput,
   View
 } from 'react-native'
@@ -20,8 +19,8 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 interface EditAccountModalProps {
   visible: boolean
-  account: any
-  onSave: (account: any) => void
+  account: Account | null
+  accountType: 'saving' | 'payment' | 'debt'
   onClose: () => void
 }
 
@@ -29,156 +28,127 @@ interface FormData {
   name: string
   description: string
   balance: string
-  targetAmount: string
-  initialAmount: string
-  dueDate: string
-  interestRate: string
-  institution: string
-  person: string
-  debtType: 'owed' | 'owedTo'
-}
-
-const DEFAULT_FORM_DATA: FormData = {
-  name: '',
-  description: '',
-  balance: '',
-  targetAmount: '',
-  initialAmount: '',
-  dueDate: '',
-  interestRate: '',
-  institution: '',
-  person: '',
-  debtType: 'owed'
-}
-
-function DebtTypeButton({
-  label,
-  isSelected,
-  onPress
-}: {
-  label: string
-  isSelected: boolean
-  onPress: () => void
-}) {
-  return (
-    <Pressable
-      className={cn(
-        'flex-1 flex-row items-center justify-center rounded-xl border py-3',
-        isSelected ? 'border-primary bg-primary' : 'border-border bg-card'
-      )}
-      onPress={onPress}
-    >
-      {isSelected && (
-        <Check size={16} className="mr-2 text-primary-foreground" />
-      )}
-      <Text
-        className={cn(
-          'text-base font-medium',
-          isSelected ? 'text-primary-foreground' : 'text-foreground'
-        )}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  )
-}
-
-function FormInput({
-  label,
-  value,
-  onChangeText,
-  placeholder,
-  keyboardType = 'default',
-  multiline = false,
-  numberOfLines,
-  prefix
-}: {
-  label: string
-  value: string
-  onChangeText: (text: string) => void
-  placeholder: string
-  keyboardType?: 'default' | 'decimal-pad'
-  multiline?: boolean
-  numberOfLines?: number
-  prefix?: string
-}) {
-  return (
-    <View className="mb-6">
-      <Text className="mb-2 text-base font-semibold text-foreground">
-        {label}
-      </Text>
-      <View className="flex-row items-center">
-        {prefix && (
-          <Text className="mr-3 text-base text-foreground">{prefix}</Text>
-        )}
-        <TextInput
-          className={cn(
-            'flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground',
-            multiline ? 'h-[100px] pt-3' : 'min-h-[48px]'
-          )}
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor="hsl(var(--muted-foreground))"
-          keyboardType={keyboardType}
-          multiline={multiline}
-          numberOfLines={numberOfLines}
-        />
-      </View>
-    </View>
-  )
+  // Savings fields
+  savingsTargetAmount: string
+  savingsTargetDate: string
+  // Debt fields
+  debtInitialAmount: string
+  debtIsOwedToMe: boolean
+  debtDueDate: string
 }
 
 export default function EditAccountModal({
   visible,
   account,
-  onSave,
+  accountType,
   onClose
 }: EditAccountModalProps) {
-  const { currency } = useCurrency()
   const insets = useSafeAreaInsets()
-  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
+  const { createAccount, updateAccount } = useAccounts()
+
+  const { control, handleSubmit, reset } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      description: '',
+      balance: '0',
+      savingsTargetAmount: '',
+      savingsTargetDate: '',
+      debtInitialAmount: '',
+      debtIsOwedToMe: false,
+      debtDueDate: ''
+    }
+  })
 
   useEffect(() => {
     if (account) {
-      setFormData({
-        name: account.name || '',
+      // Editing existing account
+      reset({
+        name: account.name,
         description: account.description || '',
-        balance: account.balance?.toString() || '',
-        targetAmount: account.targetAmount?.toString() || '',
-        initialAmount: account.initialAmount?.toString() || '',
-        dueDate: account.dueDate || '',
-        interestRate: account.interestRate?.toString() || '',
-        institution: account.institution || '',
-        person: account.person || '',
-        debtType: account.debtType || 'owed'
+        balance: account.balance,
+        savingsTargetAmount: account.savingsTargetAmount || '',
+        savingsTargetDate: account.savingsTargetDate || '',
+        debtInitialAmount: account.debtInitialAmount || '',
+        debtIsOwedToMe: account.debtIsOwedToMe || false,
+        debtDueDate: account.debtDueDate || ''
+      })
+    } else {
+      // Adding new account
+      reset({
+        name: '',
+        description: '',
+        balance: '0',
+        savingsTargetAmount: '',
+        savingsTargetDate: '',
+        debtInitialAmount: '',
+        debtIsOwedToMe: false,
+        debtDueDate: ''
       })
     }
-  }, [account])
+  }, [account, reset])
 
-  const handleSave = () => {
-    const updatedAccount = {
-      ...account,
-      ...formData,
-      balance: parseFloat(formData.balance),
-      targetAmount: formData.targetAmount
-        ? parseFloat(formData.targetAmount)
-        : undefined,
-      initialAmount: formData.initialAmount
-        ? parseFloat(formData.initialAmount)
-        : undefined,
-      interestRate: formData.interestRate
-        ? parseFloat(formData.interestRate)
-        : undefined
+  const onSubmit = (data: FormData) => {
+    const currentAccountType = account?.type || accountType
+
+    const baseData = {
+      name: data.name.trim(),
+      description: data.description.trim() || undefined,
+      balance: data.balance
     }
-    onSave(updatedAccount)
+
+    // Only include type-specific fields for the correct account type
+    let typeSpecificData = {}
+
+    if (currentAccountType === 'saving') {
+      typeSpecificData = {
+        ...(data.savingsTargetAmount && {
+          savingsTargetAmount: data.savingsTargetAmount
+        }),
+        ...(data.savingsTargetDate && {
+          savingsTargetDate: data.savingsTargetDate
+        })
+      }
+    } else if (currentAccountType === 'debt') {
+      typeSpecificData = {
+        ...(data.debtInitialAmount && {
+          debtInitialAmount: data.debtInitialAmount
+        }),
+        ...(data.debtIsOwedToMe !== undefined && {
+          debtIsOwedToMe: data.debtIsOwedToMe
+        }),
+        ...(data.debtDueDate && { debtDueDate: data.debtDueDate })
+      }
+    }
+    // Payment accounts get no type-specific fields
+
+    const finalData = { ...baseData, ...typeSpecificData }
+
+    if (account) {
+      // Update existing account - use any type to bypass strict typing for now
+      updateAccount.mutate({
+        id: account.id,
+        ...finalData
+      } as any)
+    } else {
+      // Create new account - use any type to bypass strict typing for now
+      createAccount.mutate({
+        ...finalData,
+        type: accountType,
+        currencyId: 'USD' // Default currency for now
+      } as any)
+    }
+
+    onClose()
   }
 
   const getTitle = () => {
-    if (!account) return 'Add Account'
-    if (!account.id) return `Add ${account.type} Account`
-    return `Edit ${account.type} Account`
+    if (account) {
+      return `Edit ${account.type.charAt(0).toUpperCase() + account.type.slice(1)} Account`
+    }
+    return `Add ${accountType.charAt(0).toUpperCase() + accountType.slice(1)} Account`
   }
+
+  const currentType = account?.type || accountType
 
   return (
     <Modal
@@ -199,133 +169,282 @@ export default function EditAccountModal({
         >
           <View className="border-b border-border px-5 py-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-semibold text-foreground">
+              <Text className="text-xl font-semibold text-foreground">
                 {getTitle()}
               </Text>
-              <Pressable
-                onPress={onClose}
-                className="rounded p-2 active:opacity-70"
-              >
+              <Pressable onPress={onClose} className="p-1">
                 <X size={24} className="text-foreground" />
               </Pressable>
             </View>
           </View>
 
           <ScrollView
-            className="flex-1"
+            className="flex-1 px-5"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              padding: 20,
-              paddingBottom: insets.bottom + 16
-            }}
+            contentContainerStyle={{ paddingVertical: 16 }}
           >
-            <FormInput
-              label="Account Name"
-              value={formData.name}
-              onChangeText={text =>
-                setFormData(prev => ({ ...prev, name: text }))
-              }
-              placeholder="Enter account name"
-            />
-
-            <FormInput
-              label="Description"
-              value={formData.description}
-              onChangeText={text =>
-                setFormData(prev => ({ ...prev, description: text }))
-              }
-              placeholder="Enter description"
-              multiline
-              numberOfLines={3}
-            />
-
-            <FormInput
-              label="Balance"
-              value={formData.balance}
-              onChangeText={text =>
-                setFormData(prev => ({ ...prev, balance: text }))
-              }
-              placeholder="0.00"
-              keyboardType="decimal-pad"
-              prefix={currency.symbol}
-            />
-
-            {account?.type === 'savings' && (
-              <FormInput
-                label="Target Amount"
-                value={formData.targetAmount}
-                onChangeText={text =>
-                  setFormData(prev => ({ ...prev, targetAmount: text }))
-                }
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                prefix={currency.symbol}
+            {/* Account Name */}
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                Account Name
+              </Text>
+              <Controller
+                control={control}
+                name="name"
+                rules={{ required: 'Account name is required' }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter account name"
+                    placeholderTextColor="#9CA3AF"
+                    autoFocus
+                  />
+                )}
               />
-            )}
+            </View>
 
-            {account?.type === 'debt' && (
-              <>
-                <FormInput
-                  label="Initial Amount"
-                  value={formData.initialAmount}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, initialAmount: text }))
-                  }
-                  placeholder="0.00"
-                  keyboardType="decimal-pad"
-                  prefix={currency.symbol}
-                />
+            {/* Description */}
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                Description (Optional)
+              </Text>
+              <Controller
+                control={control}
+                name="description"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="h-[100px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                    style={{ paddingTop: 12 }}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Add a description for this account"
+                    placeholderTextColor="#9CA3AF"
+                    multiline
+                    numberOfLines={3}
+                    textAlignVertical="top"
+                  />
+                )}
+              />
+            </View>
 
-                <View className="mb-6">
-                  <Text className="mb-2 text-base font-semibold text-foreground">
-                    Debt Type
-                  </Text>
-                  <View className="flex-row gap-3">
-                    <DebtTypeButton
-                      label="I Owe"
-                      isSelected={formData.debtType === 'owed'}
-                      onPress={() =>
-                        setFormData(prev => ({ ...prev, debtType: 'owed' }))
-                      }
-                    />
-                    <DebtTypeButton
-                      label="Owed to Me"
-                      isSelected={formData.debtType === 'owedTo'}
-                      onPress={() =>
-                        setFormData(prev => ({ ...prev, debtType: 'owedTo' }))
-                      }
+            {/* Initial/Current Balance */}
+            <View className="mb-6">
+              <Text className="mb-2 text-base font-semibold text-foreground">
+                {account ? 'Current Balance' : 'Initial Balance'}
+              </Text>
+              <Controller
+                control={control}
+                name="balance"
+                rules={{ required: 'Balance is required' }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View className="flex-row items-center">
+                    <Text className="mr-3 text-base text-foreground">$</Text>
+                    <TextInput
+                      className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="0.00"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="decimal-pad"
                     />
                   </View>
+                )}
+              />
+            </View>
+
+            {/* Conditional Fields Based on Account Type */}
+            {currentType === 'saving' && (
+              <>
+                {/* Savings Target Amount */}
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
+                    Savings Goal (Optional)
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="savingsTargetAmount"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <View className="flex-row items-center">
+                        <Text className="mr-3 text-base text-foreground">
+                          $
+                        </Text>
+                        <TextInput
+                          className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                          value={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                          placeholder="0.00"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="decimal-pad"
+                        />
+                      </View>
+                    )}
+                  />
                 </View>
 
-                <FormInput
-                  label="Person/Institution"
-                  value={formData.person}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, person: text }))
-                  }
-                  placeholder="Enter person or institution name"
-                />
+                {/* Savings Target Date */}
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
+                    Target Date (Optional)
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="savingsTargetDate"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        placeholder="YYYY-MM-DD"
+                        placeholderTextColor="#9CA3AF"
+                      />
+                    )}
+                  />
+                </View>
               </>
             )}
 
-            <View className="flex-row gap-3 pt-6">
-              <Button
-                onPress={onClose}
-                variant="secondary"
-                className="flex-[0.4]"
-              >
-                <Text className="text-foreground">Cancel</Text>
-              </Button>
-              <Button
-                onPress={handleSave}
-                variant="default"
-                className="flex-[0.6]"
-              >
-                <Text className="text-primary-foreground">Save</Text>
-              </Button>
-            </View>
+            {currentType === 'debt' && (
+              <>
+                {/* Debt Initial Amount */}
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
+                    Original Debt Amount
+                  </Text>
+                  <Text className="mb-2 text-sm text-muted-foreground">
+                    How much was originally borrowed or owed?
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="debtInitialAmount"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <View className="flex-row items-center">
+                        <Text className="mr-3 text-base text-foreground">
+                          $
+                        </Text>
+                        <TextInput
+                          className="min-h-[48px] flex-1 rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                          value={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                          placeholder="0.00"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="decimal-pad"
+                        />
+                      </View>
+                    )}
+                  />
+                </View>
+
+                {/* Debt Is Owed To Me */}
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
+                    Debt Direction
+                  </Text>
+                  <Text className="mb-2 text-sm text-muted-foreground">
+                    Is this money someone owes you, or money you owe?
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="debtIsOwedToMe"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <View className="flex-row gap-2">
+                        <Pressable
+                          className={`flex-1 rounded-xl border py-3 ${
+                            !value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border bg-card'
+                          }`}
+                          onPress={() => onChange(false)}
+                        >
+                          <Text
+                            className={`text-center text-base font-semibold ${
+                              !value ? 'text-primary' : 'text-foreground'
+                            }`}
+                          >
+                            I Owe Money
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          className={`flex-1 rounded-xl border py-3 ${
+                            value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border bg-card'
+                          }`}
+                          onPress={() => onChange(true)}
+                        >
+                          <Text
+                            className={`text-center text-base font-semibold ${
+                              value ? 'text-primary' : 'text-foreground'
+                            }`}
+                          >
+                            Owed To Me
+                          </Text>
+                        </Pressable>
+                      </View>
+                    )}
+                  />
+                </View>
+
+                {/* Debt Due Date */}
+                <View className="mb-6">
+                  <Text className="mb-2 text-base font-semibold text-foreground">
+                    Due Date (Optional)
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="debtDueDate"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className="min-h-[48px] rounded-xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        placeholder="YYYY-MM-DD"
+                        placeholderTextColor="#9CA3AF"
+                      />
+                    )}
+                  />
+                </View>
+              </>
+            )}
           </ScrollView>
+
+          {/* Footer */}
+          <View
+            className="flex-row gap-3 border-t border-border px-5 py-4"
+            style={{ paddingBottom: insets.bottom + 16 }}
+          >
+            <Pressable
+              className="min-h-[48px] flex-[0.4] flex-row items-center justify-center rounded-xl border border-border py-3"
+              onPress={onClose}
+            >
+              <Text className="text-base font-semibold text-foreground">
+                Cancel
+              </Text>
+            </Pressable>
+
+            <Pressable
+              className="min-h-[48px] flex-[0.6] flex-row items-center justify-center rounded-xl bg-primary py-3"
+              onPress={handleSubmit(onSubmit)}
+              disabled={createAccount.isPending || updateAccount.isPending}
+            >
+              <Check size={20} className="mr-2 text-primary-foreground" />
+              <Text className="text-base font-semibold text-primary-foreground">
+                {createAccount.isPending || updateAccount.isPending
+                  ? 'Saving...'
+                  : account
+                    ? 'Save Changes'
+                    : 'Create Account'}
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </Modal>
