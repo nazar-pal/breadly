@@ -1,5 +1,5 @@
+import AccountModal from '@/components/accounts/AccountModal'
 import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
-import EditAccountModal from '@/components/accounts/EditAccountModal'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useAccounts } from '@/hooks/useAccounts'
@@ -451,7 +451,7 @@ export default function AccountDetailsScreen() {
         <ActivitySection operations={accountOperations} />
       </ScrollView>
 
-      <EditAccountModal
+      <AccountModal
         visible={editModalVisible}
         account={selectedAccount}
         accountType={selectedAccount?.type || 'payment'}

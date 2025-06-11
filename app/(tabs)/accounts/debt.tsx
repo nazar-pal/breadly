@@ -1,5 +1,5 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import EditAccountModal from '@/components/accounts/EditAccountModal'
+import DebtAccountModal from '@/components/accounts/DebtAccountModal'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useAccountsUI } from '@/hooks/useAccountsUI'
 import React from 'react'
@@ -45,10 +45,9 @@ export default function DebtScreen() {
         />
       </ScrollView>
 
-      <EditAccountModal
+      <DebtAccountModal
         visible={editModalVisible}
         account={selectedAccount}
-        accountType={selectedAccount?.type || selectedAccountType}
         onClose={handleCloseModal}
       />
     </View>

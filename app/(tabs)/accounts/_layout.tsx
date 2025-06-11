@@ -16,8 +16,8 @@ export default function AccountsLayout() {
         swipeEnabled: true
       }}
     >
-      <TopTabs.Screen name="index" options={{ title: 'Payments' }} />
       <TopTabs.Screen name="savings" options={{ title: 'Savings' }} />
+      <TopTabs.Screen name="index" options={{ title: 'Payments' }} />
       <TopTabs.Screen name="debt" options={{ title: 'Debt' }} />
     </TopTabs>
   )

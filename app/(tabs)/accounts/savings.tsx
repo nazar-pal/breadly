@@ -1,5 +1,5 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import EditAccountModal from '@/components/accounts/EditAccountModal'
+import SavingAccountModal from '@/components/accounts/SavingAccountModal'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useAccountsUI } from '@/hooks/useAccountsUI'
 import React from 'react'
@@ -45,10 +45,9 @@ export default function SavingsScreen() {
         />
       </ScrollView>
 
-      <EditAccountModal
+      <SavingAccountModal
         visible={editModalVisible}
         account={selectedAccount}
-        accountType={selectedAccount?.type || selectedAccountType}
         onClose={handleCloseModal}
       />
     </View>
