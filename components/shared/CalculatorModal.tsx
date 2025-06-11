@@ -22,11 +22,8 @@ export default function CalculatorModal({ categoryUI }: CalculatorModalProps) {
   const { modalVisible, currentType, selectedCategory, handleCloseModal } =
     categoryUI
 
-  const handleSubmit = (data: any) => {
-    console.log(
-      `New ${currentType === 'expense' ? 'expense' : 'income'}:`,
-      data
-    )
+  const handleSubmit = () => {
+    // Transaction is already created by QuickCalculator, just close modal
     handleCloseModal()
   }
 
@@ -64,7 +61,7 @@ export default function CalculatorModal({ categoryUI }: CalculatorModalProps) {
           {selectedCategory && (
             <QuickCalculator
               type={currentType}
-              category={selectedCategory}
+              categoryId={selectedCategory}
               onSubmit={handleSubmit}
               onClose={handleCloseModal}
             />

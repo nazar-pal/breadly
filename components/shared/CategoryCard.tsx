@@ -7,7 +7,7 @@ interface CategoryCardProps {
   amount: number
   icon: React.ReactNode
   type: 'expense' | 'income'
-  onPress: (categoryName: string) => void
+  onPress: (categoryId: string) => void
   onLongPress?: (categoryId: string, categoryName: string) => void
 }
 
@@ -51,7 +51,7 @@ export default function CategoryCard({
           }
         })
       }}
-      onPress={() => onPress(name)}
+      onPress={() => onPress(id)}
       onLongPress={handleLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}

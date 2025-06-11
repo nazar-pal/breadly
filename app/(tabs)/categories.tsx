@@ -5,7 +5,10 @@ import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
 import { useCategories } from '@/hooks/useCategories'
 import { useCategoryUI } from '@/hooks/useCategoryUI'
+import { useTransactions } from '@/hooks/useTransactions'
 import { iconWithClassName } from '@/lib/icons/iconWithClassName'
+import { trpc } from '@/trpc/react'
+import { useQuery } from '@tanstack/react-query'
 import {
   Briefcase,
   Building,
@@ -91,11 +94,22 @@ function GestureDetectorContainer({
 function CategoriesContent() {
   const insets = useSafeAreaInsets()
   const { categories, isLoading } = useCategories()
+  const { transactions, getTotalByType } = useTransactions()
   const categoryUI = useCategoryUI()
 
-  // TODO: Calculate totals from actual transactions/budgets
-  const totalExpenses = 1845 // Mock value for now
-  const totalIncome = 6750 // Mock value for now
+  // Calculate totals from actual transactions using the new TRPC procedure
+  const expenseQueryOptions = trpc.transactions.getTotalAmount.queryOptions({
+    transactionType: 'expense'
+  })
+  const incomeQueryOptions = trpc.transactions.getTotalAmount.queryOptions({
+    transactionType: 'income'
+  })
+
+  const { data: expenseData } = useQuery(expenseQueryOptions)
+  const { data: incomeData } = useQuery(incomeQueryOptions)
+
+  const totalExpenses = expenseData?.totalAmount || 0
+  const totalIncome = incomeData?.totalAmount || 0
 
   // Filter categories based on current tab
   const currentCategories = categories.filter(category =>
@@ -103,6 +117,24 @@ function CategoriesContent() {
       ? category.type === 'expense'
       : category.type === 'income'
   )
+
+  // Add amount to each category using client-side calculation
+  // This works properly now thanks to cache invalidation when transactions change
+  const categoriesWithAmounts = React.useMemo(() => {
+    return currentCategories.map(category => {
+      const amount = transactions
+        .filter(transaction => transaction.categoryId === category.id)
+        .reduce(
+          (total, transaction) => total + parseFloat(transaction.amount),
+          0
+        )
+
+      return {
+        ...category,
+        amount
+      }
+    })
+  }, [currentCategories, transactions])
 
   const getCategoryIcon = (
     categoryName: string,
@@ -140,7 +172,7 @@ function CategoriesContent() {
 
       <CategoryGrid
         getIcon={getCategoryIcon}
-        categories={currentCategories}
+        categories={categoriesWithAmounts}
         isLoading={isLoading}
         categoryUI={categoryUI}
       />
