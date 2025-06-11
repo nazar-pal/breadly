@@ -18,7 +18,7 @@ import {
   UtensilsCrossed,
   X
 } from '@/lib/icons'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
@@ -59,21 +59,16 @@ interface CategoryFormData {
   selectedIcon: keyof typeof availableIcons
 }
 
-interface CategoryEditModalProps {
+interface AddCategoryModalProps {
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function CategoryEditModal({
+export default function AddCategoryModal({
   categoryUI
-}: CategoryEditModalProps) {
+}: AddCategoryModalProps) {
   const insets = useSafeAreaInsets()
-  const { updateCategory } = useCategories()
-  const {
-    editModalVisible,
-    categoryToEdit,
-    currentType,
-    handleCloseEditModal
-  } = categoryUI
+  const { createCategory } = useCategories()
+  const { addModalVisible, currentType, handleCloseAddModal } = categoryUI
 
   const { control, handleSubmit, reset, watch, setValue } =
     useForm<CategoryFormData>({
@@ -86,43 +81,20 @@ export default function CategoryEditModal({
 
   const selectedIcon = watch('selectedIcon')
 
-  useEffect(() => {
-    if (categoryToEdit) {
-      // Try to match the category name to an icon, fallback to Home
-      const matchedIcon = iconNames.find(
-        icon =>
-          icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
-          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
-      )
-
-      reset({
-        name: categoryToEdit.name,
-        description: categoryToEdit.description || '',
-        selectedIcon: matchedIcon || 'Home'
-      })
-    } else {
-      // Reset form when no category
-      reset({
-        name: '',
-        description: '',
-        selectedIcon: 'Home'
-      })
-    }
-  }, [categoryToEdit, reset])
-
   const onSubmit = (data: CategoryFormData) => {
-    if (!categoryToEdit || !data.name.trim()) {
+    if (!data.name.trim()) {
       return
     }
 
-    updateCategory.mutate({
-      id: categoryToEdit.id,
+    createCategory.mutate({
       name: data.name.trim(),
-      description: data.description.trim(),
-      icon: data.selectedIcon.toLowerCase()
+      description: data.description.trim() || '',
+      icon: data.selectedIcon.toLowerCase(),
+      type: currentType
     })
 
-    handleCloseEditModal()
+    reset()
+    handleCloseAddModal()
   }
 
   const getIconBackgroundColor = () => {
@@ -132,20 +104,18 @@ export default function CategoryEditModal({
     return '#F1F5F9' // colors.iconBackground.neutral
   }
 
-  if (!categoryToEdit) return null
-
   return (
     <Modal
-      visible={editModalVisible}
+      visible={addModalVisible}
       animationType="slide"
       transparent={true}
-      onRequestClose={handleCloseEditModal}
+      onRequestClose={handleCloseAddModal}
     >
       <View className="flex-1 justify-end">
         <Pressable
           className="absolute inset-0"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
-          onPress={handleCloseEditModal}
+          onPress={handleCloseAddModal}
         />
         <View
           className="rounded-t-3xl bg-background pt-2"
@@ -157,9 +127,9 @@ export default function CategoryEditModal({
           {/* Header */}
           <View className="flex-row items-center justify-between border-b border-border px-5 py-4">
             <Text className="text-xl font-semibold text-foreground">
-              Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
+              Add {currentType === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
-            <Pressable onPress={handleCloseEditModal} className="p-1">
+            <Pressable onPress={handleCloseAddModal} className="p-1">
               <X size={24} color="#1A202C" />
             </Pressable>
           </View>
@@ -254,7 +224,7 @@ export default function CategoryEditModal({
           <View className="border-border-light flex-row gap-3 border-t px-5 pb-2 pt-4">
             <Pressable
               className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border py-3"
-              onPress={handleCloseEditModal}
+              onPress={handleCloseAddModal}
             >
               <Text className="text-base font-semibold">Cancel</Text>
             </Pressable>
@@ -262,11 +232,11 @@ export default function CategoryEditModal({
             <Pressable
               className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
               onPress={handleSubmit(onSubmit)}
-              disabled={updateCategory.isPending}
+              disabled={createCategory.isPending}
             >
               <Check size={20} color="#FFFFFF" />
               <Text className="text-base font-semibold">
-                {updateCategory.isPending ? 'Saving...' : 'Save Changes'}
+                {createCategory.isPending ? 'Creating...' : 'Create Category'}
               </Text>
             </Pressable>
           </View>

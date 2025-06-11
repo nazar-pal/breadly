@@ -1,21 +1,38 @@
-import { useCategoryContext } from '@/context/CategoryContext'
+import { Category } from '@/hooks/useCategories'
+import { useCategoryUI } from '@/hooks/useCategoryUI'
 import React from 'react'
-import { ScrollView } from 'react-native'
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 import AddCategoryButton from './AddCategoryButton'
 import CategoryCard from './CategoryCard'
 
 interface CategoryGridProps {
   getIcon: (categoryName: string, type: 'expense' | 'income') => React.ReactNode
+  categories: Category[]
+  isLoading: boolean
+  categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function CategoryGrid({ getIcon }: CategoryGridProps) {
+export default function CategoryGrid({
+  getIcon,
+  categories,
+  isLoading,
+  categoryUI
+}: CategoryGridProps) {
   const {
-    currentCategories,
     currentType,
     activeTab,
     handleCategoryPress,
     handleCategoryLongPress
-  } = useCategoryContext()
+  } = categoryUI
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+        <Text className="mt-2 text-foreground">Loading categories...</Text>
+      </View>
+    )
+  }
 
   return (
     <ScrollView
@@ -27,15 +44,9 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
         gap: 12
       }}
     >
-      {currentCategories.map(category => {
-        const amount =
-          currentType === 'expense'
-            ? 'spent' in category
-              ? category.spent
-              : 0
-            : 'earned' in category
-              ? category.earned
-              : 0
+      {categories.map(category => {
+        // TODO: Calculate actual amounts from transactions/budgets
+        const amount = 0
 
         return (
           <CategoryCard
@@ -43,8 +54,8 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
             id={category.id}
             name={category.name}
             amount={amount}
-            icon={getIcon(category.name, currentType)}
-            type={currentType}
+            icon={getIcon(category.name, category.type)}
+            type={category.type}
             onPress={handleCategoryPress}
             onLongPress={handleCategoryLongPress}
           />
@@ -52,7 +63,7 @@ export default function CategoryGrid({ getIcon }: CategoryGridProps) {
       })}
 
       <AddCategoryButton
-        onPress={() => {}} // TODO: Implement add category functionality
+        onPress={categoryUI.handleAddCategory}
         label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
       />
     </ScrollView>

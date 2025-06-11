@@ -1,32 +1,40 @@
-import { useCategoryContext } from '@/context/CategoryContext'
-import React from 'react'
+import { useCategoryUI } from '@/hooks/useCategoryUI'
+import { useDateRange } from '@/hooks/useDateRange'
+import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import DateRangeModal from './DateRangeModal'
 
 interface FinancialHeaderProps {
   totalExpenses: number
   totalIncome: number
+  categoryUI: ReturnType<typeof useCategoryUI>
 }
 
 export default function FinancialHeader({
   totalExpenses,
-  totalIncome
+  totalIncome,
+  categoryUI
 }: FinancialHeaderProps) {
+  const { activeTab, setActiveTab } = categoryUI
   const {
-    activeTab,
-    setActiveTab,
-    // Date range
+    mode,
+    setMode,
     formattedRange,
     canNavigate,
     navigatePrevious,
     navigateNext,
-    mode,
-    setMode,
-    getModeDisplayName,
-    dateRangeModalVisible,
-    handleDateRangePress,
-    handleDateRangeModalClose
-  } = useCategoryContext()
+    getModeDisplayName
+  } = useDateRange()
+
+  const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false)
+
+  const handleDateRangePress = () => {
+    setDateRangeModalVisible(true)
+  }
+
+  const handleDateRangeModalClose = () => {
+    setDateRangeModalVisible(false)
+  }
 
   const netBalance = totalIncome - totalExpenses
 

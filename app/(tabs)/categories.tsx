@@ -1,8 +1,10 @@
+import AddCategoryModal from '@/components/shared/AddCategoryModal'
 import CalculatorModal from '@/components/shared/CalculatorModal'
 import CategoryEditModal from '@/components/shared/CategoryEditModal'
 import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
-import { CategoryProvider, useCategoryContext } from '@/context/CategoryContext'
+import { useCategories } from '@/hooks/useCategories'
+import { useCategoryUI } from '@/hooks/useCategoryUI'
 import { iconWithClassName } from '@/lib/icons/iconWithClassName'
 import {
   Briefcase,
@@ -50,9 +52,17 @@ const incomeCategoryIcons: { [key: string]: LucideIcon } = {
   Other: PiggyBank
 }
 
-function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
-  const { canNavigate, navigatePrevious, navigateNext } = useCategoryContext()
-
+function GestureDetectorContainer({
+  children,
+  canNavigate,
+  navigatePrevious,
+  navigateNext
+}: {
+  children: React.ReactNode
+  canNavigate: boolean
+  navigatePrevious: () => void
+  navigateNext: () => void
+}) {
   // Create pan gesture for full-screen swipe support
   const panGesture = Gesture.Pan()
     .minDistance(30)
@@ -80,10 +90,19 @@ function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
 
 function CategoriesContent() {
   const insets = useSafeAreaInsets()
+  const { categories, isLoading } = useCategories()
+  const categoryUI = useCategoryUI()
 
-  // Mock data - in real app these would come from state/API
-  const totalExpenses = 1845
-  const totalIncome = 6750
+  // TODO: Calculate totals from actual transactions/budgets
+  const totalExpenses = 1845 // Mock value for now
+  const totalIncome = 6750 // Mock value for now
+
+  // Filter categories based on current tab
+  const currentCategories = categories.filter(category =>
+    categoryUI.currentType === 'expense'
+      ? category.type === 'expense'
+      : category.type === 'income'
+  )
 
   const getCategoryIcon = (
     categoryName: string,
@@ -100,6 +119,11 @@ function CategoriesContent() {
     )
   }
 
+  // Mock navigation functions for now
+  const canNavigate = true
+  const navigatePrevious = () => console.log('Navigate previous')
+  const navigateNext = () => console.log('Navigate next')
+
   return (
     <View
       className="flex-1 bg-background"
@@ -111,23 +135,37 @@ function CategoriesContent() {
       <FinancialHeader
         totalExpenses={totalExpenses}
         totalIncome={totalIncome}
+        categoryUI={categoryUI}
       />
 
-      <CategoryGrid getIcon={getCategoryIcon} />
+      <CategoryGrid
+        getIcon={getCategoryIcon}
+        categories={currentCategories}
+        isLoading={isLoading}
+        categoryUI={categoryUI}
+      />
 
-      <CalculatorModal />
+      <CalculatorModal categoryUI={categoryUI} />
 
-      <CategoryEditModal />
+      <CategoryEditModal categoryUI={categoryUI} />
+
+      <AddCategoryModal categoryUI={categoryUI} />
     </View>
   )
 }
 
 export default function CategoriesScreen() {
+  const canNavigate = true
+  const navigatePrevious = () => console.log('Navigate previous')
+  const navigateNext = () => console.log('Navigate next')
+
   return (
-    <CategoryProvider>
-      <GestureDetectorContainer>
-        <CategoriesContent />
-      </GestureDetectorContainer>
-    </CategoryProvider>
+    <GestureDetectorContainer
+      canNavigate={canNavigate}
+      navigatePrevious={navigatePrevious}
+      navigateNext={navigateNext}
+    >
+      <CategoriesContent />
+    </GestureDetectorContainer>
   )
 }
