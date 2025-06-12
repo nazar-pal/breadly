@@ -1,4 +1,5 @@
-import { useCategoryContext } from '@/context/CategoryContext'
+import { useCategories } from '@/hooks/useCategories'
+import { useCategoryUI } from '@/hooks/useCategoryUI'
 import {
   Briefcase,
   Building,
@@ -17,7 +18,8 @@ import {
   UtensilsCrossed,
   X
 } from '@/lib/icons'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
   Modal,
@@ -51,51 +53,76 @@ const availableIcons = {
 
 const iconNames = Object.keys(availableIcons) as (keyof typeof availableIcons)[]
 
-export default function CategoryEditModal() {
+interface CategoryFormData {
+  name: string
+  description: string
+  selectedIcon: keyof typeof availableIcons
+}
+
+interface CategoryEditModalProps {
+  categoryUI: ReturnType<typeof useCategoryUI>
+}
+
+export default function CategoryEditModal({
+  categoryUI
+}: CategoryEditModalProps) {
   const insets = useSafeAreaInsets()
+  const { updateCategory } = useCategories()
   const {
     editModalVisible,
     categoryToEdit,
     currentType,
-    handleSaveCategory,
     handleCloseEditModal
-  } = useCategoryContext()
+  } = categoryUI
 
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [selectedIcon, setSelectedIcon] =
-    useState<keyof typeof availableIcons>('Home')
+  const { control, handleSubmit, reset, watch, setValue } =
+    useForm<CategoryFormData>({
+      defaultValues: {
+        name: '',
+        description: '',
+        selectedIcon: 'Home'
+      }
+    })
+
+  const selectedIcon = watch('selectedIcon')
 
   useEffect(() => {
     if (categoryToEdit) {
-      setName(categoryToEdit.name)
-      setDescription(categoryToEdit.description || '')
       // Try to match the category name to an icon, fallback to Home
       const matchedIcon = iconNames.find(
         icon =>
           icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
           categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
       )
-      setSelectedIcon(matchedIcon || 'Home')
+
+      reset({
+        name: categoryToEdit.name,
+        description: categoryToEdit.description || '',
+        selectedIcon: matchedIcon || 'Home'
+      })
     } else {
       // Reset form when no category
-      setName('')
-      setDescription('')
-      setSelectedIcon('Home')
+      reset({
+        name: '',
+        description: '',
+        selectedIcon: 'Home'
+      })
     }
-  }, [categoryToEdit])
+  }, [categoryToEdit, reset])
 
-  const handleSave = () => {
-    if (!categoryToEdit || !name.trim()) {
+  const onSubmit = (data: CategoryFormData) => {
+    if (!categoryToEdit || !data.name.trim()) {
       return
     }
 
-    handleSaveCategory({
+    updateCategory.mutate({
       id: categoryToEdit.id,
-      name: name.trim(),
-      description: description.trim(),
-      iconName: selectedIcon
+      name: data.name.trim(),
+      description: data.description.trim(),
+      icon: data.selectedIcon.toLowerCase()
     })
+
+    handleCloseEditModal()
   }
 
   const getIconBackgroundColor = () => {
@@ -147,13 +174,21 @@ export default function CategoryEditModal() {
               <Text className="mb-2 text-base font-semibold text-foreground">
                 Category Name
               </Text>
-              <TextInput
-                className="min-h-[48px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter category name"
-                placeholderTextColor="#4A5568"
-                autoFocus
+              <Controller
+                control={control}
+                name="name"
+                rules={{ required: 'Category name is required' }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="min-h-[48px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter category name"
+                    placeholderTextColor="#4A5568"
+                    autoFocus
+                  />
+                )}
               />
             </View>
 
@@ -162,16 +197,23 @@ export default function CategoryEditModal() {
               <Text className="mb-2 text-base font-semibold text-foreground">
                 Description (Optional)
               </Text>
-              <TextInput
-                className="h-[100px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
-                style={{ paddingTop: 12 }}
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Add a description for this category"
-                placeholderTextColor="#4A5568"
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
+              <Controller
+                control={control}
+                name="description"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="h-[100px] rounded-2xl border border-border bg-card px-4 py-3 text-base text-foreground"
+                    style={{ paddingTop: 12 }}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Add a description for this category"
+                    placeholderTextColor="#4A5568"
+                    multiline
+                    numberOfLines={3}
+                    textAlignVertical="top"
+                  />
+                )}
               />
             </View>
 
@@ -195,7 +237,7 @@ export default function CategoryEditModal() {
                           : getIconBackgroundColor(),
                         borderColor: isSelected ? '#6366F1' : 'transparent' // colors.primary
                       }}
-                      onPress={() => setSelectedIcon(iconName)}
+                      onPress={() => setValue('selectedIcon', iconName)}
                     >
                       <IconComponent
                         size={24}
@@ -219,11 +261,13 @@ export default function CategoryEditModal() {
 
             <Pressable
               className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
-              onPress={handleSave}
-              disabled={!name.trim()}
+              onPress={handleSubmit(onSubmit)}
+              disabled={updateCategory.isPending}
             >
               <Check size={20} color="#FFFFFF" />
-              <Text className="text-base font-semibold">Save Changes</Text>
+              <Text className="text-base font-semibold">
+                {updateCategory.isPending ? 'Saving...' : 'Save Changes'}
+              </Text>
             </Pressable>
           </View>
         </View>

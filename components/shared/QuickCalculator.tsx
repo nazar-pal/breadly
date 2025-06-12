@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { mockCategories, mockIncomeCategories } from '@/data/mockData'
+import { useAccounts } from '@/hooks/useAccounts'
+import { useCategories } from '@/hooks/useCategories'
+import { useTransactions } from '@/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
 import React, { useState } from 'react'
 import {
@@ -14,18 +16,14 @@ import {
 
 interface QuickCalculatorProps {
   type: 'expense' | 'income'
-  category: string
-  onSubmit: (data: {
-    amount: number
-    category: string
-    comment?: string
-  }) => void
+  categoryId: string
+  onSubmit: () => void
   onClose: () => void
 }
 
 export default function QuickCalculator({
   type,
-  category: initialCategory,
+  categoryId: initialCategoryId,
   onSubmit,
   onClose
 }: QuickCalculatorProps) {
@@ -34,13 +32,30 @@ export default function QuickCalculator({
   const [isNewNumber, setIsNewNumber] = useState(true)
   const [showCommentModal, setShowCommentModal] = useState(false)
   const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [showAccountModal, setShowAccountModal] = useState(false)
   const [comment, setComment] = useState('')
-  const [category, setCategory] = useState(initialCategory)
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState(initialCategoryId)
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('')
 
-  // Get appropriate categories based on type
-  const categories = type === 'expense' ? mockCategories : mockIncomeCategories
-  const modalTitle =
-    type === 'expense' ? 'Select Category' : 'Select Income Category'
+  // Hooks
+  const { categories } = useCategories()
+  const { accounts, paymentAccounts } = useAccounts()
+  const { createTransaction } = useTransactions()
+
+  // Filter categories by type
+  const availableCategories = categories.filter(cat => cat.type === type)
+
+  // Find selected category and account
+  const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
+  const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
+
+  // Auto-select first payment account if none selected
+  React.useEffect(() => {
+    if (!selectedAccountId && paymentAccounts.length > 0) {
+      setSelectedAccountId(paymentAccounts[0].id)
+    }
+  }, [selectedAccountId, paymentAccounts])
 
   const getDisplayExpression = () => {
     if (expression.length === 0) return currentInput
@@ -128,9 +143,29 @@ export default function QuickCalculator({
 
   const handleSubmit = () => {
     const amount = parseFloat(currentInput)
-    if (amount > 0) {
-      onSubmit({ amount, category, comment })
-      onClose()
+    if (amount > 0 && selectedAccount && selectedCategory) {
+      // Create the transaction
+      createTransaction.mutate(
+        {
+          type,
+          accountId: selectedAccount.id,
+          categoryId: selectedCategory.id,
+          amount: amount.toString(),
+          currencyId: selectedAccount.currencyId,
+          txDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+          notes: comment || undefined
+        },
+        {
+          onSuccess: () => {
+            onSubmit()
+            onClose()
+          },
+          onError: error => {
+            console.error('Failed to create transaction:', error)
+            // TODO: Show error toast/alert
+          }
+        }
+      )
     }
   }
 
@@ -192,13 +227,21 @@ export default function QuickCalculator({
     <View className="p-4">
       {/* Header */}
       <View className="mb-6 flex-row items-center justify-between">
-        <View className="flex-row items-center">
+        <View className="flex-row items-center gap-2">
           <Pressable
             className="bg-card-secondary flex-row items-center rounded px-3 py-2"
             onPress={() => setShowCategoryModal(true)}
           >
-            <Text className="text-2xl font-semibold text-foreground">
-              {category}
+            <Text className="text-lg font-semibold text-foreground">
+              {selectedCategory?.name || 'Select Category'}
+            </Text>
+          </Pressable>
+          <Pressable
+            className="bg-card-secondary flex-row items-center rounded px-3 py-2"
+            onPress={() => setShowAccountModal(true)}
+          >
+            <Text className="text-sm font-medium text-foreground">
+              {selectedAccount?.name || 'Select Account'}
             </Text>
           </Pressable>
         </View>
@@ -299,9 +342,16 @@ export default function QuickCalculator({
           variant="default"
           size="lg"
           className="w-full"
+          disabled={
+            createTransaction.isPending || !selectedAccount || !selectedCategory
+          }
         >
           <Save size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-          <Text>Save {type === 'expense' ? 'Expense' : 'Income'}</Text>
+          <Text>
+            {createTransaction.isPending
+              ? 'Saving...'
+              : `Save ${type === 'expense' ? 'Expense' : 'Income'}`}
+          </Text>
         </Button>
       </View>
 
@@ -318,21 +368,21 @@ export default function QuickCalculator({
         >
           <View className="max-h-[80%] rounded-2xl bg-card p-4">
             <Text className="mb-4 text-xl font-semibold text-foreground">
-              {modalTitle}
+              Select {type === 'expense' ? 'Expense' : 'Income'} Category
             </Text>
             <ScrollView>
-              {categories.map(cat => (
+              {availableCategories.map(cat => (
                 <Pressable
                   key={cat.id}
                   className="my-1 rounded-lg p-4"
                   style={{
                     backgroundColor:
-                      cat.name === category
+                      cat.id === selectedCategoryId
                         ? 'rgba(99, 102, 241, 0.1)'
                         : 'transparent'
                   }}
                   onPress={() => {
-                    setCategory(cat.name)
+                    setSelectedCategoryId(cat.id)
                     setShowCategoryModal(false)
                   }}
                 >
@@ -345,6 +395,61 @@ export default function QuickCalculator({
             <View className="mt-4 flex-row">
               <Button
                 onPress={() => setShowCategoryModal(false)}
+                variant="outline"
+                className="w-full"
+              >
+                <Text>Close</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Account Modal */}
+      <Modal
+        visible={showAccountModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowAccountModal(false)}
+      >
+        <View
+          className="flex-1 justify-center p-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
+        >
+          <View className="max-h-[80%] rounded-2xl bg-card p-4">
+            <Text className="mb-4 text-xl font-semibold text-foreground">
+              Select Account
+            </Text>
+            <ScrollView>
+              {paymentAccounts.map(account => (
+                <Pressable
+                  key={account.id}
+                  className="my-1 rounded-lg p-4"
+                  style={{
+                    backgroundColor:
+                      account.id === selectedAccountId
+                        ? 'rgba(99, 102, 241, 0.1)'
+                        : 'transparent'
+                  }}
+                  onPress={() => {
+                    setSelectedAccountId(account.id)
+                    setShowAccountModal(false)
+                  }}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-base font-medium text-foreground">
+                      {account.name}
+                    </Text>
+                    <Text className="text-sm text-muted-foreground">
+                      ${parseFloat(account.balance).toFixed(2)}
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <View className="mt-4 flex-row">
+              <Button
+                onPress={() => setShowAccountModal(false)}
                 variant="outline"
                 className="w-full"
               >

@@ -1,57 +1,44 @@
-import type { Account } from '@/hooks/useAccountManagement'
+import type { Account } from '@/hooks/useAccounts'
 import React from 'react'
-import { ScrollView } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import AccountSection from './AccountSection'
+import { ScrollView, Text, View } from 'react-native'
+import AccountCard from './AccountCard'
 
 interface AccountsListProps {
-  accounts: {
-    payment: Account[]
-    savings: Account[]
-    debt: Account[]
-  }
-  onEditAccount: (account: Account) => void
-  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
-}
-
-interface SectionConfig {
-  type: 'payment' | 'savings' | 'debt'
+  accounts: Account[]
   title: string
+  emptyMessage?: string
 }
-
-const SECTIONS: SectionConfig[] = [
-  { type: 'payment', title: 'Payment Accounts' },
-  { type: 'savings', title: 'Savings Accounts' },
-  { type: 'debt', title: 'Debt Accounts' }
-]
 
 export default function AccountsList({
   accounts,
-  onEditAccount,
-  onAddAccount
+  title,
+  emptyMessage = 'No accounts found'
 }: AccountsListProps) {
-  const insets = useSafeAreaInsets()
-
   return (
-    <ScrollView
-      className="flex-1 bg-background"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingTop: 8,
-        paddingBottom: insets.bottom + 20
-      }}
-    >
-      {SECTIONS.map(section => (
-        <AccountSection
-          key={section.type}
-          title={section.title}
-          accounts={accounts[section.type]}
-          accountType={section.type}
-          onEditAccount={onEditAccount}
-          onAddAccount={onAddAccount}
-        />
-      ))}
-    </ScrollView>
+    <View className="mb-6">
+      <Text className="mb-3 text-lg font-semibold text-foreground">
+        {title}
+      </Text>
+      {accounts.length === 0 ? (
+        <View className="rounded-xl border border-dashed border-border bg-muted/20 p-8">
+          <Text className="text-center text-sm text-muted-foreground">
+            {emptyMessage}
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 2 }}
+          className="gap-4"
+        >
+          {accounts.map(account => (
+            <View key={account.id} className="w-72">
+              <AccountCard account={account} />
+            </View>
+          ))}
+        </ScrollView>
+      )}
+    </View>
   )
 }

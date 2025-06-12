@@ -1,4 +1,4 @@
-import type { Account } from '@/hooks/useAccountManagement'
+import { Account } from '@/hooks/useAccounts'
 import React from 'react'
 import { Text, View } from 'react-native'
 import AccountCard from './AccountCard'
@@ -7,14 +7,14 @@ import AddAccountButton from './AddAccountButton'
 interface AccountSectionProps {
   title: string
   accounts: Account[]
-  accountType: 'payment' | 'savings' | 'debt'
+  accountType: 'payment' | 'saving' | 'debt'
   onEditAccount: (account: Account) => void
-  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
+  onAddAccount: (type: 'payment' | 'saving' | 'debt') => void
 }
 
 const ADD_BUTTON_LABELS: Record<string, string> = {
   payment: 'Add Payment',
-  savings: 'Add Savings',
+  saving: 'Add Savings',
   debt: 'Add Debt'
 }
 

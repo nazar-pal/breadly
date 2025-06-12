@@ -1,4 +1,4 @@
-import { useCategoryContext } from '@/context/CategoryContext'
+import { useCategoryUI } from '@/hooks/useCategoryUI'
 import React from 'react'
 import {
   Dimensions,
@@ -13,15 +13,19 @@ import QuickCalculator from './QuickCalculator'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
-export default function CalculatorModal() {
+interface CalculatorModalProps {
+  categoryUI: ReturnType<typeof useCategoryUI>
+}
+
+export default function CalculatorModal({ categoryUI }: CalculatorModalProps) {
   const insets = useSafeAreaInsets()
-  const {
-    modalVisible,
-    currentType,
-    selectedCategory,
-    handleSubmit,
-    handleCloseModal
-  } = useCategoryContext()
+  const { modalVisible, currentType, selectedCategory, handleCloseModal } =
+    categoryUI
+
+  const handleSubmit = () => {
+    // Transaction is already created by QuickCalculator, just close modal
+    handleCloseModal()
+  }
 
   const getModalContentStyle = () => ({
     backgroundColor: '#F5F5F5', // colors.background
@@ -57,7 +61,7 @@ export default function CalculatorModal() {
           {selectedCategory && (
             <QuickCalculator
               type={currentType}
-              category={selectedCategory}
+              categoryId={selectedCategory}
               onSubmit={handleSubmit}
               onClose={handleCloseModal}
             />
