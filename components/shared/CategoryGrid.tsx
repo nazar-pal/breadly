@@ -22,12 +22,7 @@ export default function CategoryGrid({
   isLoading,
   categoryUI
 }: CategoryGridProps) {
-  const {
-    currentType,
-    activeTab,
-    handleCategoryPress,
-    handleCategoryLongPress
-  } = categoryUI
+  const { activeTab, handleCategoryPress, handleCategoryLongPress } = categoryUI
 
   if (isLoading) {
     return (

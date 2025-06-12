@@ -12,7 +12,6 @@ export default function PaymentsScreen() {
   const {
     editModalVisible,
     selectedAccount,
-    selectedAccountType,
     handleEditAccount,
     handleAddAccount,
     handleCloseModal

@@ -12,7 +12,6 @@ export default function SavingsScreen() {
   const {
     editModalVisible,
     selectedAccount,
-    selectedAccountType,
     handleEditAccount,
     handleAddAccount,
     handleCloseModal

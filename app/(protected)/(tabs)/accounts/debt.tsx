@@ -12,7 +12,6 @@ export default function DebtScreen() {
   const {
     editModalVisible,
     selectedAccount,
-    selectedAccountType,
     handleEditAccount,
     handleAddAccount,
     handleCloseModal

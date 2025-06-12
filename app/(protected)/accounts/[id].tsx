@@ -54,21 +54,23 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
   }
 }
 
-interface InfoItemProps {
-  icon: React.ReactNode
-  label: string
-  value: string
-}
+// InfoItem component commented out as it's not currently used
+// TODO: Uncomment when account details like targetAmount, dueDate, interestRate are added to schema
+// interface InfoItemProps {
+//   icon: React.ReactNode
+//   label: string
+//   value: string
+// }
 
-function InfoItem({ icon, label, value }: InfoItemProps) {
-  return (
-    <View className="flex-row items-center gap-2 py-2">
-      {icon}
-      <Text className="flex-1 text-sm text-muted-foreground">{label}</Text>
-      <Text className="text-sm font-semibold text-foreground">{value}</Text>
-    </View>
-  )
-}
+// function InfoItem({ icon, label, value }: InfoItemProps) {
+//   return (
+//     <View className="flex-row items-center gap-2 py-2">
+//       {icon}
+//       <Text className="flex-1 text-sm text-muted-foreground">{label}</Text>
+//       <Text className="text-sm font-semibold text-foreground">{value}</Text>
+//     </View>
+//   )
+// }
 
 interface AccountHeaderProps {
   name: string
@@ -323,7 +325,7 @@ export default function AccountDetailsScreen() {
 
   // For now, we'll use empty array for operations until transactions are implemented
   const accountOperations: any[] = []
-  const hasTransactions = accountOperations.length > 0
+  // hasTransactions variable removed as it's not currently used
 
   if (isLoading) {
     return (

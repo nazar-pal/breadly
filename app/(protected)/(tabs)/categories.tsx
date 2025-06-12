@@ -94,7 +94,7 @@ function GestureDetectorContainer({
 function CategoriesContent() {
   const insets = useSafeAreaInsets()
   const { categories, isLoading } = useCategories()
-  const { transactions, getTotalByType } = useTransactions()
+  const { transactions } = useTransactions()
   const categoryUI = useCategoryUI()
 
   // Calculate totals from actual transactions using the new TRPC procedure
@@ -151,11 +151,6 @@ function CategoriesContent() {
     )
   }
 
-  // Mock navigation functions for now
-  const canNavigate = true
-  const navigatePrevious = () => console.log('Navigate previous')
-  const navigateNext = () => console.log('Navigate next')
-
   return (
     <View
       className="flex-1 bg-background"
@@ -187,15 +182,11 @@ function CategoriesContent() {
 }
 
 export default function CategoriesScreen() {
-  const canNavigate = true
-  const navigatePrevious = () => console.log('Navigate previous')
-  const navigateNext = () => console.log('Navigate next')
-
   return (
     <GestureDetectorContainer
-      canNavigate={canNavigate}
-      navigatePrevious={navigatePrevious}
-      navigateNext={navigateNext}
+      canNavigate={true}
+      navigatePrevious={() => console.log('Navigate previous')}
+      navigateNext={() => console.log('Navigate next')}
     >
       <CategoriesContent />
     </GestureDetectorContainer>
