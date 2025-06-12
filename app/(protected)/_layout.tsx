@@ -10,7 +10,7 @@ export default function ProtectedLayout() {
   }
 
   if (!authState.isSignedIn) {
-    return <Redirect href="/(auth)/sign-up" />
+    return <Redirect href="/auth" />
   }
 
   return (

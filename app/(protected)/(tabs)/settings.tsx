@@ -1,5 +1,4 @@
-import { SignOutButton } from '@/components/auth/SignOutButton'
-import { Button } from '@/components/ui/button'
+import { SignOutButton } from '@/components/auth'
 import { Card, CardContent } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
@@ -7,8 +6,7 @@ import { currencies, useCurrency } from '@/context/CurrencyContext'
 import { ChevronRight, DollarSign, Moon, Sun, User } from '@/lib/icons'
 import { useColorScheme } from '@/lib/useColorScheme'
 import { cn } from '@/lib/utils'
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
-import { Link } from 'expo-router'
+import { SignedIn, useUser } from '@clerk/clerk-expo'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -122,31 +120,6 @@ export default function SettingsScreen() {
             <SignOutButton />
           </SettingsSection>
         </SignedIn>
-
-        <SignedOut>
-          <SettingsSection title="Account">
-            <View className="py-2">
-              <Text className="mb-2 text-lg font-semibold text-foreground">
-                Sign in to access your account
-              </Text>
-              <Text className="mb-4 text-sm leading-5 text-muted-foreground">
-                Sign in or create an account to sync your data across devices
-              </Text>
-              <View className="gap-2">
-                <Link href="/sign-in" asChild>
-                  <Button className="w-full">
-                    <Text>Sign In</Text>
-                  </Button>
-                </Link>
-                <Link href="/sign-up" asChild>
-                  <Button variant="secondary" className="w-full">
-                    <Text>Sign Up</Text>
-                  </Button>
-                </Link>
-              </View>
-            </View>
-          </SettingsSection>
-        </SignedOut>
 
         <SettingsSection title="Preferences" className="mt-6">
           <SettingsItem
