@@ -2,56 +2,44 @@ import { env } from '@/env'
 import Constants from 'expo-constants'
 
 /**
- * Gets the base URL for the API based on the environment.
- * - In development: Automatically detects the host IP from Expo
- * - In production: Uses the production API URL from environment variables
+ * Gets the base URL for the API with the following priority:
+ * 1. Uses EXPO_PUBLIC_API_URL environment variable if set (any environment)
+ * 2. In development mode only:
+ *    - Web platform: Uses localhost (http://localhost:8081)
+ *    - Mobile platforms: Auto-detects host IP from Expo (http://{hostIP}:8081)
+ * 3. Throws error if no API URL is configured and not in development mode
  */
 export const getBaseUrl = () => {
-  if (__DEV__) {
-    /**
-     * Development: Platform-specific URLs for optimal performance and compatibility
-     * - Web: Uses localhost for best performance and reliability
-     * - Mobile: Uses actual IP address since localhost refers to the device itself
-     */
-    const { Platform } = require('react-native')
+  const apiUrl = env.EXPO_PUBLIC_API_URL
+  if (apiUrl) return apiUrl
 
-    if (Platform.OS === 'web') {
-      // Web can use localhost for better performance and fewer firewall issues
-      const url = 'http://localhost:8081'
-      console.log('[getBaseUrl] Development mode (web):', url)
-      return url
-    } else {
-      // Mobile devices need the actual IP address of the development machine
-      const debuggerHost = Constants.expoConfig?.hostUri
-      const hostIP = debuggerHost?.split(':')[0]
+  if (!__DEV__) throw new Error('API URL is not set')
 
-      if (!hostIP) {
-        throw new Error(
-          'Failed to get host IP from Expo. Make sure your Expo development server is running.'
-        )
-      }
+  /**
+   * Development: Platform-specific URLs for optimal performance and compatibility
+   * - Web: Uses localhost for best performance and reliability
+   * - Mobile: Uses actual IP address since localhost refers to the device itself
+   */
+  const { Platform } = require('react-native')
 
-      const url = `http://${hostIP}:8081`
-      console.log('[getBaseUrl] Development mode (mobile):', url)
-      return url
-    }
+  if (Platform.OS === 'web') {
+    // Web can use localhost for better performance and fewer firewall issues
+    const url = 'http://localhost:8081'
+    console.log('[getBaseUrl] Development mode (web):', url)
+    return url
   } else {
-    /**
-     * Production: Uses the production API URL from environment variables
-     * Only allows HTTPS for security. HTTP is prohibited in production.
-     */
-    const apiUrl = env.EXPO_PUBLIC_API_URL
+    // Mobile devices need the actual IP address of the development machine
+    const debuggerHost = Constants.expoConfig?.hostUri
+    const hostIP = debuggerHost?.split(':')[0]
 
-    // Security check: reject HTTP URLs in production
-    if (apiUrl.startsWith('http://')) {
+    if (!hostIP) {
       throw new Error(
-        'HTTP URLs are not allowed in production for security reasons. Please use HTTPS.'
+        'Failed to get host IP from Expo. Make sure your Expo development server is running.'
       )
     }
 
-    const url = apiUrl.startsWith('https://') ? apiUrl : `https://${apiUrl}`
-
-    console.log('[getBaseUrl] Production mode:', url)
+    const url = `http://${hostIP}:8081`
+    console.log('[getBaseUrl] Development mode (mobile):', url)
     return url
   }
 }
