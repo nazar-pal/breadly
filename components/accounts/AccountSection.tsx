@@ -1,16 +1,21 @@
-import { useTheme } from '@/context/ThemeContext'
-import type { Account } from '@/hooks/useAccountManagement'
+import { Account } from '@/hooks/useAccounts'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import AccountCard from './AccountCard'
 import AddAccountButton from './AddAccountButton'
 
 interface AccountSectionProps {
   title: string
   accounts: Account[]
-  accountType: 'payment' | 'savings' | 'debt'
+  accountType: 'payment' | 'saving' | 'debt'
   onEditAccount: (account: Account) => void
-  onAddAccount: (type: 'payment' | 'savings' | 'debt') => void
+  onAddAccount: (type: 'payment' | 'saving' | 'debt') => void
+}
+
+const ADD_BUTTON_LABELS: Record<string, string> = {
+  payment: 'Add Payment',
+  saving: 'Add Savings',
+  debt: 'Add Debt'
 }
 
 export default function AccountSection({
@@ -20,25 +25,12 @@ export default function AccountSection({
   onEditAccount,
   onAddAccount
 }: AccountSectionProps) {
-  const { colors } = useTheme()
-
-  const getAddButtonLabel = () => {
-    switch (accountType) {
-      case 'payment':
-        return 'Add Payment'
-      case 'savings':
-        return 'Add Savings'
-      case 'debt':
-        return 'Add Debt'
-      default:
-        return 'Add Account'
-    }
-  }
-
   return (
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>{title}</Text>
-      <View style={styles.accountsGrid}>
+    <View className="mb-8">
+      <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
+        {title}
+      </Text>
+      <View className="flex-col">
         {accounts.map(account => (
           <AccountCard
             key={account.id}
@@ -48,24 +40,9 @@ export default function AccountSection({
         ))}
         <AddAccountButton
           onPress={() => onAddAccount(accountType)}
-          label={getAddButtonLabel()}
+          label={ADD_BUTTON_LABELS[accountType] || 'Add Account'}
         />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginBottom: 32
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 16,
-    letterSpacing: -0.5
-  },
-  accountsGrid: {
-    flexDirection: 'column'
-  }
-})

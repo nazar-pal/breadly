@@ -1,6 +1,9 @@
-import Button from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
+import { LogOut } from '@/lib/icons'
 import { useClerk } from '@clerk/clerk-expo'
 import * as Linking from 'expo-linking'
+import { View } from 'react-native'
 
 export const SignOutButton = () => {
   // Use `useClerk()` to access the `signOut()` function
@@ -17,8 +20,15 @@ export const SignOutButton = () => {
     }
   }
   return (
-    <Button variant="destructive" onPress={handleSignOut} fullWidth>
-      Sign Out
+    <Button
+      variant="destructive"
+      onPress={handleSignOut}
+      className="h-14 w-full rounded-xl"
+    >
+      <View className="flex-row items-center gap-2">
+        <LogOut size={20} className="text-destructive-foreground" />
+        <Text className="text-base font-semibold">Sign Out</Text>
+      </View>
     </Button>
   )
 }

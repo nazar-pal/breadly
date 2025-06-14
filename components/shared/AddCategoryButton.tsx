@@ -1,5 +1,4 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
-import { Plus } from 'lucide-react-native'
+import { Plus } from '@/lib/icons'
 import React from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
@@ -12,53 +11,32 @@ export default function AddCategoryButton({
   onPress,
   label = 'Add Category'
 }: AddCategoryButtonProps) {
-  const { colors } = useTheme()
-
-  const styles = useThemedStyles(theme => ({
-    categoryCard: {
-      width: '47%' as const,
-      padding: theme.spacing.sm * 1.5,
-      borderRadius: theme.borderRadius.md * 2,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      backgroundColor: theme.colors.surfaceSecondary,
+  const getCardStyle = () => {
+    return {
+      backgroundColor: '#F8F9FA', // colors.surfaceSecondary
       borderStyle: 'dashed' as const,
       borderWidth: 1,
-      borderColor: theme.colors.borderLight,
+      borderColor: '#F7FAFC', // colors.borderLight
       ...Platform.select({
-        ios: {
-          shadowColor: theme.colors.shadowLight,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 1,
-          shadowRadius: 4
-        },
         android: {
           elevation: 1
         },
-        web: {
-          boxShadow: `0px 2px 4px ${theme.colors.shadowLight}`
+        default: {
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)' // colors.shadowLight
         }
       })
-    },
-    addButtonContent: {
-      flex: 1,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      gap: theme.spacing.sm
-    },
-    addButtonText: {
-      fontSize: 14,
-      fontWeight: '500' as const,
-      color: theme.colors.textSecondary
     }
-  }))
+  }
 
   return (
-    <Pressable style={styles.categoryCard} onPress={onPress}>
-      <View style={styles.addButtonContent}>
-        <Plus size={20} color={colors.textSecondary} />
-        <Text style={styles.addButtonText}>{label}</Text>
+    <Pressable
+      className="w-[47%] flex-row items-center rounded-2xl p-3"
+      style={getCardStyle()}
+      onPress={onPress}
+    >
+      <View className="flex-1 flex-row items-center justify-center gap-2">
+        <Plus size={20} color="#4A5568" />
+        <Text className="text-sm font-medium text-foreground">{label}</Text>
       </View>
     </Pressable>
   )

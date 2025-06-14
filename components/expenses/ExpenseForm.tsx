@@ -1,6 +1,6 @@
-import { useTheme } from '@/context/ThemeContext'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { mockCategories } from '@/data/mockData'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   AlignLeft,
   Calendar,
@@ -8,20 +8,13 @@ import {
   ChevronRight,
   Plus,
   X
-} from 'lucide-react-native'
+} from '@/lib/icons'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
-import * as z from 'zod'
-import Button from '../ui/Button'
+import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native'
+import * as z from 'zod/v4'
 
 const expenseSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
@@ -37,11 +30,82 @@ interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>
 }
 
+function FormField({
+  label,
+  error,
+  children
+}: {
+  label: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <View className="mb-4">
+      <Text className="mb-2 text-sm font-medium text-foreground">{label}</Text>
+      {children}
+      {error && <Text className="mt-1 text-xs text-destructive">{error}</Text>}
+    </View>
+  )
+}
+
+function ExpenseListItem({
+  expense,
+  isEditing,
+  onPress
+}: {
+  expense: ExpenseFormData
+  isEditing: boolean
+  onPress: () => void
+}) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  return (
+    <Pressable
+      onPress={onPress}
+      className={cn(
+        'mb-2 rounded-lg p-3',
+        isEditing ? 'bg-card' : 'bg-transparent'
+      )}
+    >
+      <View className="flex-row items-center justify-between">
+        <Text className="text-base font-semibold text-expense">
+          ${parseFloat(expense.amount).toFixed(2)}
+        </Text>
+        <View className="mx-3 flex-1 flex-row items-center justify-end gap-2">
+          <Text className="text-xs text-muted-foreground">
+            {formatDate(expense.date)}
+          </Text>
+          <View className="rounded bg-muted px-2 py-1">
+            <Text className="text-xs font-medium text-foreground">
+              {expense.category}
+            </Text>
+          </View>
+        </View>
+        <ChevronRight size={20} className="text-muted-foreground" />
+      </View>
+      {expense.description && (
+        <Text
+          className="mt-2 pl-1 text-[13px] text-muted-foreground"
+          numberOfLines={2}
+        >
+          {expense.description}
+        </Text>
+      )}
+    </Pressable>
+  )
+}
+
 export default function ExpenseForm({
   onSubmit,
   initialData
 }: ExpenseFormProps) {
-  const { colors, spacing } = useTheme()
   const [showDescription, setShowDescription] = useState(false)
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -74,21 +138,19 @@ export default function ExpenseForm({
 
   const handleAddExpense = (data: ExpenseFormData) => {
     if (editingExpenseIndex !== null) {
-      // Update existing expense
       const updatedExpenses = [...expenses]
       updatedExpenses[editingExpenseIndex] = data
       setExpenses(updatedExpenses)
       setEditingExpenseIndex(null)
     } else {
-      // Add new expense
       setExpenses([...expenses, data])
     }
 
     reset({
       amount: '',
       description: '',
-      category: data.category, // Keep the same category for convenience
-      date: data.date // Keep the same date for convenience
+      category: data.category,
+      date: data.date
     })
     setShowDescription(false)
   }
@@ -96,7 +158,7 @@ export default function ExpenseForm({
   const handleFinalSubmit = () => {
     handleSubmit(data => {
       const allExpenses = [...expenses, data]
-      onSubmit(allExpenses[0]) // For now, just submit the first expense
+      onSubmit(allExpenses[0])
     })()
   }
 
@@ -129,155 +191,124 @@ export default function ExpenseForm({
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
+      className="flex-1"
+      contentContainerStyle={{ padding: 16 }}
       keyboardShouldPersistTaps="handled"
     >
       {/* Form Section */}
-      <View style={styles.formSection}>
-        <View style={[styles.row, styles.topAlignedRow]}>
-          <View style={[styles.formGroup, styles.amountContainer]}>
-            <Text style={[styles.label, { color: colors.text }]}>Amount</Text>
-            <Controller
-              control={control}
-              name="amount"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <View>
+      <View className="mb-6">
+        <View className="mb-4 flex-row items-start">
+          <View className="mr-3 flex-1">
+            <FormField label="Amount" error={errors.amount?.message}>
+              <Controller
+                control={control}
+                name="amount"
+                render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={[
-                      styles.input,
-                      styles.amountInput,
-                      {
-                        color: colors.text,
-                        borderColor: errors.amount
-                          ? colors.error
-                          : colors.border,
-                        backgroundColor: colors.card
-                      }
-                    ]}
-                    placeholderTextColor={colors.textSecondary}
+                    className={cn(
+                      'h-12 rounded-lg border bg-card px-4 text-xl font-semibold text-foreground',
+                      errors.amount ? 'border-destructive' : 'border-border'
+                    )}
                     placeholder="0.00"
+                    placeholderTextColor="hsl(var(--muted-foreground))"
                     keyboardType="decimal-pad"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                   />
-                  {errors.amount && (
-                    <Text style={[styles.errorText, { color: colors.error }]}>
-                      {errors.amount.message}
-                    </Text>
-                  )}
-                </View>
-              )}
-            />
+                )}
+              />
+            </FormField>
           </View>
 
-          <View style={[styles.formGroup, styles.categoryContainer]}>
-            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-            <Pressable
-              onPress={() => setShowCategoryPicker(true)}
-              style={[
-                styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border }
-              ]}
-            >
-              <Text
-                style={[
-                  styles.pickerButtonText,
-                  {
-                    color: selectedCategory ? colors.text : colors.textSecondary
-                  }
-                ]}
-                numberOfLines={1}
+          <View className="flex-[1.2]">
+            <FormField label="Category" error={errors.category?.message}>
+              <Pressable
+                onPress={() => setShowCategoryPicker(true)}
+                className="h-12 flex-row items-center justify-between rounded-lg border border-border bg-card px-4"
               >
-                {selectedCategory || 'Select'}
-              </Text>
-              <ChevronDown size={20} color={colors.text} />
-            </Pressable>
-            {errors.category && (
-              <Text style={[styles.errorText, { color: colors.error }]}>
-                {errors.category.message}
-              </Text>
-            )}
+                <Text
+                  className={cn(
+                    'flex-1 text-base',
+                    selectedCategory
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
+                  )}
+                  numberOfLines={1}
+                >
+                  {selectedCategory || 'Select'}
+                </Text>
+                <ChevronDown size={20} className="text-foreground" />
+              </Pressable>
+            </FormField>
           </View>
         </View>
 
-        <View style={[styles.row, styles.bottomAlignedRow]}>
-          <View style={[styles.formGroup, { flex: 1 }]}>
-            <Text style={[styles.label, { color: colors.text }]}>Date</Text>
-            <Pressable
-              onPress={() => setShowDatePicker(true)}
-              style={[
-                styles.pickerButton,
-                { backgroundColor: colors.card, borderColor: colors.border }
-              ]}
-            >
-              <Text style={[styles.pickerButtonText, { color: colors.text }]}>
-                {selectedDate === today ? 'Today' : formatDate(selectedDate)}
-              </Text>
-              <Calendar size={20} color={colors.text} />
-            </Pressable>
+        <View className="mb-4 flex-row items-end">
+          <View className="flex-1">
+            <FormField label="Date">
+              <Pressable
+                onPress={() => setShowDatePicker(true)}
+                className="h-12 flex-row items-center justify-between rounded-lg border border-border bg-card px-4"
+              >
+                <Text className="text-base text-foreground">
+                  {selectedDate === today ? 'Today' : formatDate(selectedDate)}
+                </Text>
+                <Calendar size={20} className="text-foreground" />
+              </Pressable>
+            </FormField>
           </View>
 
           <Pressable
             onPress={() => setShowDescription(!showDescription)}
-            style={[
-              styles.descriptionToggle,
-              { backgroundColor: colors.iconBackground.neutral }
-            ]}
+            className="ml-3 h-12 w-12 items-center justify-center rounded-lg bg-muted"
           >
-            <AlignLeft size={20} color={colors.text} />
+            <AlignLeft size={20} className="text-foreground" />
           </Pressable>
         </View>
 
         {showDescription && (
-          <View style={styles.formGroup}>
+          <FormField label="Description">
             <Controller
               control={control}
               name="description"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    styles.descriptionInput,
-                    {
-                      color: colors.text,
-                      borderColor: errors.description
-                        ? colors.error
-                        : colors.border,
-                      backgroundColor: colors.card
-                    }
-                  ]}
-                  placeholderTextColor={colors.textSecondary}
+                  className={cn(
+                    'h-20 rounded-lg border border-border bg-card px-4 py-3 text-base text-foreground',
+                    errors.description && 'border-destructive'
+                  )}
                   placeholder="What was this expense for?"
+                  placeholderTextColor="hsl(var(--muted-foreground))"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   multiline
                   numberOfLines={3}
+                  textAlignVertical="top"
                 />
               )}
             />
-          </View>
+          </FormField>
         )}
 
-        <View style={styles.buttonContainer}>
+        <View className="mt-6 flex-row">
           {editingExpenseIndex !== null ? (
             <>
               <Button
                 variant="outline"
                 onPress={handleCancelEdit}
-                style={{ flex: 1, marginRight: spacing.sm }}
-                leftIcon={<X size={20} color={colors.text} />}
+                className="mr-2 flex-1"
               >
-                Cancel
+                <X size={20} className="mr-2 text-foreground" />
+                <Text className="text-foreground">Cancel</Text>
               </Button>
               <Button
-                variant="primary"
+                variant="default"
                 onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1 }}
+                className="flex-1"
               >
-                Update Expense
+                <Text className="text-primary-foreground">Update Expense</Text>
               </Button>
             </>
           ) : (
@@ -285,18 +316,20 @@ export default function ExpenseForm({
               <Button
                 variant="outline"
                 onPress={handleSubmit(handleAddExpense)}
-                style={{ flex: 1, marginRight: spacing.sm }}
-                leftIcon={<Plus size={20} color={colors.text} />}
+                className="mr-2 flex-1"
               >
-                Add Another
+                <Plus size={20} className="mr-2 text-foreground" />
+                <Text className="text-foreground">Add Another</Text>
               </Button>
               <Button
-                variant="primary"
+                variant="default"
                 onPress={handleFinalSubmit}
-                style={{ flex: 1 }}
+                className="flex-1"
               >
-                Save {expenses.length > 0 ? 'All ' : ''}
-                Expense{expenses.length !== 0 ? 's' : ''}
+                <Text className="text-primary-foreground">
+                  Save {expenses.length > 0 ? 'All ' : ''}Expense
+                  {expenses.length !== 0 ? 's' : ''}
+                </Text>
               </Button>
             </>
           )}
@@ -305,68 +338,17 @@ export default function ExpenseForm({
 
       {/* Added Expenses List */}
       {expenses.length > 0 && (
-        <View
-          style={[
-            styles.expensesList,
-            { backgroundColor: colors.surfaceSecondary }
-          ]}
-        >
-          <Text style={[styles.expensesListTitle, { color: colors.text }]}>
+        <View className="rounded-lg bg-muted p-4">
+          <Text className="mb-3 text-sm font-semibold text-foreground">
             Added Expenses ({expenses.length})
           </Text>
           {expenses.map((expense, index) => (
-            <Pressable
+            <ExpenseListItem
               key={index}
+              expense={expense}
+              isEditing={editingExpenseIndex === index}
               onPress={() => handleEditExpense(index)}
-              style={[
-                styles.expenseItem,
-                {
-                  backgroundColor:
-                    editingExpenseIndex === index ? colors.card : 'transparent',
-                  borderRadius: 8,
-                  marginBottom: 8
-                }
-              ]}
-            >
-              <View style={styles.expenseItemRow}>
-                <Text
-                  style={[styles.expenseItemAmount, { color: colors.text }]}
-                >
-                  ${parseFloat(expense.amount).toFixed(2)}
-                </Text>
-                <View style={styles.expenseItemDetails}>
-                  <Text
-                    style={[styles.dateText, { color: colors.textSecondary }]}
-                  >
-                    {formatDate(expense.date)}
-                  </Text>
-                  <View
-                    style={[
-                      styles.categoryBadge,
-                      { backgroundColor: colors.card }
-                    ]}
-                  >
-                    <Text
-                      style={[styles.categoryBadgeText, { color: colors.text }]}
-                    >
-                      {expense.category}
-                    </Text>
-                  </View>
-                </View>
-                <ChevronRight size={20} color={colors.textSecondary} />
-              </View>
-              {expense.description && (
-                <Text
-                  style={[
-                    styles.descriptionText,
-                    { color: colors.textSecondary }
-                  ]}
-                  numberOfLines={2}
-                >
-                  {expense.description}
-                </Text>
-              )}
-            </Pressable>
+            />
           ))}
         </View>
       )}
@@ -379,48 +361,33 @@ export default function ExpenseForm({
         onRequestClose={() => setShowCategoryPicker(false)}
       >
         <Pressable
-          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
+          className="flex-1 justify-center bg-black/10 p-4"
           onPress={() => setShowCategoryPicker(false)}
         >
-          <View
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
-          >
-            <Text
-              style={[
-                styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight }
-              ]}
-            >
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b border-border p-4 text-lg font-semibold text-foreground">
               Select Category
             </Text>
             <ScrollView>
               {mockCategories.map(category => (
                 <Pressable
                   key={category.id}
-                  style={[
-                    styles.categoryOption,
-                    {
-                      backgroundColor:
-                        selectedCategory === category.name
-                          ? colors.primary
-                          : 'transparent'
-                    }
-                  ]}
+                  className={cn(
+                    'p-4',
+                    selectedCategory === category.name && 'bg-primary'
+                  )}
                   onPress={() => {
                     setValue('category', category.name)
                     setShowCategoryPicker(false)
                   }}
                 >
                   <Text
-                    style={[
-                      styles.categoryOptionText,
-                      {
-                        color:
-                          selectedCategory === category.name
-                            ? colors.textInverse
-                            : colors.text
-                      }
-                    ]}
+                    className={cn(
+                      'text-base',
+                      selectedCategory === category.name
+                        ? 'text-primary-foreground'
+                        : 'text-foreground'
+                    )}
                   >
                     {category.name}
                   </Text>
@@ -439,18 +406,11 @@ export default function ExpenseForm({
         onRequestClose={() => setShowDatePicker(false)}
       >
         <Pressable
-          style={[styles.modalOverlay, { backgroundColor: colors.shadow }]}
+          className="flex-1 justify-center bg-black/10 p-4"
           onPress={() => setShowDatePicker(false)}
         >
-          <View
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
-          >
-            <Text
-              style={[
-                styles.modalTitle,
-                { color: colors.text, borderBottomColor: colors.borderLight }
-              ]}
-            >
+          <View className="max-h-[80%] rounded-xl bg-card">
+            <Text className="border-b border-border p-4 text-lg font-semibold text-foreground">
               Select Date
             </Text>
             <ScrollView>
@@ -463,30 +423,22 @@ export default function ExpenseForm({
                 return (
                   <Pressable
                     key={dateString}
-                    style={[
-                      styles.dateOption,
-                      {
-                        backgroundColor:
-                          selectedDate === dateString
-                            ? colors.primary
-                            : 'transparent'
-                      }
-                    ]}
+                    className={cn(
+                      'p-4',
+                      selectedDate === dateString && 'bg-primary'
+                    )}
                     onPress={() => {
                       setValue('date', dateString)
                       setShowDatePicker(false)
                     }}
                   >
                     <Text
-                      style={[
-                        styles.dateOptionText,
-                        {
-                          color:
-                            selectedDate === dateString
-                              ? colors.textInverse
-                              : colors.text
-                        }
-                      ]}
+                      className={cn(
+                        'text-base',
+                        selectedDate === dateString
+                          ? 'text-primary-foreground'
+                          : 'text-foreground'
+                      )}
                     >
                       {isToday ? 'Today' : formatDate(dateString)}
                     </Text>
@@ -500,158 +452,3 @@ export default function ExpenseForm({
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  contentContainer: {
-    padding: 16
-  },
-  formSection: {
-    marginBottom: 24
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: 16
-  },
-  topAlignedRow: {
-    alignItems: 'flex-start'
-  },
-  bottomAlignedRow: {
-    alignItems: 'flex-end'
-  },
-  formGroup: {
-    flex: 1
-  },
-  amountContainer: {
-    marginRight: 12
-  },
-  categoryContainer: {
-    flex: 1.2
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 8
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16
-  },
-  amountInput: {
-    fontWeight: '600',
-    fontSize: 20
-  },
-  descriptionInput: {
-    height: 80,
-    paddingTop: 12,
-    paddingBottom: 12,
-    textAlignVertical: 'top'
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4
-  },
-  descriptionToggle: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12
-  },
-  pickerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16
-  },
-  pickerButtonText: {
-    fontSize: 16,
-    flex: 1
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16
-  },
-  modalContent: {
-    borderRadius: 12,
-    maxHeight: '80%'
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    padding: 16,
-    borderBottomWidth: 1
-  },
-  categoryOption: {
-    padding: 16
-  },
-  categoryOptionText: {
-    fontSize: 16
-  },
-  dateOption: {
-    padding: 16
-  },
-  dateOptionText: {
-    fontSize: 16
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 24
-  },
-  expensesList: {
-    borderRadius: 8,
-    padding: 16
-  },
-  expensesListTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12
-  },
-  expenseItem: {
-    padding: 12
-  },
-  expenseItemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  expenseItemAmount: {
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  expenseItemDetails: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginHorizontal: 12
-  },
-  categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4
-  },
-  categoryBadgeText: {
-    fontSize: 12,
-    fontWeight: '500'
-  },
-  dateText: {
-    fontSize: 12
-  },
-  descriptionText: {
-    fontSize: 13,
-    marginTop: 8,
-    paddingLeft: 4
-  }
-})

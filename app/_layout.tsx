@@ -1,47 +1,87 @@
+import './global.css'
+
 import { CurrencyProvider } from '@/context/CurrencyContext'
-import { ThemeProvider, useTheme } from '@/context/ThemeContext'
-import { useFrameworkReady } from '@/hooks/useFrameworkReady'
+import { NAV_THEME } from '@/lib/constants'
+import { useColorScheme } from '@/lib/useColorScheme'
 import { queryClient } from '@/trpc/query-client'
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
-import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
+import {
+  DarkTheme,
+  DefaultTheme,
+  Theme,
+  ThemeProvider
+} from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import * as React from 'react'
+import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-// Layout component that needs access to theme
-function AppLayout() {
-  const { isDark, navigationTheme } = useTheme()
-
-  return (
-    <NavigationThemeProvider value={navigationTheme}>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="expenses" />
-        <Stack.Screen name="accounts" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </NavigationThemeProvider>
-  )
+const LIGHT_THEME: Theme = {
+  ...DefaultTheme,
+  colors: NAV_THEME.light
+}
+const DARK_THEME: Theme = {
+  ...DarkTheme,
+  colors: NAV_THEME.dark
 }
 
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary
+} from 'expo-router'
+
 export default function RootLayout() {
-  useFrameworkReady()
+  const hasMounted = React.useRef(false)
+  const { isDarkColorScheme } = useColorScheme()
+  const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (hasMounted.current) {
+      return
+    }
+
+    if (Platform.OS === 'web') {
+      // Adds the background color to the html element to prevent white background on overscroll.
+      document.documentElement.classList.add('bg-background')
+    }
+    setIsColorSchemeLoaded(true)
+    hasMounted.current = true
+  }, [])
+
+  if (!isColorSchemeLoaded) {
+    return null
+  }
 
   return (
     <ClerkProvider
       tokenCache={tokenCache}
       __experimental_resourceCache={resourceCache}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView className="flex-1">
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
-            <ThemeProvider>
-              <AppLayout />
+            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+              <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+              <Stack>
+                <Stack.Screen
+                  name="(protected)"
+                  options={{
+                    headerShown: false,
+                    animation: 'none'
+                  }}
+                />
+                <Stack.Screen
+                  name="auth"
+                  options={{
+                    headerShown: false,
+                    animation: 'none'
+                  }}
+                />
+              </Stack>
             </ThemeProvider>
           </CurrencyProvider>
         </QueryClientProvider>
@@ -49,3 +89,8 @@ export default function RootLayout() {
     </ClerkProvider>
   )
 }
+
+const useIsomorphicLayoutEffect =
+  Platform.OS === 'web' && typeof window === 'undefined'
+    ? React.useEffect
+    : React.useLayoutEffect

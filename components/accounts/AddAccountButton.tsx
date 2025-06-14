@@ -1,5 +1,5 @@
-import { useTheme, useThemedStyles } from '@/context/ThemeContext'
-import { Plus } from 'lucide-react-native'
+import { Plus } from '@/lib/icons'
+import { cn } from '@/lib/utils'
 import React from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
@@ -12,75 +12,21 @@ export default function AddAccountButton({
   onPress,
   label = 'Add Account'
 }: AddAccountButtonProps) {
-  const { colors } = useTheme()
-
-  const styles = useThemedStyles(
-    theme =>
-      ({
-        container: {
-          width: '100%',
-          padding: 12,
-          borderRadius: 12,
-          minHeight: 60, // Reduced height for single column
-          marginBottom: 8,
-          ...Platform.select({
-            ios: {
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.05,
-              shadowRadius: 2
-            },
-            android: {
-              elevation: 1
-            },
-            web: {
-              boxShadow: `0px 1px 2px ${theme.colors.shadowLight}`
-            }
-          })
-        },
-        content: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12
-        },
-        iconContainer: {
-          width: 28,
-          height: 28,
-          borderRadius: 6,
-          alignItems: 'center',
-          justifyContent: 'center'
-        },
-        label: {
-          fontSize: 14,
-          fontWeight: '600',
-          textAlign: 'center'
-        }
-      }) as const
-  )
-
   return (
     <Pressable
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surfaceSecondary,
-          borderStyle: 'dashed',
-          borderWidth: 2,
-          borderColor: colors.iconBackground.primary
-        }
-      ]}
+      className={cn(
+        'mb-2 min-h-[60px] w-full rounded-xl border-2 border-dashed bg-card p-3',
+        Platform.OS === 'android' ? 'shadow' : 'shadow-sm'
+      )}
       onPress={onPress}
     >
-      <View style={styles.content}>
-        <View
-          style={[
-            styles.iconContainer,
-            { backgroundColor: colors.iconBackground.primary }
-          ]}
-        >
-          <Plus size={16} color={colors.primary} />
+      <View className="flex-row items-center justify-center gap-3">
+        <View className="h-7 w-7 items-center justify-center rounded-md">
+          <Plus size={16} className="text-primary" />
         </View>
-        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+        <Text className="text-center text-sm font-semibold text-foreground">
+          {label}
+        </Text>
       </View>
     </Pressable>
   )

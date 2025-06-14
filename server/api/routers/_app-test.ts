@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 export const appTestRouter = createTRPCRouter({
