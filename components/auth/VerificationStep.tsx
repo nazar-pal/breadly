@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Animated, View } from 'react-native'
-import * as z from 'zod'
+import * as z from 'zod/v4'
 
 const verificationSchema = z.object({
   code: z
