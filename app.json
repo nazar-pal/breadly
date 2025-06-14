@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.nazar_dev.breadlyexpensetracker"
     },
     "web": {
       "bundler": "metro",
@@ -40,6 +41,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "36c0d713-fd76-42c0-99ba-9cbef6a99863"
+      }
+    },
+    "owner": "nazar_dev"
   }
 }
