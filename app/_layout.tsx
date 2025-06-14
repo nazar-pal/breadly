@@ -1,6 +1,7 @@
 import './global.css'
 
 import { CurrencyProvider } from '@/context/CurrencyContext'
+import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
 import { useColorScheme } from '@/lib/useColorScheme'
 import { queryClient } from '@/trpc/query-client'
@@ -58,6 +59,7 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider
+      publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}
       __experimental_resourceCache={resourceCache}
     >
