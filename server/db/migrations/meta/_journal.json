@@ -71,6 +71,27 @@
       "when": 1749651137305,
       "tag": "0009_chemical_may_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1749904271142,
+      "tag": "0010_rapid_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1749904562380,
+      "tag": "0011_brief_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1749904681190,
+      "tag": "0012_opposite_caretaker",
+      "breakpoints": true
     }
   ]
 }

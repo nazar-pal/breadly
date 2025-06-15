@@ -9,19 +9,20 @@ Purpose: Manages the many-to-many relationship between transactions and their
 
 Key Features:
 - Many-to-many relationship management
-- Composite primary key for relationship integrity
-- User isolation through transaction ownership validation
+- UUID primary key for PowerSync compatibility
+- Direct user_id for efficient PowerSync filtering
+- Unique constraint for relationship integrity
+- User isolation through direct user ownership
 - Automatic cleanup on transaction/attachment deletion
 - Row-level security for multi-tenant access control
 ================================================================================
 */
 
-import { sql } from 'drizzle-orm'
-import { authenticatedRole, crudPolicy } from 'drizzle-orm/neon'
-import { index, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core'
+import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
+import { index, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core'
 import { transactions } from './table_7_transactions'
 import { attachments } from './table_8_attachments'
-import { createdAtColumn } from './utils'
+import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
 // Transaction attachments table - Many-to-many transaction ↔ attachment links
@@ -33,15 +34,17 @@ import { createdAtColumn } from './utils'
  * one attachment can be referenced by multiple transactions
  *
  * Business Rules:
- * - Each transaction-attachment pair can only exist once (composite primary key)
- * - Users can only access attachments through their own transactions (RLS)
+ * - Each transaction-attachment pair can only exist once (unique constraint)
+ * - Direct user ownership for efficient PowerSync filtering
  * - Cascade deletion when transactions or attachments are removed
- * - Attachment access is controlled by transaction ownership
- * - Supports sharing attachments across multiple transactions (e.g., one receipt for split expenses)
+ * - User_id is denormalized from transaction for PowerSync compatibility
+ * - Supports sharing attachments across multiple transactions within user scope
  */
 export const transactionAttachments = pgTable(
   'transaction_attachments',
   {
+    id: uuidPrimaryKey(), // UUID primary key for PowerSync compatibility
+    userId: clerkUserIdColumn(), // Denormalized user_id for PowerSync filtering
     transactionId: uuid()
       .references(() => transactions.id, { onDelete: 'cascade' })
       .notNull(), // Transaction that references the attachment
@@ -51,26 +54,22 @@ export const transactionAttachments = pgTable(
     createdAt: createdAtColumn() // Link creation timestamp
   },
   table => [
-    // Composite primary key ensures unique transaction-attachment pairs
-    primaryKey({ columns: [table.transactionId, table.attachmentId] }),
+    // Unique constraint ensures each transaction-attachment pair exists only once
+    uniqueIndex('transaction_attachments_unique').on(
+      table.transactionId,
+      table.attachmentId
+    ),
 
-    // Performance indexes for foreign key lookups
+    // Performance indexes for common queries
+    index('transaction_attachments_user_idx').on(table.userId), // User's transaction-attachments
     index('transaction_attachments_transaction_idx').on(table.transactionId), // Transaction's attachments
     index('transaction_attachments_attachment_idx').on(table.attachmentId), // Attachment's transactions
 
-    // RLS: Users can only access attachments through their own transactions
+    // RLS: Users can only access their own transaction-attachment links
     crudPolicy({
       role: authenticatedRole,
-      read: sql`EXISTS (
-        SELECT 1 FROM transactions t 
-        WHERE t.id = ${table.transactionId} 
-        AND t.user_id = auth.user_id()
-      )`, // Read access through transaction ownership
-      modify: sql`EXISTS (
-        SELECT 1 FROM transactions t 
-        WHERE t.id = ${table.transactionId} 
-        AND t.user_id = auth.user_id()
-      )` // Modify access through transaction ownership
+      read: authUid(table.userId),
+      modify: authUid(table.userId)
     })
   ]
 )

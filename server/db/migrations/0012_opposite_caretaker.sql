@@ -1,0 +1,6 @@
+ALTER TABLE "transaction_attachments" ADD COLUMN "user_id" varchar(50) DEFAULT (auth.user_id()) NOT NULL;--> statement-breakpoint
+CREATE INDEX "transaction_attachments_user_idx" ON "transaction_attachments" USING btree ("user_id");--> statement-breakpoint
+ALTER POLICY "crud-authenticated-policy-select" ON "transaction_attachments" TO authenticated USING ((select auth.user_id() = "transaction_attachments"."user_id"));--> statement-breakpoint
+ALTER POLICY "crud-authenticated-policy-insert" ON "transaction_attachments" TO authenticated WITH CHECK ((select auth.user_id() = "transaction_attachments"."user_id"));--> statement-breakpoint
+ALTER POLICY "crud-authenticated-policy-update" ON "transaction_attachments" TO authenticated USING ((select auth.user_id() = "transaction_attachments"."user_id")) WITH CHECK ((select auth.user_id() = "transaction_attachments"."user_id"));--> statement-breakpoint
+ALTER POLICY "crud-authenticated-policy-delete" ON "transaction_attachments" TO authenticated USING ((select auth.user_id() = "transaction_attachments"."user_id"));
