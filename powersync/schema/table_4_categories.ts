@@ -16,7 +16,15 @@ Key Features:
 ================================================================================
 */
 
-import { index, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
+import {
+  check,
+  foreignKey,
+  index,
+  sqliteTable,
+  text,
+  uniqueIndex
+} from 'drizzle-orm/sqlite-core'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -29,6 +37,13 @@ import {
 // ============================================================================
 // Categories table - Hierarchical transaction classification
 // ============================================================================
+
+/**
+ * Category types for transaction classification
+ * - expense: Money going out (groceries, rent, utilities, entertainment)
+ * - income: Money coming in (salary, freelance, investments, gifts)
+ */
+const CATEGORY_TYPE = ['expense', 'income'] as const
 
 /**
  * Hierarchical transaction categories (income/expense classification)
@@ -48,7 +63,7 @@ export const categories = sqliteTable(
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: text().notNull(), // Income or expense category classification ('expense' | 'income')
+    type: text({ enum: CATEGORY_TYPE }).notNull(), // Income or expense category classification
     parentId: text(), // Self-reference for hierarchy (null = root category)
     name: nameColumn(), // Category display name
     description: descriptionColumn(), // Optional user notes about the category
@@ -57,6 +72,13 @@ export const categories = sqliteTable(
     createdAt: createdAtColumn()
   },
   table => [
+    // Self-referencing foreign key for hierarchy
+    foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+      name: 'categories_parent_id_fk'
+    }).onDelete('cascade'), // Cascade deletion to prevent orphaned categories
+
     // Performance indexes for common query patterns
     index('categories_user_idx').on(table.userId), // User's categories lookup
     index('categories_parent_idx').on(table.parentId), // Child categories lookup
@@ -68,6 +90,13 @@ export const categories = sqliteTable(
       table.userId,
       table.parentId,
       table.name
-    )
+    ),
+
+    // Business rule constraints
+    check('categories_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
+    check(
+      'categories_no_self_parent',
+      sql`${table.parentId} IS NULL OR ${table.parentId} != ${table.id}`
+    ) // Prevent self-referencing
   ]
 )

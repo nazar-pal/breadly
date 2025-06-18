@@ -13,11 +13,18 @@ Key Features:
 - Category-based transaction classification
 - Automatic account balance updates via database triggers
 - Comprehensive business rule validation
-- Multi-tenant isolation
+- Multi-tenant isolation with row-level security
 ================================================================================
 */
 
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
+import {
+  check,
+  index,
+  integer,
+  sqliteTable,
+  text
+} from 'drizzle-orm/sqlite-core'
 
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
@@ -29,6 +36,18 @@ import {
   monetaryAmountColumn,
   uuidPrimaryKey
 } from './utils'
+
+// ============================================================================
+// TRANSACTION TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Transaction types defining money movement patterns
+ * - expense: Money spent from an account (groceries, rent, bills)
+ * - income: Money received into an account (salary, freelance, gifts)
+ * - transfer: Money moved between user's accounts (internal transfers)
+ */
+const TX_TYPE = ['expense', 'income', 'transfer'] as const
 
 // ============================================================================
 // TRANSACTIONS TABLE
@@ -47,14 +66,13 @@ import {
  * - Transaction amounts must be positive (direction determined by type)
  * - Transaction dates cannot be in the future
  * - Account balances are automatically updated by database triggers
- * - Transaction types: 'expense' | 'income' | 'transfer'
  */
 export const transactions = sqliteTable(
   'transactions',
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: text().notNull(), // Transaction type ('expense' | 'income' | 'transfer')
+    type: text({ enum: TX_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
 
     // Account references
     accountId: text()
@@ -80,6 +98,22 @@ export const transactions = sqliteTable(
     index('transactions_user_date_idx').on(table.userId, table.txDate), // Date-based queries
     index('transactions_user_type_idx').on(table.userId, table.type), // Type-based filtering
     index('transactions_date_idx').on(table.txDate), // Date range queries
-    index('transactions_counter_account_idx').on(table.counterAccountId) // Transfer lookups
+    index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
+
+    // Business rule constraints
+    check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive
+    check(
+      'transactions_transfer_different_accounts',
+      sql`${table.type} != 'transfer' OR ${table.accountId} != ${table.counterAccountId}`
+    ), // Transfer accounts must be different
+    check(
+      'transactions_transfer_has_counter_account',
+      sql`${table.type} != 'transfer' OR ${table.counterAccountId} IS NOT NULL`
+    ), // Transfers must have counter account
+    check(
+      'transactions_non_transfer_no_counter_account',
+      sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`
+    ), // Non-transfers cannot have counter account
+    check('transactions_date_not_future', sql`${table.txDate} <= CURRENT_DATE`) // No future dates
   ]
 )

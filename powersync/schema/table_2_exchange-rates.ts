@@ -15,7 +15,9 @@ Key Features:
 ================================================================================
 */
 
+import { sql } from 'drizzle-orm'
 import {
+  check,
   index,
   integer,
   real,
@@ -61,6 +63,13 @@ export const exchangeRates = sqliteTable(
       table.quoteCurrency,
       table.rateDate
     ),
+
+    // Business rule constraints
+    check('exchange_rates_positive_rate', sql`${table.rate} > 0`), // Rates must be positive
+    check(
+      'exchange_rates_different_currencies',
+      sql`${table.baseCurrency} != ${table.quoteCurrency}`
+    ), // Base and quote must be different
 
     // Performance indexes for currency conversion lookups
     index('exchange_rates_base_currency_idx').on(table.baseCurrency), // Base currency lookups

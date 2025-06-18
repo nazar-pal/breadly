@@ -1,4 +1,5 @@
 import { integer, real, text } from 'drizzle-orm/sqlite-core'
+import { randomUUID } from 'expo-crypto'
 
 // user ID column for PowerSync (no auth.user_id() function in SQLite)
 export const clerkUserIdColumn = () => text({ length: 50 }).notNull()
@@ -6,7 +7,7 @@ export const clerkUserIdColumn = () => text({ length: 50 }).notNull()
 // ISO 4217 currency code column (3-character codes like USD, EUR)
 export const isoCurrencyCodeColumn = () => text({ length: 3 }).notNull()
 
-export const uuidPrimaryKey = () => text().primaryKey()
+export const uuidPrimaryKey = () => text().$defaultFn(randomUUID).primaryKey()
 
 // real number for currency amounts (SQLite uses REAL for decimal numbers)
 // Note: SQLite doesn't have precise decimal types, consider storing as integers (cents)

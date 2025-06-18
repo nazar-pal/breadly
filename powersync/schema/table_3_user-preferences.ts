@@ -12,10 +12,12 @@ Key Features:
 - Week start day customization for calendar displays
 - Locale/language preference for internationalization
 - Extensible structure for future preference additions
+- Row-level security for data protection
 ================================================================================
 */
 
-import { real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
+import { check, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
@@ -35,9 +37,19 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
  * - All preferences have sensible defaults for new users
  * - Preferences persist across user sessions
  */
-export const userPreferences = sqliteTable('user_preferences', {
-  userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
-  defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
-  firstWeekday: real().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
-  locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
-})
+export const userPreferences = sqliteTable(
+  'user_preferences',
+  {
+    userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
+    defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
+    firstWeekday: real().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
+    locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
+  },
+  table => [
+    // Business rule constraints
+    check(
+      'user_preferences_valid_weekday',
+      sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
+    ) // Valid weekday range
+  ]
+)

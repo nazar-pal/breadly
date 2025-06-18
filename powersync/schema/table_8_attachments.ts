@@ -18,9 +18,27 @@ Key Features:
 ================================================================================
 */
 
-import { index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import {
+  check,
+  index,
+  integer,
+  sqliteTable,
+  text
+} from 'drizzle-orm/sqlite-core'
 
+import { sql } from 'drizzle-orm'
 import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+
+// ============================================================================
+// Attachments table - File metadata (receipts, voice notes)
+// ============================================================================
+
+/**
+ * Attachment types for transaction documentation
+ * - receipt: Receipt photos/documents (images, PDFs, scanned documents)
+ * - voice: Voice message recordings (audio files, voice notes)
+ */
+const ATTACHMENT_TYPE = ['receipt', 'voice'] as const
 
 // ============================================================================
 // ATTACHMENTS TABLE
@@ -46,12 +64,12 @@ export const attachments = sqliteTable(
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: text().notNull(), // attachment type ('receipt' | 'voice')
-    bucketPath: text().notNull(), // Cloud storage path (S3, etc.) - unlimited length for complex paths
-    mime: text({ length: 150 }).notNull(), // File MIME type - supports complex MIME types
-    fileName: text({ length: 500 }).notNull(), // Original filename - supports very long file names
-    fileSize: real().notNull(), // File size in bytes (for storage management)
-    duration: real(), // Duration in seconds (required for voice, optional for video receipts)
+    type: text({ enum: ATTACHMENT_TYPE }).notNull(), // attachment type ('receipt' | 'voice')
+    bucketPath: text().notNull(), // Cloud storage path (S3, etc.)
+    mime: text({ length: 150 }).notNull(), // File MIME type
+    fileName: text({ length: 500 }).notNull(), // Original filename
+    fileSize: integer().notNull(), // File size in bytes (for storage management)
+    duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
     createdAt: createdAtColumn() // Upload timestamp
   },
   table => [
@@ -59,6 +77,24 @@ export const attachments = sqliteTable(
     index('attachments_user_idx').on(table.userId), // User's attachments lookup
     index('attachments_type_idx').on(table.type), // Filter by attachment type
     index('attachments_user_type_idx').on(table.userId, table.type), // User's attachments by type
-    index('attachments_created_at_idx').on(table.createdAt) // Sort by upload date
+    index('attachments_created_at_idx').on(table.createdAt), // Sort by upload date
+
+    // Business rule constraints
+    check(
+      'attachments_bucket_path_not_empty',
+      sql`length(trim(${table.bucketPath})) > 0`
+    ), // Valid bucket paths
+    check(
+      'attachments_file_size_positive',
+      sql`${table.fileSize} IS NULL OR ${table.fileSize} > 0`
+    ), // Positive file sizes
+    check(
+      'attachments_duration_positive',
+      sql`${table.duration} IS NULL OR ${table.duration} > 0`
+    ), // Positive durations
+    check(
+      'attachments_voice_has_duration',
+      sql`${table.type} != 'voice' OR ${table.duration} IS NOT NULL`
+    ) // Voice messages require duration
   ]
 )

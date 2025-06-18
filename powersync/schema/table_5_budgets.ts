@@ -12,10 +12,13 @@ Key Features:
 - User-specific budgets with multi-tenant isolation
 - Unique budget constraints per category+period+start date
 - Integration with transaction categorization for spending analysis
+- Row-level security for data protection
 ================================================================================
 */
 
+import { sql } from 'drizzle-orm'
 import {
+  check,
   index,
   integer,
   sqliteTable,
@@ -32,6 +35,22 @@ import {
 // ============================================================================
 // Budgets table - Category-based spending limits
 // ============================================================================
+
+/**
+ * Budget period types for tracking spending limits
+ * - daily: Daily budget limits (for strict daily spending control)
+ * - weekly: Weekly budget limits (for weekly allowances)
+ * - monthly: Monthly budget limits (most common budget period)
+ * - quarterly: Quarterly budget limits (for seasonal planning)
+ * - yearly: Annual budget limits (for long-term financial planning)
+ */
+const BUDGET_PERIOD = [
+  'daily',
+  'weekly',
+  'monthly',
+  'quarterly',
+  'yearly'
+] as const
 
 /**
  * Budget tracking for categories
@@ -55,7 +74,7 @@ export const budgets = sqliteTable(
       .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(), // Category this budget applies to
     amount: monetaryAmountColumn(), // Budget limit amount
-    period: text().default('monthly').notNull(), // Budget time period ('daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly')
+    period: text({ enum: BUDGET_PERIOD }).default('monthly').notNull(), // Budget time period
     startDate: integer({ mode: 'timestamp_ms' }).notNull() // When this budget period starts
   },
   table => [
@@ -69,6 +88,9 @@ export const budgets = sqliteTable(
       table.categoryId,
       table.period,
       table.startDate
-    )
+    ),
+
+    // Business rule constraints
+    check('budgets_positive_amount', sql`${table.amount} > 0`) // Budget amounts must be positive
   ]
 )
