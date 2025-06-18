@@ -4,6 +4,7 @@ import { CurrencyProvider } from '@/context/CurrencyContext'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
 import { useColorScheme } from '@/lib/useColorScheme'
+import { PowerSyncContextProvider } from '@/powersync/context'
 import { queryClient } from '@/trpc/query-client'
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
@@ -21,14 +22,8 @@ import * as React from 'react'
 import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-const LIGHT_THEME: Theme = {
-  ...DefaultTheme,
-  colors: NAV_THEME.light
-}
-const DARK_THEME: Theme = {
-  ...DarkTheme,
-  colors: NAV_THEME.dark
-}
+const LIGHT_THEME: Theme = { ...DefaultTheme, colors: NAV_THEME.light }
+const DARK_THEME: Theme = { ...DarkTheme, colors: NAV_THEME.dark }
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -41,21 +36,17 @@ export default function RootLayout() {
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    if (hasMounted.current) {
-      return
-    }
+    if (hasMounted.current) return
 
     if (Platform.OS === 'web') {
-      // Adds the background color to the html element to prevent white background on overscroll.
+      // Prevent white background flash on overscroll (web).
       document.documentElement.classList.add('bg-background')
     }
     setIsColorSchemeLoaded(true)
     hasMounted.current = true
   }, [])
 
-  if (!isColorSchemeLoaded) {
-    return null
-  }
+  if (!isColorSchemeLoaded) return null
 
   return (
     <ClerkProvider
@@ -65,33 +56,32 @@ export default function RootLayout() {
     >
       <GestureHandlerRootView className="flex-1">
         <QueryClientProvider client={queryClient}>
-          <CurrencyProvider>
-            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-              <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-              <Stack>
-                <Stack.Screen
-                  name="(protected)"
-                  options={{
-                    headerShown: false,
-                    animation: 'none'
-                  }}
-                />
-                <Stack.Screen
-                  name="auth"
-                  options={{
-                    headerShown: false,
-                    animation: 'none'
-                  }}
-                />
-              </Stack>
-            </ThemeProvider>
-          </CurrencyProvider>
+          <PowerSyncContextProvider>
+            <CurrencyProvider>
+              <ThemeProvider
+                value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+              >
+                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                <Stack>
+                  <Stack.Screen
+                    name="(protected)"
+                    options={{ headerShown: false, animation: 'none' }}
+                  />
+                  <Stack.Screen
+                    name="auth"
+                    options={{ headerShown: false, animation: 'none' }}
+                  />
+                </Stack>
+              </ThemeProvider>
+            </CurrencyProvider>
+          </PowerSyncContextProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
     </ClerkProvider>
   )
 }
 
+/* React-Native work-around for layout effect on web build */
 const useIsomorphicLayoutEffect =
   Platform.OS === 'web' && typeof window === 'undefined'
     ? React.useEffect

@@ -3,6 +3,7 @@ import { accountsRouter } from './routers/accounts'
 import { attachmentsRouter } from './routers/attachments'
 import { budgetsRouter } from './routers/budgets'
 import { categoriesRouter } from './routers/categories'
+import { syncRouter } from './routers/sync'
 import { transactionsRouter } from './routers/transactions'
 import { userPreferencesRouter } from './routers/user-preferences'
 import { createTRPCRouter } from './trpc'
@@ -14,6 +15,7 @@ import { createTRPCRouter } from './trpc'
  */
 export const appRouter = createTRPCRouter({
   appTest: appTestRouter,
+  sync: syncRouter,
   accounts: accountsRouter,
   attachments: attachmentsRouter,
   budgets: budgetsRouter,
