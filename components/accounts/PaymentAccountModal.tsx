@@ -1,5 +1,5 @@
 import { Account, useAccounts } from '@/hooks/useAccounts'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseAccountModal from './shared/BaseAccountModal'
 import CommonAccountFields from './shared/CommonAccountFields'
@@ -23,6 +23,7 @@ export default function PaymentAccountModal({
   onClose
 }: PaymentAccountModalProps) {
   const { createAccount, updateAccount } = useAccounts()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { control, handleSubmit, reset } = useForm<PaymentAccountFormData>({
     defaultValues: {
@@ -38,7 +39,7 @@ export default function PaymentAccountModal({
       reset({
         name: account.name,
         description: account.description || '',
-        balance: account.balance
+        balance: account.balance.toString()
       })
     } else {
       // Adding new account
@@ -50,34 +51,40 @@ export default function PaymentAccountModal({
     }
   }, [account, reset])
 
-  const onSubmit = (data: PaymentAccountFormData) => {
-    const finalData = {
-      name: data.name.trim(),
-      description: data.description.trim() || undefined,
-      balance: data.balance
-    }
+  const onSubmit = async (data: PaymentAccountFormData) => {
+    setIsSubmitting(true)
+    try {
+      const finalData = {
+        name: data.name.trim(),
+        description: data.description.trim() || undefined,
+        balance: parseFloat(data.balance) || 0
+      }
 
-    if (account) {
-      updateAccount.mutate({
-        id: account.id,
-        ...finalData
-      } as any)
-    } else {
-      createAccount.mutate({
-        ...finalData,
-        type: 'payment',
-        currencyId: 'USD'
-      } as any)
-    }
+      if (account) {
+        await updateAccount({
+          id: account.id,
+          ...finalData
+        })
+      } else {
+        await createAccount({
+          ...finalData,
+          type: 'payment',
+          currencyId: 'USD'
+        })
+      }
 
-    onClose()
+      onClose()
+    } catch (error) {
+      // Error is already handled in the hook with Alert.alert
+      console.error('Failed to save account:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const getTitle = () => {
     return account ? 'Edit Payment Account' : 'Add Payment Account'
   }
-
-  const isLoading = createAccount.isPending || updateAccount.isPending
 
   return (
     <BaseAccountModal
@@ -88,7 +95,7 @@ export default function PaymentAccountModal({
         <ModalFooter
           onCancel={onClose}
           onSubmit={handleSubmit(onSubmit)}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
           isEditing={!!account}
         />
       }

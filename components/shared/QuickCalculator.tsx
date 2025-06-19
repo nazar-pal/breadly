@@ -439,7 +439,7 @@ export default function QuickCalculator({
                       {account.name}
                     </Text>
                     <Text className="text-sm text-muted-foreground">
-                      ${parseFloat(account.balance).toFixed(2)}
+                      ${account.balance.toFixed(2)}
                     </Text>
                   </View>
                 </Pressable>

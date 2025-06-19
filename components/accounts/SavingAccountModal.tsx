@@ -1,5 +1,5 @@
 import { Account, useAccounts } from '@/hooks/useAccounts'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseAccountModal from './shared/BaseAccountModal'
 import CommonAccountFields from './shared/CommonAccountFields'
@@ -26,6 +26,7 @@ export default function SavingAccountModal({
   onClose
 }: SavingAccountModalProps) {
   const { createAccount, updateAccount } = useAccounts()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { control, handleSubmit, reset } = useForm<SavingAccountFormData>({
     defaultValues: {
@@ -43,9 +44,10 @@ export default function SavingAccountModal({
       reset({
         name: account.name,
         description: account.description || '',
-        balance: account.balance,
-        savingsTargetAmount: account.savingsTargetAmount || '',
-        savingsTargetDate: account.savingsTargetDate || ''
+        balance: account.balance.toString(),
+        savingsTargetAmount: account.savingsTargetAmount?.toString() || '',
+        savingsTargetDate:
+          account.savingsTargetDate?.toISOString().split('T')[0] || ''
       })
     } else {
       // Adding new account
@@ -59,45 +61,50 @@ export default function SavingAccountModal({
     }
   }, [account, reset])
 
-  const onSubmit = (data: SavingAccountFormData) => {
-    const baseData = {
-      name: data.name.trim(),
-      description: data.description.trim() || undefined,
-      balance: data.balance
+  const onSubmit = async (data: SavingAccountFormData) => {
+    setIsSubmitting(true)
+    try {
+      const baseData = {
+        name: data.name.trim(),
+        description: data.description.trim() || undefined,
+        balance: parseFloat(data.balance) || 0
+      }
+
+      const savingsData: any = {}
+      if (data.savingsTargetAmount) {
+        savingsData.savingsTargetAmount = parseFloat(data.savingsTargetAmount)
+      }
+      if (data.savingsTargetDate) {
+        savingsData.savingsTargetDate = new Date(data.savingsTargetDate)
+      }
+
+      const finalData = { ...baseData, ...savingsData }
+
+      if (account) {
+        await updateAccount({
+          id: account.id,
+          ...finalData
+        })
+      } else {
+        await createAccount({
+          ...finalData,
+          type: 'saving',
+          currencyId: 'USD'
+        })
+      }
+
+      onClose()
+    } catch (error) {
+      // Error is already handled in the hook with Alert.alert
+      console.error('Failed to save account:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    const savingsData = {
-      ...(data.savingsTargetAmount && {
-        savingsTargetAmount: data.savingsTargetAmount
-      }),
-      ...(data.savingsTargetDate && {
-        savingsTargetDate: data.savingsTargetDate
-      })
-    }
-
-    const finalData = { ...baseData, ...savingsData }
-
-    if (account) {
-      updateAccount.mutate({
-        id: account.id,
-        ...finalData
-      } as any)
-    } else {
-      createAccount.mutate({
-        ...finalData,
-        type: 'saving',
-        currencyId: 'USD'
-      } as any)
-    }
-
-    onClose()
   }
 
   const getTitle = () => {
     return account ? 'Edit Savings Account' : 'Add Savings Account'
   }
-
-  const isLoading = createAccount.isPending || updateAccount.isPending
 
   return (
     <BaseAccountModal
@@ -108,7 +115,7 @@ export default function SavingAccountModal({
         <ModalFooter
           onCancel={onClose}
           onSubmit={handleSubmit(onSubmit)}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
           isEditing={!!account}
         />
       }

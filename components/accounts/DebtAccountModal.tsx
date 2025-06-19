@@ -1,5 +1,5 @@
 import { Account, useAccounts } from '@/hooks/useAccounts'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseAccountModal from './shared/BaseAccountModal'
 import CommonAccountFields from './shared/CommonAccountFields'
@@ -27,6 +27,7 @@ export default function DebtAccountModal({
   onClose
 }: DebtAccountModalProps) {
   const { createAccount, updateAccount } = useAccounts()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { control, handleSubmit, reset } = useForm<DebtAccountFormData>({
     defaultValues: {
@@ -45,10 +46,10 @@ export default function DebtAccountModal({
       reset({
         name: account.name,
         description: account.description || '',
-        balance: account.balance,
-        debtInitialAmount: account.debtInitialAmount || '',
+        balance: account.balance.toString(),
+        debtInitialAmount: account.debtInitialAmount?.toString() || '',
         debtIsOwedToMe: account.debtIsOwedToMe || false,
-        debtDueDate: account.debtDueDate || ''
+        debtDueDate: account.debtDueDate?.toISOString().split('T')[0] || ''
       })
     } else {
       // Adding new account
@@ -63,46 +64,53 @@ export default function DebtAccountModal({
     }
   }, [account, reset])
 
-  const onSubmit = (data: DebtAccountFormData) => {
-    const baseData = {
-      name: data.name.trim(),
-      description: data.description.trim() || undefined,
-      balance: data.balance
+  const onSubmit = async (data: DebtAccountFormData) => {
+    setIsSubmitting(true)
+    try {
+      const baseData = {
+        name: data.name.trim(),
+        description: data.description.trim() || undefined,
+        balance: parseFloat(data.balance) || 0
+      }
+
+      const debtData: any = {}
+      if (data.debtInitialAmount) {
+        debtData.debtInitialAmount = parseFloat(data.debtInitialAmount)
+      }
+      if (data.debtIsOwedToMe !== undefined) {
+        debtData.debtIsOwedToMe = data.debtIsOwedToMe
+      }
+      if (data.debtDueDate) {
+        debtData.debtDueDate = new Date(data.debtDueDate)
+      }
+
+      const finalData = { ...baseData, ...debtData }
+
+      if (account) {
+        await updateAccount({
+          id: account.id,
+          ...finalData
+        })
+      } else {
+        await createAccount({
+          ...finalData,
+          type: 'debt',
+          currencyId: 'USD'
+        })
+      }
+
+      onClose()
+    } catch (error) {
+      // Error is already handled in the hook with Alert.alert
+      console.error('Failed to save account:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    const debtData = {
-      ...(data.debtInitialAmount && {
-        debtInitialAmount: data.debtInitialAmount
-      }),
-      ...(data.debtIsOwedToMe !== undefined && {
-        debtIsOwedToMe: data.debtIsOwedToMe
-      }),
-      ...(data.debtDueDate && { debtDueDate: data.debtDueDate })
-    }
-
-    const finalData = { ...baseData, ...debtData }
-
-    if (account) {
-      updateAccount.mutate({
-        id: account.id,
-        ...finalData
-      } as any)
-    } else {
-      createAccount.mutate({
-        ...finalData,
-        type: 'debt',
-        currencyId: 'USD'
-      } as any)
-    }
-
-    onClose()
   }
 
   const getTitle = () => {
     return account ? 'Edit Debt Account' : 'Add Debt Account'
   }
-
-  const isLoading = createAccount.isPending || updateAccount.isPending
 
   return (
     <BaseAccountModal
@@ -113,7 +121,7 @@ export default function DebtAccountModal({
         <ModalFooter
           onCancel={onClose}
           onSubmit={handleSubmit(onSubmit)}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
           isEditing={!!account}
         />
       }

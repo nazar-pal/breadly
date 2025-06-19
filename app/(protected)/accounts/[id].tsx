@@ -355,18 +355,18 @@ export default function AccountDetailsScreen() {
     label
   } = ACCOUNT_TYPES[accountType]
 
-  // Convert balance from string to number
-  const balanceAmount = parseFloat(account.balance) || 0
+  // Balance is already a number now
+  const balanceAmount = account.balance || 0
 
   // For now, disable progress calculation since targetAmount and initialAmount
   // don't exist in our current schema
   let progress = null
   // TODO: Add targetAmount and initialAmount fields to account schema when needed
-  // if (account.type === 'saving' && account.targetAmount) {
-  //   progress = (balanceAmount / parseFloat(account.targetAmount)) * 100
-  // } else if (account.type === 'debt' && account.initialAmount) {
+  // if (account.type === 'saving' && account.savingsTargetAmount) {
+  //   progress = (balanceAmount / account.savingsTargetAmount) * 100
+  // } else if (account.type === 'debt' && account.debtInitialAmount) {
   //   progress =
-  //     ((parseFloat(account.initialAmount) - balanceAmount) / parseFloat(account.initialAmount)) * 100
+  //     ((account.debtInitialAmount - balanceAmount) / account.debtInitialAmount) * 100
   // }
 
   const formatBalance = (amount: number) => {
@@ -377,6 +377,16 @@ export default function AccountDetailsScreen() {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(Math.abs(amount))
+  }
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount(account.id)
+      router.back()
+    } catch (error) {
+      // Error is already handled in the hook with Alert.alert
+      console.error('Failed to delete account:', error)
+    }
   }
 
   return (
@@ -396,7 +406,6 @@ export default function AccountDetailsScreen() {
           bgColorClass={bgColorClass}
           onEdit={() => handleEditAccount(account)}
           onDelete={() => {
-            // For now, we'll use Alert.alert for the delete confirmation
             Alert.alert(
               'Delete Account',
               `Are you sure you want to delete the account "${account.name}"? This action cannot be undone.`,
@@ -408,23 +417,7 @@ export default function AccountDetailsScreen() {
                 {
                   text: 'Delete',
                   style: 'destructive',
-                  onPress: () => {
-                    deleteAccount.mutate(
-                      { id: account.id },
-                      {
-                        onSuccess: () => {
-                          router.back()
-                        },
-                        onError: error => {
-                          Alert.alert(
-                            'Error',
-                            'Failed to delete account. Please try again.',
-                            [{ text: 'OK' }]
-                          )
-                        }
-                      }
-                    )
-                  }
+                  onPress: handleDeleteAccount
                 }
               ]
             )

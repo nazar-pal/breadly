@@ -70,8 +70,8 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const config = getAccountConfig()
   const Icon = config.icon
 
-  // Convert balance from string to number
-  const balanceAmount = parseFloat(account.balance) || 0
+  // Balance is already a number now
+  const balanceAmount = account.balance || 0
 
   const formatBalance = (amount: number) => {
     const currency = account.currency?.code || 'USD'
@@ -86,7 +86,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const getProgressPercentage = () => {
     if (account.type === 'saving' && account.savingsTargetAmount) {
       // For savings: current balance / target amount * 100
-      const targetAmount = parseFloat(account.savingsTargetAmount) || 0
+      const targetAmount = account.savingsTargetAmount
       if (targetAmount > 0) {
         return Math.min((balanceAmount / targetAmount) * 100, 100)
       }
@@ -95,7 +95,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
     if (account.type === 'debt' && account.debtInitialAmount) {
       // For debt: (initial amount - current balance) / initial amount * 100
       // This shows how much of the debt has been paid off
-      const initialAmount = parseFloat(account.debtInitialAmount) || 0
+      const initialAmount = account.debtInitialAmount
       if (initialAmount > 0) {
         const paidAmount = initialAmount - balanceAmount
         return Math.min(Math.max((paidAmount / initialAmount) * 100, 0), 100)
@@ -113,7 +113,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       account.savingsTargetAmount &&
       progress !== null
     ) {
-      const targetAmount = parseFloat(account.savingsTargetAmount) || 0
+      const targetAmount = account.savingsTargetAmount
       return `${formatBalance(balanceAmount)} of ${formatBalance(targetAmount)} saved`
     }
 
@@ -122,7 +122,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
       account.debtInitialAmount &&
       progress !== null
     ) {
-      const initialAmount = parseFloat(account.debtInitialAmount) || 0
+      const initialAmount = account.debtInitialAmount
       const paidAmount = initialAmount - balanceAmount
       return `${formatBalance(paidAmount)} of ${formatBalance(initialAmount)} paid`
     }
