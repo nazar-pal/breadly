@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^2.0.0",
-    "@clerk/clerk-expo": "^2.13.0",
+    "@clerk/clerk-expo": "^2.13.1",
     "@expo/vector-icons": "^14.1.0",
     "@hookform/resolvers": "^5.1.1",
     "@journeyapps/react-native-quick-sqlite": "^2.4.4",
