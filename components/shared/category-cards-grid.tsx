@@ -3,21 +3,19 @@ import { useCategoryUI } from '@/hooks/useCategoryUI'
 import React from 'react'
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 import AddCategoryButton from './AddCategoryButton'
-import CategoryCard from './CategoryCard'
+import { CategoryCard } from './category-card'
 
 interface CategoryWithAmount extends Category {
   amount: number
 }
 
 interface CategoryGridProps {
-  getIcon: (categoryName: string, type: 'expense' | 'income') => React.ReactNode
   categories: CategoryWithAmount[]
   isLoading: boolean
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function CategoryGrid({
-  getIcon,
+export function CategoryCardsGrid({
   categories,
   isLoading,
   categoryUI
@@ -50,7 +48,6 @@ export default function CategoryGrid({
             id={category.id}
             name={category.name}
             amount={category.amount}
-            icon={getIcon(category.name, category.type)}
             type={category.type}
             onPress={handleCategoryPress}
             onLongPress={handleCategoryLongPress}

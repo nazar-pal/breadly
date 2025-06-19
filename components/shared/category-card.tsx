@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
+import { CategoryIcon } from './category-card-icon'
+
 interface CategoryCardProps {
   id: string
   name: string
   amount: number
-  icon: React.ReactNode
   type: 'expense' | 'income'
   onPress: (categoryId: string) => void
   onLongPress?: (categoryId: string, categoryName: string) => void
 }
 
-export default function CategoryCard({
+export function CategoryCard({
   id,
   name,
   amount,
-  icon,
   type,
   onPress,
   onLongPress
@@ -62,7 +62,7 @@ export default function CategoryCard({
           type === 'income' ? 'bg-income/10' : 'bg-muted'
         }`}
       >
-        {icon}
+        <CategoryIcon name={name} type={type} />
       </View>
       <View className="ml-3 flex-1">
         <Text

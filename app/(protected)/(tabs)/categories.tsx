@@ -1,59 +1,19 @@
 import AddCategoryModal from '@/components/shared/AddCategoryModal'
 import CalculatorModal from '@/components/shared/CalculatorModal'
+import { CategoryCardsGrid } from '@/components/shared/category-cards-grid'
 import CategoryEditModal from '@/components/shared/CategoryEditModal'
-import CategoryGrid from '@/components/shared/CategoryGrid'
 import FinancialHeader from '@/components/shared/FinancialHeader'
 import { useCategories } from '@/hooks/useCategories'
 import { useCategoryUI } from '@/hooks/useCategoryUI'
 import { useTransactions } from '@/hooks/useTransactions'
-import { iconWithClassName } from '@/lib/icons/iconWithClassName'
 import { trpc } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  Briefcase,
-  Building,
-  Bus,
-  Coffee,
-  DollarSign,
-  Film,
-  Heart,
-  Home,
-  LucideIcon,
-  PiggyBank,
-  Shirt,
-  Target,
-  TrendingUp,
-  Users,
-  UtensilsCrossed
-} from 'lucide-react-native'
+
 import React from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-// Map category names to icons for expenses
-const categoryIcons: { [key: string]: LucideIcon } = {
-  Coffee: Coffee,
-  Dining: UtensilsCrossed,
-  Entertainment: Film,
-  Transportation: Bus,
-  Health: Heart,
-  Home: Home,
-  Family: Users,
-  Shopping: Shirt
-}
-
-// Map income category names to icons
-const incomeCategoryIcons: { [key: string]: LucideIcon } = {
-  Salary: Briefcase,
-  Freelance: DollarSign,
-  Investment: TrendingUp,
-  Business: Building,
-  Rental: Home,
-  'Side Hustle': Target,
-  Other: PiggyBank
-}
 
 function GestureDetectorContainer({
   children,
@@ -137,21 +97,6 @@ function CategoriesContent() {
     })
   }, [currentCategories, rawTransactions])
 
-  const getCategoryIcon = (
-    categoryName: string,
-    type: 'expense' | 'income'
-  ) => {
-    const icons = type === 'expense' ? categoryIcons : incomeCategoryIcons
-    const IconComponent = icons[categoryName] || Home
-    iconWithClassName(IconComponent)
-    return (
-      <IconComponent
-        size={20}
-        className={type === 'expense' ? 'text-expense' : 'text-income'}
-      />
-    )
-  }
-
   return (
     <View
       className="flex-1 bg-background"
@@ -166,8 +111,7 @@ function CategoriesContent() {
         categoryUI={categoryUI}
       />
 
-      <CategoryGrid
-        getIcon={getCategoryIcon}
+      <CategoryCardsGrid
         categories={categoriesWithAmounts}
         isLoading={isLoading}
         categoryUI={categoryUI}
