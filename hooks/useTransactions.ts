@@ -1,161 +1,320 @@
-import { trpc } from '@/trpc/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { Operation } from '@/components/accounts/OperationListItem'
+import { usePowerSync } from '@/powersync/context'
+import { transactions } from '@/powersync/schema/table_7_transactions'
+import { asyncTryCatch } from '@/utils'
+import { useUser } from '@clerk/clerk-expo'
+import { toCompilableQuery } from '@powersync/drizzle-driver'
+import { useQuery } from '@powersync/react'
+import { and, desc, eq, gte, lte } from 'drizzle-orm'
+import { useCallback, useMemo } from 'react'
+import { Alert } from 'react-native'
 
-export interface Transaction {
+interface TransactionWithRelations {
   id: string
-  userId: string
   type: 'expense' | 'income' | 'transfer'
-  accountId: string
-  counterAccountId?: string | null
-  categoryId?: string | null
-  amount: string
-  currencyId: string
-  txDate: string
-  notes?: string | null
-  createdAt: string
-  account?: {
+  amount: number
+  txDate: Date
+  notes: string | null
+  account: {
     id: string
     name: string
     type: string
-    balance: string
-    currencyId: string
   }
+  counterAccount?: {
+    id: string
+    name: string
+    type: string
+  } | null
   category?: {
     id: string
     name: string
-    type: 'expense' | 'income'
-  }
-  currency?: {
-    code: string
-    name: string
-    symbol: string
-  }
+    type: string
+    icon: string
+  } | null
 }
 
-export interface CreateTransactionInput {
+interface CreateTransactionInput {
   type: 'expense' | 'income' | 'transfer'
   accountId: string
   counterAccountId?: string
-  categoryId?: string
+  categoryId: string
   amount: number
   currencyId: string
-  txDate: string
+  txDate: Date
   notes?: string
 }
 
-export function useTransactions() {
-  const queryClient = useQueryClient()
+interface UpdateTransactionInput {
+  id: string
+  type?: 'expense' | 'income' | 'transfer'
+  accountId?: string
+  counterAccountId?: string
+  categoryId?: string
+  amount?: number
+  currencyId?: string
+  txDate?: Date
+  notes?: string
+}
 
-  // Get all transactions
-  const transactionsQueryOptions = trpc.transactions.getAll.queryOptions()
+// Transform database transaction to Operation type expected by OperationListItem
+const transformTransactionToOperation = (
+  tx: TransactionWithRelations
+): Operation => {
+  const baseOperation = {
+    id: tx.id,
+    amount: tx.amount,
+    category: tx.category?.name || 'Uncategorized',
+    date: tx.txDate.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
+    description: tx.notes || `${tx.type} transaction`,
+    hasPhoto: false, // TODO: Check for attachments in future
+    hasVoice: false // TODO: Check for attachments in future
+  }
+
+  switch (tx.type) {
+    case 'expense':
+      return {
+        ...baseOperation,
+        type: 'expense' as const
+      }
+    case 'income':
+      return {
+        ...baseOperation,
+        type: 'income' as const
+      }
+    case 'transfer':
+      return {
+        ...baseOperation,
+        type: 'other' as const,
+        transactionType: 'exchange' as const,
+        description: tx.counterAccount
+          ? `Transfer from ${tx.account.name} to ${tx.counterAccount.name}`
+          : `Transfer from ${tx.account.name}`
+      }
+    default:
+      return {
+        ...baseOperation,
+        type: 'expense' as const
+      }
+  }
+}
+
+interface UseTransactionsOptions {
+  accountId?: string
+  type?: 'expense' | 'income' | 'transfer'
+  dateFrom?: Date
+  dateTo?: Date
+  categoryId?: string
+  limit?: number
+}
+
+export function useTransactions(options: UseTransactionsOptions = {}) {
+  const { db } = usePowerSync()
+  const { user } = useUser()
+
+  const { accountId, type, dateFrom, dateTo, categoryId, limit } = options
+
+  // Build where conditions
+  const whereConditions = useMemo(() => {
+    const conditions = []
+
+    if (user?.id) {
+      conditions.push(eq(transactions.userId, user.id))
+    }
+
+    if (accountId) {
+      conditions.push(eq(transactions.accountId, accountId))
+    }
+
+    if (type) {
+      conditions.push(eq(transactions.type, type))
+    }
+
+    if (dateFrom) {
+      conditions.push(gte(transactions.txDate, dateFrom))
+    }
+
+    if (dateTo) {
+      conditions.push(lte(transactions.txDate, dateTo))
+    }
+
+    if (categoryId) {
+      conditions.push(eq(transactions.categoryId, categoryId))
+    }
+
+    return conditions.length > 0 ? and(...conditions) : undefined
+  }, [user?.id, accountId, type, dateFrom, dateTo, categoryId])
+
+  // Query transactions with related data
   const {
-    data: transactions = [],
+    data: transactionsData = [],
     isLoading,
     error
-  } = useQuery(transactionsQueryOptions)
-
-  // Create transaction mutation
-  const createTransactionMutationOptions =
-    trpc.transactions.create.mutationOptions({
-      onSuccess: () => {
-        // Invalidate all relevant queries
-        const transactionsQueryKey = trpc.transactions.getAll.queryKey()
-        const accountsQueryKey = trpc.accounts.getAll.queryKey()
-        const categoriesQueryKey = trpc.categories.getAll.queryKey()
-
-        queryClient.invalidateQueries({ queryKey: transactionsQueryKey })
-        queryClient.invalidateQueries({ queryKey: accountsQueryKey })
-        queryClient.invalidateQueries({ queryKey: categoriesQueryKey })
-      }
-    })
-  const createTransaction = useMutation(createTransactionMutationOptions)
-
-  // Update transaction mutation
-  const updateTransactionMutationOptions =
-    trpc.transactions.update.mutationOptions({
-      onSuccess: () => {
-        const transactionsQueryKey = trpc.transactions.getAll.queryKey()
-        const accountsQueryKey = trpc.accounts.getAll.queryKey()
-        const categoriesQueryKey = trpc.categories.getAll.queryKey()
-
-        queryClient.invalidateQueries({ queryKey: transactionsQueryKey })
-        queryClient.invalidateQueries({ queryKey: accountsQueryKey })
-        queryClient.invalidateQueries({ queryKey: categoriesQueryKey })
-      }
-    })
-  const updateTransaction = useMutation(updateTransactionMutationOptions)
-
-  // Delete transaction mutation
-  const deleteTransactionMutationOptions =
-    trpc.transactions.delete.mutationOptions({
-      onSuccess: () => {
-        const transactionsQueryKey = trpc.transactions.getAll.queryKey()
-        const accountsQueryKey = trpc.accounts.getAll.queryKey()
-        const categoriesQueryKey = trpc.categories.getAll.queryKey()
-
-        queryClient.invalidateQueries({ queryKey: transactionsQueryKey })
-        queryClient.invalidateQueries({ queryKey: accountsQueryKey })
-        queryClient.invalidateQueries({ queryKey: categoriesQueryKey })
-      }
-    })
-  const deleteTransaction = useMutation(deleteTransactionMutationOptions)
-
-  // Helper function to get recent transactions
-  const getRecentTransactions = (limit = 10) => {
-    return transactions
-      .slice()
-      .sort(
-        (a, b) => new Date(b.txDate).getTime() - new Date(a.txDate).getTime()
-      )
-      .slice(0, limit)
-  }
-
-  // Helper function to get transactions by type
-  const getTransactionsByType = (type: 'expense' | 'income' | 'transfer') => {
-    return transactions.filter(transaction => transaction.type === type)
-  }
-
-  // Helper function to calculate total for a type in a date range
-  const getTotalByType = (
-    type: 'expense' | 'income',
-    startDate?: string,
-    endDate?: string
-  ) => {
-    return transactions
-      .filter(transaction => {
-        if (transaction.type !== type) return false
-
-        if (startDate && transaction.txDate < startDate) return false
-        if (endDate && transaction.txDate > endDate) return false
-
-        return true
+  } = useQuery(
+    toCompilableQuery(
+      db.query.transactions.findMany({
+        where: whereConditions,
+        with: {
+          account: true,
+          counterAccount: true,
+          category: true
+        },
+        orderBy: [desc(transactions.txDate)],
+        ...(limit && { limit })
       })
-      .reduce((total, transaction) => total + parseFloat(transaction.amount), 0)
-  }
+    )
+  )
 
-  // New helper function using the TRPC procedure for category totals
-  const useCategoryTotal = (categoryId: string) => {
-    const queryOptions = trpc.transactions.getTotalAmount.queryOptions({
-      categoryId
-    })
-    return useQuery(queryOptions)
-  }
+  // Transform transactions to operations
+  const operations = useMemo(() => {
+    if (!transactionsData) return []
+
+    return transactionsData.map(transformTransactionToOperation)
+  }, [transactionsData])
+
+  // Filter operations by type for convenience
+  const expenses = useMemo(
+    () => operations.filter(op => op.type === 'expense'),
+    [operations]
+  )
+
+  const incomes = useMemo(
+    () => operations.filter(op => op.type === 'income'),
+    [operations]
+  )
+
+  const transfers = useMemo(
+    () =>
+      operations.filter(
+        op =>
+          op.type === 'other' &&
+          'transactionType' in op &&
+          op.transactionType === 'exchange'
+      ),
+    [operations]
+  )
+
+  // Get today's operations
+  const today = new Date().toISOString().split('T')[0]
+  const todaysOperations = useMemo(() => {
+    return operations.filter(operation => operation.date === today)
+  }, [operations, today])
+
+  // Calculate totals
+  const totals = useMemo(() => {
+    const totalExpenses = expenses.reduce((sum, op) => sum + op.amount, 0)
+    const totalIncome = incomes.reduce((sum, op) => sum + op.amount, 0)
+    const netAmount = totalIncome - totalExpenses
+
+    return {
+      expenses: totalExpenses,
+      income: totalIncome,
+      net: netAmount,
+      count: operations.length
+    }
+  }, [expenses, incomes, operations.length])
+
+  // Mutation functions
+  const createTransaction = useCallback(
+    async (input: CreateTransactionInput) => {
+      if (!user?.id) {
+        throw new Error('User must be logged in to create transactions')
+      }
+
+      const [error] = await asyncTryCatch(
+        db.insert(transactions).values({
+          userId: user.id,
+          type: input.type,
+          accountId: input.accountId,
+          counterAccountId: input.counterAccountId || null,
+          categoryId: input.categoryId,
+          amount: input.amount,
+          currencyId: input.currencyId,
+          txDate: input.txDate,
+          notes: input.notes || null,
+          createdAt: new Date()
+        })
+      )
+
+      if (error) {
+        console.error('Failed to create transaction:', error)
+        Alert.alert('Error', 'Failed to create transaction')
+        throw error
+      }
+    },
+    [db, user?.id]
+  )
+
+  const updateTransaction = useCallback(
+    async (input: UpdateTransactionInput) => {
+      if (!user?.id) {
+        throw new Error('User must be logged in to update transactions')
+      }
+
+      const [error] = await asyncTryCatch(
+        db
+          .update(transactions)
+          .set({
+            type: input.type,
+            accountId: input.accountId,
+            counterAccountId: input.counterAccountId,
+            categoryId: input.categoryId,
+            amount: input.amount,
+            currencyId: input.currencyId,
+            txDate: input.txDate,
+            notes: input.notes
+          })
+          .where(eq(transactions.id, input.id))
+      )
+
+      if (error) {
+        console.error('Failed to update transaction:', error)
+        Alert.alert('Error', 'Failed to update transaction')
+        throw error
+      }
+    },
+    [db, user?.id]
+  )
+
+  const deleteTransaction = useCallback(
+    async (transactionId: string) => {
+      if (!user?.id) {
+        throw new Error('User must be logged in to delete transactions')
+      }
+
+      const [error] = await asyncTryCatch(
+        db.delete(transactions).where(eq(transactions.id, transactionId))
+      )
+
+      if (error) {
+        console.error('Failed to delete transaction:', error)
+        Alert.alert('Error', 'Failed to delete transaction')
+        throw error
+      }
+    },
+    [db, user?.id]
+  )
 
   return {
-    // Data
-    transactions,
+    operations,
+    expenses,
+    incomes,
+    transfers,
+    todaysOperations,
+    totals,
     isLoading,
     error,
+    rawTransactions: transactionsData,
 
     // Mutations
     createTransaction,
     updateTransaction,
-    deleteTransaction,
-
-    // Helper functions
-    getRecentTransactions,
-    getTransactionsByType,
-    getTotalByType,
-    useCategoryTotal
+    deleteTransaction
   }
+}
+
+export type {
+  CreateTransactionInput,
+  TransactionWithRelations,
+  UpdateTransactionInput,
+  UseTransactionsOptions
 }

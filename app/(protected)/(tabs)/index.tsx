@@ -1,63 +1,91 @@
-import OperationListItem, {
-  Operation
-} from '@/components/accounts/OperationListItem'
+import OperationListItem from '@/components/accounts/OperationListItem'
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  mockDebtOperations,
-  mockExpenses,
-  mockIncomes,
-  mockOtherTransactions
-} from '@/data/mockData'
+import { useTransactions } from '@/hooks/useTransactions'
 import { cn } from '@/lib/utils'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-type FilterType = 'all' | 'expense' | 'income' | 'debt' | 'other'
+type FilterType = 'all' | 'expense' | 'income' | 'transfer'
 
 export default function OperationsScreen() {
   const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
 
-  // Combine all operations with type information
-  const allOperations: Operation[] = [
-    ...mockExpenses.map(expense => ({
-      ...expense,
-      type: 'expense' as const
-    })),
-    ...mockIncomes.map(income => ({
-      ...income,
-      type: 'income' as const
-    })),
-    ...mockDebtOperations.map(debt => ({
-      ...debt,
-      type: 'debt' as const
-    })),
-    ...mockOtherTransactions.map(transaction => ({
-      ...transaction,
-      type: 'other' as const
-    }))
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  // Use the new transactions hook
+  const {
+    operations,
+    expenses,
+    incomes,
+    transfers,
+    todaysOperations,
+    isLoading,
+    error
+  } = useTransactions()
 
   // Filter operations based on active filter
-  const filteredOperations =
-    activeFilter === 'all'
-      ? allOperations
-      : allOperations.filter(operation => operation.type === activeFilter)
+  const filteredOperations = useMemo(() => {
+    switch (activeFilter) {
+      case 'expense':
+        return expenses
+      case 'income':
+        return incomes
+      case 'transfer':
+        return transfers
+      default:
+        return operations
+    }
+  }, [activeFilter, operations, expenses, incomes, transfers])
 
-  // Get today's operations
-  const today = '2025-03-01' // Current mock date
-  const todaysOperations = filteredOperations.filter(
-    operation => operation.date === today
-  )
-
+  // Calculate counts for filter buttons
   const filterButtons = [
-    { key: 'all', label: 'All', count: allOperations.length },
-    { key: 'expense', label: 'Expenses', count: mockExpenses.length },
-    { key: 'income', label: 'Income', count: mockIncomes.length },
-    { key: 'debt', label: 'Debts', count: mockDebtOperations.length },
-    { key: 'other', label: 'Other', count: mockOtherTransactions.length }
+    { key: 'all', label: 'All', count: operations.length },
+    { key: 'expense', label: 'Expenses', count: expenses.length },
+    { key: 'income', label: 'Income', count: incomes.length },
+    { key: 'transfer', label: 'Transfers', count: transfers.length }
   ]
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <View
+        className="flex-1 bg-background"
+        style={{
+          paddingTop: insets.top
+        }}
+      >
+        <View className="px-4 py-4">
+          <Text className="text-3xl font-bold text-foreground">Operations</Text>
+        </View>
+        <View className="flex-1 items-center justify-center px-4">
+          <Text className="text-center text-foreground">
+            Loading operations...
+          </Text>
+        </View>
+      </View>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <View
+        className="flex-1 bg-background"
+        style={{
+          paddingTop: insets.top
+        }}
+      >
+        <View className="px-4 py-4">
+          <Text className="text-3xl font-bold text-foreground">Operations</Text>
+        </View>
+        <View className="flex-1 items-center justify-center px-4">
+          <Text className="text-center text-destructive">
+            Error loading operations: {error.message}
+          </Text>
+        </View>
+      </View>
+    )
+  }
 
   return (
     <View
@@ -115,10 +143,7 @@ export default function OperationsScreen() {
               Today&apos;s Operations
             </Text>
             {todaysOperations.map(operation => (
-              <OperationListItem
-                key={`${operation.type}-${operation.id}`}
-                operation={operation}
-              />
+              <OperationListItem key={operation.id} operation={operation} />
             ))}
           </View>
         )}
@@ -132,15 +157,12 @@ export default function OperationsScreen() {
           </Text>
           {filteredOperations.length > 0 ? (
             filteredOperations.map(operation => (
-              <OperationListItem
-                key={`${operation.type}-${operation.id}`}
-                operation={operation}
-              />
+              <OperationListItem key={operation.id} operation={operation} />
             ))
           ) : (
             <Card>
-              <CardContent>
-                <Text className="text-center text-foreground">
+              <CardContent className="p-4">
+                <Text className="text-center text-muted-foreground">
                   No operations found for the selected filter
                 </Text>
               </CardContent>

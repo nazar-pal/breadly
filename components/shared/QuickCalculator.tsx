@@ -37,6 +37,7 @@ export default function QuickCalculator({
   const [selectedCategoryId, setSelectedCategoryId] =
     useState(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Hooks
   const { categories } = useCategories()
@@ -141,31 +142,30 @@ export default function QuickCalculator({
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const amount = parseFloat(currentInput)
     if (amount > 0 && selectedAccount && selectedCategory) {
-      // Create the transaction
-      createTransaction.mutate(
-        {
+      setIsSubmitting(true)
+      try {
+        // Create the transaction
+        await createTransaction({
           type,
           accountId: selectedAccount.id,
           categoryId: selectedCategory.id,
-          amount: amount.toString(),
+          amount: amount,
           currencyId: selectedAccount.currencyId,
-          txDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+          txDate: new Date(), // Today's date
           notes: comment || undefined
-        },
-        {
-          onSuccess: () => {
-            onSubmit()
-            onClose()
-          },
-          onError: error => {
-            console.error('Failed to create transaction:', error)
-            // TODO: Show error toast/alert
-          }
-        }
-      )
+        })
+
+        onSubmit()
+        onClose()
+      } catch (error) {
+        console.error('Failed to create transaction:', error)
+        // Error is already handled in the hook with Alert.alert
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -342,13 +342,11 @@ export default function QuickCalculator({
           variant="default"
           size="lg"
           className="w-full"
-          disabled={
-            createTransaction.isPending || !selectedAccount || !selectedCategory
-          }
+          disabled={isSubmitting || !selectedAccount || !selectedCategory}
         >
           <Save size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
           <Text>
-            {createTransaction.isPending
+            {isSubmitting
               ? 'Saving...'
               : `Save ${type === 'expense' ? 'Expense' : 'Income'}`}
           </Text>

@@ -94,7 +94,7 @@ function GestureDetectorContainer({
 function CategoriesContent() {
   const insets = useSafeAreaInsets()
   const { categories, isLoading } = useCategories()
-  const { transactions } = useTransactions()
+  const { rawTransactions } = useTransactions()
   const categoryUI = useCategoryUI()
 
   // Calculate totals from actual transactions using the new TRPC procedure
@@ -122,10 +122,11 @@ function CategoriesContent() {
   // This works properly now thanks to cache invalidation when transactions change
   const categoriesWithAmounts = React.useMemo(() => {
     return currentCategories.map(category => {
-      const amount = transactions
-        .filter(transaction => transaction.categoryId === category.id)
+      const amount = rawTransactions
+        .filter((transaction: any) => transaction.categoryId === category.id)
         .reduce(
-          (total, transaction) => total + parseFloat(transaction.amount),
+          (total: number, transaction: any) =>
+            total + parseFloat(transaction.amount.toString()),
           0
         )
 
@@ -134,7 +135,7 @@ function CategoriesContent() {
         amount
       }
     })
-  }, [currentCategories, transactions])
+  }, [currentCategories, rawTransactions])
 
   const getCategoryIcon = (
     categoryName: string,
