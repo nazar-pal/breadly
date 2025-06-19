@@ -1,6 +1,5 @@
 import { wrapPowerSyncWithDrizzle } from '@powersync/drizzle-driver'
 import { PowerSyncDatabase } from '@powersync/react-native'
-import { Connector } from './connector'
 import { AppSchema, sqliteSchema } from './schema'
 
 export const powerSyncDb = new PowerSyncDatabase({
@@ -20,9 +19,3 @@ export const powerSyncDb = new PowerSyncDatabase({
 export const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
   schema: sqliteSchema
 })
-
-export const setupPowerSync = async () => {
-  // Uses the backend connector that will be created in the next section
-  const connector = new Connector()
-  await powerSyncDb.connect(connector)
-}

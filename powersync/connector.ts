@@ -10,14 +10,19 @@ import {
 export class Connector implements PowerSyncBackendConnector {
   async fetchCredentials() {
     const clerkInstance = getClerkInstance()
-    const authToken = await clerkInstance.session?.getToken({
-      template: 'powersync'
-    })
-    if (!authToken) throw new Error('No auth token found')
+    try {
+      const authToken = await clerkInstance.session?.getToken({
+        template: 'powersync'
+      })
+      if (!authToken) throw new Error('No auth token found for PowerSync')
 
-    return {
-      endpoint: env.EXPO_PUBLIC_POWERSYNC_WSS,
-      token: authToken
+      return {
+        endpoint: env.EXPO_PUBLIC_POWERSYNC_WSS,
+        token: authToken
+      }
+    } catch (err) {
+      console.error('Connector.fetchCredentials failed', err)
+      throw err
     }
   }
 
@@ -32,30 +37,33 @@ export class Connector implements PowerSyncBackendConnector {
       return
     }
 
-    for (const op of transaction.crud) {
-      // The data that needs to be changed in the remote db
-      const record = { ...op.opData, id: op.id }
+    let lastOp: { table: string; op: UpdateType } | null = null
+    try {
+      for (const op of transaction.crud) {
+        // The data that needs to be changed in the remote db
+        lastOp = { table: op.table, op: op.op }
 
-      // Type guard to ensure table is valid
-      const validTables = [
-        'categories',
-        'budgets',
-        'accounts',
-        'transactions',
-        'attachments',
-        'transactionAttachments',
-        'userPreferences'
-      ] as const
-      const tableName = op.table as (typeof validTables)[number]
+        const record = { ...op.opData, id: op.id }
 
-      if (!validTables.includes(tableName)) {
-        console.warn(
-          `⚠️ Connector.uploadData: Skipping unknown table: ${op.table}`
-        )
-        continue
-      }
+        // Type guard to ensure table is valid
+        const validTables = [
+          'categories',
+          'budgets',
+          'accounts',
+          'transactions',
+          'attachments',
+          'transactionAttachments',
+          'userPreferences'
+        ] as const
+        const tableName = op.table as (typeof validTables)[number]
 
-      try {
+        if (!validTables.includes(tableName)) {
+          console.warn(
+            `Connector.uploadData: Skipping unknown table: ${op.table}`
+          )
+          continue
+        }
+
         switch (op.op) {
           case UpdateType.PUT: {
             await trpcClient.sync.insertRecord.mutate({
@@ -81,17 +89,31 @@ export class Connector implements PowerSyncBackendConnector {
             })
             break
           }
+          default:
+            console.warn(
+              `Connector.uploadData: Unknown operation type: ${op.op}`
+            )
         }
-      } catch (error) {
-        console.error(
-          `Failed to sync operation ${op.op} for table ${op.table}:`,
-          error
-        )
-        throw error
       }
+      // Complete the transaction so PowerSync can proceed to the next.
+      await transaction.complete()
+      // If we get here, the transaction was successful.
+    } catch (error) {
+      console.error(
+        `Connector.uploadData error on op ${lastOp?.op} for table ${lastOp?.table}:`,
+        error
+      )
+      // Attempt to complete (discard) this transaction to avoid blocking the queue.
+      try {
+        await transaction.complete()
+      } catch (completeError) {
+        console.error(
+          'Failed to complete PowerSync transaction after error:',
+          completeError
+        )
+      }
+      // Rethrow to allow PowerSync to potentially retry later.
+      throw error
     }
-
-    // Completes the transaction and moves onto the next one
-    await transaction.complete()
   }
 }
