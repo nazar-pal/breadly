@@ -72,19 +72,19 @@ export const accounts = sqliteTable(
     type: text({ enum: ACCOUNT_TYPE }).notNull(), // Account classification ('saving' | 'payment' | 'debt')
     name: nameColumn(), // User-defined account name
     description: descriptionColumn(), // Optional user notes about the account
-    currencyId: isoCurrencyCodeColumn()
+    currencyId: isoCurrencyCodeColumn('currency_id')
       .references(() => currencies.code)
       .default('USD'), // Account base currency
     balance: monetaryAmountColumn().default(0), // Current balance (updated by triggers)
 
     // Type-specific fields for savings accounts
-    savingsTargetAmount: real(), // Target savings goal (savings only)
-    savingsTargetDate: integer({ mode: 'timestamp_ms' }), // Target date to reach savings goal (savings only)
+    savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
+    savingsTargetDate: integer('savings_target_date', { mode: 'timestamp_ms' }), // Target date to reach savings goal (savings only)
 
     // Type-specific fields for debt accounts
-    debtInitialAmount: real(), // Original debt amount (debt only)
-    debtIsOwedToMe: integer({ mode: 'boolean' }), // True if someone owes you, false if you owe someone (debt only)
-    debtDueDate: integer({ mode: 'timestamp_ms' }), // Due date for debt payment (debt only)
+    debtInitialAmount: real('debt_initial_amount'), // Original debt amount (debt only)
+    debtIsOwedToMe: integer('debt_is_owed_to_me', { mode: 'boolean' }), // True if someone owes you, false if you owe someone (debt only)
+    debtDueDate: integer('debt_due_date', { mode: 'timestamp_ms' }), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
     createdAt: createdAtColumn()

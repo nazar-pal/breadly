@@ -11,7 +11,7 @@ export const powerSyncDb = new PowerSyncDatabase({
     // Filename for the SQLite database — it's important to only instantiate one instance per file.
     // For other database options see,
     // https://powersync-ja.github.io/powersync-js/web-sdk/globals#sqlopenoptions
-    dbFilename: 'powersync_v9.db'
+    dbFilename: 'powersync_v10.db'
   }
 })
 

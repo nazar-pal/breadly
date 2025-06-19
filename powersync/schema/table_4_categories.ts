@@ -64,7 +64,7 @@ export const categories = sqliteTable(
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: text({ enum: CATEGORY_TYPE }).notNull(), // Income or expense category classification
-    parentId: text(), // Self-reference for hierarchy (null = root category)
+    parentId: text('parent_id'), // Self-reference for hierarchy (null = root category)
     name: nameColumn(), // Category display name
     description: descriptionColumn(), // Optional user notes about the category
     icon: text({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI

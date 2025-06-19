@@ -65,10 +65,10 @@ export const attachments = sqliteTable(
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: text({ enum: ATTACHMENT_TYPE }).notNull(), // attachment type ('receipt' | 'voice')
-    bucketPath: text().notNull(), // Cloud storage path (S3, etc.)
+    bucketPath: text('bucket_path').notNull(), // Cloud storage path (S3, etc.)
     mime: text({ length: 150 }).notNull(), // File MIME type
-    fileName: text({ length: 500 }).notNull(), // Original filename
-    fileSize: integer().notNull(), // File size in bytes (for storage management)
+    fileName: text('file_name', { length: 500 }).notNull(), // Original filename
+    fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
     createdAt: createdAtColumn() // Upload timestamp
   },

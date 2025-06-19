@@ -41,8 +41,10 @@ export const userPreferences = sqliteTable(
   'user_preferences',
   {
     userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
-    defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
-    firstWeekday: real().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
+    defaultCurrency: isoCurrencyCodeColumn('default_currency').references(
+      () => currencies.code
+    ), // Default currency for new accounts/transactions
+    firstWeekday: real('first_weekday').default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
     locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
   },
   table => [

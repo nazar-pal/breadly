@@ -43,10 +43,10 @@ export const transactionAttachments = sqliteTable(
   {
     id: uuidPrimaryKey(), // UUID primary key for PowerSync compatibility
     userId: clerkUserIdColumn(), // Denormalized user_id for PowerSync filtering
-    transactionId: text()
+    transactionId: text('transaction_id')
       .references(() => transactions.id, { onDelete: 'cascade' })
       .notNull(), // Transaction that references the attachment
-    attachmentId: text()
+    attachmentId: text('attachment_id')
       .references(() => attachments.id, { onDelete: 'cascade' })
       .notNull(), // Attachment being referenced
     createdAt: createdAtColumn() // Link creation timestamp

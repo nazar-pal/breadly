@@ -75,18 +75,18 @@ export const transactions = sqliteTable(
     type: text({ enum: TX_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
 
     // Account references
-    accountId: text()
+    accountId: text('account_id')
       .references(() => accounts.id, { onDelete: 'cascade' })
       .notNull(), // Primary account (source for expense/transfer, destination for income)
-    counterAccountId: text().references(() => accounts.id), // Transfer destination account (transfers only)
+    counterAccountId: text('counter_account_id').references(() => accounts.id), // Transfer destination account (transfers only)
 
     // Classification and details
-    categoryId: text().references(() => categories.id), // Optional transaction category
+    categoryId: text('category_id').references(() => categories.id), // Optional transaction category
     amount: monetaryAmountColumn(), // Transaction amount (always positive)
-    currencyId: isoCurrencyCodeColumn()
+    currencyId: isoCurrencyCodeColumn('currency_id')
       .references(() => currencies.code)
       .notNull(), // Transaction currency (must match account currency)
-    txDate: integer({ mode: 'timestamp_ms' }).notNull(), // Transaction date (when the transaction occurred)
+    txDate: integer('tx_date', { mode: 'timestamp_ms' }).notNull(), // Transaction date (when the transaction occurred)
     notes: text({ length: 1000 }), // Optional user notes/description
     createdAt: createdAtColumn() // Record creation timestamp
   },

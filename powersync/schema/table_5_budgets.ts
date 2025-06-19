@@ -70,12 +70,12 @@ export const budgets = sqliteTable(
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    categoryId: text()
+    categoryId: text('category_id')
       .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(), // Category this budget applies to
     amount: monetaryAmountColumn(), // Budget limit amount
     period: text({ enum: BUDGET_PERIOD }).default('monthly').notNull(), // Budget time period
-    startDate: integer({ mode: 'timestamp_ms' }).notNull() // When this budget period starts
+    startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull() // When this budget period starts
   },
   table => [
     // Performance indexes for common query patterns

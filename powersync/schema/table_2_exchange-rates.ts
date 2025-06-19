@@ -47,14 +47,14 @@ export const exchangeRates = sqliteTable(
   'exchange_rates',
   {
     id: uuidPrimaryKey(),
-    baseCurrency: isoCurrencyCodeColumn()
+    baseCurrency: isoCurrencyCodeColumn('base_currency')
       .references(() => currencies.code)
       .notNull(), // Base currency (e.g., USD in USD/EUR)
-    quoteCurrency: isoCurrencyCodeColumn()
+    quoteCurrency: isoCurrencyCodeColumn('quote_currency')
       .references(() => currencies.code)
       .notNull(), // Quote currency (e.g., EUR in USD/EUR)
     rate: real().notNull(), // Exchange rate (base to quote conversion factor)
-    rateDate: integer({ mode: 'timestamp_ms' }).notNull() // Date this rate was valid (for historical tracking)
+    rateDate: integer('rate_date', { mode: 'timestamp_ms' }).notNull() // Date this rate was valid (for historical tracking)
   },
   table => [
     // One rate per currency pair per date
