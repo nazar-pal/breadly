@@ -5,7 +5,6 @@ import { accounts } from '@/server/db/schema/table_6_accounts'
 import { transactions } from '@/server/db/schema/table_7_transactions'
 import { attachments } from '@/server/db/schema/table_8_attachments'
 import { transactionAttachments } from '@/server/db/schema/table_9_transaction-attachments'
-import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 
@@ -27,70 +26,63 @@ const operationSchema = z.object({
 })
 
 /**
+ * Convert snake_case string to camelCase
+ */
+function snakeToCamel(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+}
+
+/**
  * Transform PowerSync data to PostgreSQL-compatible format
  * Handles:
- * 1. Timestamp conversion (Unix milliseconds → Date objects)
- * 2. ID format conversion (custom strings → UUIDs)
- * 3. User ID mapping (test_user_id → actual Clerk user ID)
- * 4. Enum value mapping (text → PostgreSQL enums)
+ * 1. Universal field name mapping (snake_case → camelCase)
+ * 2. Timestamp conversion (Unix milliseconds → Date objects)
+ * 3. Enum value mapping (text → PostgreSQL enums)
  */
-function transformDataForPostgres(
-  data: any,
-  table: string,
-  currentUserId: string
-): any {
+function transformDataForPostgres(data: any, table: string): any {
   if (!data || typeof data !== 'object') return data
 
-  const transformed = { ...data }
+  const transformed: any = {}
 
-  // 1. Convert timestamps from Unix milliseconds to Date objects
+  // Define timestamp fields that need conversion from Unix milliseconds to Date objects
   const timestampFields: Record<string, string[]> = {
-    categories: ['createdAt'],
-    budgets: ['createdAt'],
-    accounts: ['createdAt'],
-    transactions: ['createdAt', 'date'],
-    attachments: ['createdAt'],
-    transactionAttachments: ['createdAt'],
-    userPreferences: ['createdAt']
+    categories: ['created_at'],
+    budgets: ['created_at'],
+    accounts: ['created_at'],
+    transactions: ['created_at', 'tx_date'],
+    attachments: ['created_at'],
+    transactionAttachments: ['created_at'],
+    userPreferences: ['created_at']
   }
 
-  const fields = timestampFields[table] || []
-  for (const field of fields) {
-    if (field in transformed && typeof transformed[field] === 'number') {
-      transformed[field] = new Date(transformed[field])
-    }
-  }
+  const timestampFieldsForTable = timestampFields[table] || []
 
-  // 2. Handle ID format conversions and user ID mapping
-  if (table === 'categories') {
-    // Replace custom PowerSync ID with proper UUID
-    if (
-      transformed.id &&
-      typeof transformed.id === 'string' &&
-      transformed.id.startsWith('cat_')
-    ) {
-      const newId = randomUUID()
-      transformed.id = newId
-    }
+  // Universal field transformation: snake_case → camelCase + timestamp conversion
+  for (const [key, value] of Object.entries(data)) {
+    const camelKey = snakeToCamel(key)
 
-    // Replace test_user_id with actual Clerk user ID
-    if (transformed.userId === 'test_user_id') {
-      transformed.userId = currentUserId
-    }
-
-    // Map type values for PostgreSQL enum
-    if (transformed.type) {
-      // PowerSync uses 'expense'/'income' strings, PostgreSQL uses categoryType enum
-      // These should be the same, but let's ensure compatibility
-      const validTypes = ['expense', 'income']
-      if (!validTypes.includes(transformed.type)) {
-        transformed.type = 'expense'
-      }
+    // Convert timestamp fields from Unix milliseconds to Date objects
+    if (timestampFieldsForTable.includes(key) && typeof value === 'number') {
+      transformed[camelKey] = new Date(value)
+    } else {
+      transformed[camelKey] = value
     }
   }
 
-  // Handle other tables similarly if needed
-  // Add more table-specific transformations here
+  // Table-specific enum validations
+  if (table === 'categories' && transformed.type) {
+    const validTypes = ['expense', 'income']
+    if (!validTypes.includes(transformed.type)) {
+      transformed.type = 'expense'
+    }
+  }
+
+  if (table === 'transactions' && transformed.type) {
+    const validTypes = ['expense', 'income', 'transfer']
+    if (!validTypes.includes(transformed.type)) {
+      transformed.type = 'expense'
+    }
+  }
 
   return transformed
 }
@@ -103,11 +95,7 @@ export const syncRouter = createTRPCRouter({
       const { table, opData } = input
 
       // Transform data from PowerSync format to PostgreSQL format
-      const transformedData = transformDataForPostgres(
-        opData,
-        table,
-        session.userId
-      )
+      const transformedData = transformDataForPostgres(opData, table)
 
       try {
         switch (table) {
@@ -157,11 +145,7 @@ export const syncRouter = createTRPCRouter({
       }
 
       // Transform data from PowerSync format to PostgreSQL format
-      const transformedData = transformDataForPostgres(
-        opData,
-        table,
-        session.userId
-      )
+      const transformedData = transformDataForPostgres(opData, table)
 
       try {
         switch (table) {
