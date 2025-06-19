@@ -42,7 +42,7 @@ const incomeCategoryIcons: { [key: string]: LucideIcon } = {
   Other: PiggyBank
 }
 
-export function CategoryIcon({
+export function CategoryCardIcon({
   name,
   type
 }: {

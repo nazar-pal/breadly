@@ -59,13 +59,11 @@ interface CategoryFormData {
   selectedIcon: keyof typeof availableIcons
 }
 
-interface CategoryEditModalProps {
+interface Props {
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function CategoryEditModal({
-  categoryUI
-}: CategoryEditModalProps) {
+export function CategoryEditModal({ categoryUI }: Props) {
   const insets = useSafeAreaInsets()
   const { updateCategory } = useCategories()
   const {

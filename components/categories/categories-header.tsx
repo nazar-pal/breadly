@@ -2,19 +2,19 @@ import { useCategoryUI } from '@/hooks/useCategoryUI'
 import { useDateRange } from '@/hooks/useDateRange'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import DateRangeModal from './DateRangeModal'
+import { DateRangeModal } from './modal-transactions-date-range'
 
-interface FinancialHeaderProps {
+interface Props {
   totalExpenses: number
   totalIncome: number
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function FinancialHeader({
+export function CategoriesHeader({
   totalExpenses,
   totalIncome,
   categoryUI
-}: FinancialHeaderProps) {
+}: Props) {
   const { activeTab, setActiveTab } = categoryUI
   const {
     mode,

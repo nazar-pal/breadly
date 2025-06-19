@@ -59,13 +59,11 @@ interface CategoryFormData {
   selectedIcon: keyof typeof availableIcons
 }
 
-interface AddCategoryModalProps {
+interface Props {
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function AddCategoryModal({
-  categoryUI
-}: AddCategoryModalProps) {
+export function AddCategoryModal({ categoryUI }: Props) {
   const insets = useSafeAreaInsets()
   const { createCategory } = useCategories()
   const { addModalVisible, currentType, handleCloseAddModal } = categoryUI

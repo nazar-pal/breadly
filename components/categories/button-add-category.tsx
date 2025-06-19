@@ -2,15 +2,12 @@ import { Plus } from '@/lib/icons'
 import React from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 
-interface AddCategoryButtonProps {
+interface Props {
   onPress: () => void
   label?: string
 }
 
-export default function AddCategoryButton({
-  onPress,
-  label = 'Add Category'
-}: AddCategoryButtonProps) {
+export function ButtonAddCategory({ onPress, label = 'Add Category' }: Props) {
   const getCardStyle = () => {
     return {
       backgroundColor: '#F8F9FA', // colors.surfaceSecondary

@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
+import { CategoryCardIcon } from './category-card-icon'
 
-import { CategoryIcon } from './category-card-icon'
-
-interface CategoryCardProps {
+interface Props {
   id: string
   name: string
   amount: number
@@ -19,7 +18,7 @@ export function CategoryCard({
   type,
   onPress,
   onLongPress
-}: CategoryCardProps) {
+}: Props) {
   const [isPressed, setIsPressed] = useState(false)
 
   const handleLongPress = () => {
@@ -62,7 +61,7 @@ export function CategoryCard({
           type === 'income' ? 'bg-income/10' : 'bg-muted'
         }`}
       >
-        <CategoryIcon name={name} type={type} />
+        <CategoryCardIcon name={name} type={type} />
       </View>
       <View className="ml-3 flex-1">
         <Text

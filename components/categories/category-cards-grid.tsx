@@ -2,14 +2,14 @@ import { Category } from '@/hooks/useCategories'
 import { useCategoryUI } from '@/hooks/useCategoryUI'
 import React from 'react'
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
-import AddCategoryButton from './AddCategoryButton'
+import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 
 interface CategoryWithAmount extends Category {
   amount: number
 }
 
-interface CategoryGridProps {
+interface Props {
   categories: CategoryWithAmount[]
   isLoading: boolean
   categoryUI: ReturnType<typeof useCategoryUI>
@@ -19,7 +19,7 @@ export function CategoryCardsGrid({
   categories,
   isLoading,
   categoryUI
-}: CategoryGridProps) {
+}: Props) {
   const { activeTab, handleCategoryPress, handleCategoryLongPress } = categoryUI
 
   if (isLoading) {
@@ -55,7 +55,7 @@ export function CategoryCardsGrid({
         )
       })}
 
-      <AddCategoryButton
+      <ButtonAddCategory
         onPress={categoryUI.handleAddCategory}
         label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
       />

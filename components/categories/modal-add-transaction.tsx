@@ -9,15 +9,15 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import QuickCalculator from './QuickCalculator'
+import QuickCalculator from '../shared/QuickCalculator'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
-interface CalculatorModalProps {
+interface Props {
   categoryUI: ReturnType<typeof useCategoryUI>
 }
 
-export default function CalculatorModal({ categoryUI }: CalculatorModalProps) {
+export function CalculatorModal({ categoryUI }: Props) {
   const insets = useSafeAreaInsets()
   const { modalVisible, currentType, selectedCategory, handleCloseModal } =
     categoryUI
