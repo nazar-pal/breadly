@@ -43,7 +43,7 @@ import {
  * - expense: Money going out (groceries, rent, utilities, entertainment)
  * - income: Money coming in (salary, freelance, investments, gifts)
  */
-const CATEGORY_TYPE = ['expense', 'income'] as const
+export const CATEGORY_TYPE = ['expense', 'income'] as const
 
 /**
  * Hierarchical transaction categories (income/expense classification)

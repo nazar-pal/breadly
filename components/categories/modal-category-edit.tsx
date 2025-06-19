@@ -1,5 +1,3 @@
-import { useCategories } from '@/hooks/useCategories'
-import { useCategoryUI } from '@/hooks/useCategoryUI'
 import {
   Briefcase,
   Building,
@@ -18,7 +16,8 @@ import {
   UtensilsCrossed,
   X
 } from '@/lib/icons'
-import React, { useEffect } from 'react'
+import { updateCategory } from '@/powersync/data/mutations'
+import React, { use, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
@@ -30,6 +29,7 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { CategoriesContext } from './categories-context'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -59,13 +59,9 @@ interface CategoryFormData {
   selectedIcon: keyof typeof availableIcons
 }
 
-interface Props {
-  categoryUI: ReturnType<typeof useCategoryUI>
-}
-
-export function CategoryEditModal({ categoryUI }: Props) {
+export function CategoryEditModal() {
+  const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
-  const { updateCategory } = useCategories()
   const {
     editModalVisible,
     categoryToEdit,
@@ -113,11 +109,14 @@ export function CategoryEditModal({ categoryUI }: Props) {
       return
     }
 
-    updateCategory.mutate({
+    updateCategory({
       id: categoryToEdit.id,
-      name: data.name.trim(),
-      description: data.description.trim(),
-      icon: data.selectedIcon.toLowerCase()
+      userId,
+      data: {
+        name: data.name.trim(),
+        description: data.description.trim(),
+        icon: data.selectedIcon.toLowerCase()
+      }
     })
 
     handleCloseEditModal()
@@ -261,12 +260,9 @@ export function CategoryEditModal({ categoryUI }: Props) {
               <Pressable
                 className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
                 onPress={handleSubmit(onSubmit)}
-                disabled={updateCategory.isPending}
               >
                 <Check size={20} color="#FFFFFF" />
-                <Text className="text-base font-semibold">
-                  {updateCategory.isPending ? 'Saving...' : 'Save Changes'}
-                </Text>
+                <Text className="text-base font-semibold">Save Changes</Text>
               </Pressable>
             </View>
           </View>

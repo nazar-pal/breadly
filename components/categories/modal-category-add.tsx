@@ -1,5 +1,3 @@
-import { useCategories } from '@/hooks/useCategories'
-import { useCategoryUI } from '@/hooks/useCategoryUI'
 import {
   Briefcase,
   Building,
@@ -18,7 +16,8 @@ import {
   UtensilsCrossed,
   X
 } from '@/lib/icons'
-import React from 'react'
+import { createCategory } from '@/powersync/data/mutations'
+import React, { use } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
@@ -30,6 +29,7 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { CategoriesContext } from './categories-context'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -59,13 +59,9 @@ interface CategoryFormData {
   selectedIcon: keyof typeof availableIcons
 }
 
-interface Props {
-  categoryUI: ReturnType<typeof useCategoryUI>
-}
-
-export function AddCategoryModal({ categoryUI }: Props) {
+export function AddCategoryModal() {
+  const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
-  const { createCategory } = useCategories()
   const { addModalVisible, currentType, handleCloseAddModal } = categoryUI
 
   const { control, handleSubmit, reset, watch, setValue } =
@@ -84,11 +80,14 @@ export function AddCategoryModal({ categoryUI }: Props) {
       return
     }
 
-    createCategory.mutate({
-      name: data.name.trim(),
-      description: data.description.trim() || '',
-      icon: data.selectedIcon.toLowerCase(),
-      type: currentType
+    createCategory({
+      userId,
+      data: {
+        name: data.name.trim(),
+        description: data.description.trim() || '',
+        icon: data.selectedIcon.toLowerCase(),
+        type: currentType
+      }
     })
 
     reset()
@@ -231,12 +230,9 @@ export function AddCategoryModal({ categoryUI }: Props) {
               <Pressable
                 className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
                 onPress={handleSubmit(onSubmit)}
-                disabled={createCategory.isPending}
               >
                 <Check size={20} color="#FFFFFF" />
-                <Text className="text-base font-semibold">
-                  {createCategory.isPending ? 'Creating...' : 'Create Category'}
-                </Text>
+                <Text className="text-base font-semibold">Create Category</Text>
               </Pressable>
             </View>
           </View>

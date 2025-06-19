@@ -1,20 +1,12 @@
-import { useCategoryUI } from '@/hooks/useCategoryUI'
 import { useDateRange } from '@/hooks/useDateRange'
-import React, { useState } from 'react'
+import { useSumTransactions } from '@/powersync/data/queries'
+import React, { use, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
+import { CategoriesContext } from './categories-context'
 import { DateRangeModal } from './modal-transactions-date-range'
 
-interface Props {
-  totalExpenses: number
-  totalIncome: number
-  categoryUI: ReturnType<typeof useCategoryUI>
-}
-
-export function CategoriesHeader({
-  totalExpenses,
-  totalIncome,
-  categoryUI
-}: Props) {
+export function CategoriesHeader() {
+  const { userId, categoryUI } = use(CategoriesContext)
   const { activeTab, setActiveTab } = categoryUI
   const {
     mode,
@@ -35,6 +27,18 @@ export function CategoriesHeader({
   const handleDateRangeModalClose = () => {
     setDateRangeModalVisible(false)
   }
+
+  const totalExpensesResult = useSumTransactions({
+    userId,
+    type: 'expense'
+  })
+  const totalIncomeResult = useSumTransactions({
+    userId,
+    type: 'income'
+  })
+
+  const totalExpenses = Number(totalExpensesResult.data?.[0]?.totalAmount || 0)
+  const totalIncome = Number(totalIncomeResult.data?.[0]?.totalAmount || 0)
 
   const netBalance = totalIncome - totalExpenses
 

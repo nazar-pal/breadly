@@ -1,5 +1,4 @@
-import { useCategoryUI } from '@/hooks/useCategoryUI'
-import React from 'react'
+import React, { use } from 'react'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -10,14 +9,12 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import QuickCalculator from '../shared/QuickCalculator'
+import { CategoriesContext } from './categories-context'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
-interface Props {
-  categoryUI: ReturnType<typeof useCategoryUI>
-}
-
-export function CalculatorModal({ categoryUI }: Props) {
+export function CalculatorModal() {
+  const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
   const { modalVisible, currentType, selectedCategory, handleCloseModal } =
     categoryUI
@@ -60,6 +57,7 @@ export function CalculatorModal({ categoryUI }: Props) {
           />
           {selectedCategory && (
             <QuickCalculator
+              userId={userId}
               type={currentType}
               categoryId={selectedCategory}
               onSubmit={handleSubmit}

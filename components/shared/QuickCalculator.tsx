@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useAccounts } from '@/hooks/useAccounts'
-import { useCategories } from '@/hooks/useCategories'
 import { useTransactions } from '@/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
+import { useGetCategories } from '@/powersync/data/queries'
 import React, { useState } from 'react'
 import {
   Modal,
@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 
 interface QuickCalculatorProps {
+  userId: string
   type: 'expense' | 'income'
   categoryId: string
   onSubmit: () => void
@@ -22,6 +23,7 @@ interface QuickCalculatorProps {
 }
 
 export default function QuickCalculator({
+  userId,
   type,
   categoryId: initialCategoryId,
   onSubmit,
@@ -40,7 +42,10 @@ export default function QuickCalculator({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Hooks
-  const { categories } = useCategories()
+  const { data: categories } = useGetCategories({
+    userId,
+    type: 'expense'
+  })
   const { accounts, paymentAccounts } = useAccounts()
   const { createTransaction } = useTransactions()
 

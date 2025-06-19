@@ -1,4 +1,5 @@
 import { CategoriesContent } from '@/components/categories/categories-content'
+import { CategoriesContextProvider } from '@/components/categories/categories-context'
 
 import React from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -47,7 +48,9 @@ export default function CategoriesScreen() {
       navigatePrevious={() => console.log('Navigate previous')}
       navigateNext={() => console.log('Navigate next')}
     >
-      <CategoriesContent />
+      <CategoriesContextProvider>
+        <CategoriesContent />
+      </CategoriesContextProvider>
     </GestureDetectorContainer>
   )
 }
