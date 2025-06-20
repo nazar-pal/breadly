@@ -1,10 +1,11 @@
-import { Account } from '@/components/accounts/lib/useAccounts'
 import { Progress } from '@/components/ui/progress'
+import { Text } from '@/components/ui/text'
 import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { Account } from '@/powersync/schema/table_6_accounts'
 import { useRouter } from 'expo-router'
 import React from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 interface AccountCardProps {
   account: Account

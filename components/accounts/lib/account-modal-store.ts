@@ -1,5 +1,5 @@
+import { Account } from '@/powersync/schema/table_6_accounts'
 import { create } from 'zustand'
-import { Account } from './useAccounts'
 
 type AccountType = 'saving' | 'payment' | 'debt'
 

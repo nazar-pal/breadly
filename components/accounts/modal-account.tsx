@@ -1,4 +1,4 @@
-import { useAccountModalStore } from '@/components/accounts/lib/accountModalStore'
+import { useAccountModalStore } from '@/components/accounts/lib/account-modal-store'
 import React from 'react'
 import UnifiedAccountModal from './UnifiedAccountModal'
 

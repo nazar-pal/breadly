@@ -1,6 +1,7 @@
-import type { Account } from '@/components/accounts/lib/useAccounts'
+import { Text } from '@/components/ui/text'
+import { Account } from '@/powersync/schema/table_6_accounts'
 import React from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import AccountCard from './AccountCard'
 
 interface AccountsListProps {

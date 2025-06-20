@@ -1,15 +1,16 @@
-import { Account } from '@/components/accounts/lib/useAccounts'
+import { Text } from '@/components/ui/text'
+import { Account } from '@/powersync/schema/table_6_accounts'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import AccountCard from './AccountCard'
 import AddAccountButton from './AddAccountButton'
 
 interface AccountSectionProps {
   title: string
   accounts: Account[]
-  accountType: 'payment' | 'saving' | 'debt'
+  accountType: 'saving' | 'payment' | 'debt'
   onEditAccount: (account: Account) => void
-  onAddAccount: (type: 'payment' | 'saving' | 'debt') => void
+  onAddAccount: (type: 'saving' | 'payment' | 'debt') => void
 }
 
 const ADD_BUTTON_LABELS: Record<string, string> = {

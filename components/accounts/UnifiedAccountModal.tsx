@@ -1,4 +1,6 @@
-import { Account, useAccounts } from '@/components/accounts/lib/useAccounts'
+import { createAccount, updateAccount } from '@/powersync/data/mutations'
+import { Account } from '@/powersync/schema/table_6_accounts'
+import { useUser } from '@clerk/clerk-expo'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
 import { DebtFields, PaymentFields, SavingFields } from './account-type-fields'
@@ -110,10 +112,10 @@ export default function UnifiedAccountModal({
   accountType,
   onClose
 }: UnifiedAccountModalProps) {
-  const { createAccount, updateAccount } = useAccounts()
+  const { user } = useUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const currentType = account?.type || accountType
+  const currentType: AccountType = (account?.type as AccountType) || accountType
   const config = accountTypeConfigs[currentType]
   const isEditing = !!account
 
@@ -168,6 +170,8 @@ export default function UnifiedAccountModal({
   }, [account, reset, config])
 
   const onSubmit = async (data: UnifiedAccountFormData) => {
+    if (!user?.id) return
+
     setIsSubmitting(true)
     try {
       const baseData = {
@@ -182,13 +186,17 @@ export default function UnifiedAccountModal({
       if (account) {
         await updateAccount({
           id: account.id,
-          ...finalData
+          userId: account.userId,
+          data: finalData
         })
       } else {
         await createAccount({
-          ...finalData,
-          type: currentType,
-          currencyId: 'USD'
+          userId: user.id,
+          data: {
+            ...finalData,
+            type: currentType,
+            currencyId: 'USD'
+          }
         })
       }
 

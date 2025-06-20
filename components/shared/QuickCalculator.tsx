@@ -1,9 +1,8 @@
-import { useAccounts } from '@/components/accounts/lib/useAccounts'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useTransactions } from '@/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
-import { useGetCategories } from '@/powersync/data/queries'
+import { useGetAccounts, useGetCategories } from '@/powersync/data/queries'
 import React, { useState } from 'react'
 import {
   Modal,
@@ -42,15 +41,19 @@ export default function QuickCalculator({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Hooks
-  const { data: categories } = useGetCategories({
+  const { data: categories = [] } = useGetCategories({
     userId,
     type: 'expense'
   })
-  const { accounts, paymentAccounts } = useAccounts()
+  const { data: accounts = [] } = useGetAccounts({
+    userId,
+    accountType: 'payment'
+  })
   const { createTransaction } = useTransactions()
 
-  // Filter categories by type
+  // Filter categories by type and get payment accounts
   const availableCategories = categories.filter(cat => cat.type === type)
+  const paymentAccounts = accounts // These are already payment accounts from the query
 
   // Find selected category and account
   const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
@@ -444,7 +447,7 @@ export default function QuickCalculator({
                       {account.name}
                     </Text>
                     <Text className="text-sm text-muted-foreground">
-                      ${account.balance.toFixed(2)}
+                      ${account.balance?.toFixed(2) ?? '0.00'}
                     </Text>
                   </View>
                 </Pressable>

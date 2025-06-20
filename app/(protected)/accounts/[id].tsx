@@ -1,8 +1,8 @@
 import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
-import { useAccounts } from '@/components/accounts/lib/useAccounts'
-import { useAccountsUI } from '@/components/accounts/lib/useAccountsUI'
+import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
+import { TEMP_USER_ID } from '@/lib/constants'
 import {
   CreditCard,
   DollarSign,
@@ -14,6 +14,9 @@ import {
   Wallet
 } from '@/lib/icons'
 import { cn } from '@/lib/utils'
+import { deleteAccount } from '@/powersync/data/mutations'
+import { useGetAccount } from '@/powersync/data/queries'
+import { useAuth } from '@clerk/clerk-expo'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React from 'react'
 import { Alert, Pressable, ScrollView, View } from 'react-native'
@@ -312,16 +315,20 @@ export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { accounts, isLoading, deleteAccount } = useAccounts()
   const { handleEditAccount } = useAccountsUI()
 
-  const account = accounts.find(acc => acc.id === id)
+  const { userId, isLoaded } = useAuth()
+  const { data: accounts, isLoading } = useGetAccount({
+    userId: userId || TEMP_USER_ID,
+    accountId: id
+  })
+  const account = accounts?.[0]
 
   // For now, we'll use empty array for operations until transactions are implemented
   const accountOperations: any[] = []
   // hasTransactions variable removed as it's not currently used
 
-  if (isLoading) {
+  if (isLoading || !isLoaded) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <Text className="text-lg text-muted-foreground">Loading...</Text>
@@ -375,7 +382,10 @@ export default function AccountDetailsScreen() {
 
   const handleDeleteAccount = async () => {
     try {
-      await deleteAccount(account.id)
+      await deleteAccount({
+        id: account.id,
+        userId: userId || TEMP_USER_ID
+      })
       router.back()
     } catch (error) {
       // Error is already handled in the hook with Alert.alert

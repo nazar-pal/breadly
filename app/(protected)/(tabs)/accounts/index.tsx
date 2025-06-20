@@ -1,16 +1,22 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import { useAccounts } from '@/components/accounts/lib/useAccounts'
-import { useAccountsUI } from '@/components/accounts/lib/useAccountsUI'
+import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
+import { TEMP_USER_ID } from '@/lib/constants'
+import { useGetAccounts } from '@/powersync/data/queries'
+import { useAuth } from '@clerk/clerk-expo'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function PaymentsScreen() {
   const insets = useSafeAreaInsets()
-  const { paymentAccounts, isLoading } = useAccounts()
+  const { userId, isLoaded } = useAuth()
+  const { data: paymentAccounts, isLoading } = useGetAccounts({
+    userId: userId || TEMP_USER_ID,
+    accountType: 'payment'
+  })
   const { handleEditAccount, handleAddAccount } = useAccountsUI()
 
-  if (isLoading) {
+  if (isLoading || !isLoaded) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />

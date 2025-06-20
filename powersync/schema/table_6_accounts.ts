@@ -14,6 +14,7 @@ Key Features:
 ================================================================================
 */
 
+import { sql } from 'drizzle-orm'
 import {
   check,
   index,
@@ -23,7 +24,6 @@ import {
   text
 } from 'drizzle-orm/sqlite-core'
 
-import { sql } from 'drizzle-orm'
 import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
@@ -121,3 +121,5 @@ export const accounts = sqliteTable(
     ) // Payment accounts cannot have type-specific fields
   ]
 )
+
+export type Account = typeof accounts.$inferSelect
