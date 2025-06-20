@@ -1,8 +1,8 @@
 import { Account } from '@/hooks/useAccounts'
 import React from 'react'
-import DebtAccountModal from './DebtAccountModal'
-import PaymentAccountModal from './PaymentAccountModal'
-import SavingAccountModal from './SavingAccountModal'
+import PaymentAccountModal from './moda-account-payment'
+import DebtAccountModal from './modal-account-dept'
+import SavingAccountModal from './modal-account-saving'
 
 interface AccountModalProps {
   visible: boolean

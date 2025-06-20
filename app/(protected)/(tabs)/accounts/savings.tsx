@@ -1,5 +1,5 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import SavingAccountModal from '@/components/accounts/SavingAccountModal'
+import SavingAccountModal from '@/components/accounts/modal-account-saving'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useAccountsUI } from '@/hooks/useAccountsUI'
 import React from 'react'
