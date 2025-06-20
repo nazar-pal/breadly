@@ -1,6 +1,6 @@
+import { useAccounts } from '@/components/accounts/lib/useAccounts'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useAccounts } from '@/hooks/useAccounts'
 import { useTransactions } from '@/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
 import { useGetCategories } from '@/powersync/data/queries'

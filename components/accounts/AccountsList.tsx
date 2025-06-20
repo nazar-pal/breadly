@@ -1,4 +1,4 @@
-import type { Account } from '@/hooks/useAccounts'
+import type { Account } from '@/components/accounts/lib/useAccounts'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import AccountCard from './AccountCard'

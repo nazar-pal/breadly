@@ -1,4 +1,4 @@
-import { Account } from '@/hooks/useAccounts'
+import { Account } from '@/components/accounts/lib/useAccounts'
 import React from 'react'
 import { Text, View } from 'react-native'
 import AccountCard from './AccountCard'

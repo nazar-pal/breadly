@@ -1,49 +1,16 @@
-import { Account } from '@/hooks/useAccounts'
+import { useAccountModalStore } from '@/components/accounts/lib/accountModalStore'
 import React from 'react'
-import PaymentAccountModal from './moda-account-payment'
-import DebtAccountModal from './modal-account-dept'
-import SavingAccountModal from './modal-account-saving'
+import UnifiedAccountModal from './UnifiedAccountModal'
 
-interface AccountModalProps {
-  visible: boolean
-  account: Account | null
-  accountType: 'saving' | 'payment' | 'debt'
-  onClose: () => void
-}
+export function AccountModal() {
+  const { visible, account, accountType, close } = useAccountModalStore()
 
-export default function AccountModal({
-  visible,
-  account,
-  accountType,
-  onClose
-}: AccountModalProps) {
-  const currentType = account?.type || accountType
-
-  switch (currentType) {
-    case 'saving':
-      return (
-        <SavingAccountModal
-          visible={visible}
-          account={account}
-          onClose={onClose}
-        />
-      )
-    case 'debt':
-      return (
-        <DebtAccountModal
-          visible={visible}
-          account={account}
-          onClose={onClose}
-        />
-      )
-    case 'payment':
-    default:
-      return (
-        <PaymentAccountModal
-          visible={visible}
-          account={account}
-          onClose={onClose}
-        />
-      )
-  }
+  return (
+    <UnifiedAccountModal
+      visible={visible}
+      account={account}
+      accountType={accountType}
+      onClose={close}
+    />
+  )
 }

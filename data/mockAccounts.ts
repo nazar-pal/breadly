@@ -1,4 +1,4 @@
-import type { Account } from '@/hooks/useAccounts'
+import type { Account } from '@/components/accounts/lib/useAccounts'
 
 // Mock data remains for reference, but won't be used in the updated components
 export const mockAccounts = {

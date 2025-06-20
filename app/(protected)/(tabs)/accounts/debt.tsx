@@ -1,7 +1,6 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import DebtAccountModal from '@/components/accounts/modal-account-dept'
-import { useAccounts } from '@/hooks/useAccounts'
-import { useAccountsUI } from '@/hooks/useAccountsUI'
+import { useAccounts } from '@/components/accounts/lib/useAccounts'
+import { useAccountsUI } from '@/components/accounts/lib/useAccountsUI'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -9,13 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function DebtScreen() {
   const insets = useSafeAreaInsets()
   const { debtAccounts, isLoading } = useAccounts()
-  const {
-    editModalVisible,
-    selectedAccount,
-    handleEditAccount,
-    handleAddAccount,
-    handleCloseModal
-  } = useAccountsUI()
+  const { handleEditAccount, handleAddAccount } = useAccountsUI()
 
   if (isLoading) {
     return (
@@ -43,12 +36,6 @@ export default function DebtScreen() {
           onAddAccount={handleAddAccount}
         />
       </ScrollView>
-
-      <DebtAccountModal
-        visible={editModalVisible}
-        account={selectedAccount}
-        onClose={handleCloseModal}
-      />
     </View>
   )
 }

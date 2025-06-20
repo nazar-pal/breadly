@@ -1,7 +1,6 @@
 import AccountSection from '@/components/accounts/AccountSection'
-import PaymentAccountModal from '@/components/accounts/moda-account-payment'
-import { useAccounts } from '@/hooks/useAccounts'
-import { useAccountsUI } from '@/hooks/useAccountsUI'
+import { useAccounts } from '@/components/accounts/lib/useAccounts'
+import { useAccountsUI } from '@/components/accounts/lib/useAccountsUI'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -9,13 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function PaymentsScreen() {
   const insets = useSafeAreaInsets()
   const { paymentAccounts, isLoading } = useAccounts()
-  const {
-    editModalVisible,
-    selectedAccount,
-    handleEditAccount,
-    handleAddAccount,
-    handleCloseModal
-  } = useAccountsUI()
+  const { handleEditAccount, handleAddAccount } = useAccountsUI()
 
   if (isLoading) {
     return (
@@ -43,12 +36,6 @@ export default function PaymentsScreen() {
           onAddAccount={handleAddAccount}
         />
       </ScrollView>
-
-      <PaymentAccountModal
-        visible={editModalVisible}
-        account={selectedAccount}
-        onClose={handleCloseModal}
-      />
     </View>
   )
 }

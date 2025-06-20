@@ -1,5 +1,5 @@
+import { Account } from '@/components/accounts/lib/useAccounts'
 import { Progress } from '@/components/ui/progress'
-import { Account } from '@/hooks/useAccounts'
 import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
@@ -74,7 +74,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
   const balanceAmount = account.balance || 0
 
   const formatBalance = (amount: number) => {
-    const currency = account.currency?.code || 'USD'
+    const currency = account.currencyId || 'USD'
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency,

@@ -1,9 +1,8 @@
-import AccountModal from '@/components/accounts/AccountModal'
 import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
+import { useAccounts } from '@/components/accounts/lib/useAccounts'
+import { useAccountsUI } from '@/components/accounts/lib/useAccountsUI'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { useAccounts } from '@/hooks/useAccounts'
-import { useAccountsUI } from '@/hooks/useAccountsUI'
 import {
   CreditCard,
   DollarSign,
@@ -314,12 +313,7 @@ export default function AccountDetailsScreen() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { accounts, isLoading, deleteAccount } = useAccounts()
-  const {
-    editModalVisible,
-    selectedAccount,
-    handleEditAccount,
-    handleCloseModal
-  } = useAccountsUI()
+  const { handleEditAccount } = useAccountsUI()
 
   const account = accounts.find(acc => acc.id === id)
 
@@ -445,13 +439,6 @@ export default function AccountDetailsScreen() {
 
         <ActivitySection operations={accountOperations} />
       </ScrollView>
-
-      <AccountModal
-        visible={editModalVisible}
-        account={selectedAccount}
-        accountType={selectedAccount?.type || 'payment'}
-        onClose={handleCloseModal}
-      />
     </View>
   )
 }

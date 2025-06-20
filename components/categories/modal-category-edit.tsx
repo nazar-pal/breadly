@@ -70,14 +70,13 @@ export function CategoryEditModal() {
   const [localSelectedIcon, setLocalSelectedIcon] =
     useState<keyof typeof availableIcons>('Home')
 
-  const { control, handleSubmit, reset, setValue, getValues } =
-    useForm<CategoryFormData>({
-      defaultValues: {
-        name: '',
-        description: '',
-        selectedIcon: 'Home'
-      }
-    })
+  const { control, handleSubmit, reset, setValue } = useForm<CategoryFormData>({
+    defaultValues: {
+      name: '',
+      description: '',
+      selectedIcon: 'Home'
+    }
+  })
 
   useEffect(() => {
     if (categoryToEdit) {

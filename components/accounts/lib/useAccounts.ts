@@ -4,66 +4,18 @@ import { asyncTryCatch } from '@/utils'
 import { useUser } from '@clerk/clerk-expo'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, InferInsertModel, InferSelectModel } from 'drizzle-orm'
 import { useCallback, useMemo } from 'react'
 import { Alert } from 'react-native'
 
-export interface Account {
-  id: string
-  userId: string
-  type: 'saving' | 'payment' | 'debt'
-  name: string
-  description?: string | null
-  currencyId: string
-  balance: number
-  // Type-specific fields for savings accounts
-  savingsTargetAmount?: number | null
-  savingsTargetDate?: Date | null
-  // Type-specific fields for debt accounts
-  debtInitialAmount?: number | null
-  debtIsOwedToMe?: boolean | null
-  debtDueDate?: Date | null
-  // Common fields
-  isArchived: boolean
-  createdAt: Date
-  currency?: {
-    code: string
-    name: string
-    symbol: string
-  } | null
-}
+export type Account = InferSelectModel<typeof accounts>
 
-interface CreateAccountInput {
-  type: 'saving' | 'payment' | 'debt'
-  name: string
-  description?: string
-  currencyId?: string
-  balance?: number
-  // Type-specific fields for savings accounts
-  savingsTargetAmount?: number
-  savingsTargetDate?: Date
-  // Type-specific fields for debt accounts
-  debtInitialAmount?: number
-  debtIsOwedToMe?: boolean
-  debtDueDate?: Date
-}
+export type CreateAccountInput = Omit<
+  InferInsertModel<typeof accounts>,
+  'userId' | 'id' | 'createdAt' | 'isArchived'
+>
 
-interface UpdateAccountInput {
-  id: string
-  type?: 'saving' | 'payment' | 'debt'
-  name?: string
-  description?: string
-  currencyId?: string
-  balance?: number
-  // Type-specific fields for savings accounts
-  savingsTargetAmount?: number
-  savingsTargetDate?: Date
-  // Type-specific fields for debt accounts
-  debtInitialAmount?: number
-  debtIsOwedToMe?: boolean
-  debtDueDate?: Date
-  isArchived?: boolean
-}
+export type UpdateAccountInput = Partial<Account>
 
 export function useAccounts() {
   const { db } = usePowerSync()
@@ -168,6 +120,10 @@ export function useAccounts() {
         throw new Error('User must be logged in to update accounts')
       }
 
+      if (!input.id) {
+        throw new Error('Account ID is required for updates')
+      }
+
       // Build the update values based on account type
       const baseValues: any = {}
 
@@ -266,5 +222,3 @@ export function useAccounts() {
     deleteAccount
   }
 }
-
-export type { CreateAccountInput, UpdateAccountInput }
