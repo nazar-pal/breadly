@@ -1,44 +1,40 @@
 import { useState } from 'react'
+import { CategoryWithAmounts } from './use-get-categories-with-amounts'
 
 export interface CategoryToEdit {
   id: string
   name: string
-  description?: string
+  description: string | null
+  icon: string
 }
 
 export function useCategoryUI() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [activeTab, setActiveTab] = useState<'expenses' | 'incomes'>('expenses')
+  const [addTransactionModalVisible, setAddTransactionModalVisible] =
+    useState(false)
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryToEdit | null>(
     null
   )
   const [addModalVisible, setAddModalVisible] = useState(false)
 
-  // Derived state
-  const currentType: 'expense' | 'income' =
-    activeTab === 'expenses' ? 'expense' : 'income'
-
   // Actions
   const handleCategoryPress = (categoryId: string) => {
     setSelectedCategory(categoryId)
-    setModalVisible(true)
+    setAddTransactionModalVisible(true)
   }
 
-  const handleCloseModal = () => {
-    setModalVisible(false)
+  const handleCloseAddTransactionModal = () => {
+    setAddTransactionModalVisible(false)
     setSelectedCategory(null)
   }
 
-  const handleCategoryLongPress = (
-    categoryId: string,
-    categoryName: string
-  ) => {
+  const handleCategoryLongPress = (category: CategoryWithAmounts) => {
     setCategoryToEdit({
-      id: categoryId,
-      name: categoryName,
-      description: ''
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      icon: category.icon
     })
     setEditModalVisible(true)
   }
@@ -59,18 +55,15 @@ export function useCategoryUI() {
   return {
     // State
     selectedCategory,
-    modalVisible,
-    activeTab,
+    addTransactionModalVisible,
     editModalVisible,
     categoryToEdit,
     addModalVisible,
-    currentType,
 
     // Actions
-    setActiveTab,
     handleCategoryPress,
     handleCategoryLongPress,
-    handleCloseModal,
+    handleCloseAddTransactionModal,
     handleCloseEditModal,
     handleAddCategory,
     handleCloseAddModal

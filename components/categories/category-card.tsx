@@ -1,31 +1,23 @@
+import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 import { CategoryCardIcon } from './category-card-icon'
+import { CategoryWithAmounts } from './lib/use-get-categories-with-amounts'
 
 interface Props {
-  id: string
-  name: string
-  amount: number
-  type: 'expense' | 'income'
+  category: CategoryWithAmounts
+  className?: string
   onPress: (categoryId: string) => void
-  onLongPress?: (categoryId: string, categoryName: string) => void
+  onLongPress?: () => void
 }
 
 export function CategoryCard({
-  id,
-  name,
-  amount,
-  type,
+  category,
+  className,
   onPress,
   onLongPress
 }: Props) {
   const [isPressed, setIsPressed] = useState(false)
-
-  const handleLongPress = () => {
-    if (onLongPress) {
-      onLongPress(id, name)
-    }
-  }
 
   const handlePressIn = () => {
     setIsPressed(true)
@@ -37,9 +29,11 @@ export function CategoryCard({
 
   return (
     <Pressable
-      className={`w-[47%] flex-row items-center rounded-2xl bg-card p-3 transition-all duration-150 ${
-        isPressed ? 'scale-98 opacity-70' : 'scale-100 opacity-100'
-      }`}
+      className={cn(
+        'flex-row items-center transition-all duration-150',
+        isPressed ? 'scale-98 opacity-70' : 'scale-100 opacity-100',
+        className
+      )}
       style={{
         ...Platform.select({
           android: {
@@ -50,38 +44,38 @@ export function CategoryCard({
           }
         })
       }}
-      onPress={() => onPress(id)}
-      onLongPress={handleLongPress}
+      onPress={() => onPress(category.id)}
+      onLongPress={onLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       delayLongPress={500}
     >
       <View
         className={`h-9 w-9 items-center justify-center rounded-lg ${
-          type === 'income' ? 'bg-income/10' : 'bg-muted'
+          category.type === 'income' ? 'bg-income/10' : 'bg-muted'
         }`}
       >
-        <CategoryCardIcon name={name} type={type} />
+        <CategoryCardIcon name={category.icon} type={category.type} />
       </View>
       <View className="ml-3 flex-1">
         <Text
           numberOfLines={1}
           className="mb-0.5 text-sm font-semibold text-foreground"
         >
-          {name}
+          {category.name}
         </Text>
         <Text
           className={`text-[13px] ${
-            type === 'income'
-              ? amount > 0
+            category.type === 'income'
+              ? category.amount > 0
                 ? 'text-income'
                 : 'text-muted-foreground'
-              : amount > 0
+              : category.amount > 0
                 ? 'text-foreground'
                 : 'text-muted-foreground'
           }`}
         >
-          ${amount.toFixed(2)}
+          ${category.amount.toFixed(2)}
         </Text>
       </View>
     </Pressable>

@@ -17,7 +17,7 @@ import {
   X
 } from '@/lib/icons'
 import { createCategory } from '@/powersync/data/mutations'
-import React, { use } from 'react'
+import React, { use, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
@@ -30,6 +30,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CategoriesContext } from './categories-context'
+import { useCategoryType } from './lib/use-category-type'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -62,18 +63,25 @@ interface CategoryFormData {
 export function AddCategoryModal() {
   const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
-  const { addModalVisible, currentType, handleCloseAddModal } = categoryUI
+  const { addModalVisible, handleCloseAddModal } = categoryUI
+  const activeCategoryType = useCategoryType()
 
-  const { control, handleSubmit, reset, watch, setValue } =
-    useForm<CategoryFormData>({
-      defaultValues: {
-        name: '',
-        description: '',
-        selectedIcon: 'Home'
-      }
-    })
+  // Add local state for icon selection to ensure immediate visual feedback
+  const [localSelectedIcon, setLocalSelectedIcon] =
+    useState<keyof typeof availableIcons>('Home')
 
-  const selectedIcon = watch('selectedIcon')
+  const { control, handleSubmit, reset, setValue } = useForm<CategoryFormData>({
+    defaultValues: {
+      name: '',
+      description: '',
+      selectedIcon: 'Home'
+    }
+  })
+
+  const handleIconSelect = (iconName: keyof typeof availableIcons) => {
+    setLocalSelectedIcon(iconName)
+    setValue('selectedIcon', iconName, { shouldValidate: true })
+  }
 
   const onSubmit = (data: CategoryFormData) => {
     if (!data.name.trim()) {
@@ -85,17 +93,18 @@ export function AddCategoryModal() {
       data: {
         name: data.name.trim(),
         description: data.description.trim() || '',
-        icon: data.selectedIcon.toLowerCase(),
-        type: currentType
+        icon: localSelectedIcon, // Use local state instead
+        type: activeCategoryType
       }
     })
 
     reset()
+    setLocalSelectedIcon('Home') // Reset local state
     handleCloseAddModal()
   }
 
   const getIconBackgroundColor = () => {
-    if (currentType === 'income') {
+    if (activeCategoryType === 'income') {
       return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
     }
     return '#F1F5F9' // colors.iconBackground.neutral
@@ -125,7 +134,8 @@ export function AddCategoryModal() {
             {/* Header */}
             <View className="flex-row items-center justify-between border-b border-border px-5 py-4">
               <Text className="text-xl font-semibold text-foreground">
-                Add {currentType === 'expense' ? 'Expense' : 'Income'} Category
+                Add {activeCategoryType === 'expense' ? 'Expense' : 'Income'}{' '}
+                Category
               </Text>
               <Pressable onPress={handleCloseAddModal} className="p-1">
                 <X size={24} color="#1A202C" />
@@ -193,7 +203,7 @@ export function AddCategoryModal() {
                 <View className="flex-row flex-wrap gap-3 pt-2">
                   {iconNames.map(iconName => {
                     const IconComponent = availableIcons[iconName]
-                    const isSelected = selectedIcon === iconName
+                    const isSelected = localSelectedIcon === iconName
 
                     return (
                       <Pressable
@@ -201,11 +211,13 @@ export function AddCategoryModal() {
                         className="h-14 w-14 items-center justify-center rounded-2xl border-2"
                         style={{
                           backgroundColor: isSelected
-                            ? 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
+                            ? 'rgba(99, 102, 241, 0.2)' // More visible selected background
                             : getIconBackgroundColor(),
-                          borderColor: isSelected ? '#6366F1' : 'transparent' // colors.primary
+                          borderColor: isSelected ? '#6366F1' : '#E2E8F0', // Always show border
+                          borderWidth: isSelected ? 3 : 1 // Thicker border when selected
                         }}
-                        onPress={() => setValue('selectedIcon', iconName)}
+                        onPress={() => handleIconSelect(iconName)}
+                        hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                       >
                         <IconComponent
                           size={24}

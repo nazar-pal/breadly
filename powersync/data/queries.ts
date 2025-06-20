@@ -1,6 +1,6 @@
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
-import { and, eq, gte, lte, sum } from 'drizzle-orm'
+import { and, asc, eq, gte, lte, sum } from 'drizzle-orm'
 import { transactions } from '../schema/table_7_transactions'
 import { db } from '../system'
 import { categories, CATEGORY_TYPE } from './../schema/table_4_categories'
@@ -30,7 +30,8 @@ export function useGetCategories({
           transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
         )
       }
-    }
+    },
+    orderBy: [asc(categories.createdAt)]
   })
 
   const result = useQuery(toCompilableQuery(query))

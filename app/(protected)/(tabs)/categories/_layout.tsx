@@ -1,9 +1,14 @@
-import { CategoriesContent } from '@/components/categories/categories-content'
 import { CategoriesContextProvider } from '@/components/categories/categories-context'
-
+import { CategoriesHeader } from '@/components/categories/categories-header'
+import { CalculatorModal } from '@/components/categories/modal-add-transaction'
+import { AddCategoryModal } from '@/components/categories/modal-category-add'
+import { CategoryEditModal } from '@/components/categories/modal-category-edit'
+import { Slot } from 'expo-router'
 import React from 'react'
+import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function GestureDetectorContainer({
   children,
@@ -41,7 +46,8 @@ function GestureDetectorContainer({
   return <GestureDetector gesture={panGesture}>{children}</GestureDetector>
 }
 
-export default function CategoriesScreen() {
+export default function CategoriesLayout() {
+  const insets = useSafeAreaInsets()
   return (
     <GestureDetectorContainer
       canNavigate={true}
@@ -49,7 +55,21 @@ export default function CategoriesScreen() {
       navigateNext={() => console.log('Navigate next')}
     >
       <CategoriesContextProvider>
-        <CategoriesContent />
+        <View
+          className="flex-1 bg-background"
+          style={{
+            paddingTop: insets.top
+          }}
+          collapsable={false}
+        >
+          <CategoriesHeader />
+          <Slot />
+          <CalculatorModal />
+
+          <CategoryEditModal />
+
+          <AddCategoryModal />
+        </View>
       </CategoriesContextProvider>
     </GestureDetectorContainer>
   )

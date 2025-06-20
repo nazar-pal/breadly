@@ -10,18 +10,23 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import QuickCalculator from '../shared/QuickCalculator'
 import { CategoriesContext } from './categories-context'
+import { useCategoryType } from './lib/use-category-type'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
   const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
-  const { modalVisible, currentType, selectedCategory, handleCloseModal } =
-    categoryUI
+  const activeCategoryType = useCategoryType()
+  const {
+    addTransactionModalVisible,
+    selectedCategory,
+    handleCloseAddTransactionModal
+  } = categoryUI
 
   const handleSubmit = () => {
     // Transaction is already created by QuickCalculator, just close modal
-    handleCloseModal()
+    handleCloseAddTransactionModal()
   }
 
   const getModalContentStyle = () => ({
@@ -36,10 +41,10 @@ export function CalculatorModal() {
 
   return (
     <Modal
-      visible={modalVisible}
+      visible={addTransactionModalVisible}
       animationType="slide"
       transparent={true}
-      onRequestClose={handleCloseModal}
+      onRequestClose={handleCloseAddTransactionModal}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -48,7 +53,7 @@ export function CalculatorModal() {
         <Pressable
           className="absolute inset-0"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }} // colors.shadow
-          onPress={handleCloseModal}
+          onPress={handleCloseAddTransactionModal}
         />
         <View className="rounded-t-3xl pt-6" style={getModalContentStyle()}>
           <View
@@ -58,10 +63,10 @@ export function CalculatorModal() {
           {selectedCategory && (
             <QuickCalculator
               userId={userId}
-              type={currentType}
+              type={activeCategoryType}
               categoryId={selectedCategory}
               onSubmit={handleSubmit}
-              onClose={handleCloseModal}
+              onClose={handleCloseAddTransactionModal}
             />
           )}
         </View>

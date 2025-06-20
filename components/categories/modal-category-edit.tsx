@@ -17,7 +17,7 @@ import {
   X
 } from '@/lib/icons'
 import { updateCategory } from '@/powersync/data/mutations'
-import React, { use, useEffect } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Dimensions,
@@ -30,6 +30,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CategoriesContext } from './categories-context'
+import { useCategoryType } from './lib/use-category-type'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -62,14 +63,14 @@ interface CategoryFormData {
 export function CategoryEditModal() {
   const { categoryUI, userId } = use(CategoriesContext)
   const insets = useSafeAreaInsets()
-  const {
-    editModalVisible,
-    categoryToEdit,
-    currentType,
-    handleCloseEditModal
-  } = categoryUI
+  const activeCategoryType = useCategoryType()
+  const { editModalVisible, categoryToEdit, handleCloseEditModal } = categoryUI
 
-  const { control, handleSubmit, reset, watch, setValue } =
+  // Add local state for icon selection to ensure immediate visual feedback
+  const [localSelectedIcon, setLocalSelectedIcon] =
+    useState<keyof typeof availableIcons>('Home')
+
+  const { control, handleSubmit, reset, setValue, getValues } =
     useForm<CategoryFormData>({
       defaultValues: {
         name: '',
@@ -78,22 +79,24 @@ export function CategoryEditModal() {
       }
     })
 
-  const selectedIcon = watch('selectedIcon')
-
   useEffect(() => {
     if (categoryToEdit) {
       // Try to match the category name to an icon, fallback to Home
-      const matchedIcon = iconNames.find(
-        icon =>
-          icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
-          categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
-      )
+      const matchedIcon =
+        iconNames.find(
+          icon =>
+            icon.toLowerCase() === categoryToEdit.name.toLowerCase() ||
+            categoryToEdit.name.toLowerCase().includes(icon.toLowerCase())
+        ) || 'Home'
 
       reset({
         name: categoryToEdit.name,
         description: categoryToEdit.description || '',
-        selectedIcon: matchedIcon || 'Home'
+        selectedIcon: matchedIcon
       })
+
+      // Update local state to match
+      setLocalSelectedIcon(matchedIcon)
     } else {
       // Reset form when no category
       reset({
@@ -101,8 +104,14 @@ export function CategoryEditModal() {
         description: '',
         selectedIcon: 'Home'
       })
+      setLocalSelectedIcon('Home')
     }
   }, [categoryToEdit, reset])
+
+  const handleIconSelect = (iconName: keyof typeof availableIcons) => {
+    setLocalSelectedIcon(iconName)
+    setValue('selectedIcon', iconName, { shouldValidate: true })
+  }
 
   const onSubmit = (data: CategoryFormData) => {
     if (!categoryToEdit || !data.name.trim()) {
@@ -115,7 +124,7 @@ export function CategoryEditModal() {
       data: {
         name: data.name.trim(),
         description: data.description.trim(),
-        icon: data.selectedIcon.toLowerCase()
+        icon: localSelectedIcon
       }
     })
 
@@ -123,7 +132,7 @@ export function CategoryEditModal() {
   }
 
   const getIconBackgroundColor = () => {
-    if (currentType === 'income') {
+    if (activeCategoryType === 'income') {
       return 'rgba(16, 185, 129, 0.1)' // colors.iconBackground.success
     }
     return '#F1F5F9' // colors.iconBackground.neutral
@@ -155,7 +164,8 @@ export function CategoryEditModal() {
             {/* Header */}
             <View className="flex-row items-center justify-between border-b border-border px-5 py-4">
               <Text className="text-xl font-semibold text-foreground">
-                Edit {currentType === 'expense' ? 'Expense' : 'Income'} Category
+                Edit {activeCategoryType === 'expense' ? 'Expense' : 'Income'}{' '}
+                Category
               </Text>
               <Pressable onPress={handleCloseEditModal} className="p-1">
                 <X size={24} color="#1A202C" />
@@ -223,7 +233,7 @@ export function CategoryEditModal() {
                 <View className="flex-row flex-wrap gap-3 pt-2">
                   {iconNames.map(iconName => {
                     const IconComponent = availableIcons[iconName]
-                    const isSelected = selectedIcon === iconName
+                    const isSelected = localSelectedIcon === iconName
 
                     return (
                       <Pressable
@@ -235,7 +245,8 @@ export function CategoryEditModal() {
                             : getIconBackgroundColor(),
                           borderColor: isSelected ? '#6366F1' : 'transparent' // colors.primary
                         }}
-                        onPress={() => setValue('selectedIcon', iconName)}
+                        onPress={() => handleIconSelect(iconName)}
+                        hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
                       >
                         <IconComponent
                           size={24}
@@ -251,18 +262,22 @@ export function CategoryEditModal() {
             {/* Footer */}
             <View className="border-border-light flex-row gap-3 border-t px-5 pb-2 pt-4">
               <Pressable
-                className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border py-3"
+                className="min-h-[48px] flex-[0.4] flex-row items-center justify-center gap-2 rounded-2xl border border-border py-3"
                 onPress={handleCloseEditModal}
               >
-                <Text className="text-base font-semibold">Cancel</Text>
+                <Text className="text-base font-semibold text-foreground">
+                  Cancel
+                </Text>
               </Pressable>
 
               <Pressable
-                className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl py-3"
+                className="min-h-[48px] flex-[0.6] flex-row items-center justify-center gap-2 rounded-2xl bg-primary py-3"
                 onPress={handleSubmit(onSubmit)}
               >
                 <Check size={20} color="#FFFFFF" />
-                <Text className="text-base font-semibold">Save Changes</Text>
+                <Text className="text-base font-semibold text-white">
+                  Save Changes
+                </Text>
               </Pressable>
             </View>
           </View>

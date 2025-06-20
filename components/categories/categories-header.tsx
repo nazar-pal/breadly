@@ -1,13 +1,15 @@
 import { useDateRange } from '@/hooks/useDateRange'
 import { useSumTransactions } from '@/powersync/data/queries'
+import { Link } from 'expo-router'
 import React, { use, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { CategoriesContext } from './categories-context'
+import { useCategoryType } from './lib/use-category-type'
 import { DateRangeModal } from './modal-transactions-date-range'
 
 export function CategoriesHeader() {
-  const { userId, categoryUI } = use(CategoriesContext)
-  const { activeTab, setActiveTab } = categoryUI
+  const { userId } = use(CategoriesContext)
+  const activeCategoryType = useCategoryType()
   const {
     mode,
     setMode,
@@ -70,65 +72,69 @@ export function CategoriesHeader() {
 
       {/* Tab Navigation */}
       <View className="mt-1 flex-row gap-2">
-        <Pressable
-          className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
-          style={{
-            backgroundColor:
-              activeTab === 'expenses'
-                ? 'rgba(99, 102, 241, 0.1)'
-                : 'transparent',
-            borderWidth: activeTab === 'expenses' ? 1 : 0,
-            borderColor: activeTab === 'expenses' ? '#6366F1' : 'transparent'
-          }}
-          onPress={() => setActiveTab('expenses')}
-        >
-          <Text
-            className="mb-0.5 text-base font-semibold"
+        <Link href="/(protected)/(tabs)/categories" asChild>
+          <Pressable
+            className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{
-              color: activeTab === 'expenses' ? '#6366F1' : '#4A5568'
+              backgroundColor:
+                activeCategoryType === 'expense'
+                  ? 'rgba(99, 102, 241, 0.1)'
+                  : 'transparent',
+              borderWidth: activeCategoryType === 'expense' ? 1 : 0,
+              borderColor:
+                activeCategoryType === 'expense' ? '#6366F1' : 'transparent'
             }}
           >
-            Expenses
-          </Text>
-          <Text
-            className="text-sm font-medium"
-            style={{
-              color: activeTab === 'expenses' ? '#EF4444' : '#4A5568'
-            }}
-          >
-            ${totalExpenses.toFixed(2)}
-          </Text>
-        </Pressable>
+            <Text
+              className="mb-0.5 text-base font-semibold"
+              style={{
+                color: activeCategoryType === 'expense' ? '#6366F1' : '#4A5568'
+              }}
+            >
+              Expenses
+            </Text>
+            <Text
+              className="text-sm font-medium"
+              style={{
+                color: activeCategoryType === 'expense' ? '#EF4444' : '#4A5568'
+              }}
+            >
+              ${totalExpenses.toFixed(2)}
+            </Text>
+          </Pressable>
+        </Link>
 
-        <Pressable
-          className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
-          style={{
-            backgroundColor:
-              activeTab === 'incomes'
-                ? 'rgba(99, 102, 241, 0.1)'
-                : 'transparent',
-            borderWidth: activeTab === 'incomes' ? 1 : 0,
-            borderColor: activeTab === 'incomes' ? '#6366F1' : 'transparent'
-          }}
-          onPress={() => setActiveTab('incomes')}
-        >
-          <Text
-            className="mb-0.5 text-base font-semibold"
+        <Link href="/(protected)/(tabs)/categories/incomes" asChild>
+          <Pressable
+            className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{
-              color: activeTab === 'incomes' ? '#6366F1' : '#4A5568'
+              backgroundColor:
+                activeCategoryType === 'income'
+                  ? 'rgba(99, 102, 241, 0.1)'
+                  : 'transparent',
+              borderWidth: activeCategoryType === 'income' ? 1 : 0,
+              borderColor:
+                activeCategoryType === 'income' ? '#6366F1' : 'transparent'
             }}
           >
-            Income
-          </Text>
-          <Text
-            className="text-sm font-medium"
-            style={{
-              color: activeTab === 'incomes' ? '#10B981' : '#4A5568'
-            }}
-          >
-            ${totalIncome.toFixed(2)}
-          </Text>
-        </Pressable>
+            <Text
+              className="mb-0.5 text-base font-semibold"
+              style={{
+                color: activeCategoryType === 'income' ? '#6366F1' : '#4A5568'
+              }}
+            >
+              Income
+            </Text>
+            <Text
+              className="text-sm font-medium"
+              style={{
+                color: activeCategoryType === 'income' ? '#10B981' : '#4A5568'
+              }}
+            >
+              ${totalIncome.toFixed(2)}
+            </Text>
+          </Pressable>
+        </Link>
       </View>
 
       {/* Date Range Modal */}

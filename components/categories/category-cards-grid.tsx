@@ -1,32 +1,20 @@
-import { categories } from '@/powersync/schema/table_4_categories'
-import { InferSelectModel } from 'drizzle-orm'
 import React, { use } from 'react'
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoriesContext } from './categories-context'
 import { CategoryCard } from './category-card'
+import { useGetCategoriesWithAmounts } from './lib/use-get-categories-with-amounts'
 
-interface CategoryWithAmount extends InferSelectModel<typeof categories> {
-  amount: number
-}
+export function CategoryCardsGrid() {
+  const categories = useGetCategoriesWithAmounts()
 
-interface Props {
-  categories: CategoryWithAmount[]
-  isLoading: boolean
-}
-
-export function CategoryCardsGrid({ categories, isLoading }: Props) {
-  const { categoryUI } = use(CategoriesContext)
-  const { activeTab, handleCategoryPress, handleCategoryLongPress } = categoryUI
-
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" />
-        <Text className="mt-2 text-foreground">Loading categories...</Text>
-      </View>
-    )
-  }
+  const {
+    categoryUI: {
+      handleCategoryPress,
+      handleCategoryLongPress,
+      handleAddCategory
+    }
+  } = use(CategoriesContext)
 
   return (
     <ScrollView
@@ -42,19 +30,17 @@ export function CategoryCardsGrid({ categories, isLoading }: Props) {
         return (
           <CategoryCard
             key={category.id}
-            id={category.id}
-            name={category.name}
-            amount={category.amount}
-            type={category.type}
+            category={category}
             onPress={handleCategoryPress}
-            onLongPress={handleCategoryLongPress}
+            onLongPress={() => handleCategoryLongPress(category)}
+            className="w-[47%] rounded-2xl border border-border bg-card p-3"
           />
         )
       })}
 
       <ButtonAddCategory
-        onPress={categoryUI.handleAddCategory}
-        label={activeTab === 'expenses' ? 'Add' : 'Add Category'}
+        onPress={handleAddCategory}
+        className="w-[47%] rounded-2xl border border-dashed border-border bg-muted p-3"
       />
     </ScrollView>
   )
