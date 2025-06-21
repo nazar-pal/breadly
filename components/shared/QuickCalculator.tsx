@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useTransactions } from '@/hooks/useTransactions'
+import { useTransactions } from '@/lib/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
-import { useGetAccounts, useGetCategories } from '@/powersync/data/queries'
+import { useGetAccounts, useGetCategories } from '@/lib/powersync/data/queries'
 import React, { useState } from 'react'
 import {
   Modal,

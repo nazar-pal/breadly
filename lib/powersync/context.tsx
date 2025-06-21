@@ -1,5 +1,5 @@
-import { Connector } from '@/powersync/connector'
-import { db, powerSyncDb } from '@/powersync/system'
+import { Connector } from '@/lib/powersync/connector'
+import { db, powerSyncDb } from '@/lib/powersync/system'
 import { useAuth } from '@clerk/clerk-expo'
 import { PowerSyncContext } from '@powersync/react'
 import React from 'react'

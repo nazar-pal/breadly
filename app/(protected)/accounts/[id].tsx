@@ -13,9 +13,9 @@ import {
   TrendingUp,
   Wallet
 } from '@/lib/icons'
+import { deleteAccount } from '@/lib/powersync/data/mutations'
+import { useGetAccount } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
-import { deleteAccount } from '@/powersync/data/mutations'
-import { useGetAccount } from '@/powersync/data/queries'
 import { useAuth } from '@clerk/clerk-expo'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React from 'react'

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { mockCategories } from '@/data/mockData'
+import { mockCategories } from '@/lib/data/mockData'
 import {
   AlignLeft,
   Calendar,

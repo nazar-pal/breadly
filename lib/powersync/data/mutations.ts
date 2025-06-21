@@ -1,4 +1,4 @@
-import { asyncTryCatch } from '@/utils'
+import { asyncTryCatch } from '@/lib/utils/index'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod/v4'

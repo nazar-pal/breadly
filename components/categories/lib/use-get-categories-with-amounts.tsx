@@ -1,5 +1,5 @@
-import { useGetCategories } from '@/powersync/data/queries'
-import { categories } from '@/powersync/schema/table_4_categories'
+import { useGetCategories } from '@/lib/powersync/data/queries'
+import { categories } from '@/lib/powersync/schema/table_4_categories'
 import { InferSelectModel } from 'drizzle-orm'
 import { use } from 'react'
 import { CategoriesContext } from '../categories-context'

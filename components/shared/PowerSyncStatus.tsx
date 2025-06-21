@@ -1,5 +1,5 @@
+import { usePowerSync } from '@/lib/powersync/context'
 import { cn } from '@/lib/utils'
-import { usePowerSync } from '@/powersync/context'
 import React from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
 

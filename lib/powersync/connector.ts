@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { trpcClient } from '@/trpc/react'
+import { trpcClient } from '@/lib/trpc/react'
 import { getClerkInstance } from '@clerk/clerk-expo'
 import {
   AbstractPowerSyncDatabase,

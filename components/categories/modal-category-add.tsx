@@ -16,7 +16,7 @@ import {
   UtensilsCrossed,
   X
 } from '@/lib/icons'
-import { createCategory } from '@/powersync/data/mutations'
+import { createCategory } from '@/lib/powersync/data/mutations'
 import React, { use, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {

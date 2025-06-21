@@ -1,4 +1,4 @@
-import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import { useAccountModalStore } from './account-modal-store'
 
 export function useAccountsUI() {

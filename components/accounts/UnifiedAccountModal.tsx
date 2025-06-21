@@ -1,5 +1,5 @@
-import { createAccount, updateAccount } from '@/powersync/data/mutations'
-import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
+import { createAccount, updateAccount } from '@/lib/powersync/data/mutations'
+import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import { useUser } from '@clerk/clerk-expo'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'

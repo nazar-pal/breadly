@@ -1,5 +1,5 @@
-import { useDateRange } from '@/hooks/useDateRange'
-import { useSumTransactions } from '@/powersync/data/queries'
+import { useDateRange } from '@/lib/hooks/useDateRange'
+import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { Link } from 'expo-router'
 import React, { use, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'

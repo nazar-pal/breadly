@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/text'
-import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import React from 'react'
 import { View } from 'react-native'
 import AccountCard from './AccountCard'

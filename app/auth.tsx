@@ -20,7 +20,7 @@ import {
 } from '@/components/auth'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useAuthFlow } from '@/hooks'
+import { useAuthFlow } from '@/lib/hooks'
 
 const { height: screenHeight } = Dimensions.get('window')
 

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { mockExpenses } from '@/data/mockData'
+import { mockExpenses } from '@/lib/data/mockData'
 import { Calendar, Mic, Tag } from '@/lib/icons'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'

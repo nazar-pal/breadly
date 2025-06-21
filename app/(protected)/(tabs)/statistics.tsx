@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { mockCategories } from '@/data/mockData'
+import { mockCategories } from '@/lib/data/mockData'
 import {
   ArrowDown,
   ArrowUp,

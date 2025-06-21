@@ -1,7 +1,7 @@
 import AccountSection from '@/components/accounts/AccountSection'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 import { TEMP_USER_ID } from '@/lib/constants'
-import { useGetAccounts } from '@/powersync/data/queries'
+import { useGetAccounts } from '@/lib/powersync/data/queries'
 import { useAuth } from '@clerk/clerk-expo'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'

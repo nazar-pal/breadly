@@ -1,6 +1,6 @@
 import OperationListItem from '@/components/accounts/OperationListItem'
 import { Card, CardContent } from '@/components/ui/card'
-import { useTransactions } from '@/hooks/useTransactions'
+import { useTransactions } from '@/lib/hooks/useTransactions'
 import { cn } from '@/lib/utils'
 import React, { useMemo, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
