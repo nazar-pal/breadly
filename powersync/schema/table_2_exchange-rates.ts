@@ -76,3 +76,5 @@ export const exchangeRates = sqliteTable(
     index('exchange_rates_quote_currency_idx').on(table.quoteCurrency) // Quote currency lookups
   ]
 )
+
+export type ExchangeRateSelectSQLite = typeof exchangeRates.$inferSelect

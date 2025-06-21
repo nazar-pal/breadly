@@ -131,3 +131,6 @@ export const transactions = pgTable(
     })
   ]
 )
+
+export type TransactionSelectPg = typeof transactions.$inferSelect
+export type TransactionInsertPg = typeof transactions.$inferInsert

@@ -34,3 +34,5 @@ export const currencies = pgTable('currencies', {
   symbol: varchar({ length: 10 }).notNull(), // Display symbol ($, €)
   name: varchar({ length: 100 }).notNull() // Full name (US Dollar)
 })
+
+export type CurrencySelectPg = typeof currencies.$inferSelect

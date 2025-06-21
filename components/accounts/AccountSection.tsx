@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/text'
-import { Account } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
 import React from 'react'
 import { View } from 'react-native'
 import AccountCard from './AccountCard'
@@ -7,9 +7,9 @@ import AddAccountButton from './AddAccountButton'
 
 interface AccountSectionProps {
   title: string
-  accounts: Account[]
+  accounts: AccountSelectSQLite[]
   accountType: 'saving' | 'payment' | 'debt'
-  onEditAccount: (account: Account) => void
+  onEditAccount: (account: AccountSelectSQLite) => void
   onAddAccount: (type: 'saving' | 'payment' | 'debt') => void
 }
 

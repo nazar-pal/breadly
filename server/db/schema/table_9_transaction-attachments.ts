@@ -73,3 +73,8 @@ export const transactionAttachments = pgTable(
     })
   ]
 )
+
+export type TransactionAttachmentSelectPg =
+  typeof transactionAttachments.$inferSelect
+export type TransactionAttachmentInsertPg =
+  typeof transactionAttachments.$inferInsert

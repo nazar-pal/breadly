@@ -64,3 +64,8 @@ export const transactionAttachments = sqliteTable(
     index('transaction_attachments_attachment_idx').on(table.attachmentId) // Attachment's transactions
   ]
 )
+
+export type TransactionAttachmentSelectSQLite =
+  typeof transactionAttachments.$inferSelect
+export type TransactionAttachmentInsertSQLite =
+  typeof transactionAttachments.$inferInsert

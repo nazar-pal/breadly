@@ -34,3 +34,5 @@ export const currencies = sqliteTable('currencies', {
   symbol: text({ length: 10 }).notNull(), // Display symbol ($, €)
   name: text({ length: 100 }).notNull() // Full name (US Dollar)
 })
+
+export type CurrencySelectSQLite = typeof currencies.$inferSelect

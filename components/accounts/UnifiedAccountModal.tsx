@@ -1,5 +1,5 @@
 import { createAccount, updateAccount } from '@/powersync/data/mutations'
-import { Account } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
 import { useUser } from '@clerk/clerk-expo'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
@@ -34,7 +34,9 @@ interface AccountTypeConfig {
   extraFields: (props: {
     control: Control<UnifiedAccountFormData>
   }) => React.JSX.Element
-  toFormDefaults: (account?: Account) => Partial<UnifiedAccountFormData>
+  toFormDefaults: (
+    account?: AccountSelectSQLite
+  ) => Partial<UnifiedAccountFormData>
   serialize: (data: UnifiedAccountFormData) => Record<string, any>
 }
 
@@ -101,7 +103,7 @@ const accountTypeConfigs: Record<AccountType, AccountTypeConfig> = {
 
 interface UnifiedAccountModalProps {
   visible: boolean
-  account: Account | null
+  account: AccountSelectSQLite | null
   accountType: AccountType
   onClose: () => void
 }

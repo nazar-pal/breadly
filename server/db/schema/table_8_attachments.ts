@@ -107,3 +107,6 @@ export const attachments = pgTable(
     })
   ]
 )
+
+export type AttachmentSelectPg = typeof attachments.$inferSelect
+export type AttachmentInsertPg = typeof attachments.$inferInsert

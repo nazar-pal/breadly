@@ -122,4 +122,5 @@ export const accounts = sqliteTable(
   ]
 )
 
-export type Account = typeof accounts.$inferSelect
+export type AccountSelectSQLite = typeof accounts.$inferSelect
+export type AccountInsertSQLite = typeof accounts.$inferInsert

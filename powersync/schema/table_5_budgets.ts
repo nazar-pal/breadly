@@ -94,3 +94,6 @@ export const budgets = sqliteTable(
     check('budgets_positive_amount', sql`${table.amount} > 0`) // Budget amounts must be positive
   ]
 )
+
+export type BudgetSelectSQLite = typeof budgets.$inferSelect
+export type BudgetInsertSQLite = typeof budgets.$inferInsert

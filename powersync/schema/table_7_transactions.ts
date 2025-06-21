@@ -117,3 +117,6 @@ export const transactions = sqliteTable(
     check('transactions_date_not_future', sql`${table.txDate} <= CURRENT_DATE`) // No future dates
   ]
 )
+
+export type TransactionSelectSQLite = typeof transactions.$inferSelect
+export type TransactionInsertSQLite = typeof transactions.$inferInsert

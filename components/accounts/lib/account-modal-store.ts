@@ -1,18 +1,18 @@
-import { Account } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
 import { create } from 'zustand'
 
 type AccountType = 'saving' | 'payment' | 'debt'
 
 interface AccountModalState {
   visible: boolean
-  account: Account | null
+  account: AccountSelectSQLite | null
   accountType: AccountType
   isEditing: boolean
 }
 
 interface AccountModalActions {
   openForCreate: (accountType: AccountType) => void
-  openForEdit: (account: Account) => void
+  openForEdit: (account: AccountSelectSQLite) => void
   close: () => void
 }
 
@@ -34,7 +34,7 @@ export const useAccountModalStore = create<AccountModalStore>(set => ({
       isEditing: false
     }),
 
-  openForEdit: (account: Account) =>
+  openForEdit: (account: AccountSelectSQLite) =>
     set({
       visible: true,
       account,

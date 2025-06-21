@@ -1,11 +1,11 @@
 import { Text } from '@/components/ui/text'
-import { Account } from '@/powersync/schema/table_6_accounts'
+import { AccountSelectSQLite } from '@/powersync/schema/table_6_accounts'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import AccountCard from './AccountCard'
 
 interface AccountsListProps {
-  accounts: Account[]
+  accounts: AccountSelectSQLite[]
   title: string
   emptyMessage?: string
 }

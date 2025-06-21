@@ -61,3 +61,6 @@ export const userPreferences = pgTable(
     })
   ]
 )
+
+export type UserPreferenceSelectPg = typeof userPreferences.$inferSelect
+export type UserPreferenceInsertPg = typeof userPreferences.$inferInsert

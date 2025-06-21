@@ -55,3 +55,6 @@ export const userPreferences = sqliteTable(
     ) // Valid weekday range
   ]
 )
+
+export type UserPreferenceSelectSQLite = typeof userPreferences.$inferSelect
+export type UserPreferenceInsertSQLite = typeof userPreferences.$inferInsert

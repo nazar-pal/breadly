@@ -100,3 +100,6 @@ export const categories = sqliteTable(
     ) // Prevent self-referencing
   ]
 )
+
+export type CategorySelectSQLite = typeof categories.$inferSelect
+export type CategoryInsertSQLite = typeof categories.$inferInsert

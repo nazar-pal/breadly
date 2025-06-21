@@ -98,3 +98,6 @@ export const attachments = sqliteTable(
     ) // Voice messages require duration
   ]
 )
+
+export type AttachmentSelectSQLite = typeof attachments.$inferSelect
+export type AttachmentInsertSQLite = typeof attachments.$inferInsert

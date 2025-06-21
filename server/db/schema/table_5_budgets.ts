@@ -102,3 +102,6 @@ export const budgets = pgTable(
     })
   ]
 )
+
+export type BudgetSelectPg = typeof budgets.$inferSelect
+export type BudgetInsertPg = typeof budgets.$inferInsert

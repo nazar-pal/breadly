@@ -109,3 +109,6 @@ export const categories = pgTable(
     })
   ]
 )
+
+export type CategorySelectPg = typeof categories.$inferSelect
+export type CategoryInsertPg = typeof categories.$inferInsert
