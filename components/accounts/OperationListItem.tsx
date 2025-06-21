@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { useRouter } from 'expo-router'
+import { Link } from 'expo-router'
 import {
   ArrowRight,
   Calendar,
@@ -143,7 +143,6 @@ const getOperationConfig = (operation: Operation): OperationConfig => {
 }
 
 export default function OperationListItem({ operation }: OperationCardProps) {
-  const router = useRouter()
   const config = getOperationConfig(operation)
   const IconComponent = config.icon
   const subtext = config.subtext?.(operation)
@@ -155,94 +154,81 @@ export default function OperationListItem({ operation }: OperationCardProps) {
     })
   }
 
-  const handlePress = () => {
-    switch (operation.type) {
-      case 'expense':
-        router.push(`/expenses/${operation.id}`)
-        break
-      case 'income':
-        // TODO: Add income detail screen
-        console.log('Income operation clicked:', operation.id)
-        break
-      case 'debt':
-        // TODO: Add debt detail screen
-        console.log('Debt operation clicked:', operation.id)
-        break
-      case 'other':
-        // TODO: Add other transaction detail screen
-        console.log('Other operation clicked:', operation.id)
-        break
-    }
-  }
-
   return (
-    <Pressable onPress={handlePress}>
-      <Card className="mb-2 border-0 bg-card/50">
-        <CardContent className="p-3">
-          <View className="flex-row items-center">
-            <View
-              className={cn(
-                'mr-3 h-8 w-8 items-center justify-center rounded-lg',
-                config.bgColorClass
-              )}
-            >
-              <IconComponent size={16} className={config.colorClass} />
-            </View>
-
-            <View className="flex-1 gap-1">
-              <View className="flex-row items-center justify-between">
-                <Text
-                  className="mr-2 flex-1 text-sm font-medium text-foreground"
-                  numberOfLines={1}
-                >
-                  {operation.description}
-                </Text>
-                <Text
-                  className={cn('text-[15px] font-semibold', config.colorClass)}
-                >
-                  {config.prefix}${operation.amount.toFixed(2)}
-                </Text>
+    <Link href={`/transactions/${operation.id}`} asChild>
+      <Pressable>
+        <Card className="mb-2 border-0 bg-card/50">
+          <CardContent className="p-3">
+            <View className="flex-row items-center">
+              <View
+                className={cn(
+                  'mr-3 h-8 w-8 items-center justify-center rounded-lg',
+                  config.bgColorClass
+                )}
+              >
+                <IconComponent size={16} className={config.colorClass} />
               </View>
 
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1 flex-row items-center gap-2">
-                  <View className="rounded bg-muted/50 px-1.5 py-0.5">
-                    <Text
-                      className="text-[11px] font-medium text-muted-foreground"
-                      numberOfLines={1}
-                    >
-                      {operation.category}
-                    </Text>
+              <View className="flex-1 gap-1">
+                <View className="flex-row items-center justify-between">
+                  <Text
+                    className="mr-2 flex-1 text-sm font-medium text-foreground"
+                    numberOfLines={1}
+                  >
+                    {operation.description}
+                  </Text>
+                  <Text
+                    className={cn(
+                      'text-[15px] font-semibold',
+                      config.colorClass
+                    )}
+                  >
+                    {config.prefix}${operation.amount.toFixed(2)}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1 flex-row items-center gap-2">
+                    <View className="rounded bg-muted/50 px-1.5 py-0.5">
+                      <Text
+                        className="text-[11px] font-medium text-muted-foreground"
+                        numberOfLines={1}
+                      >
+                        {operation.category}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center gap-1">
+                      <Calendar size={12} className="text-muted-foreground" />
+                      <Text className="text-[11px] text-muted-foreground">
+                        {formatDate(operation.date)}
+                      </Text>
+                    </View>
                   </View>
-                  <View className="flex-row items-center gap-1">
-                    <Calendar size={12} className="text-muted-foreground" />
-                    <Text className="text-[11px] text-muted-foreground">
-                      {formatDate(operation.date)}
-                    </Text>
+
+                  <View className="flex-row items-center">
+                    {operation.hasPhoto && (
+                      <Receipt size={14} className="text-muted-foreground" />
+                    )}
+                    {operation.hasVoice && (
+                      <Mic size={14} className="ml-1 text-muted-foreground" />
+                    )}
+                    <ArrowRight
+                      size={14}
+                      className="ml-1 text-muted-foreground"
+                    />
                   </View>
                 </View>
 
-                <View className="flex-row items-center">
-                  {operation.hasPhoto && (
-                    <Receipt size={14} className="text-muted-foreground" />
-                  )}
-                  {operation.hasVoice && (
-                    <Mic size={14} className="ml-1 text-muted-foreground" />
-                  )}
-                  <ArrowRight
-                    size={14}
-                    className="ml-1 text-muted-foreground"
-                  />
-                </View>
+                {subtext && (
+                  <Text className="text-xs text-muted-foreground">
+                    {subtext}
+                  </Text>
+                )}
               </View>
-
-              {subtext && (
-                <Text className="text-xs text-muted-foreground">{subtext}</Text>
-              )}
             </View>
-          </View>
-        </CardContent>
-      </Card>
-    </Pressable>
+          </CardContent>
+        </Card>
+      </Pressable>
+    </Link>
   )
 }

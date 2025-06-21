@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { mockExpenses } from '@/lib/data/mockData'
+import { TEMP_USER_ID } from '@/lib/constants'
 import { Calendar, Mic, Tag } from '@/lib/icons'
+import { useGetTransaction } from '@/lib/powersync/data/queries'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
 import { Image, ScrollView, View } from 'react-native'
@@ -36,22 +37,27 @@ function DetailItem({
   )
 }
 
-export default function ExpenseDetailsScreen() {
+export default function TransactionDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const insets = useSafeAreaInsets()
 
   // Find the expense with the matching ID
-  const expense = mockExpenses.find(e => e.id === id)
+  const transactions = useGetTransaction({
+    userId: TEMP_USER_ID,
+    transactionId: id
+  })
+
+  const transaction = transactions.data?.[0]
 
   // Placeholder for receipt image
   const receiptImageUrl =
     'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 
-  if (!expense) {
+  if (!transaction) {
     return (
       <View className="flex-1 bg-background">
         <Text className="mt-10 text-center text-lg text-destructive">
-          Expense not found
+          Transaction not found
         </Text>
       </View>
     )
@@ -72,7 +78,7 @@ export default function ExpenseDetailsScreen() {
             Total Amount
           </Text>
           <Text className="mb-1 text-[48px] font-extrabold tracking-tight text-primary">
-            ${expense.amount.toFixed(2)}
+            ${transaction.amount.toFixed(2)}
           </Text>
         </CardContent>
       </Card>
@@ -80,32 +86,32 @@ export default function ExpenseDetailsScreen() {
       {/* Details Card */}
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Expense Details</CardTitle>
+          <CardTitle>Transaction Details</CardTitle>
         </CardHeader>
         <CardContent>
           <DetailItem
             icon={<Calendar size={20} className="text-primary" />}
             label="Date"
-            value={expense.date}
+            value={transaction.txDate.toLocaleDateString()}
           />
 
           <DetailItem
             icon={<Tag size={20} className="text-primary" />}
             label="Category"
-            value={expense.category}
+            value={transaction.category?.name ?? 'No category'}
           />
 
           <DetailItem
             icon={<Tag size={20} className="text-primary" />}
             label="Description"
-            value={expense.description ?? 'No description provided'}
+            value={transaction.notes ?? 'No description provided'}
             showBorder={false}
           />
         </CardContent>
       </Card>
 
       {/* Receipt Photo */}
-      {expense.hasPhoto && (
+      {transaction.transactionAttachments.length > 0 && (
         <Card className="mb-4">
           <CardHeader>
             <CardTitle>Receipt Photo</CardTitle>
@@ -123,7 +129,7 @@ export default function ExpenseDetailsScreen() {
       )}
 
       {/* Voice Memo */}
-      {expense.hasVoice && (
+      {transaction.transactionAttachments.length > 0 && (
         <Card className="mb-4">
           <CardHeader>
             <CardTitle>Voice Memo</CardTitle>

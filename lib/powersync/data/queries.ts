@@ -6,6 +6,36 @@ import { transactions } from '../schema/table_7_transactions'
 import { db } from '../system'
 import { categories, CATEGORY_TYPE } from './../schema/table_4_categories'
 
+export function useGetTransaction({
+  userId,
+  transactionId
+}: {
+  userId: string
+  transactionId: string
+}) {
+  const query = db.query.transactions.findFirst({
+    where: and(
+      eq(transactions.userId, userId),
+      eq(transactions.id, transactionId)
+    ),
+    with: {
+      category: true,
+      account: true,
+      counterAccount: true,
+      currency: true,
+      transactionAttachments: {
+        with: {
+          attachment: true
+        }
+      }
+    }
+  })
+
+  const result = useQuery(toCompilableQuery(query))
+
+  return result
+}
+
 export function useGetAccounts({
   userId,
   accountType
@@ -81,11 +111,13 @@ export function useGetCategories({
 
 export function useSumTransactions({
   userId,
+  categoryId,
   type,
   transactionsFrom,
   transactionsTo
 }: {
   userId: string
+  categoryId?: string
   type: (typeof CATEGORY_TYPE)[number]
   transactionsFrom?: Date
   transactionsTo?: Date
@@ -98,6 +130,7 @@ export function useSumTransactions({
     .where(
       and(
         eq(transactions.userId, userId),
+        categoryId ? eq(transactions.categoryId, categoryId) : undefined,
         eq(transactions.type, type),
         transactionsFrom
           ? gte(transactions.txDate, transactionsFrom)

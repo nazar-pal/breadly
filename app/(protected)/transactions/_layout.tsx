@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router'
 
-export default function ExpensesLayout() {
+export default function TransactionsLayout() {
   return (
     <Stack>
       <Stack.Screen
         name="[id]"
         options={{
-          title: 'Expense Details',
+          title: 'Transaction Details',
           headerBackTitle: 'Back'
         }}
       />

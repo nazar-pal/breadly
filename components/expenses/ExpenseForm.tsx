@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { mockCategories } from '@/lib/data/mockData'
+import { TEMP_USER_ID } from '@/lib/constants'
 import {
   AlignLeft,
   Calendar,
@@ -9,7 +9,9 @@ import {
   Plus,
   X
 } from '@/lib/icons'
+import { useGetCategories } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@clerk/clerk-expo'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -115,6 +117,13 @@ export default function ExpenseForm({
   )
 
   const today = new Date().toISOString().split('T')[0]
+
+  const { userId } = useAuth()
+
+  const { data: categories } = useGetCategories({
+    userId: userId || TEMP_USER_ID,
+    type: 'expense'
+  })
 
   const {
     control,
@@ -369,7 +378,7 @@ export default function ExpenseForm({
               Select Category
             </Text>
             <ScrollView>
-              {mockCategories.map(category => (
+              {categories.map(category => (
                 <Pressable
                   key={category.id}
                   className={cn(

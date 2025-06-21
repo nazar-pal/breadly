@@ -29,7 +29,7 @@ export default function ExpenseCard({ expense }: ExpenseCardProps) {
   }
 
   const handlePress = () => {
-    router.push(`/expenses/${expense.id}`)
+    router.push(`/transactions/${expense.id}`)
   }
 
   return (
