@@ -1,4 +1,4 @@
-import { AuthInput } from '@/components/auth/AuthInput'
+import { AuthInput } from '@/components/auth/auth-input'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { ArrowRight, Mail } from '@/lib/icons'
