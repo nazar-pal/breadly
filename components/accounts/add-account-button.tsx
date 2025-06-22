@@ -8,7 +8,7 @@ interface AddAccountButtonProps {
   label?: string
 }
 
-export default function AddAccountButton({
+export function AddAccountButton({
   onPress,
   label = 'Add Account'
 }: AddAccountButtonProps) {

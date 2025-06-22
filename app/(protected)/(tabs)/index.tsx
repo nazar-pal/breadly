@@ -1,4 +1,4 @@
-import OperationListItem from '@/components/accounts/OperationListItem'
+import { OperationListItem } from '@/components/accounts/operation-list-item'
 import { Card, CardContent } from '@/components/ui/card'
 import { useTransactions } from '@/lib/hooks/useTransactions'
 import { cn } from '@/lib/utils'

@@ -1,12 +1,12 @@
 import React from 'react'
 import { Control } from 'react-hook-form'
-import { CurrencyField, DateField, ToggleField } from '../shared/FormFields'
+import { CurrencyField, DateField, ToggleField } from './form-fields'
 
 interface DebtFieldsProps {
   control: Control<any>
 }
 
-export default function DebtFields({ control }: DebtFieldsProps) {
+export function DebtFields({ control }: DebtFieldsProps) {
   return (
     <>
       <CurrencyField

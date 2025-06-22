@@ -1,4 +1,4 @@
-import AccountsTabBar from '@/components/navigation/AccountsTabBar'
+import { AccountsTabBar } from '@/components/accounts/accounts-tab-bar'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { withLayoutContext } from 'expo-router'
 import React from 'react'

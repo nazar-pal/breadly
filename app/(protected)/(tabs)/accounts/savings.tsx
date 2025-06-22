@@ -1,4 +1,4 @@
-import AccountSection from '@/components/accounts/AccountSection'
+import { AccountSection } from '@/components/accounts/account-section'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 import { TEMP_USER_ID } from '@/lib/constants'
 import { useGetAccounts } from '@/lib/powersync/data/queries'

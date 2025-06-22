@@ -142,7 +142,7 @@ const getOperationConfig = (operation: Operation): OperationConfig => {
   }
 }
 
-export default function OperationListItem({ operation }: OperationCardProps) {
+export function OperationListItem({ operation }: OperationCardProps) {
   const config = getOperationConfig(operation)
   const IconComponent = config.icon
   const subtext = config.subtext?.(operation)

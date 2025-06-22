@@ -51,7 +51,7 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
   }
 }
 
-export default function AccountCard({ account, onPress }: AccountCardProps) {
+export function AccountCard({ account, onPress }: AccountCardProps) {
   const router = useRouter()
 
   const handlePress = () => {

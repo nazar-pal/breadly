@@ -1,4 +1,4 @@
-import AccountTransactionItem from '@/components/accounts/AccountTransactionItem'
+import { AccountTransactionItem } from '@/components/accounts/account-transaction-item'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'

@@ -9,7 +9,7 @@ interface ModalFooterProps {
   isEditing: boolean
 }
 
-export default function ModalFooter({
+export function ModalFooter({
   onCancel,
   onSubmit,
   isLoading,

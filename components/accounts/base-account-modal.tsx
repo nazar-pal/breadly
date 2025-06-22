@@ -22,7 +22,7 @@ interface BaseAccountModalProps {
   footerContent: ReactNode
 }
 
-export default function BaseAccountModal({
+export function BaseAccountModal({
   visible,
   title,
   onClose,

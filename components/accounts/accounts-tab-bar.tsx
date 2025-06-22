@@ -7,10 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ICONS = { index: CreditCard, savings: PiggyBank, debt: Receipt }
 
-export default function AccountsTabBar({
-  state,
-  navigation
-}: MaterialTopTabBarProps) {
+export function AccountsTabBar({ state, navigation }: MaterialTopTabBarProps) {
   const insets = useSafeAreaInsets()
 
   return (

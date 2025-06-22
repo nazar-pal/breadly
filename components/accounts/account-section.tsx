@@ -2,8 +2,8 @@ import { Text } from '@/components/ui/text'
 import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import React from 'react'
 import { View } from 'react-native'
-import AccountCard from './AccountCard'
-import AddAccountButton from './AddAccountButton'
+import { AccountCard } from './account-card'
+import { AddAccountButton } from './add-account-button'
 
 interface AccountSectionProps {
   title: string
@@ -19,7 +19,7 @@ const ADD_BUTTON_LABELS: Record<string, string> = {
   debt: 'Add Debt'
 }
 
-export default function AccountSection({
+export function AccountSection({
   title,
   accounts,
   accountType,

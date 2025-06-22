@@ -1,12 +1,12 @@
 import React from 'react'
 import { Control } from 'react-hook-form'
-import { CurrencyField, DateField } from '../shared/FormFields'
+import { CurrencyField, DateField } from './form-fields'
 
 interface SavingFieldsProps {
   control: Control<any>
 }
 
-export default function SavingFields({ control }: SavingFieldsProps) {
+export function SavingFields({ control }: SavingFieldsProps) {
   return (
     <>
       <CurrencyField

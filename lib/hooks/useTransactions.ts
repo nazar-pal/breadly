@@ -1,4 +1,4 @@
-import type { Operation } from '@/components/accounts/OperationListItem'
+import type { Operation } from '@/components/accounts/operation-list-item'
 import { usePowerSync } from '@/lib/powersync/context'
 import { transactions } from '@/lib/powersync/schema/table_7_transactions'
 import { asyncTryCatch } from '@/lib/utils/index'

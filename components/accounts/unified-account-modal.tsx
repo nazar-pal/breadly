@@ -3,10 +3,11 @@ import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import { useUser } from '@clerk/clerk-expo'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
-import { DebtFields, PaymentFields, SavingFields } from './account-type-fields'
-import BaseAccountModal from './shared/BaseAccountModal'
-import CommonAccountFields from './shared/CommonAccountFields'
-import ModalFooter from './shared/ModalFooter'
+import { BaseAccountModal } from './base-account-modal'
+import { CommonAccountFields } from './common-account-fields'
+import { DebtFields } from './debt-fields'
+import { ModalFooter } from './modal-footer'
+import { SavingFields } from './saving-fields'
 
 type AccountType = 'saving' | 'payment' | 'debt'
 
@@ -46,7 +47,7 @@ const accountTypeConfigs: Record<AccountType, AccountTypeConfig> = {
       add: 'Add Payment Account',
       edit: 'Edit Payment Account'
     },
-    extraFields: ({ control }) => <PaymentFields control={control} />,
+    extraFields: () => null as any,
     toFormDefaults: () => ({}),
     serialize: () => ({})
   },
@@ -108,7 +109,7 @@ interface UnifiedAccountModalProps {
   onClose: () => void
 }
 
-export default function UnifiedAccountModal({
+export function UnifiedAccountModal({
   visible,
   account,
   accountType,

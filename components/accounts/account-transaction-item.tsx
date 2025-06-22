@@ -65,7 +65,7 @@ const getOperationConfig = (type: OperationType): OperationConfig => {
   )
 }
 
-export default function AccountTransactionItem({
+export function AccountTransactionItem({
   operation
 }: AccountTransactionItemProps) {
   const {

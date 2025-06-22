@@ -1,13 +1,13 @@
 import React from 'react'
 import { Control } from 'react-hook-form'
-import { CurrencyField, TextField } from './FormFields'
+import { CurrencyField, TextField } from './form-fields'
 
 interface CommonAccountFieldsProps<T extends Record<string, any>> {
   control: Control<T>
   isEditing: boolean
 }
 
-export default function CommonAccountFields<T extends Record<string, any>>({
+export function CommonAccountFields<T extends Record<string, any>>({
   control,
   isEditing
 }: CommonAccountFieldsProps<T>) {
