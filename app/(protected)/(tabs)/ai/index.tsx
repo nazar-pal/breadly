@@ -1,4 +1,4 @@
-import ExpenseForm from '@/components/expenses/ExpenseForm'
+import { ExpenseForm } from '@/components/ai/expense-form'
 import { router } from 'expo-router'
 import React from 'react'
 import { Alert, View } from 'react-native'

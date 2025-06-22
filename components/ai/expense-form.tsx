@@ -104,10 +104,7 @@ function ExpenseListItem({
   )
 }
 
-export default function ExpenseForm({
-  onSubmit,
-  initialData
-}: ExpenseFormProps) {
+export function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
   const [showDescription, setShowDescription] = useState(false)
   const [expenses, setExpenses] = useState<ExpenseFormData[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)

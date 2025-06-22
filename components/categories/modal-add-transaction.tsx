@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import QuickCalculator from '../shared/QuickCalculator'
+import { QuickCalculator } from '../shared/quick-calculator'
 import { CategoriesContext } from './categories-context'
 import { useCategoryType } from './lib/use-category-type'
 

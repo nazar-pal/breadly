@@ -1,5 +1,5 @@
 import { SignOutButton } from '@/components/auth'
-import { PowerSyncStatus } from '@/components/shared/PowerSyncStatus'
+import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'

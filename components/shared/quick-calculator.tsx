@@ -21,7 +21,7 @@ interface QuickCalculatorProps {
   onClose: () => void
 }
 
-export default function QuickCalculator({
+export function QuickCalculator({
   userId,
   type,
   categoryId: initialCategoryId,
