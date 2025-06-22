@@ -66,9 +66,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="ai"
         options={{
-          title: 'Add',
+          title: 'AI',
           tabBarIcon: ({ focused }) => (
             <TabBarIcon Icon={CirclePlus} focused={focused} />
           )

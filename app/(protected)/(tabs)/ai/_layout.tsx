@@ -1,4 +1,4 @@
-import AddExpenseTabBar from '@/components/navigation/AddExpenseTabBar'
+import { AddExpenseTabBar } from '@/components/ai/add-expense-tab-bar'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { withLayoutContext } from 'expo-router'
 import React from 'react'

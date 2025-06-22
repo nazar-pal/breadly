@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const ICONS = { index: Pencil, photo: Camera, voice: Mic }
 
-export default function AddExpenseTabBar({
+export function AddExpenseTabBar({
   state,
   navigation
 }: MaterialTopTabBarProps) {
