@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { TEMP_USER_ID } from '@/lib/constants'
+import { useUserSession } from '@/lib/context/user-context'
 import {
   AlignLeft,
   Calendar,
@@ -11,7 +11,6 @@ import {
 } from '@/lib/icons'
 import { useGetCategories } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@clerk/clerk-expo'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -115,10 +114,10 @@ export function ExpenseForm({ onSubmit, initialData }: ExpenseFormProps) {
 
   const today = new Date().toISOString().split('T')[0]
 
-  const { userId } = useAuth()
+  const { userId } = useUserSession()
 
   const { data: categories } = useGetCategories({
-    userId: userId || TEMP_USER_ID,
+    userId: userId,
     type: 'expense'
   })
 

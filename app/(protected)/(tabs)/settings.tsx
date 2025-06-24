@@ -1,4 +1,5 @@
 import { SignOutButton } from '@/components/auth'
+import { MigrationPreview } from '@/components/shared/migration-preview'
 import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
@@ -123,6 +124,8 @@ export default function SettingsScreen() {
         </SignedIn>
 
         <PowerSyncStatus />
+
+        <MigrationPreview />
 
         <SettingsSection title="Preferences" className="mt-6">
           <SettingsItem

@@ -3,6 +3,7 @@ import './global.css'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
 import { CurrencyProvider } from '@/lib/context/CurrencyContext'
+import { UserProvider } from '@/lib/context/user-context'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
 import { PowerSyncContextProvider } from '@/lib/powersync/context'
 import { queryClient } from '@/lib/trpc/query-client'
@@ -54,29 +55,31 @@ export default function RootLayout() {
       tokenCache={tokenCache}
       __experimental_resourceCache={resourceCache}
     >
-      <GestureHandlerRootView className="flex-1">
-        <QueryClientProvider client={queryClient}>
-          <PowerSyncContextProvider>
-            <CurrencyProvider>
-              <ThemeProvider
-                value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-              >
-                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                <Stack>
-                  <Stack.Screen
-                    name="(protected)"
-                    options={{ headerShown: false, animation: 'none' }}
-                  />
-                  <Stack.Screen
-                    name="auth"
-                    options={{ headerShown: false, animation: 'none' }}
-                  />
-                </Stack>
-              </ThemeProvider>
-            </CurrencyProvider>
-          </PowerSyncContextProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
+      <UserProvider>
+        <GestureHandlerRootView className="flex-1">
+          <QueryClientProvider client={queryClient}>
+            <PowerSyncContextProvider>
+              <CurrencyProvider>
+                <ThemeProvider
+                  value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+                >
+                  <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                  <Stack>
+                    <Stack.Screen
+                      name="(protected)"
+                      options={{ headerShown: false, animation: 'none' }}
+                    />
+                    <Stack.Screen
+                      name="auth"
+                      options={{ headerShown: false, animation: 'none' }}
+                    />
+                  </Stack>
+                </ThemeProvider>
+              </CurrencyProvider>
+            </PowerSyncContextProvider>
+          </QueryClientProvider>
+        </GestureHandlerRootView>
+      </UserProvider>
     </ClerkProvider>
   )
 }

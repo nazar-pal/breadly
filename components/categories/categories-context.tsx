@@ -1,6 +1,6 @@
 import { useCategoryUI } from '@/components/categories/lib/use-category-ui'
 import { TEMP_USER_ID } from '@/lib/constants'
-import { useAuth } from '@clerk/clerk-expo'
+import { useUserSession } from '@/lib/context/user-context'
 import React, { createContext } from 'react'
 
 export const CategoriesContext = createContext<{
@@ -16,18 +16,12 @@ export function CategoriesContextProvider({
 }: {
   children: React.ReactNode
 }) {
-  const { userId, isLoaded } = useAuth()
+  const { userId } = useUserSession()
 
   const categoryUI = useCategoryUI()
 
-  if (!isLoaded) {
-    return null
-  }
-
   return (
-    <CategoriesContext.Provider
-      value={{ userId: userId || TEMP_USER_ID, categoryUI }}
-    >
+    <CategoriesContext.Provider value={{ userId, categoryUI }}>
       {children}
     </CategoriesContext.Provider>
   )

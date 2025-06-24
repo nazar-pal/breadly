@@ -10,11 +10,11 @@ import { useQuery } from '@powersync/react'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { eq } from 'drizzle-orm'
 import { asyncTryCatch } from '@/utils'
-import { useUser } from '@clerk/clerk-expo'
+import { useUserSession } from '@/lib/context/user-context'
 import { categories } from '@/lib/powersync/schema/table_4_categories'
 
 const { db } = usePowerSync()
-const { user } = useUser()
+const userSession = useUserSession()
 ```
 
 ## Queries
@@ -25,11 +25,11 @@ const { data: expenseCategories, isLoading } = useQuery(
   toCompilableQuery(db.query.categories.findMany())
 )
 
-// Query with conditions
+// Query with conditions (user-scoped data)
 const { data: userCategories, isLoading } = useQuery(
   toCompilableQuery(
     db.query.categories.findMany({
-      where: eq(categories.userId, user?.id)
+      where: eq(categories.userId, userSession.userId)
     })
   )
 )
@@ -41,11 +41,11 @@ const { data: userCategories, isLoading } = useQuery(
 
 ```typescript
 const createCategory = async () => {
-  if (!user?.id) return
+  if (!userSession.userId) return
 
   const [error] = await asyncTryCatch(
     db.insert(categories).values({
-      userId: user.id,
+      userId: userSession.userId,
       name: formData.name.trim(),
       description: formData.description.trim() || null,
       icon: formData.icon,
@@ -103,6 +103,24 @@ const deleteCategory = async (categoryId: string) => {
 
 - Use `useQuery` + `toCompilableQuery` for reactive queries
 - Wrap all mutations in `asyncTryCatch`
-- Always check `user?.id` before mutations
+- Always check `userSession.userId` before mutations
 - Include `userId` in data for user-scoped records
 - Queries automatically update when data changes
+- **Guest users**: All data stays local-only until they authenticate
+- **Authenticated users**: Data syncs automatically to cloud via PowerSync
+
+## Guest vs Authenticated Users
+
+### Guest Users
+
+- Data stored locally only (no cloud sync)
+- Can use all app features
+- PowerSync remains disconnected
+- Data preserved when upgrading to authenticated account
+
+### Authenticated Users
+
+- Data syncs to cloud automatically
+- PowerSync connects and handles sync
+- Seamless offline/online experience
+- Previous guest data migrated during sign-up

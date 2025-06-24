@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { TEMP_USER_ID } from '@/lib/constants'
+import { useUserSession } from '@/lib/context/user-context'
 import {
   ArrowDown,
   ArrowUp,
@@ -14,7 +14,6 @@ import {
 } from '@/lib/powersync/data/queries'
 import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@clerk/clerk-expo'
 import { LucideIcon } from 'lucide-react-native'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
@@ -157,9 +156,9 @@ function TopTransactions() {
 }
 
 function CategoryBreakdown() {
-  const { userId } = useAuth()
+  const { userId } = useUserSession()
   const { data: categories } = useGetCategories({
-    userId: userId || TEMP_USER_ID,
+    userId,
     type: 'expense'
   })
 
@@ -167,7 +166,7 @@ function CategoryBreakdown() {
   const topCategories = [...categories].slice(0, 5)
 
   const { data: totalSpent } = useSumTransactions({
-    userId: userId || TEMP_USER_ID,
+    userId,
     type: 'expense'
   })
 
@@ -203,9 +202,9 @@ function CategoryBreakdownItem({
   lastItemInList: boolean
   totalSpent: number
 }) {
-  const { userId } = useAuth()
+  const { userId } = useUserSession()
   const { data: spent } = useSumTransactions({
-    userId: userId || TEMP_USER_ID,
+    userId,
     type: 'expense',
     categoryId: category.id
   })

@@ -1,6 +1,6 @@
+import { useUserSession } from '@/lib/context/user-context'
 import { createAccount, updateAccount } from '@/lib/powersync/data/mutations'
 import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
-import { useUser } from '@clerk/clerk-expo'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
 import { BaseAccountModal } from './base-account-modal'
@@ -115,7 +115,7 @@ export function UnifiedAccountModal({
   accountType,
   onClose
 }: UnifiedAccountModalProps) {
-  const { user } = useUser()
+  const { userId } = useUserSession()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const currentType: AccountType = (account?.type as AccountType) || accountType
@@ -173,8 +173,6 @@ export function UnifiedAccountModal({
   }, [account, reset, config])
 
   const onSubmit = async (data: UnifiedAccountFormData) => {
-    if (!user?.id) return
-
     setIsSubmitting(true)
     try {
       const baseData = {
@@ -194,7 +192,7 @@ export function UnifiedAccountModal({
         })
       } else {
         await createAccount({
-          userId: user.id,
+          userId,
           data: {
             ...finalData,
             type: currentType,

@@ -3,6 +3,7 @@ import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { TEMP_USER_ID } from '@/lib/constants'
+import { useUserSession } from '@/lib/context/user-context'
 import {
   CreditCard,
   DollarSign,
@@ -16,7 +17,6 @@ import {
 import { deleteAccount } from '@/lib/powersync/data/mutations'
 import { useGetAccount } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@clerk/clerk-expo'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React from 'react'
 import { Alert, Pressable, ScrollView, View } from 'react-native'
@@ -317,9 +317,9 @@ export default function AccountDetailsScreen() {
   const insets = useSafeAreaInsets()
   const { handleEditAccount } = useAccountsUI()
 
-  const { userId, isLoaded } = useAuth()
+  const { userId } = useUserSession()
   const { data: accounts, isLoading } = useGetAccount({
-    userId: userId || TEMP_USER_ID,
+    userId,
     accountId: id
   })
   const account = accounts?.[0]
@@ -328,7 +328,7 @@ export default function AccountDetailsScreen() {
   const accountOperations: any[] = []
   // hasTransactions variable removed as it's not currently used
 
-  if (isLoading || !isLoaded) {
+  if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <Text className="text-lg text-muted-foreground">Loading...</Text>

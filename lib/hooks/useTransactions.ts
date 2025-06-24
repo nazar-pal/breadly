@@ -1,8 +1,8 @@
 import type { Operation } from '@/components/accounts/operation-list-item'
+import { useUserSession } from '@/lib/context/user-context'
 import { usePowerSync } from '@/lib/powersync/context'
 import { transactions } from '@/lib/powersync/schema/table_7_transactions'
 import { asyncTryCatch } from '@/lib/utils/index'
-import { useUser } from '@clerk/clerk-expo'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
@@ -109,7 +109,7 @@ interface UseTransactionsOptions {
 
 export function useTransactions(options: UseTransactionsOptions = {}) {
   const { db } = usePowerSync()
-  const { user } = useUser()
+  const userSession = useUserSession()
 
   const { accountId, type, dateFrom, dateTo, categoryId, limit } = options
 
@@ -117,8 +117,8 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
   const whereConditions = useMemo(() => {
     const conditions = []
 
-    if (user?.id) {
-      conditions.push(eq(transactions.userId, user.id))
+    if (userSession.userId) {
+      conditions.push(eq(transactions.userId, userSession.userId))
     }
 
     if (accountId) {
@@ -142,7 +142,7 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
     }
 
     return conditions.length > 0 ? and(...conditions) : undefined
-  }, [user?.id, accountId, type, dateFrom, dateTo, categoryId])
+  }, [userSession.userId, accountId, type, dateFrom, dateTo, categoryId])
 
   // Query transactions with related data
   const {
@@ -216,13 +216,13 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
   // Mutation functions
   const createTransaction = useCallback(
     async (input: CreateTransactionInput) => {
-      if (!user?.id) {
+      if (!userSession.userId) {
         throw new Error('User must be logged in to create transactions')
       }
 
       const [error] = await asyncTryCatch(
         db.insert(transactions).values({
-          userId: user.id,
+          userId: userSession.userId,
           type: input.type,
           accountId: input.accountId,
           counterAccountId: input.counterAccountId || null,
@@ -241,12 +241,12 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
         throw error
       }
     },
-    [db, user?.id]
+    [db, userSession.userId]
   )
 
   const updateTransaction = useCallback(
     async (input: UpdateTransactionInput) => {
-      if (!user?.id) {
+      if (!userSession.userId) {
         throw new Error('User must be logged in to update transactions')
       }
 
@@ -272,12 +272,12 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
         throw error
       }
     },
-    [db, user?.id]
+    [db, userSession.userId]
   )
 
   const deleteTransaction = useCallback(
     async (transactionId: string) => {
-      if (!user?.id) {
+      if (!userSession.userId) {
         throw new Error('User must be logged in to delete transactions')
       }
 
@@ -291,7 +291,7 @@ export function useTransactions(options: UseTransactionsOptions = {}) {
         throw error
       }
     },
-    [db, user?.id]
+    [db, userSession.userId]
   )
 
   return {

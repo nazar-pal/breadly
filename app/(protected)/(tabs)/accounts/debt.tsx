@@ -1,23 +1,22 @@
 import { AccountSection } from '@/components/accounts/account-section'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
-import { TEMP_USER_ID } from '@/lib/constants'
+import { useUserSession } from '@/lib/context/user-context'
 import { useGetAccounts } from '@/lib/powersync/data/queries'
-import { useAuth } from '@clerk/clerk-expo'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function DebtScreen() {
   const insets = useSafeAreaInsets()
-  const { userId, isLoaded } = useAuth()
+  const { userId } = useUserSession()
 
   const { data: debtAccounts, isLoading } = useGetAccounts({
-    userId: userId || TEMP_USER_ID,
+    userId,
     accountType: 'debt'
   })
   const { handleEditAccount, handleAddAccount } = useAccountsUI()
 
-  if (isLoading || !isLoaded) {
+  if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
