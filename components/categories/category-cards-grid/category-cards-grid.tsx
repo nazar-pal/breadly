@@ -40,7 +40,7 @@ export function CategoryCardsGrid() {
 
       <ButtonAddCategory
         onPress={handleAddCategory}
-        className="w-[47%] rounded-2xl border border-dashed border-border bg-muted p-3"
+        className="w-[47%] rounded-2xl border border-dashed border-border bg-muted/50 p-3"
       />
     </ScrollView>
   )
