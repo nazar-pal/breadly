@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { CategoryWithAmounts } from './use-get-categories-with-amounts'
 
-export interface CategoryToEdit {
+export interface CategoryData {
   id: string
   name: string
   description: string | null
@@ -12,11 +12,12 @@ export function useCategoryUI() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [addTransactionModalVisible, setAddTransactionModalVisible] =
     useState(false)
-  const [editModalVisible, setEditModalVisible] = useState(false)
-  const [categoryToEdit, setCategoryToEdit] = useState<CategoryToEdit | null>(
+
+  // Unified modal state
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false)
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryData | null>(
     null
   )
-  const [addModalVisible, setAddModalVisible] = useState(false)
 
   // Actions
   const handleCategoryPress = (categoryId: string) => {
@@ -36,36 +37,31 @@ export function useCategoryUI() {
       description: category.description,
       icon: category.icon
     })
-    setEditModalVisible(true)
-  }
-
-  const handleCloseEditModal = () => {
-    setEditModalVisible(false)
-    setCategoryToEdit(null)
+    setCategoryModalVisible(true)
   }
 
   const handleAddCategory = () => {
-    setAddModalVisible(true)
+    setCategoryToEdit(null) // No category data means "add mode"
+    setCategoryModalVisible(true)
   }
 
-  const handleCloseAddModal = () => {
-    setAddModalVisible(false)
+  const handleCloseCategoryModal = () => {
+    setCategoryModalVisible(false)
+    setCategoryToEdit(null)
   }
 
   return {
     // State
     selectedCategory,
     addTransactionModalVisible,
-    editModalVisible,
+    categoryModalVisible,
     categoryToEdit,
-    addModalVisible,
 
     // Actions
     handleCategoryPress,
     handleCategoryLongPress,
     handleCloseAddTransactionModal,
-    handleCloseEditModal,
     handleAddCategory,
-    handleCloseAddModal
+    handleCloseCategoryModal
   }
 }

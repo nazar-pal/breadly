@@ -1,8 +1,7 @@
 import { CategoriesContextProvider } from '@/components/categories/categories-context'
 import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
-import { AddCategoryModal } from '@/components/categories/modal-category-add'
-import { CategoryEditModal } from '@/components/categories/modal-category-edit'
+import { CategoryModal } from '@/components/categories/modal-category'
 import { Slot } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
@@ -66,9 +65,7 @@ export default function CategoriesLayout() {
           <Slot />
           <CalculatorModal />
 
-          <CategoryEditModal />
-
-          <AddCategoryModal />
+          <CategoryModal />
         </View>
       </CategoriesContextProvider>
     </GestureDetectorContainer>
