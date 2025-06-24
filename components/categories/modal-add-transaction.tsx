@@ -15,7 +15,8 @@ import { useCategoryType } from './lib/use-category-type'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
-  const { categoryUI, userId } = use(CategoriesContext)
+  const { categoryUI } = use(CategoriesContext)
+
   const insets = useSafeAreaInsets()
   const activeCategoryType = useCategoryType()
   const {
@@ -62,7 +63,6 @@ export function CalculatorModal() {
           />
           {selectedCategory && (
             <QuickCalculator
-              userId={userId}
               type={activeCategoryType}
               categoryId={selectedCategory}
               onSubmit={handleSubmit}

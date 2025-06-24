@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { useUserSession } from '@/lib/context/user-context'
 import { useTransactions } from '@/lib/hooks/useTransactions'
 import { Check, MessageSquare, Save } from '@/lib/icons'
 import { useGetAccounts, useGetCategories } from '@/lib/powersync/data/queries'
@@ -14,7 +15,6 @@ import {
 } from 'react-native'
 
 interface QuickCalculatorProps {
-  userId: string
   type: 'expense' | 'income'
   categoryId: string
   onSubmit: () => void
@@ -22,7 +22,6 @@ interface QuickCalculatorProps {
 }
 
 export function QuickCalculator({
-  userId,
   type,
   categoryId: initialCategoryId,
   onSubmit,
@@ -39,6 +38,7 @@ export function QuickCalculator({
     useState(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { userId } = useUserSession()
 
   // Hooks
   const { data: categories = [] } = useGetCategories({

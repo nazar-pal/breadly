@@ -16,5 +16,3 @@ export const NAV_THEME = {
     text: 'hsl(210 20% 98%)' // foreground
   }
 }
-
-export const TEMP_USER_ID = 'temp_user_id'

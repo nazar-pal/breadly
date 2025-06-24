@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { TEMP_USER_ID } from '@/lib/constants'
+import { useUserSession } from '@/lib/context/user-context'
 import { Calendar, Mic, Tag } from '@/lib/icons'
 import { useGetTransaction } from '@/lib/powersync/data/queries'
 import { useLocalSearchParams } from 'expo-router'
@@ -40,10 +40,10 @@ function DetailItem({
 export default function TransactionDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const insets = useSafeAreaInsets()
-
+  const { userId } = useUserSession()
   // Find the expense with the matching ID
   const transactions = useGetTransaction({
-    userId: TEMP_USER_ID,
+    userId,
     transactionId: id
   })
 

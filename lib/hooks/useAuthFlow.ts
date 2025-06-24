@@ -45,7 +45,7 @@ export function useAuthFlow() {
 
   React.useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace('/(protected)/(tabs)')
+      router.replace('/(tabs)')
     }
   }, [isLoaded, isSignedIn, router])
 

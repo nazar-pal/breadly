@@ -14,7 +14,7 @@ export default function ManualScreen() {
   const handleSubmit = (data: ExpenseFormData) => {
     // TODO: persist data
     Alert.alert('Success', 'Expense saved!')
-    router.push('/(protected)/(tabs)') // back to dashboard
+    router.push('/(tabs)') // back to dashboard
   }
 
   return (

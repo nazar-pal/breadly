@@ -1,14 +1,14 @@
+import { useUserSession } from '@/lib/context/user-context'
 import { useDateRange } from '@/lib/hooks/useDateRange'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { Link } from 'expo-router'
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { CategoriesContext } from './categories-context'
 import { useCategoryType } from './lib/use-category-type'
 import { DateRangeModal } from './modal-transactions-date-range'
 
 export function CategoriesHeader() {
-  const { userId } = use(CategoriesContext)
+  const { userId } = useUserSession()
   const activeCategoryType = useCategoryType()
   const {
     mode,
@@ -72,7 +72,7 @@ export function CategoriesHeader() {
 
       {/* Tab Navigation */}
       <View className="mt-1 flex-row gap-2">
-        <Link href="/(protected)/(tabs)/categories" asChild>
+        <Link href="/(tabs)/categories" asChild>
           <Pressable
             className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{
@@ -104,7 +104,7 @@ export function CategoriesHeader() {
           </Pressable>
         </Link>
 
-        <Link href="/(protected)/(tabs)/categories/incomes" asChild>
+        <Link href="/(tabs)/categories/incomes" asChild>
           <Pressable
             className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{

@@ -1,3 +1,4 @@
+import { useUserSession } from '@/lib/context/user-context'
 import { Check } from '@/lib/icons'
 import { createCategory, updateCategory } from '@/lib/powersync/data/mutations'
 import React, { use, useEffect, useState } from 'react'
@@ -14,7 +15,8 @@ interface CategoryFormData {
 }
 
 export function CategoryForm() {
-  const { userId, categoryUI } = use(CategoriesContext)
+  const { userId } = useUserSession()
+  const { categoryUI } = use(CategoriesContext)
 
   const { categoryToEdit: category, handleCloseCategoryModal: onClose } =
     categoryUI

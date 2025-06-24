@@ -1,8 +1,6 @@
-import { AccountTransactionItem } from '@/components/accounts/account-transaction-item'
-import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
+import { AccountTransactionItem } from '@/components/account-details/account-transaction-item'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { TEMP_USER_ID } from '@/lib/constants'
 import { useUserSession } from '@/lib/context/user-context'
 import {
   CreditCard,
@@ -55,24 +53,6 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
     label: 'Debt Account'
   }
 }
-
-// InfoItem component commented out as it's not currently used
-// TODO: Uncomment when account details like targetAmount, dueDate, interestRate are added to schema
-// interface InfoItemProps {
-//   icon: React.ReactNode
-//   label: string
-//   value: string
-// }
-
-// function InfoItem({ icon, label, value }: InfoItemProps) {
-//   return (
-//     <View className="flex-row items-center gap-2 py-2">
-//       {icon}
-//       <Text className="flex-1 text-sm text-muted-foreground">{label}</Text>
-//       <Text className="text-sm font-semibold text-foreground">{value}</Text>
-//     </View>
-//   )
-// }
 
 interface AccountHeaderProps {
   name: string
@@ -231,57 +211,6 @@ function ProgressCard({
   )
 }
 
-interface DetailsCardProps {
-  account: any
-  formatBalance: (amount: number) => string
-}
-
-function DetailsCard({ account, formatBalance }: DetailsCardProps) {
-  // For now, we'll hide the details card since our current Account interface
-  // doesn't include targetAmount, dueDate, or interestRate fields
-  // TODO: Add these fields to the account schema when needed
-  return null
-
-  // Original logic - commented out until we add these fields to the schema:
-  // if (
-  //   !(account.type === 'savings' && account.targetAmount) &&
-  //   !(account.type === 'debt' && (account.dueDate || account.interestRate))
-  // ) {
-  //   return null
-  // }
-
-  // return (
-  //   <Card className="mb-4 border-0 bg-card/50 shadow-none">
-  //     <CardHeader>
-  //       <CardTitle>Account Details</CardTitle>
-  //     </CardHeader>
-  //     <CardContent>
-  //       {account.type === 'savings' && account.targetAmount && (
-  //         <InfoItem
-  //           icon={<Target size={18} className="text-muted-foreground" />}
-  //           label="Target Amount"
-  //           value={formatBalance(account.targetAmount)}
-  //         />
-  //       )}
-  //       {account.type === 'debt' && account.dueDate && (
-  //         <InfoItem
-  //           icon={<Calendar size={18} className="text-muted-foreground" />}
-  //           label="Due Date"
-  //           value={new Date(account.dueDate).toLocaleDateString()}
-  //         />
-  //       )}
-  //       {account.type === 'debt' && account.interestRate && (
-  //         <InfoItem
-  //           icon={<DollarSign size={18} className="text-muted-foreground" />}
-  //           label="Interest Rate"
-  //           value={`${account.interestRate}%`}
-  //         />
-  //       )}
-  //     </CardContent>
-  //   </Card>
-  // )
-}
-
 interface ActivitySectionProps {
   operations: any[]
 }
@@ -315,7 +244,6 @@ export default function AccountDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { handleEditAccount } = useAccountsUI()
 
   const { userId } = useUserSession()
   const { data: accounts, isLoading } = useGetAccount({
@@ -359,32 +287,13 @@ export default function AccountDetailsScreen() {
   // Balance is already a number now
   const balanceAmount = account.balance || 0
 
-  // For now, disable progress calculation since targetAmount and initialAmount
-  // don't exist in our current schema
   let progress = null
-  // TODO: Add targetAmount and initialAmount fields to account schema when needed
-  // if (account.type === 'saving' && account.savingsTargetAmount) {
-  //   progress = (balanceAmount / account.savingsTargetAmount) * 100
-  // } else if (account.type === 'debt' && account.debtInitialAmount) {
-  //   progress =
-  //     ((account.debtInitialAmount - balanceAmount) / account.debtInitialAmount) * 100
-  // }
-
-  const formatBalance = (amount: number) => {
-    const currency = account.currencyId || 'USD'
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(Math.abs(amount))
-  }
 
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount({
         id: account.id,
-        userId: userId || TEMP_USER_ID
+        userId
       })
       router.back()
     } catch (error) {
@@ -408,7 +317,7 @@ export default function AccountDetailsScreen() {
           icon={Icon}
           colorClass={colorClass}
           bgColorClass={bgColorClass}
-          onEdit={() => handleEditAccount(account)}
+          onEdit={() => console.log('edit')}
           onDelete={() => {
             Alert.alert(
               'Delete Account',
@@ -444,8 +353,6 @@ export default function AccountDetailsScreen() {
             bgColorClass={bgColorClass}
           />
         )}
-
-        <DetailsCard account={account} formatBalance={formatBalance} />
 
         <ActivitySection operations={accountOperations} />
       </ScrollView>

@@ -1,8 +1,7 @@
+import { useUserSession } from '@/lib/context/user-context'
 import { useGetCategories } from '@/lib/powersync/data/queries'
 import { categories } from '@/lib/powersync/schema/table_4_categories'
 import { InferSelectModel } from 'drizzle-orm'
-import { use } from 'react'
-import { CategoriesContext } from '../categories-context'
 import { useCategoryType } from './use-category-type'
 
 export interface CategoryWithAmounts
@@ -11,7 +10,7 @@ export interface CategoryWithAmounts
 }
 
 export function useGetCategoriesWithAmounts(): CategoryWithAmounts[] {
-  const { userId } = use(CategoriesContext)
+  const { userId } = useUserSession()
   const type = useCategoryType()
 
   const { data: categories } = useGetCategories({
