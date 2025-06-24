@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
-import { Platform, Pressable, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
+import { CategoryWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { CategoryCardIcon } from './category-card-icon'
-import { CategoryWithAmounts } from './lib/use-get-categories-with-amounts'
 
 interface Props {
   category: CategoryWithAmounts
@@ -30,33 +30,18 @@ export function CategoryCard({
   return (
     <Pressable
       className={cn(
-        'flex-row items-center transition-all duration-150',
-        isPressed ? 'scale-98 opacity-70' : 'scale-100 opacity-100',
+        'flex-row items-center',
+        isPressed && 'opacity-70',
         className
       )}
-      style={{
-        ...Platform.select({
-          android: {
-            elevation: isPressed ? 1 : 2
-          },
-          default: {
-            boxShadow: `0px ${isPressed ? 1 : 2}px ${isPressed ? 2 : 4}px rgba(0, 0, 0, 0.1)${isPressed ? '80' : ''}`
-          }
-        })
-      }}
       onPress={() => onPress(category.id)}
       onLongPress={onLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       delayLongPress={500}
     >
-      <View
-        className={`h-9 w-9 items-center justify-center rounded-lg ${
-          category.type === 'income' ? 'bg-income/10' : 'bg-muted'
-        }`}
-      >
-        <CategoryCardIcon name={category.icon} type={category.type} />
-      </View>
+      <CategoryCardIcon name={category.icon} type={category.type} />
+
       <View className="ml-3 flex-1">
         <Text
           numberOfLines={1}
@@ -65,6 +50,7 @@ export function CategoryCard({
           {category.name}
         </Text>
         <Text
+          numberOfLines={1}
           className={`text-[13px] ${
             category.type === 'income'
               ? category.amount > 0

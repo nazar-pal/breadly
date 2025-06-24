@@ -4,6 +4,7 @@ import {
   icons as lucideIcons,
   type LucideIcon
 } from 'lucide-react-native'
+import { View } from 'react-native'
 
 export function CategoryCardIcon({
   name,
@@ -21,9 +22,11 @@ export function CategoryCardIcon({
   iconWithClassName(Icon)
 
   return (
-    <Icon
-      size={20}
-      className={type === 'expense' ? 'text-expense' : 'text-income'}
-    />
+    <View className="size-9 items-center justify-center rounded-lg bg-muted/70">
+      <Icon
+        size={20}
+        className={type === 'expense' ? 'text-expense' : 'text-income'}
+      />
+    </View>
   )
 }

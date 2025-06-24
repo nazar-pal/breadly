@@ -1,9 +1,9 @@
 import React, { use } from 'react'
 import { ScrollView } from 'react-native'
+import { CategoriesContext } from '../categories-context'
+import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { ButtonAddCategory } from './button-add-category'
-import { CategoriesContext } from './categories-context'
 import { CategoryCard } from './category-card'
-import { useGetCategoriesWithAmounts } from './lib/use-get-categories-with-amounts'
 
 export function CategoryCardsGrid() {
   const categories = useGetCategoriesWithAmounts()
