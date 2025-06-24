@@ -64,15 +64,14 @@ export default function RootLayout() {
                   value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
                 >
                   <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                  <Stack>
-                    <Stack.Screen
-                      name="(protected)"
-                      options={{ headerShown: false, animation: 'none' }}
-                    />
-                    <Stack.Screen
-                      name="auth"
-                      options={{ headerShown: false, animation: 'none' }}
-                    />
+                  <Stack
+                    screenOptions={{ headerShown: false, animation: 'none' }}
+                  >
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="expenses" />
+                    <Stack.Screen name="accounts" />
+                    <Stack.Screen name="+not-found" />
+                    <Stack.Screen name="auth" />
                   </Stack>
                 </ThemeProvider>
               </CurrencyProvider>
