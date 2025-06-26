@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Animated, View } from 'react-native'
+import { Animated } from 'react-native'
 import * as z from 'zod/v4'
 
 const emailSchema = z.object({
@@ -52,18 +52,16 @@ export function EmailStep({ onSubmit, fadeAnimation }: EmailStepProps) {
         onPress={form.handleSubmit(handleSubmit)}
         disabled={form.formState.isSubmitting}
         className={cn(
-          'h-16 w-full rounded-2xl bg-gradient-to-r from-primary to-primary/90 shadow-xl',
+          'h-16 flex-row items-center gap-3 rounded-2xl shadow-xl',
           form.formState.isSubmitting && 'opacity-70'
         )}
       >
-        <View className="flex-row items-center gap-3">
-          <Text className="text-lg font-bold text-primary-foreground">
-            {form.formState.isSubmitting ? 'Checking...' : 'Continue'}
-          </Text>
-          {!form.formState.isSubmitting && (
-            <ArrowRight size={22} className="text-primary-foreground" />
-          )}
-        </View>
+        <Text className="text-lg font-bold text-primary-foreground">
+          {form.formState.isSubmitting ? 'Checking...' : 'Continue'}
+        </Text>
+        {!form.formState.isSubmitting && (
+          <ArrowRight size={22} className="text-primary-foreground" />
+        )}
       </Button>
     </Animated.View>
   )
