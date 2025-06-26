@@ -20,12 +20,15 @@ import {
 } from '@/components/auth'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useAuthFlow } from '@/lib/hooks'
+import { useUserSession } from '@/lib/context/user-context'
+import { useAuthFlow, useMigrationPreview } from '@/lib/hooks'
 
 const { height: screenHeight } = Dimensions.get('window')
 
 export default function AuthRoutesLayout() {
   const insets = useSafeAreaInsets()
+  const userSession = useUserSession()
+  const { stats } = useMigrationPreview()
   const [modalState, setModalState] = React.useState<{
     termsVisible: boolean
     privacyVisible: boolean
@@ -111,15 +114,61 @@ export default function AuthRoutesLayout() {
 
                 {/* Password Step (Sign In or Sign Up) */}
                 {(step === 'signin' || step === 'signup') && (
-                  <PasswordStep
-                    isExistingUser={isExistingUser}
-                    userEmail={userEmail}
-                    signInError={signInError}
-                    onSubmit={onPasswordSubmit}
-                    onBack={goBackStep}
-                    onForgotPassword={handleForgotPassword}
-                    fadeAnimation={fadeAnimation}
-                  />
+                  <>
+                    <PasswordStep
+                      isExistingUser={isExistingUser}
+                      userEmail={userEmail}
+                      signInError={signInError}
+                      onSubmit={onPasswordSubmit}
+                      onBack={goBackStep}
+                      onForgotPassword={handleForgotPassword}
+                      fadeAnimation={fadeAnimation}
+                    />
+
+                    {/* Show migration preview for guest users signing up */}
+                    {!isExistingUser &&
+                      userSession.isGuest &&
+                      stats &&
+                      stats.total > 0 && (
+                        <View className="mt-6 rounded-lg bg-primary/5 p-4">
+                          <Text className="mb-2 font-semibold text-foreground">
+                            Your data will be preserved! 🎉
+                          </Text>
+                          <Text className="mb-3 text-sm text-muted-foreground">
+                            You have {stats.total} items that will be saved to
+                            your account:
+                          </Text>
+
+                          <View className="space-y-1">
+                            {stats.transactions > 0 && (
+                              <Text className="text-sm text-muted-foreground">
+                                • {stats.transactions} transactions
+                              </Text>
+                            )}
+                            {stats.accounts > 0 && (
+                              <Text className="text-sm text-muted-foreground">
+                                • {stats.accounts} accounts
+                              </Text>
+                            )}
+                            {stats.categories > 0 && (
+                              <Text className="text-sm text-muted-foreground">
+                                • {stats.categories} categories
+                              </Text>
+                            )}
+                            {stats.budgets > 0 && (
+                              <Text className="text-sm text-muted-foreground">
+                                • {stats.budgets} budgets
+                              </Text>
+                            )}
+                          </View>
+
+                          <Text className="mt-3 text-xs text-muted-foreground">
+                            All your data will be automatically synced to the
+                            cloud after creating your account.
+                          </Text>
+                        </View>
+                      )}
+                  </>
                 )}
 
                 {/* Verification Step */}
