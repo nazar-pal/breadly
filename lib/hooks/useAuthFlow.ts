@@ -1,3 +1,4 @@
+import { Storage } from '@/lib/storage'
 import { useAuth, useSignIn, useSignUp } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import React from 'react'
@@ -202,6 +203,11 @@ export function useAuthFlow() {
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
       setStep('verification')
       animateStep('forward')
+
+      // Mark that we just finished creating a brand-new account so that the
+      // guest data can be migrated automatically on the first authenticated session.
+
+      Storage.setItem('AUTO_MIGRATE_AFTER_SIGNUP', 'true')
     } catch (err: any) {
       console.error('Sign-up error:', JSON.stringify(err, null, 2))
 

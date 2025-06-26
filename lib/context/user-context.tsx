@@ -1,9 +1,9 @@
+import { Storage } from '@/lib/storage'
 import { useAuth } from '@clerk/clerk-expo'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useTheme } from '@react-navigation/native'
 import { randomUUID } from 'expo-crypto'
 import React, { useContext, useEffect, useState } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Text, View } from 'react-native'
 
 type UserSession = {
   userId: string
@@ -11,6 +11,7 @@ type UserSession = {
 }
 
 const GUEST_KEY = 'guestUserId'
+const AUTO_MIGRATE_KEY = 'AUTO_MIGRATE_AFTER_SIGNUP'
 
 const UserContext = React.createContext<UserSession | undefined>(undefined)
 
@@ -63,7 +64,7 @@ async function migrateGuestDataToUser(
   }
 
   // Clear the guest ID after successful migration
-  await AsyncStorage.removeItem(GUEST_KEY)
+  Storage.removeItem(GUEST_KEY)
 }
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
@@ -74,10 +75,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   async function handleGuestSession() {
     try {
-      let guestId = await AsyncStorage.getItem(GUEST_KEY)
+      let guestId = Storage.getItem(GUEST_KEY)
       if (!guestId) {
         guestId = randomUUID()
-        await AsyncStorage.setItem(GUEST_KEY, guestId)
+        Storage.setItem(GUEST_KEY, guestId)
       }
       setSession({
         userId: guestId,
@@ -95,20 +96,80 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   async function handleAuthenticatedSession(clerkUserId: string) {
     setIsInitializing(false)
-    const existingGuestId = await AsyncStorage.getItem(GUEST_KEY)
+
+    const existingGuestId = Storage.getItem(GUEST_KEY)
 
     if (existingGuestId && !isMigrating) {
-      // User was previously a guest, migrate their data
-      setIsMigrating(true)
-      try {
-        await migrateGuestDataToUser(existingGuestId, clerkUserId)
-        console.log('✅ Successfully migrated guest data to authenticated user')
-      } catch (error) {
-        console.error('❌ Failed to migrate guest data:', error)
-        // You might want to show an error message to the user here
-        // For now, we'll continue with the authenticated session
-      } finally {
-        setIsMigrating(false)
+      // Determine if we should auto-migrate or ask the user.
+      const shouldAutoMigrate = Storage.getItem(AUTO_MIGRATE_KEY) === 'true'
+
+      if (shouldAutoMigrate) {
+        // New account that was just created – migrate automatically.
+        setIsMigrating(true)
+        try {
+          await migrateGuestDataToUser(existingGuestId, clerkUserId)
+          console.log(
+            '✅ Successfully migrated guest data to authenticated user'
+          )
+        } catch (error) {
+          console.error('❌ Failed to migrate guest data:', error)
+        } finally {
+          // Clean up flag regardless of success.
+          Storage.removeItem(AUTO_MIGRATE_KEY)
+          setIsMigrating(false)
+        }
+      } else {
+        // Existing account – ask the user if they want to import the local (guest) data.
+        try {
+          const { getGuestDataStats } = await import(
+            '@/lib/powersync/data/migrations'
+          )
+
+          const stats = await getGuestDataStats(existingGuestId)
+
+          const message =
+            stats.total > 0
+              ? `We found ${stats.total} item${stats.total === 1 ? '' : 's'} created while using the app as a guest on this device. Would you like to sync this data to your account?\n\n• ${stats.transactions} transactions\n• ${stats.accounts} accounts\n• ${stats.categories} categories\n• ${stats.budgets} budgets\n• ${stats.attachments} attachments`
+              : 'Would you like to sync the data you created while using the app as a guest on this device to your account?'
+
+          const userChoice = await new Promise<boolean>(resolve => {
+            Alert.alert(
+              'Sync your data?',
+              message,
+              [
+                {
+                  text: 'Skip',
+                  style: 'cancel',
+                  onPress: () => resolve(false)
+                },
+                {
+                  text: 'Sync',
+                  onPress: () => resolve(true)
+                }
+              ],
+              { cancelable: false }
+            )
+          })
+
+          if (userChoice) {
+            setIsMigrating(true)
+            try {
+              await migrateGuestDataToUser(existingGuestId, clerkUserId)
+              console.log(
+                '✅ Successfully migrated guest data after user consent'
+              )
+            } catch (error) {
+              console.error(
+                '❌ Failed to migrate guest data after consent:',
+                error
+              )
+            } finally {
+              setIsMigrating(false)
+            }
+          }
+        } catch (err) {
+          console.error('❌ Error while prompting for data migration:', err)
+        }
       }
     }
 

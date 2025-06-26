@@ -69,6 +69,7 @@ function usePowerSyncStatus() {
 
 /**
  * Provider that manages the PowerSync client lifecycle.
+ * Local database works for all users, cloud sync only for authenticated users.
  */
 export function PowerSyncContextProvider({
   children
@@ -84,7 +85,7 @@ export function PowerSyncContextProvider({
   const { isConnected, isSyncing, hasSynced, lastSyncedAt } =
     usePowerSyncStatus()
 
-  // Handle authentication changes
+  // Handle cloud sync connection (only for authenticated users)
   React.useEffect(() => {
     if (!isLoaded) return
 
@@ -99,18 +100,24 @@ export function PowerSyncContextProvider({
           }
 
           await powerSyncDb.connect(connectorRef.current)
-          console.log('PowerSync connected')
+          console.log(
+            '☁️ PowerSync cloud sync connected for authenticated user'
+          )
         } catch (err) {
-          console.error('PowerSync connection error:', err)
-          setError(err instanceof Error ? err : new Error('Connection failed'))
+          console.error('❌ PowerSync cloud connection error:', err)
+          setError(
+            err instanceof Error ? err : new Error('Cloud connection failed')
+          )
         } finally {
           setIsConnecting(false)
         }
       } else {
-        // Disconnect on sign out
-        await powerSyncDb.close().catch(() => {})
+        // Disconnect cloud sync but keep local database open
+        await powerSyncDb.disconnect().catch(() => {})
         connectorRef.current = null
         setError(null)
+        setIsConnecting(false)
+        console.log('👤 Guest user: local database only (no cloud sync)')
       }
     }
 
