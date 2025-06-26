@@ -6,9 +6,18 @@ import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
 import { currencies, useCurrency } from '@/lib/context/CurrencyContext'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
-import { ChevronRight, DollarSign, Moon, Sun, User } from '@/lib/icons'
+import {
+  ChevronRight,
+  DollarSign,
+  Moon,
+  Shield,
+  Sun,
+  User,
+  UserPlus
+} from '@/lib/icons'
 import { cn } from '@/lib/utils'
-import { SignedIn, useUser } from '@clerk/clerk-expo'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -39,6 +48,7 @@ interface SettingsItemProps {
   rightElement?: React.ReactNode
   onPress?: () => void
   showBorder?: boolean
+  className?: string
 }
 
 function SettingsItem({
@@ -46,6 +56,7 @@ function SettingsItem({
   title,
   subtitle,
   rightElement,
+  className,
   onPress,
   showBorder = true
 }: SettingsItemProps) {
@@ -56,7 +67,8 @@ function SettingsItem({
       <Container
         className={cn(
           'flex-row items-center justify-between py-3',
-          onPress && 'active:opacity-70'
+          onPress && 'active:opacity-70',
+          className
         )}
         onPress={onPress}
       >
@@ -84,6 +96,7 @@ export default function SettingsScreen() {
   const { colorScheme, setColorScheme } = useColorScheme()
   const { currency, setCurrency } = useCurrency()
   const { user } = useUser()
+  const router = useRouter()
   const insets = useSafeAreaInsets()
 
   const [showCurrencyModal, setShowCurrencyModal] = React.useState(false)
@@ -101,6 +114,32 @@ export default function SettingsScreen() {
           paddingBottom: insets.bottom + 32
         }}
       >
+        {/* Authentication Section - Only show for guest users */}
+        <SignedOut>
+          <SettingsSection title="Create Account">
+            <SettingsItem
+              icon={<UserPlus size={20} className="text-primary" />}
+              title="Sign Up & Save Your Data"
+              subtitle="Create an account to sync your data to the cloud"
+              rightElement={
+                <ChevronRight size={20} className="text-muted-foreground" />
+              }
+              onPress={() => router.push('/auth')}
+            />
+            <SettingsItem
+              className="pb-0"
+              icon={<Shield size={20} className="text-primary" />}
+              title="Sign In"
+              subtitle="Already have an account? Sign in here"
+              rightElement={
+                <ChevronRight size={20} className="text-muted-foreground" />
+              }
+              onPress={() => router.push('/auth')}
+              showBorder={false}
+            />
+          </SettingsSection>
+        </SignedOut>
+
         <SignedIn>
           <SettingsSection title="Account">
             <View className="mb-4 flex-row items-center">
@@ -154,6 +193,7 @@ export default function SettingsScreen() {
           <SettingsItem
             icon={<Moon size={20} className="text-primary" />}
             title="Dark Mode"
+            className="pb-0"
             rightElement={
               <Switch
                 checked={colorScheme === 'dark'}
