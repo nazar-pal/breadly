@@ -8,7 +8,7 @@ import { transactionAttachments } from '@/server/db/schema/table_9_transaction-a
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 // Define the shape of one operation
 const operationSchema = z.object({
@@ -98,6 +98,15 @@ export const syncRouter = createTRPCRouter({
       const transformedData = transformDataForPostgres(opData, table)
 
       try {
+        // Ensure the record belongs to the authenticated user (second-line defence).
+        const recordUserId = (transformedData as any).userId
+
+        if (recordUserId && recordUserId !== session.userId) {
+          throw new Error(
+            `Attempted to insert record for a different user (record userId ${recordUserId} !== session userId ${session.userId})`
+          )
+        }
+
         switch (table) {
           case 'categories':
             await db.insert(categories).values(transformedData)
@@ -153,50 +162,69 @@ export const syncRouter = createTRPCRouter({
             await db
               .update(categories)
               .set(transformedData)
-              .where(eq(categories.id, id))
+              .where(
+                and(
+                  eq(categories.id, id),
+                  eq(categories.userId, session.userId)
+                )
+              )
             break
           case 'budgets':
             await db
               .update(budgets)
               .set(transformedData)
-              .where(eq(budgets.id, id))
+              .where(
+                and(eq(budgets.id, id), eq(budgets.userId, session.userId))
+              )
             break
           case 'accounts':
             await db
               .update(accounts)
               .set(transformedData)
-              .where(eq(accounts.id, id))
+              .where(
+                and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+              )
             break
           case 'transactions':
             await db
               .update(transactions)
               .set(transformedData)
-              .where(eq(transactions.id, id))
+              .where(
+                and(
+                  eq(transactions.id, id),
+                  eq(transactions.userId, session.userId)
+                )
+              )
             break
           case 'attachments':
             await db
               .update(attachments)
               .set(transformedData)
-              .where(eq(attachments.id, id))
+              .where(
+                and(
+                  eq(attachments.id, id),
+                  eq(attachments.userId, session.userId)
+                )
+              )
             break
           case 'transactionAttachments':
             await db
               .update(transactionAttachments)
               .set(transformedData)
-              .where(eq(transactionAttachments.id, id))
+              .where(
+                and(
+                  eq(transactionAttachments.id, id),
+                  eq(transactionAttachments.userId, session.userId)
+                )
+              )
             break
           case 'userPreferences':
             // userPreferences uses userId as primary key, not id
-            const userId = transformedData.userId || id
-            if (!userId) {
-              throw new Error(
-                `UPDATE operation missing 'userId' for userPreferences`
-              )
-            }
+            const userIdPref = transformedData.userId
             await db
               .update(userPreferences)
               .set(transformedData)
-              .where(eq(userPreferences.userId, userId))
+              .where(eq(userPreferences.userId, userIdPref))
             break
         }
 
@@ -214,7 +242,7 @@ export const syncRouter = createTRPCRouter({
   deleteRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx
+      const { db, session } = ctx
       const { table, opData } = input
       const id = opData.id ?? opData
 
@@ -226,31 +254,63 @@ export const syncRouter = createTRPCRouter({
       try {
         switch (table) {
           case 'categories':
-            await db.delete(categories).where(eq(categories.id, id))
+            await db
+              .delete(categories)
+              .where(
+                and(
+                  eq(categories.id, id),
+                  eq(categories.userId, session.userId)
+                )
+              )
             break
           case 'budgets':
-            await db.delete(budgets).where(eq(budgets.id, id))
+            await db
+              .delete(budgets)
+              .where(
+                and(eq(budgets.id, id), eq(budgets.userId, session.userId))
+              )
             break
           case 'accounts':
-            await db.delete(accounts).where(eq(accounts.id, id))
+            await db
+              .delete(accounts)
+              .where(
+                and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+              )
             break
           case 'transactions':
-            await db.delete(transactions).where(eq(transactions.id, id))
+            await db
+              .delete(transactions)
+              .where(
+                and(
+                  eq(transactions.id, id),
+                  eq(transactions.userId, session.userId)
+                )
+              )
             break
           case 'attachments':
-            await db.delete(attachments).where(eq(attachments.id, id))
+            await db
+              .delete(attachments)
+              .where(
+                and(
+                  eq(attachments.id, id),
+                  eq(attachments.userId, session.userId)
+                )
+              )
             break
           case 'transactionAttachments':
             await db
               .delete(transactionAttachments)
-              .where(eq(transactionAttachments.id, id))
+              .where(
+                and(
+                  eq(transactionAttachments.id, id),
+                  eq(transactionAttachments.userId, session.userId)
+                )
+              )
             break
           case 'userPreferences':
-            // userPreferences uses userId as primary key, not id
-            const userId = id
             await db
               .delete(userPreferences)
-              .where(eq(userPreferences.userId, userId))
+              .where(eq(userPreferences.userId, session.userId))
             break
         }
 
