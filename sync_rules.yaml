@@ -5,7 +5,7 @@ bucket_definitions:
   # Global data accessible to all authenticated users
   global:
     data:
-      - SELECT code as id, symbol, name FROM currencies
+      - SELECT code as id, code, symbol, name FROM currencies
       - SELECT * FROM exchange_rates
 
   # User-specific data
@@ -13,7 +13,7 @@ bucket_definitions:
     parameters: SELECT request.user_id() as user_id
     data:
       # User preferences
-      - SELECT user_id as id, default_currency, first_weekday, locale FROM user_preferences WHERE user_id = bucket.user_id
+      - SELECT user_id as id, user_id, default_currency, first_weekday, locale FROM user_preferences WHERE user_id = bucket.user_id
 
       # User's categories
       - SELECT * FROM categories WHERE user_id = bucket.user_id
