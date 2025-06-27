@@ -13,6 +13,12 @@ Key Features:
 - Locale/language preference for internationalization
 - Extensible structure for future preference additions
 - Row-level security for data protection
+
+PowerSync Client Adaptations:
+- Additional 'id' field: PowerSync requires primary key to be named 'id'
+- PostgreSQL uses 'user_id' as PK, PowerSync sync rules alias it as 'id'
+- Both 'id' and 'userId' exist in SQLite for proper queries and relationships
+- Enables standard PowerSync conflict resolution and sync patterns
 ================================================================================
 */
 
@@ -30,17 +36,24 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
  * Controls UI behavior, localization, and default values
  *
  * Business Rules:
- * - One preference record per user (userId as primary key)
+ * - One preference record per user (unique constraint on userId)
  * - Default currency must be a valid currency from the currencies table
  * - First weekday must be between 1-7 (1=Monday, 7=Sunday)
  * - Locale codes follow standard format (e.g., en-US, fr-FR, es-ES)
  * - All preferences have sensible defaults for new users
  * - Preferences persist across user sessions
+ *
+ * Schema Notes:
+ * - PostgreSQL: Primary key is 'user_id' (Clerk user identifier)
+ * - SQLite: PowerSync adds 'id' field (aliased from 'user_id' in sync rules)
+ * - Both 'id' and 'userId' exist client-side for standard PowerSync operations
+ * - Allows proper upsert patterns and relationship queries in SQLite
  */
 export const userPreferences = sqliteTable(
   'user_preferences',
   {
-    userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
+    id: text().primaryKey(), // PowerSync-required primary key (aliased from 'user_id')
+    userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
     defaultCurrency: isoCurrencyCodeColumn('default_currency').references(
       () => currencies.code
     ), // Default currency for new accounts/transactions

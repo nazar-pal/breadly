@@ -6,6 +6,8 @@ import {
   PowerSyncBackendConnector,
   UpdateType
 } from '@powersync/react-native'
+import z from 'zod/v4'
+import { TABLES_TO_SYNC } from './const'
 
 export class Connector implements PowerSyncBackendConnector {
   async fetchCredentials() {
@@ -33,9 +35,7 @@ export class Connector implements PowerSyncBackendConnector {
      */
     const transaction = await database.getNextCrudTransaction()
 
-    if (!transaction) {
-      return
-    }
+    if (!transaction) return
 
     let lastOp: { table: string; op: UpdateType } | null = null
     try {
@@ -45,24 +45,15 @@ export class Connector implements PowerSyncBackendConnector {
 
         const record = { ...op.opData, id: op.id }
 
-        // Type guard to ensure table is valid
-        const validTables = [
-          'categories',
-          'budgets',
-          'accounts',
-          'transactions',
-          'attachments',
-          'transactionAttachments',
-          'userPreferences'
-        ] as const
-        const tableName = op.table as (typeof validTables)[number]
-
-        if (!validTables.includes(tableName)) {
+        const result = z.enum(TABLES_TO_SYNC).safeParse(op.table)
+        if (!result.success) {
           console.warn(
             `Connector.uploadData: Skipping unknown table: ${op.table}`
           )
           continue
         }
+
+        const tableName = result.data
 
         switch (op.op) {
           case UpdateType.PUT: {

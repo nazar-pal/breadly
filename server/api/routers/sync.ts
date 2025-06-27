@@ -1,3 +1,4 @@
+import { TABLES_TO_SYNC } from '@/lib/powersync/const'
 import { userPreferences } from '@/server/db/schema/table_3_user-preferences'
 import { categories } from '@/server/db/schema/table_4_categories'
 import { budgets } from '@/server/db/schema/table_5_budgets'
@@ -5,22 +6,13 @@ import { accounts } from '@/server/db/schema/table_6_accounts'
 import { transactions } from '@/server/db/schema/table_7_transactions'
 import { attachments } from '@/server/db/schema/table_8_attachments'
 import { transactionAttachments } from '@/server/db/schema/table_9_transaction-attachments'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 
-import { and, eq } from 'drizzle-orm'
-
 // Define the shape of one operation
 const operationSchema = z.object({
-  table: z.enum([
-    'categories',
-    'budgets',
-    'accounts',
-    'transactions',
-    'attachments',
-    'transactionAttachments',
-    'userPreferences'
-  ]),
+  table: z.enum(TABLES_TO_SYNC),
   op: z.enum(['PUT', 'PATCH', 'DELETE']),
   opData: z.any() // opData will be validated per type below if needed
 })
@@ -123,10 +115,10 @@ export const syncRouter = createTRPCRouter({
           case 'attachments':
             await db.insert(attachments).values(transformedData)
             break
-          case 'transactionAttachments':
+          case 'transaction_attachments':
             await db.insert(transactionAttachments).values(transformedData)
             break
-          case 'userPreferences':
+          case 'user_preferences':
             await db.insert(userPreferences).values(transformedData)
             break
         }
@@ -207,7 +199,7 @@ export const syncRouter = createTRPCRouter({
                 )
               )
             break
-          case 'transactionAttachments':
+          case 'transaction_attachments':
             await db
               .update(transactionAttachments)
               .set(transformedData)
@@ -218,7 +210,7 @@ export const syncRouter = createTRPCRouter({
                 )
               )
             break
-          case 'userPreferences':
+          case 'user_preferences':
             // userPreferences uses userId as primary key, not id
             const userIdPref = transformedData.userId
             await db
@@ -297,7 +289,7 @@ export const syncRouter = createTRPCRouter({
                 )
               )
             break
-          case 'transactionAttachments':
+          case 'transaction_attachments':
             await db
               .delete(transactionAttachments)
               .where(
@@ -307,7 +299,7 @@ export const syncRouter = createTRPCRouter({
                 )
               )
             break
-          case 'userPreferences':
+          case 'user_preferences':
             await db
               .delete(userPreferences)
               .where(eq(userPreferences.userId, session.userId))
