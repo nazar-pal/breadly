@@ -119,7 +119,8 @@ export const syncRouter = createTRPCRouter({
             await db.insert(transactionAttachments).values(transformedData)
             break
           case 'user_preferences':
-            await db.insert(userPreferences).values(transformedData)
+            const { id: _, ...rest } = transformedData
+            await db.insert(userPreferences).values(rest)
             break
         }
 
@@ -213,9 +214,10 @@ export const syncRouter = createTRPCRouter({
           case 'user_preferences':
             // userPreferences uses userId as primary key, not id
             const userIdPref = transformedData.userId
+            const { id: _, ...rest } = transformedData
             await db
               .update(userPreferences)
-              .set(transformedData)
+              .set(rest)
               .where(eq(userPreferences.userId, userIdPref))
             break
         }
