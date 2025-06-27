@@ -1,3 +1,5 @@
+import { CurrencySelectSQLite } from './powersync/schema/table_1_currencies'
+
 export const NAV_THEME = {
   light: {
     background: 'hsl(0 0% 100%)', // background
@@ -15,4 +17,11 @@ export const NAV_THEME = {
     primary: 'hsl(263.4 70% 50.4%)', // primary
     text: 'hsl(210 20% 98%)' // foreground
   }
+}
+
+export const DEFAULT_CURRENCY: CurrencySelectSQLite = {
+  id: 'USD',
+  code: 'USD',
+  symbol: '$',
+  name: 'US Dollar'
 }

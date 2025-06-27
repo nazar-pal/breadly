@@ -1,20 +1,10 @@
 import { SignOutButton } from '@/components/auth'
+import { Preferences } from '@/components/settings/preferences'
 import { MigrationPreview } from '@/components/shared/migration-preview'
 import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
-import { currencies, useCurrency } from '@/lib/context/CurrencyContext'
-import { useColorScheme } from '@/lib/hooks/useColorScheme'
-import {
-  ChevronRight,
-  DollarSign,
-  Moon,
-  Shield,
-  Sun,
-  User,
-  UserPlus
-} from '@/lib/icons'
+import { ChevronRight, Shield, User, UserPlus } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
@@ -93,13 +83,9 @@ function SettingsItem({
 }
 
 export default function SettingsScreen() {
-  const { colorScheme, setColorScheme } = useColorScheme()
-  const { currency, setCurrency } = useCurrency()
   const { user } = useUser()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-
-  const [showCurrencyModal, setShowCurrencyModal] = React.useState(false)
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
@@ -166,82 +152,7 @@ export default function SettingsScreen() {
 
         <MigrationPreview />
 
-        <SettingsSection title="Preferences" className="mt-6">
-          <SettingsItem
-            icon={<DollarSign size={20} className="text-primary" />}
-            title="Default Currency"
-            subtitle={`${currency.name} (${currency.symbol})`}
-            rightElement={
-              <ChevronRight size={20} className="text-muted-foreground" />
-            }
-            onPress={() => setShowCurrencyModal(!showCurrencyModal)}
-          />
-
-          <SettingsItem
-            icon={<Sun size={20} className="text-primary" />}
-            title="Light Mode"
-            rightElement={
-              <Switch
-                checked={colorScheme === 'light'}
-                onCheckedChange={checked =>
-                  setColorScheme(checked ? 'light' : 'dark')
-                }
-              />
-            }
-          />
-
-          <SettingsItem
-            icon={<Moon size={20} className="text-primary" />}
-            title="Dark Mode"
-            className="pb-0"
-            rightElement={
-              <Switch
-                checked={colorScheme === 'dark'}
-                onCheckedChange={checked =>
-                  setColorScheme(checked ? 'dark' : 'light')
-                }
-              />
-            }
-            showBorder={false}
-          />
-        </SettingsSection>
-
-        {showCurrencyModal && (
-          <Card className="mt-2">
-            <CardContent>
-              <Text className="mb-3 text-base font-semibold text-foreground">
-                Select Currency
-              </Text>
-              {currencies.map(curr => (
-                <Pressable
-                  key={curr.code}
-                  className={cn(
-                    'mb-1 flex-row items-center justify-between rounded-lg p-3',
-                    curr.code === currency.code && 'bg-primary'
-                  )}
-                  onPress={() => {
-                    setCurrency(curr)
-                    setShowCurrencyModal(false)
-                  }}
-                >
-                  <Text
-                    className={cn(
-                      'text-base',
-                      curr.code === currency.code
-                        ? 'text-primary-foreground'
-                        : 'text-foreground'
-                    )}
-                  >
-                    {curr.symbol} - {curr.name}
-                  </Text>
-                  {curr.code === currency.code && (
-                    <View className="h-2 w-2 rounded-full bg-primary-foreground" />
-                  )}
-                </Pressable>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+        <Preferences />
 
         <Text className="mt-6 text-center text-sm text-muted-foreground">
           Breadly v1.0.0

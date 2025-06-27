@@ -2,7 +2,6 @@ import './global.css'
 
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
-import { CurrencyProvider } from '@/lib/context/CurrencyContext'
 import { UserProvider } from '@/lib/context/user-context'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
 import { PowerSyncContextProvider } from '@/lib/powersync/context'
@@ -59,22 +58,20 @@ export default function RootLayout() {
         <GestureHandlerRootView className="flex-1">
           <QueryClientProvider client={queryClient}>
             <PowerSyncContextProvider>
-              <CurrencyProvider>
-                <ThemeProvider
-                  value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+              <ThemeProvider
+                value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
+              >
+                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                <Stack
+                  screenOptions={{ headerShown: false, animation: 'none' }}
                 >
-                  <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                  <Stack
-                    screenOptions={{ headerShown: false, animation: 'none' }}
-                  >
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="expenses" />
-                    <Stack.Screen name="accounts" />
-                    <Stack.Screen name="+not-found" />
-                    <Stack.Screen name="auth" />
-                  </Stack>
-                </ThemeProvider>
-              </CurrencyProvider>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="expenses" />
+                  <Stack.Screen name="accounts" />
+                  <Stack.Screen name="+not-found" />
+                  <Stack.Screen name="auth" />
+                </Stack>
+              </ThemeProvider>
             </PowerSyncContextProvider>
           </QueryClientProvider>
         </GestureHandlerRootView>

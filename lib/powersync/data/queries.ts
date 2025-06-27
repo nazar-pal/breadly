@@ -1,6 +1,8 @@
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, asc, eq, gte, lte, sum } from 'drizzle-orm'
+import { currencies } from '../schema/table_1_currencies'
+import { userPreferences } from '../schema/table_3_user-preferences'
 import { accounts } from '../schema/table_6_accounts'
 import { transactions } from '../schema/table_7_transactions'
 import { db } from '../system'
@@ -138,6 +140,31 @@ export function useSumTransactions({
         transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
       )
     )
+
+  const result = useQuery(toCompilableQuery(query))
+
+  return result
+}
+
+export function useGetUserPreferences({ userId }: { userId: string }) {
+  const query = db.query.userPreferences.findFirst({
+    where: eq(userPreferences.userId, userId),
+    with: {
+      defaultCurrency: true
+    }
+  })
+
+  const result = useQuery(toCompilableQuery(query))
+
+  return result
+}
+
+// -------------------- Currencies Queries --------------------
+
+export function useGetCurrencies() {
+  const query = db.query.currencies.findMany({
+    orderBy: [asc(currencies.name)]
+  })
 
   const result = useQuery(toCompilableQuery(query))
 
