@@ -128,7 +128,7 @@ export default function SettingsScreen() {
 
         <SignedIn>
           <SettingsSection title="Account">
-            <View className="mb-4 flex-row items-center">
+            <View className="my-4 flex-row items-center">
               <View className="h-[60px] w-[60px] items-center justify-center rounded-full bg-secondary">
                 <User size={32} className="text-foreground" />
               </View>
