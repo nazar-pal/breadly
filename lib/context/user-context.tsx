@@ -3,7 +3,7 @@ import { useAuth } from '@clerk/clerk-expo'
 import { useTheme } from '@react-navigation/native'
 import { randomUUID } from 'expo-crypto'
 import React, { useContext, useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 
 type UserSession = {
   userId: string
@@ -100,7 +100,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const existingGuestId = Storage.getItem(GUEST_KEY)
 
     if (existingGuestId && !isMigrating) {
-      // Determine if we should auto-migrate or ask the user.
+      // Only auto-migrate for new accounts that just signed up
       const shouldAutoMigrate = Storage.getItem(AUTO_MIGRATE_KEY) === 'true'
 
       if (shouldAutoMigrate) {
@@ -119,57 +119,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setIsMigrating(false)
         }
       } else {
-        // Existing account – ask the user if they want to import the local (guest) data.
-        try {
-          const { getGuestDataStats } = await import(
-            '@/lib/powersync/data/migrations'
-          )
-
-          const stats = await getGuestDataStats(existingGuestId)
-
-          const message =
-            stats.total > 0
-              ? `We found ${stats.total} item${stats.total === 1 ? '' : 's'} created while using the app as a guest on this device. Would you like to sync this data to your account?\n\n• ${stats.transactions} transactions\n• ${stats.accounts} accounts\n• ${stats.categories} categories\n• ${stats.budgets} budgets\n• ${stats.attachments} attachments`
-              : 'Would you like to sync the data you created while using the app as a guest on this device to your account?'
-
-          const userChoice = await new Promise<boolean>(resolve => {
-            Alert.alert(
-              'Sync your data?',
-              message,
-              [
-                {
-                  text: 'Skip',
-                  style: 'cancel',
-                  onPress: () => resolve(false)
-                },
-                {
-                  text: 'Sync',
-                  onPress: () => resolve(true)
-                }
-              ],
-              { cancelable: false }
-            )
-          })
-
-          if (userChoice) {
-            setIsMigrating(true)
-            try {
-              await migrateGuestDataToUser(existingGuestId, clerkUserId)
-              console.log(
-                '✅ Successfully migrated guest data after user consent'
-              )
-            } catch (error) {
-              console.error(
-                '❌ Failed to migrate guest data after consent:',
-                error
-              )
-            } finally {
-              setIsMigrating(false)
-            }
-          }
-        } catch (err) {
-          console.error('❌ Error while prompting for data migration:', err)
-        }
+        // Existing account sign-in – clear guest ID without migration
+        // This ensures existing cloud data takes precedence
+        Storage.removeItem(GUEST_KEY)
+        console.log(
+          '🔒 Signed into existing account, prioritizing cloud data over local guest data'
+        )
       }
     }
 
