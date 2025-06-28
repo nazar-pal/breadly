@@ -76,7 +76,7 @@ export function PowerSyncContextProvider({
 }: {
   children: React.ReactNode
 }) {
-  const { isLoaded, isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth()
   const [isConnecting, setIsConnecting] = React.useState(false)
   const [error, setError] = React.useState<Error | null>(null)
   const connectorRef = React.useRef<Connector | null>(null)
@@ -87,8 +87,6 @@ export function PowerSyncContextProvider({
 
   // Handle cloud sync connection (only for authenticated users)
   React.useEffect(() => {
-    if (!isLoaded) return
-
     async function handleConnection() {
       if (isSignedIn) {
         try {
@@ -122,7 +120,7 @@ export function PowerSyncContextProvider({
     }
 
     handleConnection()
-  }, [isLoaded, isSignedIn])
+  }, [isSignedIn])
 
   // Clean up on unmount
   React.useEffect(() => {

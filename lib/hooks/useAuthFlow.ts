@@ -15,7 +15,7 @@ interface ErrorDialogState {
 }
 
 export function useAuthFlow() {
-  const { isSignedIn, isLoaded } = useAuth()
+  const { isSignedIn } = useAuth()
   const router = useRouter()
   const { fadeAnimation, slideAnimation, scaleAnimation, animateStep } =
     useAuthAnimations()
@@ -46,10 +46,10 @@ export function useAuthFlow() {
   })
 
   React.useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (isSignedIn) {
       router.replace('/(tabs)')
     }
-  }, [isLoaded, isSignedIn, router])
+  }, [isSignedIn, router])
 
   // Show error dialog helper
   const showErrorDialog = (
@@ -358,7 +358,6 @@ export function useAuthFlow() {
 
   return {
     // State
-    isLoaded,
     step,
     userEmail,
     isExistingUser,

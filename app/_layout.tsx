@@ -6,7 +6,7 @@ import { UserProvider } from '@/lib/context/user-context'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
 import { PowerSyncContextProvider } from '@/lib/powersync/context'
 import { queryClient } from '@/lib/trpc/query-client'
-import { ClerkProvider } from '@clerk/clerk-expo'
+import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import {
@@ -54,28 +54,30 @@ export default function RootLayout() {
       tokenCache={tokenCache}
       __experimental_resourceCache={resourceCache}
     >
-      <UserProvider>
-        <GestureHandlerRootView className="flex-1">
-          <QueryClientProvider client={queryClient}>
-            <PowerSyncContextProvider>
-              <ThemeProvider
-                value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-              >
-                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                <Stack
-                  screenOptions={{ headerShown: false, animation: 'none' }}
+      <ClerkLoaded>
+        <UserProvider>
+          <GestureHandlerRootView className="flex-1">
+            <QueryClientProvider client={queryClient}>
+              <PowerSyncContextProvider>
+                <ThemeProvider
+                  value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
                 >
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="transactions" />
-                  <Stack.Screen name="accounts" />
-                  <Stack.Screen name="+not-found" />
-                  <Stack.Screen name="auth" />
-                </Stack>
-              </ThemeProvider>
-            </PowerSyncContextProvider>
-          </QueryClientProvider>
-        </GestureHandlerRootView>
-      </UserProvider>
+                  <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                  <Stack
+                    screenOptions={{ headerShown: false, animation: 'none' }}
+                  >
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="transactions" />
+                    <Stack.Screen name="accounts" />
+                    <Stack.Screen name="+not-found" />
+                    <Stack.Screen name="auth" />
+                  </Stack>
+                </ThemeProvider>
+              </PowerSyncContextProvider>
+            </QueryClientProvider>
+          </GestureHandlerRootView>
+        </UserProvider>
+      </ClerkLoaded>
     </ClerkProvider>
   )
 }

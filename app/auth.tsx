@@ -38,7 +38,6 @@ export default function AuthRoutesLayout() {
   })
   const {
     // State
-    isLoaded,
     step,
     userEmail,
     isExistingUser,
@@ -58,8 +57,6 @@ export default function AuthRoutesLayout() {
     goBackStep,
     handleForgotPassword
   } = useAuthFlow()
-
-  if (!isLoaded) return null
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>

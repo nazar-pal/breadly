@@ -68,7 +68,7 @@ async function migrateGuestDataToUser(
 }
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, userId: clerkId } = useAuth()
+  const { isSignedIn, userId: clerkId } = useAuth()
   const [session, setSession] = useState<UserSession | null>(null)
   const [isMigrating, setIsMigrating] = useState(false)
   const [isInitializing, setIsInitializing] = useState(true)
@@ -132,14 +132,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    if (!isLoaded) return
-
     if (isSignedIn && clerkId) {
       handleAuthenticatedSession(clerkId)
     } else {
       handleGuestSession()
     }
-  }, [isLoaded, isSignedIn, clerkId])
+  }, [isSignedIn, clerkId])
 
   // Show loading state during initialization or migration
   if (isInitializing || isMigrating || !session) {
