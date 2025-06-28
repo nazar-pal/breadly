@@ -50,7 +50,7 @@ export function AuthHeader({
       className={step === 'email' ? 'mb-16 items-center' : 'mb-12 items-center'}
     >
       <Animated.View
-        className="mb-8 h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary/80 shadow-2xl"
+        className="mb-8 h-24 w-24 items-center justify-center rounded-full bg-primary/80 shadow-2xl"
         style={{
           transform: [{ scale: scaleAnimation }]
         }}

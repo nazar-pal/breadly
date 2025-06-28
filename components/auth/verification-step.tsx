@@ -64,7 +64,7 @@ export function VerificationStep({
         onPress={form.handleSubmit(handleSubmit)}
         disabled={form.formState.isSubmitting}
         className={cn(
-          'h-16 w-full rounded-2xl bg-gradient-to-r from-primary to-primary/90 shadow-xl',
+          'h-16 w-full rounded-2xl shadow-xl',
           form.formState.isSubmitting && 'opacity-70'
         )}
       >
