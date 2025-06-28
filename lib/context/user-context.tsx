@@ -11,7 +11,7 @@ type UserSession = {
 }
 
 const GUEST_KEY = 'guestUserId'
-const AUTO_MIGRATE_KEY = 'AUTO_MIGRATE_AFTER_SIGNUP'
+export const AUTO_MIGRATE_KEY = 'AUTO_MIGRATE_AFTER_SIGNUP'
 
 const UserContext = React.createContext<UserSession | undefined>(undefined)
 
