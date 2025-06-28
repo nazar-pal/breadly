@@ -77,15 +77,19 @@ export function useAuthFlow() {
       setStep('signin')
       animateStep('forward')
     } catch (err: any) {
-      console.error('Email check error:', JSON.stringify(err, null, 2))
-
       // Email doesn't exist - proceed to sign-up
       if (err.errors?.[0]?.code === 'form_identifier_not_found') {
+        console.log(`📧 Email ${email} not found - proceeding to sign-up flow`)
         setUserEmail(email)
         setIsExistingUser(false)
         setStep('signup')
         animateStep('forward')
       } else {
+        // Log unexpected errors only
+        console.error(
+          'Unexpected email check error:',
+          JSON.stringify(err, null, 2)
+        )
         // Handle other types of errors
         let errorMessage = 'Please check your email and try again.'
 
