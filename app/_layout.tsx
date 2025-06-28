@@ -66,7 +66,7 @@ export default function RootLayout() {
                   screenOptions={{ headerShown: false, animation: 'none' }}
                 >
                   <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="expenses" />
+                  <Stack.Screen name="transactions" />
                   <Stack.Screen name="accounts" />
                   <Stack.Screen name="+not-found" />
                   <Stack.Screen name="auth" />
