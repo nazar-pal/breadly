@@ -1,15 +1,12 @@
 import { Storage } from '@/lib/storage'
 import { randomUUID } from 'expo-crypto'
-import { GUEST_KEY } from './const'
-import { type UserSession } from './store'
+import { GUEST_KEY } from './constants'
+import { userSessionStore } from './store'
 
-export async function handleGuestSession({
-  setSession,
-  setIsInitializing
-}: {
-  setSession: (session: UserSession) => void
-  setIsInitializing: (isInitializing: boolean) => void
-}) {
+export async function handleGuestSession() {
+  const { actions } = userSessionStore.getState()
+  const { setSession, setIsInitializing } = actions
+
   try {
     let guestId = Storage.getItem(GUEST_KEY)
     if (!guestId) {

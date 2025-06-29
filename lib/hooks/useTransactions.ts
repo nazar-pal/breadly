@@ -1,13 +1,13 @@
 import type { Operation } from '@/components/accounts/operation-list-item'
 import { usePowerSync } from '@/lib/powersync/context'
 import { transactions } from '@/lib/powersync/schema/table_7_transactions'
-import { useUserSession } from '@/lib/user-session'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
 import { useCallback, useMemo } from 'react'
 import { Alert } from 'react-native'
+import { useUserSession } from './use-user-session'
 
 interface TransactionWithRelations {
   id: string

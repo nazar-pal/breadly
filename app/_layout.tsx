@@ -1,11 +1,11 @@
 import './global.css'
 
+import { UserSessionInitializer } from '@/components/auth'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
 import { PowerSyncContextProvider } from '@/lib/powersync/context'
 import { queryClient } from '@/lib/trpc/query-client'
-import { InitializeUserSession } from '@/lib/user-session'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
@@ -55,7 +55,7 @@ export default function RootLayout() {
       __experimental_resourceCache={resourceCache}
     >
       <ClerkLoaded>
-        <InitializeUserSession>
+        <UserSessionInitializer>
           <GestureHandlerRootView className="flex-1">
             <QueryClientProvider client={queryClient}>
               <PowerSyncContextProvider>
@@ -75,7 +75,7 @@ export default function RootLayout() {
               </PowerSyncContextProvider>
             </QueryClientProvider>
           </GestureHandlerRootView>
-        </InitializeUserSession>
+        </UserSessionInitializer>
       </ClerkLoaded>
     </ClerkProvider>
   )

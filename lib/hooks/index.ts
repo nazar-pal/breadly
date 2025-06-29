@@ -1,5 +1,5 @@
-// Business logic hooks
 export { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
+export { useUserSession } from './use-user-session'
 export { useDateRange } from './useDateRange'
 export { useFrameworkReady } from './useFrameworkReady'
 export { useMigrationPreview } from './useMigrationPreview'

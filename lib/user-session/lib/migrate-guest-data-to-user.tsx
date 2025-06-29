@@ -1,5 +1,5 @@
 import { Storage } from '@/lib/storage'
-import { GUEST_KEY } from './const'
+import { GUEST_KEY } from './constants'
 
 export async function migrateGuestDataToUser(
   guestUserId: string,

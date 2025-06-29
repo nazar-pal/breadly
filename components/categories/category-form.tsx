@@ -1,6 +1,6 @@
+import { useUserSession } from '@/lib/hooks'
 import { Check } from '@/lib/icons'
 import { createCategory, updateCategory } from '@/lib/powersync/data/mutations'
-import { useUserSession } from '@/lib/user-session'
 import React, { use, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'

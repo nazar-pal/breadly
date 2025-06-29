@@ -10,7 +10,7 @@ import { useQuery } from '@powersync/react'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { eq } from 'drizzle-orm'
 import { asyncTryCatch } from '@/utils'
-import { useUserSession } from '@/lib/user-session'
+import { useUserSession } from '@/lib/hooks'
 import { categories } from '@/lib/powersync/schema/table_4_categories'
 
 const { db } = usePowerSync()

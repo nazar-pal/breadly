@@ -17,7 +17,7 @@ type UserSessionStore = {
   }
 }
 
-const useStore = create<UserSessionStore>(set => ({
+export const userSessionStore = create<UserSessionStore>(set => ({
   session: null,
   isMigrating: false,
   isInitializing: true,
@@ -28,15 +28,10 @@ const useStore = create<UserSessionStore>(set => ({
   }
 }))
 
-export const useUserSession = () => {
-  const session = useStore(state => state.session)
-  if (!session) throw new Error('User session not found')
-
-  return session
-}
+export const useUserSessionStore = userSessionStore
 
 export const useUserSessionInitializingState = () => {
-  return useStore(
+  return useUserSessionStore(
     useShallow(state => ({
       session: state.session,
       isMigrating: state.isMigrating,
@@ -44,4 +39,6 @@ export const useUserSessionInitializingState = () => {
     }))
   )
 }
-export const useActions = () => useStore(state => state.actions)
+
+export const useUserSessionActions = () =>
+  useUserSessionStore(state => state.actions)

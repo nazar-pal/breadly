@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
-import { useUserSessionInitializingState } from './store'
+import { useUserSessionInitializingState } from '../../lib/user-session/lib/store'
 
 export function UserSessionLoading() {
   const { colors } = useTheme()
