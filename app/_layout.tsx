@@ -70,7 +70,7 @@ export default function RootLayout() {
                     <Stack.Screen name="transactions" />
                     <Stack.Screen name="accounts" />
                     <Stack.Screen name="+not-found" />
-                    <Stack.Screen name="auth" />
+                    <Stack.Screen name="auth" options={{ headerShown: true }} />
                   </Stack>
                 </ThemeProvider>
               </PowerSyncContextProvider>

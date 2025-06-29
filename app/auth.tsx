@@ -9,7 +9,7 @@ import {
   ScrollView,
   View
 } from 'react-native'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import {
   AuthHeader,
@@ -26,7 +26,6 @@ import { useAuthFlow, useMigrationPreview } from '@/lib/hooks'
 const { height: screenHeight } = Dimensions.get('window')
 
 export default function AuthRoutesLayout() {
-  const insets = useSafeAreaInsets()
   const userSession = useUserSession()
   const { stats } = useMigrationPreview()
   const [modalState, setModalState] = React.useState<{
@@ -59,7 +58,7 @@ export default function AuthRoutesLayout() {
   } = useAuthFlow()
 
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background">
       <SafeAreaView className="flex-1 bg-gradient-to-br from-background via-background to-muted/20">
         <KeyboardAvoidingView
           className="flex-1"
