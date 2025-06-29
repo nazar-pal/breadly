@@ -5,35 +5,11 @@ import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useMigrationPreview } from '@/lib/hooks/useMigrationPreview'
-import { ChevronRight, Mail, Shield, User } from '@/lib/icons'
+import { Shield, User } from '@/lib/icons'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
-import { Link } from 'expo-router'
 import React from 'react'
-import { Pressable, ScrollView, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-function MailSignInButton() {
-  return (
-    <Link href="/auth" asChild>
-      <Pressable className="flex-row items-center justify-between py-3 pb-0 active:opacity-70">
-        <View className="flex-1 flex-row items-center">
-          <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-secondary">
-            <Mail size={20} className="text-primary" />
-          </View>
-          <View>
-            <Text className="text-base text-foreground">
-              Continue with Email
-            </Text>
-            <Text className="mt-0.5 text-xs text-muted-foreground">
-              Sign in or create an account with email and password
-            </Text>
-          </View>
-        </View>
-        <ChevronRight size={20} className="text-muted-foreground" />
-      </Pressable>
-    </Link>
-  )
-}
 
 function DataLossWarning() {
   const { stats, isLoading } = useMigrationPreview()
@@ -107,38 +83,20 @@ export default function SettingsScreen() {
       >
         {/* Authentication Section - Only show for guest users */}
         <SignedOut>
-          <View>
-            <Text className="mb-4 text-lg font-semibold text-foreground">
-              Sign in to save your data
-            </Text>
-            {/* Data Loss Warning */}
-            <DataLossWarning />
-            <Card>
-              <CardContent>
-                {/* Google Sign In Button */}
-                <GoogleOAuthButton onError={handleGoogleAuthError} />
+          {/* Data Loss Warning */}
+          <DataLossWarning />
 
-                {/* Divider */}
-                <View className="my-4 flex-row items-center">
-                  <View className="h-px flex-1 bg-border" />
-                  <Text className="mx-4 text-sm text-muted-foreground">or</Text>
-                  <View className="h-px flex-1 bg-border" />
-                </View>
+          <Text className="mb-4 text-lg font-semibold text-foreground">
+            Sign in to save your data
+          </Text>
+          <GoogleOAuthButton onError={handleGoogleAuthError} />
 
-                {/* Email Sign In Button */}
-                <MailSignInButton />
-
-                {/* Error Message */}
-                {errorMessage && (
-                  <View className="mt-4 rounded-lg bg-destructive/10 p-3">
-                    <Text className="text-sm text-destructive">
-                      {errorMessage}
-                    </Text>
-                  </View>
-                )}
-              </CardContent>
-            </Card>
-          </View>
+          {/* Error Message */}
+          {errorMessage && (
+            <View className="mt-4 rounded-lg bg-destructive/10 p-3">
+              <Text className="text-sm text-destructive">{errorMessage}</Text>
+            </View>
+          )}
         </SignedOut>
 
         <SignedIn>

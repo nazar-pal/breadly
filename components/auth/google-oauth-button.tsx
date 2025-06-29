@@ -75,7 +75,7 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
     <Button
       variant="outline"
       onPress={handleSignInWithGoogle}
-      className="mt-4 flex-row items-center gap-3 rounded-lg border-border/60 bg-card py-4 shadow-sm active:scale-[0.98] active:bg-accent"
+      className="mb-4 flex-row items-center gap-3 rounded-lg border-border/60 bg-card py-4 shadow-sm active:scale-[0.98] active:bg-accent"
     >
       <Image
         source={require('@/assets/images/google-icon.png')}
