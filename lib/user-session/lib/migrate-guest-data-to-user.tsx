@@ -1,5 +1,5 @@
-import { Storage } from '@/lib/storage'
-import { GUEST_KEY } from './constants'
+import { Storage } from '@/lib/storage/mmkv'
+import { GUEST_KEY } from '../../storage/mmkv/keys'
 
 export async function migrateGuestDataToUser(
   guestUserId: string,

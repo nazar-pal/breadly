@@ -1,6 +1,6 @@
-import { Storage } from '@/lib/storage'
+import { Storage } from '@/lib/storage/mmkv'
 import { randomUUID } from 'expo-crypto'
-import { GUEST_KEY } from './constants'
+import { GUEST_KEY } from '../../storage/mmkv/keys'
 import { userSessionStore } from './store'
 
 export async function handleGuestSession() {

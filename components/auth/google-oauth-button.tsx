@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Storage } from '@/lib/storage'
+import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY } from '@/lib/user-session'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'

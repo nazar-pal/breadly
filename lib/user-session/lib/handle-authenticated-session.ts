@@ -1,5 +1,5 @@
-import { Storage } from '@/lib/storage'
-import { AUTO_MIGRATE_KEY, GUEST_KEY } from './constants'
+import { Storage } from '@/lib/storage/mmkv'
+import { AUTO_MIGRATE_KEY, GUEST_KEY } from '../../storage/mmkv/keys'
 import { migrateGuestDataToUser } from './migrate-guest-data'
 import { userSessionStore } from './store'
 
