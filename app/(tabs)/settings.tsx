@@ -3,7 +3,7 @@ import { Preferences } from '@/components/settings/preferences'
 import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { useMigrationPreview } from '@/lib/hooks/useMigrationPreview'
+import { useMigrationPreview } from '@/lib/hooks'
 import { Shield, User } from '@/lib/icons'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
 import React from 'react'
@@ -13,9 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 function DataLossWarning() {
   const { stats, isLoading } = useMigrationPreview()
 
-  if (isLoading || !stats || stats.total === 0) {
-    return null
-  }
+  if (isLoading || !stats || stats.total === 0) return null
 
   return (
     <View className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/30 dark:bg-blue-950/20">
