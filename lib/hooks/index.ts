@@ -1,6 +1,3 @@
-// Auth hooks
-export { useAuthAnimations } from './useAuthAnimations'
-
 // Business logic hooks
 export { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 export { useDateRange } from './useDateRange'
