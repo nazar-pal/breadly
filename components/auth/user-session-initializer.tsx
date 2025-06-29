@@ -1,8 +1,8 @@
 import { useAuth } from '@clerk/clerk-expo'
 import React, { useEffect } from 'react'
+import { useUserSessionInitializingState } from '../../lib/storage/user-session-store'
 import { handleAuthenticatedSession } from '../../lib/user-session/lib/handle-authenticated-session'
 import { handleGuestSession } from '../../lib/user-session/lib/handle-guest-session'
-import { useUserSessionInitializingState } from '../../lib/user-session/lib/store'
 import { UserSessionLoading } from './user-session-loading'
 
 export function UserSessionInitializer({

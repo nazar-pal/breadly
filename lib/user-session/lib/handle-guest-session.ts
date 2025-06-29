@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage/mmkv'
 import { randomUUID } from 'expo-crypto'
 import { GUEST_KEY } from '../../storage/mmkv/keys'
-import { userSessionStore } from './store'
+import { userSessionStore } from '../../storage/user-session-store'
 
 export async function handleGuestSession() {
   const { actions } = userSessionStore.getState()

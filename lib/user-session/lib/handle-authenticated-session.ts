@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '../../storage/mmkv/keys'
+import { userSessionStore } from '../../storage/user-session-store'
 import { migrateGuestDataToUser } from './migrate-guest-data'
-import { userSessionStore } from './store'
 
 export async function handleAuthenticatedSession(clerkUserId: string) {
   const { actions } = userSessionStore.getState()
