@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage'
 import { randomUUID } from 'expo-crypto'
 import { GUEST_KEY } from './const'
-import { UserSession } from './user-context'
+import { type UserSession } from './store'
 
 export async function handleGuestSession({
   setSession,

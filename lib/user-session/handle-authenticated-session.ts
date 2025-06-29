@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from './const'
 import { migrateGuestDataToUser } from './migrate-guest-data-to-user'
-import { UserSession } from './user-context'
+import { type UserSession } from './store'
 
 export async function handleAuthenticatedSession({
   clerkUserId,
