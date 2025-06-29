@@ -1,7 +1,7 @@
 import { Plus } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import React from 'react'
-import { Platform, Pressable, Text } from 'react-native'
+import { Pressable, Text } from 'react-native'
 
 interface AddAccountButtonProps {
   onPress: () => void
@@ -15,8 +15,7 @@ export function AddAccountButton({
   return (
     <Pressable
       className={cn(
-        'mb-2 min-h-[60px] w-full flex-row items-center justify-center gap-3 rounded-xl border-2 border-dashed bg-card p-3',
-        Platform.OS === 'android' ? 'shadow' : 'shadow-sm'
+        'mb-2 min-h-[60px] w-full flex-row items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border bg-card p-3'
       )}
       onPress={onPress}
     >
