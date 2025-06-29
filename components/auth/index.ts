@@ -10,4 +10,5 @@ export { PasswordStep } from './password-step'
 export { VerificationStep } from './verification-step'
 
 // Auth action components
+export { GoogleOAuthButton } from './google-oauth-button'
 export { SignOutButton } from './sign-out-button'
