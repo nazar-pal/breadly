@@ -25,24 +25,10 @@ export function CalculatorModal() {
     handleCloseAddTransactionModal
   } = categoryUI
 
-  const handleSubmit = () => {
-    // Transaction is already created by QuickCalculator, just close modal
-    handleCloseAddTransactionModal()
-  }
-
-  const getModalContentStyle = () => ({
-    backgroundColor: '#F5F5F5', // colors.background
-    maxHeight: Platform.select({
-      ios: SCREEN_HEIGHT * 0.8,
-      android: SCREEN_HEIGHT * 0.8,
-      web: SCREEN_HEIGHT * 0.8
-    }),
-    paddingBottom: insets.bottom
-  })
-
   return (
     <Modal
       visible={addTransactionModalVisible}
+      className="bg-secondary"
       animationType="slide"
       transparent={true}
       onRequestClose={handleCloseAddTransactionModal}
@@ -53,19 +39,17 @@ export function CalculatorModal() {
       >
         <Pressable
           className="absolute inset-0"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }} // colors.shadow
           onPress={handleCloseAddTransactionModal}
         />
-        <View className="rounded-t-3xl pt-6" style={getModalContentStyle()}>
-          <View
-            className="mb-4 h-1 w-10 self-center rounded-full"
-            style={{ backgroundColor: '#CBD5E0' }} // colors.borderStrong
-          />
+        <View
+          className="rounded-t-3xl bg-secondary pt-6"
+          style={{ height: SCREEN_HEIGHT * 0.8, paddingBottom: insets.bottom }}
+        >
+          <View className="mb-4 h-1 w-10 self-center rounded-full bg-accent-foreground" />
           {selectedCategory && (
             <QuickCalculator
               type={activeCategoryType}
               categoryId={selectedCategory}
-              onSubmit={handleSubmit}
               onClose={handleCloseAddTransactionModal}
             />
           )}
