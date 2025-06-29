@@ -1,6 +1,6 @@
 import type { Operation } from '@/components/accounts/operation-list-item'
-import { usePowerSync } from '@/lib/powersync/hooks'
 import { transactions } from '@/lib/powersync/schema/table_7_transactions'
+import { usePowerSyncState } from '@/lib/storage/powersync-store'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react'
@@ -108,7 +108,7 @@ interface UseTransactionsOptions {
 }
 
 export function useTransactions(options: UseTransactionsOptions = {}) {
-  const { db } = usePowerSync()
+  const { db } = usePowerSyncState()
   const userSession = useUserSession()
 
   const { accountId, type, dateFrom, dateTo, categoryId, limit } = options

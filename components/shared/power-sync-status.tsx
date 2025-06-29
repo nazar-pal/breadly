@@ -1,4 +1,4 @@
-import { usePowerSync } from '@/lib/powersync/hooks'
+import { usePowerSyncState } from '@/lib/storage/powersync-store'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
@@ -83,7 +83,7 @@ export function PowerSyncStatus({ className }: { className?: string }) {
     hasSynced,
     lastSyncedAt,
     error
-  } = usePowerSync()
+  } = usePowerSyncState()
 
   const lastSyncText = getRelativeTime(lastSyncedAt)
 

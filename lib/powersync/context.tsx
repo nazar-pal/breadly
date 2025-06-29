@@ -1,52 +1,26 @@
-import { Connector } from '@/lib/powersync/connector'
-import { db, powerSyncDb } from '@/lib/powersync/system'
+import { powerSyncDb } from '@/lib/powersync/system'
+import { powerSyncStore } from '@/lib/storage/powersync-store'
 import { useAuth } from '@clerk/clerk-expo'
 import { PowerSyncContext } from '@powersync/react'
 import React from 'react'
-import { usePowerSyncStatus } from './hooks/'
+import { Connector } from './connector'
 
-// Types
-type PowerSyncContextValue = {
-  db: typeof db
-  powerSyncDb: typeof powerSyncDb
-  isConnected: boolean
-  isConnecting: boolean
-  isSyncing: boolean
-  hasSynced: boolean
-  lastSyncedAt: Date | null
-  error: Error | null
-}
-
-// Context
-export const ExtendedPowerSyncContext =
-  React.createContext<PowerSyncContextValue>({
-    db,
-    powerSyncDb,
-    isConnected: false,
-    isConnecting: false,
-    isSyncing: false,
-    hasSynced: false,
-    lastSyncedAt: null,
-    error: null
-  })
-
-/**
- * Provider that manages the PowerSync client lifecycle.
- * Local database works for all users, cloud sync only for authenticated users.
- */
 export function PowerSyncContextProvider({
   children
 }: {
   children: React.ReactNode
 }) {
   const { isSignedIn } = useAuth()
-  const [isConnecting, setIsConnecting] = React.useState(false)
-  const [error, setError] = React.useState<Error | null>(null)
   const connectorRef = React.useRef<Connector | null>(null)
 
-  // Monitor PowerSync status
-  const { isConnected, isSyncing, hasSynced, lastSyncedAt } =
-    usePowerSyncStatus()
+  const {
+    setIsConnected,
+    setIsConnecting,
+    setIsSyncing,
+    setHasSynced,
+    setLastSyncedAt,
+    setError
+  } = powerSyncStore(state => state.actions)
 
   // Handle cloud sync connection (only for authenticated users)
   React.useEffect(() => {
@@ -83,7 +57,27 @@ export function PowerSyncContextProvider({
     }
 
     handleConnection()
-  }, [isSignedIn])
+  }, [isSignedIn, setIsConnecting, setError])
+
+  // Monitor PowerSync status changes
+  React.useEffect(() => {
+    const handleStatusChange = (status: any) => {
+      setIsConnected(status.connected)
+      setHasSynced(status.hasSynced || false)
+      setLastSyncedAt(status.lastSyncedAt || null)
+      setIsSyncing(
+        !!status.downloadProgress &&
+          status.downloadProgress.downloadedOperations <
+            status.downloadProgress.totalOperations
+      )
+    }
+
+    const unsubscribe = powerSyncDb.registerListener({
+      statusChanged: handleStatusChange
+    })
+
+    return unsubscribe
+  }, [setIsConnected, setHasSynced, setLastSyncedAt, setIsSyncing])
 
   // Clean up on unmount
   React.useEffect(() => {
@@ -92,22 +86,9 @@ export function PowerSyncContextProvider({
     }
   }, [])
 
-  const contextValue: PowerSyncContextValue = {
-    db,
-    powerSyncDb,
-    isConnected,
-    isConnecting,
-    isSyncing,
-    hasSynced,
-    lastSyncedAt,
-    error
-  }
-
   return (
     <PowerSyncContext.Provider value={powerSyncDb}>
-      <ExtendedPowerSyncContext.Provider value={contextValue}>
-        {children}
-      </ExtendedPowerSyncContext.Provider>
+      {children}
     </PowerSyncContext.Provider>
   )
 }

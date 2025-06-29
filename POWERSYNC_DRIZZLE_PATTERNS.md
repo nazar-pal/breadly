@@ -5,7 +5,7 @@ Quick reference for using PowerSync with Drizzle ORM in our React Native applica
 ## Setup
 
 ```typescript
-import { usePowerSync } from '@/lib/powersync/hooks'
+import { usePowerSyncState } from '@/lib/storage/powersync-store'
 import { useQuery } from '@powersync/react'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { eq } from 'drizzle-orm'
@@ -13,7 +13,7 @@ import { asyncTryCatch } from '@/utils'
 import { useUserSession } from '@/lib/hooks'
 import { categories } from '@/lib/powersync/schema/table_4_categories'
 
-const { db } = usePowerSync()
+const { db } = usePowerSyncState()
 const userSession = useUserSession()
 ```
 
