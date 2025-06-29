@@ -1,7 +1,7 @@
 import type { Operation } from '@/components/accounts/operation-list-item'
-import { useUserSession } from '@/lib/context/user-context'
 import { usePowerSync } from '@/lib/powersync/context'
 import { transactions } from '@/lib/powersync/schema/table_7_transactions'
+import { useUserSession } from '@/lib/user-session'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react'

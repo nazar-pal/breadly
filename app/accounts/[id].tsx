@@ -1,7 +1,6 @@
 import { AccountTransactionItem } from '@/components/account-details/account-transaction-item'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { useUserSession } from '@/lib/context/user-context'
 import {
   CreditCard,
   DollarSign,
@@ -14,6 +13,7 @@ import {
 } from '@/lib/icons'
 import { deleteAccount } from '@/lib/powersync/data/mutations'
 import { useGetAccount } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/lib/user-session'
 import { cn } from '@/lib/utils'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React from 'react'

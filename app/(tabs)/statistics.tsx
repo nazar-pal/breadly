@@ -1,6 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { useUserSession } from '@/lib/context/user-context'
 import {
   ArrowDown,
   ArrowUp,
@@ -13,6 +12,7 @@ import {
   useSumTransactions
 } from '@/lib/powersync/data/queries'
 import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
+import { useUserSession } from '@/lib/user-session'
 import { cn } from '@/lib/utils'
 import { LucideIcon } from 'lucide-react-native'
 import React from 'react'

@@ -1,7 +1,7 @@
 import { DEFAULT_CURRENCY } from '@/lib/constants'
-import { useUserSession } from '@/lib/context/user-context'
 import { ChevronRight, DollarSign } from '@/lib/icons'
 import { useGetUserPreferences } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/lib/user-session'
 import React from 'react'
 import { ModalCurrencies } from './modal-currencies'
 import { PreferenceItem } from './preference-item'

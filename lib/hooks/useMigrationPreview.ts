@@ -1,4 +1,4 @@
-import { useUserSession } from '@/lib/context/user-context'
+import { useUserSession } from '@/lib/user-session'
 import { useEffect, useState } from 'react'
 import { getGuestDataStats } from '../powersync/data/migrations'
 

@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useUserSession } from '@/lib/context/user-context'
 import {
   AlignLeft,
   Calendar,
@@ -10,6 +9,7 @@ import {
   X
 } from '@/lib/icons'
 import { useGetCategories } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/lib/user-session'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'

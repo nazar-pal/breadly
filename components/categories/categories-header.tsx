@@ -1,6 +1,6 @@
-import { useUserSession } from '@/lib/context/user-context'
 import { useDateRange } from '@/lib/hooks/useDateRange'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/lib/user-session'
 import { Link } from 'expo-router'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'

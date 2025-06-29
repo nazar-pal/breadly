@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { AUTO_MIGRATE_KEY } from '@/lib/context/user-context'
 import { Storage } from '@/lib/storage'
+import { AUTO_MIGRATE_KEY } from '@/lib/user-session'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'

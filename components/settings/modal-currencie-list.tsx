@@ -1,11 +1,11 @@
 import { Text } from '@/components/ui/text'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
-import { useUserSession } from '@/lib/context/user-context'
 import { RefreshCw } from '@/lib/icons'
 import {
   useGetCurrencies,
   useGetUserPreferences
 } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/lib/user-session'
 import React from 'react'
 import { View } from 'react-native'
 import { CurrencyItem } from './modal-currency-item'
