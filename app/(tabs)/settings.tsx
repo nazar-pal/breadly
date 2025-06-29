@@ -1,6 +1,5 @@
 import { GoogleOAuthButton, SignOutButton } from '@/components/auth'
 import { Preferences } from '@/components/settings/preferences'
-import { MigrationPreview } from '@/components/shared/migration-preview'
 import { PowerSyncStatus } from '@/components/shared/power-sync-status'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
@@ -129,8 +128,6 @@ export default function SettingsScreen() {
         </SignedIn>
 
         <PowerSyncStatus />
-
-        <MigrationPreview />
 
         <Preferences />
 
