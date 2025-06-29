@@ -1,4 +1,4 @@
-import { useUserSessionStore } from '@/lib/user-session'
+import { useUserSessionStore } from '@/lib/storage/user-session-store'
 
 export function useUserSession() {
   const session = useUserSessionStore(state => state.session)

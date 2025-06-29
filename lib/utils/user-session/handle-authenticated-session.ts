@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage/mmkv'
-import { AUTO_MIGRATE_KEY, GUEST_KEY } from '../../storage/mmkv/keys'
-import { userSessionStore } from '../../storage/user-session-store'
-import { migrateGuestDataToUser } from './migrate-guest-data'
+import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
+import { userSessionStore } from '@/lib/storage/user-session-store'
+import { migrateGuestData } from './migrate-guest-data'
 
 export async function handleAuthenticatedSession(clerkUserId: string) {
   const { actions } = userSessionStore.getState()
@@ -23,7 +23,7 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
         // New account that was just created – migrate automatically.
         setIsMigrating(true)
         try {
-          await migrateGuestDataToUser(existingGuestId, clerkUserId)
+          await migrateGuestData(existingGuestId, clerkUserId)
           console.log(
             '✅ Successfully migrated guest data to authenticated user'
           )

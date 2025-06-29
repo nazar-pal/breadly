@@ -1,7 +1,7 @@
 import { Storage } from '@/lib/storage/mmkv'
-import { GUEST_KEY } from '../../storage/mmkv/keys'
+import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
 
-export async function migrateGuestDataToUser(
+export async function migrateGuestData(
   guestUserId: string,
   authenticatedUserId: string
 ) {
