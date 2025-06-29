@@ -5,7 +5,7 @@ Quick reference for using PowerSync with Drizzle ORM in our React Native applica
 ## Setup
 
 ```typescript
-import { usePowerSync } from '@/lib/powersync/context'
+import { usePowerSync } from '@/lib/powersync/hooks'
 import { useQuery } from '@powersync/react'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { eq } from 'drizzle-orm'

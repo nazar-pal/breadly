@@ -3,6 +3,7 @@ import { db, powerSyncDb } from '@/lib/powersync/system'
 import { useAuth } from '@clerk/clerk-expo'
 import { PowerSyncContext } from '@powersync/react'
 import React from 'react'
+import { usePowerSyncStatus } from './hooks/'
 
 // Types
 type PowerSyncContextValue = {
@@ -17,55 +18,17 @@ type PowerSyncContextValue = {
 }
 
 // Context
-const ExtendedPowerSyncContext = React.createContext<PowerSyncContextValue>({
-  db,
-  powerSyncDb,
-  isConnected: false,
-  isConnecting: false,
-  isSyncing: false,
-  hasSynced: false,
-  lastSyncedAt: null,
-  error: null
-})
-
-// Hook to use the context
-export const usePowerSync = () => {
-  const context = React.useContext(ExtendedPowerSyncContext)
-  if (!context) {
-    throw new Error('usePowerSync must be used within PowerSyncContextProvider')
-  }
-  return context
-}
-
-// Custom hook to monitor PowerSync status
-function usePowerSyncStatus() {
-  const [isConnected, setIsConnected] = React.useState(false)
-  const [isSyncing, setIsSyncing] = React.useState(false)
-  const [hasSynced, setHasSynced] = React.useState(false)
-  const [lastSyncedAt, setLastSyncedAt] = React.useState<Date | null>(null)
-
-  React.useEffect(() => {
-    const handleStatusChange = (status: any) => {
-      setIsConnected(status.connected)
-      setHasSynced(status.hasSynced || false)
-      setLastSyncedAt(status.lastSyncedAt || null)
-
-      // Check if actively syncing
-      const progress = status.downloadProgress
-      setIsSyncing(
-        !!progress && progress.downloadedOperations < progress.totalOperations
-      )
-    }
-
-    const unsubscribe = powerSyncDb.registerListener({
-      statusChanged: handleStatusChange
-    })
-
-    return unsubscribe
-  }, [])
-
-  return { isConnected, isSyncing, hasSynced, lastSyncedAt }
-}
+export const ExtendedPowerSyncContext =
+  React.createContext<PowerSyncContextValue>({
+    db,
+    powerSyncDb,
+    isConnected: false,
+    isConnecting: false,
+    isSyncing: false,
+    hasSynced: false,
+    lastSyncedAt: null,
+    error: null
+  })
 
 /**
  * Provider that manages the PowerSync client lifecycle.
