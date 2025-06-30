@@ -106,16 +106,6 @@ export const syncRouter = createTRPCRouter({
       }
 
       try {
-        // Ensure the record belongs to the authenticated user (second-line defence).
-        if (
-          transformedData.userId &&
-          transformedData.userId !== session.userId
-        ) {
-          throw new Error(
-            `Attempted to insert record for a different user (record userId ${transformedData.userId} !== session userId ${session.userId})`
-          )
-        }
-
         switch (table) {
           case 'categories':
             await db.insert(categories).values(transformedData)
