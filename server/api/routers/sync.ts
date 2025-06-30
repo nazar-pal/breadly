@@ -46,205 +46,135 @@ const operationSchema = z.object({
   opData: z.any() // opData will be validated per type below if needed
 })
 
+// -----------------------------------------------------------------------------
+// Centralised configuration for every sync-able table
+// -----------------------------------------------------------------------------
+const tableConfigs = {
+  user_preferences: {
+    table: userPreferences,
+    insertSchema: userPreferencesInsertSchemaPg,
+    updateSchema: userPreferencesUpdateSchemaPg,
+    idColumn: null
+  },
+  categories: {
+    table: categories,
+    insertSchema: categoriesInsertSchemaPg,
+    updateSchema: categoriesUpdateSchemaPg,
+    idColumn: categories.id
+  },
+  budgets: {
+    table: budgets,
+    insertSchema: budgetsInsertSchemaPg,
+    updateSchema: budgetsUpdateSchemaPg,
+    idColumn: budgets.id
+  },
+  accounts: {
+    table: accounts,
+    insertSchema: accountsInsertSchemaPg,
+    updateSchema: accountsUpdateSchemaPg,
+    idColumn: accounts.id
+  },
+  transactions: {
+    table: transactions,
+    insertSchema: transactionsInsertSchemaPg,
+    updateSchema: transactionsUpdateSchemaPg,
+    idColumn: transactions.id
+  },
+  attachments: {
+    table: attachments,
+    insertSchema: attachmentsInsertSchemaPg,
+    updateSchema: attachmentsUpdateSchemaPg,
+    idColumn: attachments.id
+  },
+  transaction_attachments: {
+    table: transactionAttachments,
+    insertSchema: transactionAttachmentsInsertSchemaPg,
+    updateSchema: transactionAttachmentsUpdateSchemaPg,
+    idColumn: transactionAttachments.id
+  }
+} as const
+
+// Generic helpers -------------------------------------------------------------
+const insertHelper = async (
+  ctx: any,
+  tableName: keyof typeof tableConfigs,
+  opData: any
+) => {
+  const { db, session } = ctx
+  const cfg = tableConfigs[tableName]
+  if (!cfg) throw new Error(`Unsupported table: ${tableName}`)
+
+  const transformed = transformDataForPostgres(opData, tableName)
+  validateRecordUserId(transformed, session, 'insert')
+
+  const validated = cfg.insertSchema.parse(transformed)
+  await db.insert(cfg.table).values(validated)
+}
+
+const updateHelper = async (
+  ctx: any,
+  tableName: keyof typeof tableConfigs,
+  opData: any
+) => {
+  const { db, session } = ctx
+  const cfg = tableConfigs[tableName]
+  if (!cfg) throw new Error(`Unsupported table: ${tableName}`)
+
+  const { id } = opData
+  if (!id) throw new Error(`UPDATE operation missing 'id' in opData`)
+
+  const transformed = transformDataForPostgres(opData, tableName)
+  const userId = validateRecordUserId(transformed, session, 'update')
+
+  const validated = cfg.updateSchema.parse(transformed)
+
+  const whereClause = cfg.idColumn
+    ? and(eq(cfg.idColumn, id), eq(cfg.table.userId, userId))
+    : eq(cfg.table.userId, userId)
+
+  await db.update(cfg.table).set(validated).where(whereClause)
+}
+
+const deleteHelper = async (
+  ctx: any,
+  tableName: keyof typeof tableConfigs,
+  opData: any
+) => {
+  const { db, session } = ctx
+  const cfg = tableConfigs[tableName]
+  if (!cfg) throw new Error(`Unsupported table: ${tableName}`)
+
+  const id = opData.id ?? opData
+  if (!id || typeof id !== 'string') {
+    throw new Error(`DELETE operation missing 'id'`)
+  }
+
+  const whereClause = cfg.idColumn
+    ? and(eq(cfg.idColumn, id), eq(cfg.table.userId, session.userId))
+    : eq(cfg.table.userId, session.userId)
+
+  await db.delete(cfg.table).where(whereClause)
+}
+
+// -----------------------------------------------------------------------------
+// Router definition
+// -----------------------------------------------------------------------------
 export const syncRouter = createTRPCRouter({
   insertRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
-      const { db, session } = ctx
-      const { table, opData } = input
-
-      // Transform data from PowerSync format to PostgreSQL format
-      const transformedData = transformDataForPostgres(opData, table)
-
-      validateRecordUserId(transformedData, session, 'insert')
-
-      switch (table) {
-        case 'user_preferences':
-          const validatedUserPreferences =
-            userPreferencesInsertSchemaPg.parse(transformedData)
-          await db.insert(userPreferences).values(validatedUserPreferences)
-          break
-        case 'categories':
-          const validatedCategories =
-            categoriesInsertSchemaPg.parse(transformedData)
-          await db.insert(categories).values(validatedCategories)
-          break
-        case 'budgets':
-          const validatedBudgets = budgetsInsertSchemaPg.parse(transformedData)
-          await db.insert(budgets).values(validatedBudgets)
-          break
-        case 'accounts':
-          const validatedAccounts =
-            accountsInsertSchemaPg.parse(transformedData)
-          await db.insert(accounts).values(validatedAccounts)
-          break
-        case 'transactions':
-          const validatedTransactions =
-            transactionsInsertSchemaPg.parse(transformedData)
-          await db.insert(transactions).values(validatedTransactions)
-          break
-        case 'attachments':
-          const validatedAttachments =
-            attachmentsInsertSchemaPg.parse(transformedData)
-          await db.insert(attachments).values(validatedAttachments)
-          break
-        case 'transaction_attachments':
-          const validatedTransactionAttachments =
-            transactionAttachmentsInsertSchemaPg.parse(transformedData)
-          await db
-            .insert(transactionAttachments)
-            .values(validatedTransactionAttachments)
-          break
-      }
+      await insertHelper(ctx, input.table, input.opData)
     }),
 
   updateRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
-      const { db, session } = ctx
-      const { table, opData } = input
-      const id = opData.id
-
-      if (!id) {
-        throw new Error(`UPDATE operation missing 'id' in opData`)
-      }
-
-      // Transform data from PowerSync format to PostgreSQL format
-      const transformedData = transformDataForPostgres(opData, table)
-
-      const userId = validateRecordUserId(transformedData, session, 'update')
-
-      switch (table) {
-        case 'user_preferences':
-          const validatedUserPreferences =
-            userPreferencesUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(userPreferences)
-            .set(validatedUserPreferences)
-            .where(eq(userPreferences.userId, userId))
-          break
-        case 'categories':
-          const validatedCategories =
-            categoriesUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(categories)
-            .set(validatedCategories)
-            .where(and(eq(categories.id, id), eq(categories.userId, userId)))
-          break
-        case 'budgets':
-          const validatedBudgets = budgetsUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(budgets)
-            .set(validatedBudgets)
-            .where(and(eq(budgets.id, id), eq(budgets.userId, userId)))
-          break
-        case 'accounts':
-          const validatedAccounts =
-            accountsUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(accounts)
-            .set(validatedAccounts)
-            .where(and(eq(accounts.id, id), eq(accounts.userId, userId)))
-          break
-        case 'transactions':
-          const validatedTransactions =
-            transactionsUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(transactions)
-            .set(validatedTransactions)
-            .where(
-              and(eq(transactions.id, id), eq(transactions.userId, userId))
-            )
-          break
-        case 'attachments':
-          const validatedAttachments =
-            attachmentsUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(attachments)
-            .set(validatedAttachments)
-            .where(and(eq(attachments.id, id), eq(attachments.userId, userId)))
-          break
-        case 'transaction_attachments':
-          const validatedTransactionAttachments =
-            transactionAttachmentsUpdateSchemaPg.parse(transformedData)
-          await db
-            .update(transactionAttachments)
-            .set(validatedTransactionAttachments)
-            .where(
-              and(
-                eq(transactionAttachments.id, id),
-                eq(transactionAttachments.userId, userId)
-              )
-            )
-          break
-      }
+      await updateHelper(ctx, input.table, input.opData)
     }),
 
   deleteRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
-      const { db, session } = ctx
-      const { table, opData } = input
-      const id = opData.id ?? opData
-
-      if (!id || typeof id !== 'string')
-        throw new Error(`DELETE operation missing 'id'`)
-
-      switch (table) {
-        case 'categories':
-          await db
-            .delete(categories)
-            .where(
-              and(eq(categories.id, id), eq(categories.userId, session.userId))
-            )
-          break
-        case 'budgets':
-          await db
-            .delete(budgets)
-            .where(and(eq(budgets.id, id), eq(budgets.userId, session.userId)))
-          break
-        case 'accounts':
-          await db
-            .delete(accounts)
-            .where(
-              and(eq(accounts.id, id), eq(accounts.userId, session.userId))
-            )
-          break
-        case 'transactions':
-          await db
-            .delete(transactions)
-            .where(
-              and(
-                eq(transactions.id, id),
-                eq(transactions.userId, session.userId)
-              )
-            )
-          break
-        case 'attachments':
-          await db
-            .delete(attachments)
-            .where(
-              and(
-                eq(attachments.id, id),
-                eq(attachments.userId, session.userId)
-              )
-            )
-          break
-        case 'transaction_attachments':
-          await db
-            .delete(transactionAttachments)
-            .where(
-              and(
-                eq(transactionAttachments.id, id),
-                eq(transactionAttachments.userId, session.userId)
-              )
-            )
-          break
-        case 'user_preferences':
-          await db
-            .delete(userPreferences)
-            .where(eq(userPreferences.userId, session.userId))
-          break
-      }
+      await deleteHelper(ctx, input.table, input.opData)
     })
 })
