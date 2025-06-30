@@ -29,10 +29,6 @@ export class Connector implements PowerSyncBackendConnector {
   }
 
   async uploadData(database: AbstractPowerSyncDatabase) {
-    /**
-     * For batched crud transactions, use data.getCrudBatch(n);
-     * https://powersync-ja.github.io/powersync-js/react-native-sdk/classes/SqliteBucketStorage#getcrudbatch
-     */
     const transaction = await database.getNextCrudTransaction()
 
     if (!transaction) return
