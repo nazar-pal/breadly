@@ -60,9 +60,8 @@ export const syncRouter = createTRPCRouter({
 
       switch (table) {
         case 'user_preferences':
-          const { id: _, ...rest } = transformedData
           const validatedUserPreferences =
-            userPreferencesInsertSchemaPg.parse(rest)
+            userPreferencesInsertSchemaPg.parse(transformedData)
           await db.insert(userPreferences).values(validatedUserPreferences)
           break
         case 'categories':
@@ -117,9 +116,8 @@ export const syncRouter = createTRPCRouter({
 
       switch (table) {
         case 'user_preferences':
-          const { id: _, ...rest } = transformedData
           const validatedUserPreferences =
-            userPreferencesUpdateSchemaPg.parse(rest)
+            userPreferencesUpdateSchemaPg.parse(transformedData)
           await db
             .update(userPreferences)
             .set(validatedUserPreferences)
