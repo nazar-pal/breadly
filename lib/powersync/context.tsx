@@ -12,64 +12,69 @@ export function PowerSyncContextProvider({
 }) {
   const { isSignedIn } = useAuth()
   const connectorRef = React.useRef<Connector | null>(null)
+  const isMountedRef = React.useRef(true)
 
-  const {
-    setIsConnected,
-    setIsConnecting,
-    setIsSyncing,
-    setHasSynced,
-    setLastSyncedAt,
-    setError
-  } = powerSyncStore(state => state.actions)
+  const actions = powerSyncStore(state => state.actions)
 
-  // Handle cloud sync connection (only for authenticated users)
   React.useEffect(() => {
+    isMountedRef.current = true
+    let isActive = true
+
     async function handleConnection() {
+      if (!isActive) return
+
       if (isSignedIn) {
         try {
-          setIsConnecting(true)
-          setError(null)
+          actions.setIsConnecting(true)
+          actions.setError(null)
 
           if (!connectorRef.current) {
             connectorRef.current = new Connector()
           }
 
           await powerSyncDb.connect(connectorRef.current)
-          console.log(
-            '☁️ PowerSync cloud sync connected for authenticated user'
-          )
         } catch (err) {
-          console.error('❌ PowerSync cloud connection error:', err)
-          setError(
-            err instanceof Error ? err : new Error('Cloud connection failed')
-          )
+          if (isActive) {
+            actions.setError(
+              err instanceof Error ? err : new Error('Cloud connection failed')
+            )
+          }
         } finally {
-          setIsConnecting(false)
+          if (isActive) {
+            actions.setIsConnecting(false)
+          }
         }
       } else {
-        // Disconnect cloud sync but keep local database open
         await powerSyncDb.disconnect().catch(() => {})
         connectorRef.current = null
-        setError(null)
-        setIsConnecting(false)
-        console.log('👤 Guest user: local database only (no cloud sync)')
+        if (isActive) {
+          actions.setError(null)
+          actions.setIsConnecting(false)
+        }
       }
     }
 
     handleConnection()
-  }, [isSignedIn, setIsConnecting, setError])
 
-  // Monitor PowerSync status changes
+    return () => {
+      isActive = false
+      isMountedRef.current = false
+    }
+  }, [isSignedIn, actions])
+
   React.useEffect(() => {
     const handleStatusChange = (status: any) => {
-      setIsConnected(status.connected)
-      setHasSynced(status.hasSynced || false)
-      setLastSyncedAt(status.lastSyncedAt || null)
-      setIsSyncing(
-        !!status.downloadProgress &&
+      if (!isMountedRef.current) return
+
+      powerSyncStore.setState({
+        isConnected: status.connected,
+        hasSynced: status.hasSynced || false,
+        lastSyncedAt: status.lastSyncedAt || null,
+        isSyncing:
+          !!status.downloadProgress &&
           status.downloadProgress.downloadedOperations <
             status.downloadProgress.totalOperations
-      )
+      })
     }
 
     const unsubscribe = powerSyncDb.registerListener({
@@ -77,13 +82,6 @@ export function PowerSyncContextProvider({
     })
 
     return unsubscribe
-  }, [setIsConnected, setHasSynced, setLastSyncedAt, setIsSyncing])
-
-  // Clean up on unmount
-  React.useEffect(() => {
-    return () => {
-      powerSyncDb.close().catch(() => {})
-    }
   }, [])
 
   return (

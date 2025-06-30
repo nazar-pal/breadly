@@ -89,13 +89,30 @@ export const syncRouter = createTRPCRouter({
       // Transform data from PowerSync format to PostgreSQL format
       const transformedData = transformDataForPostgres(opData, table)
 
+      if (!('userId' in transformedData)) {
+        throw new Error('Error inserting record: userId is required')
+      }
+      // Replace guest user IDs with authenticated user ID
+      const recordUserId = (transformedData as any).userId
+      if (recordUserId && !recordUserId.startsWith('user_')) {
+        console.log(
+          `🔄 Replacing guest user ID ${recordUserId} with authenticated user ${session.userId}`
+        )
+        ;(transformedData as any).userId = session.userId
+      } else if (recordUserId && recordUserId !== session.userId) {
+        throw new Error(
+          `Error inserting record: userId mismatch (record userId ${recordUserId} !== session userId ${session.userId})`
+        )
+      }
+
       try {
         // Ensure the record belongs to the authenticated user (second-line defence).
-        const recordUserId = (transformedData as any).userId
-
-        if (recordUserId && recordUserId !== session.userId) {
+        if (
+          transformedData.userId &&
+          transformedData.userId !== session.userId
+        ) {
           throw new Error(
-            `Attempted to insert record for a different user (record userId ${recordUserId} !== session userId ${session.userId})`
+            `Attempted to insert record for a different user (record userId ${transformedData.userId} !== session userId ${session.userId})`
           )
         }
 
@@ -148,6 +165,23 @@ export const syncRouter = createTRPCRouter({
 
       // Transform data from PowerSync format to PostgreSQL format
       const transformedData = transformDataForPostgres(opData, table)
+
+      if (!('userId' in transformedData)) {
+        throw new Error('Error updating record: userId is required')
+      }
+
+      // Replace guest user IDs with authenticated user ID
+      const recordUserId = (transformedData as any).userId
+      if (recordUserId && !recordUserId.startsWith('user_')) {
+        console.log(
+          `🔄 Replacing guest user ID ${recordUserId} with authenticated user ${session.userId} in update`
+        )
+        ;(transformedData as any).userId = session.userId
+      } else if (recordUserId && recordUserId !== session.userId) {
+        throw new Error(
+          `Error updating record: userId mismatch (record userId ${recordUserId} !== session userId ${session.userId})`
+        )
+      }
 
       try {
         switch (table) {
