@@ -108,7 +108,7 @@ const tableConfigs = {
 const insertHelper = async (
   ctx: ProtectedContext,
   tableName: keyof typeof tableConfigs,
-  opData: Record<string, unknown>
+  opData: OperationData
 ) => {
   const { db, session } = ctx
   const cfg = tableConfigs[tableName]
@@ -148,13 +148,13 @@ const updateHelper = async (
 const deleteHelper = async (
   ctx: ProtectedContext,
   tableName: keyof typeof tableConfigs,
-  opData: string | OperationData
+  opData: OperationData
 ) => {
   const { db, session } = ctx
   const cfg = tableConfigs[tableName]
   if (!cfg) throw new Error(`Unsupported table: ${tableName}`)
 
-  const id = typeof opData === 'string' ? opData : opData.id
+  const id = opData.id
   if (!id || typeof id !== 'string') {
     throw new Error(`DELETE operation missing 'id'`)
   }
