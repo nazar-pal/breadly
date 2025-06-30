@@ -30,6 +30,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
@@ -107,6 +108,9 @@ export const attachments = pgTable(
     })
   ]
 )
+
+export const attachmentsInsertSchemaPg = createInsertSchema(attachments)
+export const attachmentsUpdateSchemaPg = createUpdateSchema(attachments)
 
 export type AttachmentSelectPg = typeof attachments.$inferSelect
 export type AttachmentInsertPg = typeof attachments.$inferInsert

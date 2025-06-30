@@ -19,6 +19,7 @@ Key Features:
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, numeric, pgTable, varchar } from 'drizzle-orm/pg-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
@@ -61,6 +62,9 @@ export const userPreferences = pgTable(
     })
   ]
 )
+
+export const userPreferencesInsertSchemaPg = createInsertSchema(userPreferences)
+export const userPreferencesUpdateSchemaPg = createUpdateSchema(userPreferences)
 
 export type UserPreferenceSelectPg = typeof userPreferences.$inferSelect
 export type UserPreferenceInsertPg = typeof userPreferences.$inferInsert

@@ -20,6 +20,7 @@ Key Features:
 
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { index, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { transactions } from './table_7_transactions'
 import { attachments } from './table_8_attachments'
 import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
@@ -72,6 +73,13 @@ export const transactionAttachments = pgTable(
       modify: authUid(table.userId)
     })
   ]
+)
+
+export const transactionAttachmentsInsertSchemaPg = createInsertSchema(
+  transactionAttachments
+)
+export const transactionAttachmentsUpdateSchemaPg = createUpdateSchema(
+  transactionAttachments
 )
 
 export type TransactionAttachmentSelectPg =

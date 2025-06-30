@@ -28,6 +28,7 @@ import {
   uuid,
   varchar
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -109,6 +110,9 @@ export const categories = pgTable(
     })
   ]
 )
+
+export const categoriesInsertSchemaPg = createInsertSchema(categories)
+export const categoriesUpdateSchemaPg = createUpdateSchema(categories)
 
 export type CategorySelectPg = typeof categories.$inferSelect
 export type CategoryInsertPg = typeof categories.$inferInsert

@@ -29,6 +29,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import { accounts } from './table_6_accounts'
@@ -131,6 +132,9 @@ export const transactions = pgTable(
     })
   ]
 )
+
+export const transactionsInsertSchemaPg = createInsertSchema(transactions)
+export const transactionsUpdateSchemaPg = createUpdateSchema(transactions)
 
 export type TransactionSelectPg = typeof transactions.$inferSelect
 export type TransactionInsertPg = typeof transactions.$inferInsert

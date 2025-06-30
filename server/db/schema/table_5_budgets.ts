@@ -27,6 +27,7 @@ import {
   uniqueIndex,
   uuid
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
@@ -102,6 +103,8 @@ export const budgets = pgTable(
     })
   ]
 )
+export const budgetsInsertSchemaPg = createInsertSchema(budgets)
+export const budgetsUpdateSchemaPg = createUpdateSchema(budgets)
 
 export type BudgetSelectPg = typeof budgets.$inferSelect
 export type BudgetInsertPg = typeof budgets.$inferInsert

@@ -27,6 +27,7 @@ import {
   pgTable
 } from 'drizzle-orm/pg-core'
 
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
@@ -131,6 +132,9 @@ export const accounts = pgTable(
     })
   ]
 )
+
+export const accountsInsertSchemaPg = createInsertSchema(accounts)
+export const accountsUpdateSchemaPg = createUpdateSchema(accounts)
 
 export type AccountSelectPg = typeof accounts.$inferSelect
 export type AccountInsertPg = typeof accounts.$inferInsert
