@@ -117,41 +117,32 @@ export const syncRouter = createTRPCRouter({
 
       validateRecordUserId(transformedData, session, 'insert')
 
-      try {
-        switch (table) {
-          case 'categories':
-            await db.insert(categories).values(transformedData)
-            break
-          case 'budgets':
-            await db.insert(budgets).values(transformedData)
-            break
-          case 'accounts':
-            await db.insert(accounts).values(transformedData)
-            break
-          case 'transactions':
-            await db.insert(transactions).values(transformedData)
-            break
-          case 'attachments':
-            await db.insert(attachments).values(transformedData)
-            break
-          case 'transaction_attachments':
-            await db.insert(transactionAttachments).values(transformedData)
-            break
-          case 'user_preferences':
-            const { id: _, ...rest } = transformedData
-            await db.insert(userPreferences).values(rest)
-            break
-        }
-
-        return { status: 'success' }
-      } catch (error) {
-        console.error('❌ syncRouter.insertRecord: Error inserting record:', {
-          table,
-          error: error instanceof Error ? error.message : String(error),
-          recordId: transformedData.id
-        })
-        throw error
+      switch (table) {
+        case 'categories':
+          await db.insert(categories).values(transformedData)
+          break
+        case 'budgets':
+          await db.insert(budgets).values(transformedData)
+          break
+        case 'accounts':
+          await db.insert(accounts).values(transformedData)
+          break
+        case 'transactions':
+          await db.insert(transactions).values(transformedData)
+          break
+        case 'attachments':
+          await db.insert(attachments).values(transformedData)
+          break
+        case 'transaction_attachments':
+          await db.insert(transactionAttachments).values(transformedData)
+          break
+        case 'user_preferences':
+          const { id: _, ...rest } = transformedData
+          await db.insert(userPreferences).values(rest)
+          break
       }
+
+      return { status: 'success' }
     }),
 
   updateRecord: protectedProcedure
@@ -170,88 +161,74 @@ export const syncRouter = createTRPCRouter({
 
       validateRecordUserId(transformedData, session, 'update')
 
-      try {
-        switch (table) {
-          case 'categories':
-            await db
-              .update(categories)
-              .set(transformedData)
-              .where(
-                and(
-                  eq(categories.id, id),
-                  eq(categories.userId, session.userId)
-                )
+      switch (table) {
+        case 'categories':
+          await db
+            .update(categories)
+            .set(transformedData)
+            .where(
+              and(eq(categories.id, id), eq(categories.userId, session.userId))
+            )
+          break
+        case 'budgets':
+          await db
+            .update(budgets)
+            .set(transformedData)
+            .where(and(eq(budgets.id, id), eq(budgets.userId, session.userId)))
+          break
+        case 'accounts':
+          await db
+            .update(accounts)
+            .set(transformedData)
+            .where(
+              and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+            )
+          break
+        case 'transactions':
+          await db
+            .update(transactions)
+            .set(transformedData)
+            .where(
+              and(
+                eq(transactions.id, id),
+                eq(transactions.userId, session.userId)
               )
-            break
-          case 'budgets':
-            await db
-              .update(budgets)
-              .set(transformedData)
-              .where(
-                and(eq(budgets.id, id), eq(budgets.userId, session.userId))
+            )
+          break
+        case 'attachments':
+          await db
+            .update(attachments)
+            .set(transformedData)
+            .where(
+              and(
+                eq(attachments.id, id),
+                eq(attachments.userId, session.userId)
               )
-            break
-          case 'accounts':
-            await db
-              .update(accounts)
-              .set(transformedData)
-              .where(
-                and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+            )
+          break
+        case 'transaction_attachments':
+          await db
+            .update(transactionAttachments)
+            .set(transformedData)
+            .where(
+              and(
+                eq(transactionAttachments.id, id),
+                eq(transactionAttachments.userId, session.userId)
               )
-            break
-          case 'transactions':
-            await db
-              .update(transactions)
-              .set(transformedData)
-              .where(
-                and(
-                  eq(transactions.id, id),
-                  eq(transactions.userId, session.userId)
-                )
-              )
-            break
-          case 'attachments':
-            await db
-              .update(attachments)
-              .set(transformedData)
-              .where(
-                and(
-                  eq(attachments.id, id),
-                  eq(attachments.userId, session.userId)
-                )
-              )
-            break
-          case 'transaction_attachments':
-            await db
-              .update(transactionAttachments)
-              .set(transformedData)
-              .where(
-                and(
-                  eq(transactionAttachments.id, id),
-                  eq(transactionAttachments.userId, session.userId)
-                )
-              )
-            break
-          case 'user_preferences':
-            // userPreferences uses userId as primary key, not id
-            const userIdPref = transformedData.userId
-            const { id: _, ...rest } = transformedData
-            await db
-              .update(userPreferences)
-              .set(rest)
-              .where(eq(userPreferences.userId, userIdPref))
-            break
-        }
-
-        return { status: 'success' }
-      } catch (error) {
-        console.error('❌ syncRouter.updateRecord: Error updating record:', {
-          table,
-          error: error instanceof Error ? error.message : String(error),
-          recordId: id
-        })
-        throw error
+            )
+          break
+        case 'user_preferences':
+          // userPreferences uses userId as primary key, not id
+          const userIdPref = transformedData.userId
+          const { id: _, ...rest } = transformedData
+          await db
+            .update(userPreferences)
+            .set(rest)
+            .where(eq(userPreferences.userId, userIdPref))
+          break
       }
+
+      return { status: 'success' }
     }),
 
   deleteRecord: protectedProcedure
@@ -266,77 +243,63 @@ export const syncRouter = createTRPCRouter({
         throw new Error(`DELETE operation missing 'id'`)
       }
 
-      try {
-        switch (table) {
-          case 'categories':
-            await db
-              .delete(categories)
-              .where(
-                and(
-                  eq(categories.id, id),
-                  eq(categories.userId, session.userId)
-                )
+      switch (table) {
+        case 'categories':
+          await db
+            .delete(categories)
+            .where(
+              and(eq(categories.id, id), eq(categories.userId, session.userId))
+            )
+          break
+        case 'budgets':
+          await db
+            .delete(budgets)
+            .where(and(eq(budgets.id, id), eq(budgets.userId, session.userId)))
+          break
+        case 'accounts':
+          await db
+            .delete(accounts)
+            .where(
+              and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+            )
+          break
+        case 'transactions':
+          await db
+            .delete(transactions)
+            .where(
+              and(
+                eq(transactions.id, id),
+                eq(transactions.userId, session.userId)
               )
-            break
-          case 'budgets':
-            await db
-              .delete(budgets)
-              .where(
-                and(eq(budgets.id, id), eq(budgets.userId, session.userId))
+            )
+          break
+        case 'attachments':
+          await db
+            .delete(attachments)
+            .where(
+              and(
+                eq(attachments.id, id),
+                eq(attachments.userId, session.userId)
               )
-            break
-          case 'accounts':
-            await db
-              .delete(accounts)
-              .where(
-                and(eq(accounts.id, id), eq(accounts.userId, session.userId))
+            )
+          break
+        case 'transaction_attachments':
+          await db
+            .delete(transactionAttachments)
+            .where(
+              and(
+                eq(transactionAttachments.id, id),
+                eq(transactionAttachments.userId, session.userId)
               )
-            break
-          case 'transactions':
-            await db
-              .delete(transactions)
-              .where(
-                and(
-                  eq(transactions.id, id),
-                  eq(transactions.userId, session.userId)
-                )
-              )
-            break
-          case 'attachments':
-            await db
-              .delete(attachments)
-              .where(
-                and(
-                  eq(attachments.id, id),
-                  eq(attachments.userId, session.userId)
-                )
-              )
-            break
-          case 'transaction_attachments':
-            await db
-              .delete(transactionAttachments)
-              .where(
-                and(
-                  eq(transactionAttachments.id, id),
-                  eq(transactionAttachments.userId, session.userId)
-                )
-              )
-            break
-          case 'user_preferences':
-            await db
-              .delete(userPreferences)
-              .where(eq(userPreferences.userId, session.userId))
-            break
-        }
-
-        return { status: 'success' }
-      } catch (error) {
-        console.error('❌ syncRouter.deleteRecord: Error deleting record:', {
-          table,
-          error: error instanceof Error ? error.message : String(error),
-          recordId: id
-        })
-        throw error
+            )
+          break
+        case 'user_preferences':
+          await db
+            .delete(userPreferences)
+            .where(eq(userPreferences.userId, session.userId))
+          break
       }
+
+      return { status: 'success' }
     })
 })
