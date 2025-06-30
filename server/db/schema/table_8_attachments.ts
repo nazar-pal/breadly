@@ -23,7 +23,7 @@ import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
   check,
   index,
-  numeric,
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -71,8 +71,8 @@ export const attachments = pgTable(
     bucketPath: text().notNull(), // Cloud storage path (S3, etc.) - unlimited length for complex paths
     mime: varchar({ length: 150 }).notNull(), // File MIME type - supports complex MIME types
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
-    fileSize: numeric().notNull(), // File size in bytes (for storage management)
-    duration: numeric(), // Duration in seconds (required for voice, optional for video receipts)
+    fileSize: integer().notNull(), // File size in bytes (for storage management)
+    duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
     createdAt: createdAtColumn() // Upload timestamp
   },
   table => [

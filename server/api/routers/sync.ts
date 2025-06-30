@@ -1,11 +1,39 @@
 import { TABLES_TO_SYNC } from '@/lib/powersync/const'
-import { userPreferences } from '@/server/db/schema/table_3_user-preferences'
-import { categories } from '@/server/db/schema/table_4_categories'
-import { budgets } from '@/server/db/schema/table_5_budgets'
-import { accounts } from '@/server/db/schema/table_6_accounts'
-import { transactions } from '@/server/db/schema/table_7_transactions'
-import { attachments } from '@/server/db/schema/table_8_attachments'
-import { transactionAttachments } from '@/server/db/schema/table_9_transaction-attachments'
+import {
+  userPreferences,
+  userPreferencesInsertSchemaPg,
+  userPreferencesUpdateSchemaPg
+} from '@/server/db/schema/table_3_user-preferences'
+import {
+  categories,
+  categoriesInsertSchemaPg,
+  categoriesUpdateSchemaPg
+} from '@/server/db/schema/table_4_categories'
+import {
+  budgets,
+  budgetsInsertSchemaPg,
+  budgetsUpdateSchemaPg
+} from '@/server/db/schema/table_5_budgets'
+import {
+  accounts,
+  accountsInsertSchemaPg,
+  accountsUpdateSchemaPg
+} from '@/server/db/schema/table_6_accounts'
+import {
+  transactions,
+  transactionsInsertSchemaPg,
+  transactionsUpdateSchemaPg
+} from '@/server/db/schema/table_7_transactions'
+import {
+  attachments,
+  attachmentsInsertSchemaPg,
+  attachmentsUpdateSchemaPg
+} from '@/server/db/schema/table_8_attachments'
+import {
+  transactionAttachments,
+  transactionAttachmentsInsertSchemaPg,
+  transactionAttachmentsUpdateSchemaPg
+} from '@/server/db/schema/table_9_transaction-attachments'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
@@ -36,32 +64,90 @@ function transformDataForPostgres(data: any, table: string): any {
 
   const transformed: any = {}
 
-  // Define timestamp fields that need conversion from Unix milliseconds to Date objects
+  // ---------------------------------------------------------------------
+  // Field mappings per table
+  // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
     categories: ['created_at'],
-    budgets: ['created_at'],
-    accounts: ['created_at'],
+    budgets: ['created_at', 'start_date'],
+    accounts: ['created_at', 'savings_target_date', 'debt_due_date'],
     transactions: ['created_at', 'tx_date'],
     attachments: ['created_at'],
-    transactionAttachments: ['created_at'],
-    userPreferences: ['created_at']
+    transaction_attachments: ['created_at'],
+    user_preferences: []
+  }
+
+  // Boolean columns that come from SQLite as 0/1 integers
+  const booleanFields: Record<string, string[]> = {
+    categories: ['is_archived'],
+    budgets: ['is_active'], // (future-proof, not present in current schema)
+    accounts: ['is_archived', 'debt_is_owed_to_me'],
+    transactions: ['is_recurring'],
+    attachments: [],
+    transaction_attachments: [],
+    user_preferences: []
+  }
+
+  // Decimal / numeric columns that come from SQLite as numbers but must be strings for Postgres numeric columns
+  const numericFields: Record<string, string[]> = {
+    budgets: ['amount'],
+    accounts: ['balance', 'savings_target_amount', 'debt_initial_amount'],
+    transactions: ['amount'],
+    attachments: [],
+    categories: [],
+    transaction_attachments: [],
+    user_preferences: []
   }
 
   const timestampFieldsForTable = timestampFields[table] || []
+  const booleanFieldsForTable = booleanFields[table] || []
+  const numericFieldsForTable = numericFields[table] || []
 
-  // Universal field transformation: snake_case → camelCase + timestamp conversion
+  // ---------------------------------------------------------------------
+  // 1) Convert snake_case → camelCase and handle timestamps immediately
+  // ---------------------------------------------------------------------
   for (const [key, value] of Object.entries(data)) {
     const camelKey = snakeToCamel(key)
 
-    // Convert timestamp fields from Unix milliseconds to Date objects
-    if (timestampFieldsForTable.includes(key) && typeof value === 'number') {
+    // Timestamp conversion: Unix millis → JS Date
+    if (
+      timestampFieldsForTable.includes(key) &&
+      typeof value === 'number' &&
+      !Number.isNaN(value)
+    ) {
       transformed[camelKey] = new Date(value)
-    } else {
-      transformed[camelKey] = value
+      continue
+    }
+
+    transformed[camelKey] = value
+  }
+
+  // ---------------------------------------------------------------------
+  // 2) Boolean conversion (0/1 → true/false)
+  // ---------------------------------------------------------------------
+  for (const camelKey of booleanFieldsForTable.map(snakeToCamel)) {
+    if (camelKey in transformed) {
+      const v = transformed[camelKey]
+      if (typeof v === 'number') transformed[camelKey] = v === 1
+      else if (typeof v === 'string') transformed[camelKey] = v === '1'
     }
   }
 
-  // Table-specific enum validations
+  // ---------------------------------------------------------------------
+  // 3) Numeric conversion (number → string for numeric columns)
+  // ---------------------------------------------------------------------
+  for (const camelKey of numericFieldsForTable.map(snakeToCamel)) {
+    if (camelKey in transformed) {
+      const v = transformed[camelKey]
+      if (typeof v === 'number' && !Number.isNaN(v)) {
+        transformed[camelKey] = v.toString()
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // 4) Enum sanitisation (already existed – kept intact)
+  // ---------------------------------------------------------------------
   if (table === 'categories' && transformed.type) {
     const validTypes = ['expense', 'income']
     if (!validTypes.includes(transformed.type)) {
@@ -80,28 +166,40 @@ function transformDataForPostgres(data: any, table: string): any {
 }
 
 function validateRecordUserId(
-  transformedData: any,
-  session: {
-    userId: string
-    authToken: string
-  },
+  transformedData: Record<string, unknown>,
+  session: { userId: string; authToken: string },
   operation: 'insert' | 'update'
 ) {
+  const { userId: sessionUserId } = session
+
   if (!('userId' in transformedData)) {
-    throw new Error('Error inserting record: userId is required')
+    transformedData.userId = sessionUserId
+    return sessionUserId
   }
-  // Replace guest user IDs with authenticated user ID
-  const recordUserId = (transformedData as any).userId
-  if (recordUserId && !recordUserId.startsWith('user_')) {
-    console.log(
-      `🔄 Replacing guest user ID ${recordUserId} with authenticated user ${session.userId}`
-    )
-    ;(transformedData as any).userId = session.userId
-  } else if (recordUserId && recordUserId !== session.userId) {
+
+  if (typeof transformedData.userId !== 'string') {
     throw new Error(
-      `Error ${operation} record: userId mismatch (record userId ${recordUserId} !== session userId ${session.userId})`
+      `Error ${operation} record: userId has invalid type: ${typeof transformedData.userId}`
     )
   }
+
+  let recordUserId = transformedData.userId
+
+  // If the userId is not a valid authenticated user, replace it
+  if (!recordUserId.startsWith('user_')) {
+    if (__DEV__) {
+      console.info(
+        `🔄 Replacing guest user ID "${recordUserId}" with authenticated user "${sessionUserId}"`
+      )
+    }
+    transformedData.userId = sessionUserId
+    recordUserId = sessionUserId
+  } else if (recordUserId !== sessionUserId) {
+    throw new Error(
+      `Error ${operation} record: userId mismatch (record userId "${recordUserId}" !== session userId "${sessionUserId}")`
+    )
+  }
+
   return recordUserId
 }
 
@@ -118,31 +216,44 @@ export const syncRouter = createTRPCRouter({
       validateRecordUserId(transformedData, session, 'insert')
 
       switch (table) {
-        case 'categories':
-          await db.insert(categories).values(transformedData)
-          break
-        case 'budgets':
-          await db.insert(budgets).values(transformedData)
-          break
-        case 'accounts':
-          await db.insert(accounts).values(transformedData)
-          break
-        case 'transactions':
-          await db.insert(transactions).values(transformedData)
-          break
-        case 'attachments':
-          await db.insert(attachments).values(transformedData)
-          break
-        case 'transaction_attachments':
-          await db.insert(transactionAttachments).values(transformedData)
-          break
         case 'user_preferences':
           const { id: _, ...rest } = transformedData
-          await db.insert(userPreferences).values(rest)
+          const validatedUserPreferences =
+            userPreferencesInsertSchemaPg.parse(rest)
+          await db.insert(userPreferences).values(validatedUserPreferences)
+          break
+        case 'categories':
+          const validatedCategories =
+            categoriesInsertSchemaPg.parse(transformedData)
+          await db.insert(categories).values(validatedCategories)
+          break
+        case 'budgets':
+          const validatedBudgets = budgetsInsertSchemaPg.parse(transformedData)
+          await db.insert(budgets).values(validatedBudgets)
+          break
+        case 'accounts':
+          const validatedAccounts =
+            accountsInsertSchemaPg.parse(transformedData)
+          await db.insert(accounts).values(validatedAccounts)
+          break
+        case 'transactions':
+          const validatedTransactions =
+            transactionsInsertSchemaPg.parse(transformedData)
+          await db.insert(transactions).values(validatedTransactions)
+          break
+        case 'attachments':
+          const validatedAttachments =
+            attachmentsInsertSchemaPg.parse(transformedData)
+          await db.insert(attachments).values(validatedAttachments)
+          break
+        case 'transaction_attachments':
+          const validatedTransactionAttachments =
+            transactionAttachmentsInsertSchemaPg.parse(transformedData)
+          await db
+            .insert(transactionAttachments)
+            .values(validatedTransactionAttachments)
           break
       }
-
-      return { status: 'success' }
     }),
 
   updateRecord: protectedProcedure
@@ -159,76 +270,73 @@ export const syncRouter = createTRPCRouter({
       // Transform data from PowerSync format to PostgreSQL format
       const transformedData = transformDataForPostgres(opData, table)
 
-      validateRecordUserId(transformedData, session, 'update')
+      const userId = validateRecordUserId(transformedData, session, 'update')
 
       switch (table) {
+        case 'user_preferences':
+          const { id: _, ...rest } = transformedData
+          const validatedUserPreferences =
+            userPreferencesUpdateSchemaPg.parse(rest)
+          await db
+            .update(userPreferences)
+            .set(validatedUserPreferences)
+            .where(eq(userPreferences.userId, userId))
+          break
         case 'categories':
+          const validatedCategories =
+            categoriesUpdateSchemaPg.parse(transformedData)
           await db
             .update(categories)
-            .set(transformedData)
-            .where(
-              and(eq(categories.id, id), eq(categories.userId, session.userId))
-            )
+            .set(validatedCategories)
+            .where(and(eq(categories.id, id), eq(categories.userId, userId)))
           break
         case 'budgets':
+          const validatedBudgets = budgetsUpdateSchemaPg.parse(transformedData)
           await db
             .update(budgets)
-            .set(transformedData)
-            .where(and(eq(budgets.id, id), eq(budgets.userId, session.userId)))
+            .set(validatedBudgets)
+            .where(and(eq(budgets.id, id), eq(budgets.userId, userId)))
           break
         case 'accounts':
+          const validatedAccounts =
+            accountsUpdateSchemaPg.parse(transformedData)
           await db
             .update(accounts)
-            .set(transformedData)
-            .where(
-              and(eq(accounts.id, id), eq(accounts.userId, session.userId))
-            )
+            .set(validatedAccounts)
+            .where(and(eq(accounts.id, id), eq(accounts.userId, userId)))
           break
         case 'transactions':
+          const validatedTransactions =
+            transactionsUpdateSchemaPg.parse(transformedData)
           await db
             .update(transactions)
-            .set(transformedData)
+            .set(validatedTransactions)
             .where(
-              and(
-                eq(transactions.id, id),
-                eq(transactions.userId, session.userId)
-              )
+              and(eq(transactions.id, id), eq(transactions.userId, userId))
             )
           break
         case 'attachments':
+          const validatedAttachments =
+            attachmentsUpdateSchemaPg.parse(transformedData)
           await db
             .update(attachments)
-            .set(transformedData)
-            .where(
-              and(
-                eq(attachments.id, id),
-                eq(attachments.userId, session.userId)
-              )
-            )
+            .set(validatedAttachments)
+            .where(and(eq(attachments.id, id), eq(attachments.userId, userId)))
           break
         case 'transaction_attachments':
+          const validatedTransactionAttachments =
+            transactionAttachmentsUpdateSchemaPg.parse(transformedData)
           await db
             .update(transactionAttachments)
-            .set(transformedData)
+            .set(validatedTransactionAttachments)
             .where(
               and(
                 eq(transactionAttachments.id, id),
-                eq(transactionAttachments.userId, session.userId)
+                eq(transactionAttachments.userId, userId)
               )
             )
           break
-        case 'user_preferences':
-          // userPreferences uses userId as primary key, not id
-          const userIdPref = transformedData.userId
-          const { id: _, ...rest } = transformedData
-          await db
-            .update(userPreferences)
-            .set(rest)
-            .where(eq(userPreferences.userId, userIdPref))
-          break
       }
-
-      return { status: 'success' }
     }),
 
   deleteRecord: protectedProcedure
@@ -238,10 +346,8 @@ export const syncRouter = createTRPCRouter({
       const { table, opData } = input
       const id = opData.id ?? opData
 
-      if (!id) {
-        console.error('❌ syncRouter.deleteRecord: Missing id')
+      if (!id || typeof id !== 'string')
         throw new Error(`DELETE operation missing 'id'`)
-      }
 
       switch (table) {
         case 'categories':
@@ -299,7 +405,5 @@ export const syncRouter = createTRPCRouter({
             .where(eq(userPreferences.userId, session.userId))
           break
       }
-
-      return { status: 'success' }
     })
 })

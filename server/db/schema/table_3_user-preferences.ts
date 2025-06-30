@@ -18,7 +18,7 @@ Key Features:
 
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
-import { check, numeric, pgTable, varchar } from 'drizzle-orm/pg-core'
+import { check, pgTable, smallint, varchar } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
@@ -44,7 +44,7 @@ export const userPreferences = pgTable(
   {
     userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
     defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
-    firstWeekday: numeric().default('1'), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
+    firstWeekday: smallint().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
     locale: varchar({ length: 20 }).default('en-US') // Localization/language code (ISO format)
   },
   table => [
