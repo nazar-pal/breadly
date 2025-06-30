@@ -36,15 +36,25 @@ import {
 } from '@/server/db/schema/table_9_transaction-attachments'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+import {
+  createTRPCContext,
+  createTRPCRouter,
+  protectedProcedure
+} from '../trpc'
 import { transformDataForPostgres, validateRecordUserId } from '../utils'
+
+type OperationData = Record<string, unknown> & { id?: string }
 
 // Define the shape of one operation
 const operationSchema = z.object({
   table: z.enum(TABLES_TO_SYNC),
   op: z.enum(['PUT', 'PATCH', 'DELETE']),
-  opData: z.any() // opData will be validated per type below if needed
+  opData: z.record(z.unknown())
 })
+
+type ProtectedContext = Awaited<ReturnType<typeof createTRPCContext>> & {
+  session: { userId: string; authToken: string }
+}
 
 // -----------------------------------------------------------------------------
 // Centralised configuration for every sync-able table
@@ -96,9 +106,9 @@ const tableConfigs = {
 
 // Generic helpers -------------------------------------------------------------
 const insertHelper = async (
-  ctx: any,
+  ctx: ProtectedContext,
   tableName: keyof typeof tableConfigs,
-  opData: any
+  opData: Record<string, unknown>
 ) => {
   const { db, session } = ctx
   const cfg = tableConfigs[tableName]
@@ -112,9 +122,9 @@ const insertHelper = async (
 }
 
 const updateHelper = async (
-  ctx: any,
+  ctx: ProtectedContext,
   tableName: keyof typeof tableConfigs,
-  opData: any
+  opData: OperationData
 ) => {
   const { db, session } = ctx
   const cfg = tableConfigs[tableName]
@@ -136,15 +146,15 @@ const updateHelper = async (
 }
 
 const deleteHelper = async (
-  ctx: any,
+  ctx: ProtectedContext,
   tableName: keyof typeof tableConfigs,
-  opData: any
+  opData: string | OperationData
 ) => {
   const { db, session } = ctx
   const cfg = tableConfigs[tableName]
   if (!cfg) throw new Error(`Unsupported table: ${tableName}`)
 
-  const id = opData.id ?? opData
+  const id = typeof opData === 'string' ? opData : opData.id
   if (!id || typeof id !== 'string') {
     throw new Error(`DELETE operation missing 'id'`)
   }
