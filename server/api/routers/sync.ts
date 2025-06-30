@@ -69,11 +69,22 @@ function transformDataForPostgres(data: any, table: string): any {
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
     categories: ['created_at'],
-    budgets: ['created_at', 'start_date'],
-    accounts: ['created_at', 'savings_target_date', 'debt_due_date'],
-    transactions: ['created_at', 'tx_date'],
+    budgets: ['created_at'],
+    accounts: ['created_at'],
+    transactions: ['created_at'],
     attachments: ['created_at'],
     transaction_attachments: ['created_at'],
+    user_preferences: []
+  }
+
+  // Date fields (date only - need YYYY-MM-DD string format)
+  const dateFields: Record<string, string[]> = {
+    budgets: ['start_date'],
+    accounts: ['savings_target_date', 'debt_due_date'],
+    transactions: ['tx_date'],
+    categories: [],
+    attachments: [],
+    transaction_attachments: [],
     user_preferences: []
   }
 
@@ -100,22 +111,33 @@ function transformDataForPostgres(data: any, table: string): any {
   }
 
   const timestampFieldsForTable = timestampFields[table] || []
+  const dateFieldsForTable = dateFields[table] || []
   const booleanFieldsForTable = booleanFields[table] || []
   const numericFieldsForTable = numericFields[table] || []
 
   // ---------------------------------------------------------------------
-  // 1) Convert snake_case → camelCase and handle timestamps immediately
+  // 1) Convert snake_case → camelCase and handle timestamps/dates immediately
   // ---------------------------------------------------------------------
   for (const [key, value] of Object.entries(data)) {
     const camelKey = snakeToCamel(key)
 
-    // Timestamp conversion: Unix millis → JS Date
+    // Timestamp conversion: Unix millis → Date object
     if (
       timestampFieldsForTable.includes(key) &&
       typeof value === 'number' &&
       !Number.isNaN(value)
     ) {
       transformed[camelKey] = new Date(value)
+      continue
+    }
+
+    // Date conversion: Unix millis → YYYY-MM-DD string
+    if (
+      dateFieldsForTable.includes(key) &&
+      typeof value === 'number' &&
+      !Number.isNaN(value)
+    ) {
+      transformed[camelKey] = new Date(value).toISOString().split('T')[0]
       continue
     }
 
