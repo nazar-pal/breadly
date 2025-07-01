@@ -59,18 +59,38 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
         console.log('🔑 Existing Google account sign-in')
       }
 
-      // If sign in was successful, set the active session
-      if (createdSessionId) {
-        await setActive!({ session: createdSessionId })
-      } else {
-        // If there is no `createdSessionId`,
-        // there are missing requirements, such as MFA
-        // Use the `signIn` or `signUp` returned from `startSSOFlow`
-        // to handle next steps
-        console.log(
-          'OAuth flow completed, but no session created - may require additional steps'
-        )
+      /**
+       * Handle completed sign-in / sign-up flows
+       * --------------------------------------------------
+       * Clerk may not always return `createdSessionId` at the top level.
+       * For existing users the session id is usually nested inside the
+       * `signIn` object. We therefore check both places and, if found,
+       * immediately activate the session so that `useAuth()` becomes
+       * truthy and the rest of the app can initialize correctly.
+       */
+
+      const sessionId =
+        createdSessionId || signIn?.createdSessionId || signUp?.createdSessionId
+
+      if (sessionId) {
+        if (__DEV__) console.log('✅ Session created, activating…', sessionId)
+
+        await setActive!({ session: sessionId })
+        return
       }
+
+      // If there is still no session, we are missing additional steps
+      // (e.g. MFA, email verification, account linking, etc.).
+      // Surface that information so it is clear why the sign-in halted.
+      if (__DEV__) {
+        console.log('⚠️ No session yet, inspecting Clerk response…')
+        console.log('signIn', JSON.stringify(signIn, null, 2))
+        console.log('signUp', JSON.stringify(signUp, null, 2))
+      }
+
+      onError?.(
+        'Sign-in requires additional steps. Please complete the verification prompts and try again.'
+      )
     } catch (err) {
       console.error('Google OAuth error:', JSON.stringify(err, null, 2))
 
