@@ -14,7 +14,21 @@ interface GoogleOAuthButtonProps {
   onError?: (error: string) => void
 }
 
+export const useWarmUpBrowser = () => {
+  React.useEffect(() => {
+    // Preloads the browser for Android devices to reduce authentication load time
+    // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
+    void WebBrowser.warmUpAsync()
+    return () => {
+      // Cleanup: closes browser when component unmounts
+      void WebBrowser.coolDownAsync()
+    }
+  }, [])
+}
+
 export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
+  useWarmUpBrowser()
+
   const { startSSOFlow } = useSSO()
 
   async function handleSignInWithGoogle() {
@@ -23,7 +37,9 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
       const { createdSessionId, setActive, signIn, signUp } =
         await startSSOFlow({
           strategy: 'oauth_google',
-          // Defaults to current path
+          // For web, defaults to current path
+          // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
+          // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
           redirectUrl: AuthSession.makeRedirectUri()
         })
 
