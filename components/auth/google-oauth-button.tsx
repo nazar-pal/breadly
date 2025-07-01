@@ -34,7 +34,7 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
   async function handleSignInWithGoogle() {
     try {
       // Start the authentication process by calling `startSSOFlow()`
-      const { createdSessionId, setActive, signIn, signUp } =
+      const { createdSessionId, setActive, signIn, signUp, authSessionResult } =
         await startSSOFlow({
           strategy: 'oauth_google',
           // For web, defaults to current path
@@ -42,6 +42,8 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
           // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
           redirectUrl: AuthSession.makeRedirectUri()
         })
+
+      if (__DEV__) console.log('authSessionResult', authSessionResult)
 
       // Check if this is a new sign-up by examining the signUp object
       const isNewSignUp =
