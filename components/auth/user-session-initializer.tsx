@@ -1,3 +1,5 @@
+import { Storage } from '@/lib/storage/mmkv'
+import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
 import { useUserSessionInitializingState } from '@/lib/storage/user-session-store'
 import {
   handleAuthenticatedSession,
@@ -7,6 +9,8 @@ import { useAuth } from '@clerk/clerk-expo'
 import React, { useEffect } from 'react'
 import { UserSessionLoading } from './user-session-loading'
 
+// Bootstraps the correct session (guest or authenticated) and keeps the UI
+// in a loading state until everything is ready.
 export function UserSessionInitializer({
   children
 }: {
@@ -17,11 +21,20 @@ export function UserSessionInitializer({
     useUserSessionInitializingState()
 
   useEffect(() => {
-    if (isSignedIn && clerkId) {
-      handleAuthenticatedSession(clerkId)
-    } else {
-      handleGuestSession()
+    const initializeSession = async () => {
+      if (isSignedIn && clerkId) {
+        if (__DEV__)
+          console.log(`🔍 Authenticated session detected: ${clerkId}`)
+        await handleAuthenticatedSession(clerkId)
+        if (__DEV__) console.log(`✅ Authenticated session ready: ${clerkId}`)
+      } else {
+        if (__DEV__) console.log('🔍 Guest session detected')
+        await handleGuestSession()
+        const guestId = Storage.getItem(GUEST_KEY)
+        if (__DEV__) console.log(`✅ Guest session ready: ${guestId}`)
+      }
     }
+    initializeSession()
   }, [isSignedIn, clerkId])
 
   // Show loading state during initialization or migration

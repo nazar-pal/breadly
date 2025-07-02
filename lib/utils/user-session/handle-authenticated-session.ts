@@ -1,6 +1,7 @@
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
 import { userSessionStore } from '@/lib/storage/user-session-store'
+import { asyncTryCatch } from '../try-catch'
 import { migrateGuestData } from './migrate-guest-data'
 
 export async function handleAuthenticatedSession(clerkUserId: string) {
@@ -22,25 +23,24 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
       if (shouldAutoMigrate) {
         // New account that was just created – migrate automatically.
         setIsMigrating(true)
-        try {
-          await migrateGuestData(existingGuestId, clerkUserId)
-          console.log(
-            '✅ Successfully migrated guest data to authenticated user'
-          )
-        } catch (error) {
-          console.error('❌ Failed to migrate guest data:', error)
-        } finally {
-          // Clean up flag regardless of success.
-          Storage.removeItem(AUTO_MIGRATE_KEY)
-          setIsMigrating(false)
-        }
+
+        if (__DEV__) console.log('🔍 Starting to migrate guest data...')
+        const [error] = await asyncTryCatch(
+          migrateGuestData(existingGuestId, clerkUserId)
+        )
+        if (__DEV__) console.log('✅ Guest data migrated!')
+        if (error) console.error('❌ Failed to migrate guest data:', error)
+
+        // Clear flags & guest key so next guest session starts fresh
+        Storage.removeItem(AUTO_MIGRATE_KEY)
+        Storage.removeItem(GUEST_KEY)
+        setIsMigrating(false)
       } else {
         // Existing account sign-in – clear guest ID without migration
         // This ensures existing cloud data takes precedence
+        if (__DEV__)
+          console.log('🔒 Existing account sign-in – skip guest data')
         Storage.removeItem(GUEST_KEY)
-        console.log(
-          '🔒 Signed into existing account, prioritizing cloud data over local guest data'
-        )
       }
     }
   }
