@@ -1,6 +1,3 @@
-import { Storage } from '@/lib/storage/mmkv'
-import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
-
 export async function migrateGuestData(
   guestUserId: string,
   authenticatedUserId: string
@@ -21,7 +18,4 @@ export async function migrateGuestData(
   if (!result.success) {
     throw result.error || new Error('Migration failed')
   }
-
-  // Clear the guest ID after successful migration
-  Storage.removeItem(GUEST_KEY)
 }

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { LogOut } from '@/lib/icons'
+import { userSessionStore } from '@/lib/storage/user-session-store'
 import { useClerk } from '@clerk/clerk-expo'
 import * as Linking from 'expo-linking'
 import { View } from 'react-native'
@@ -11,6 +12,8 @@ export const SignOutButton = () => {
   const handleSignOut = async () => {
     try {
       await signOut()
+      // Immediately reset the client-side session so UI reverts to guest state instantly
+      userSessionStore.setState({ session: null })
       // Redirect to your desired page
       Linking.openURL(Linking.createURL('/'))
     } catch (err) {
