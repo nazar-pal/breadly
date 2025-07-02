@@ -13,7 +13,7 @@ export const SignOutButton = () => {
     try {
       await signOut()
       // Immediately reset the client-side session so UI reverts to guest state instantly
-      userSessionStore.setState({ session: null })
+      userSessionStore.setState({ session: null, isInitializing: true })
       // Redirect to your desired page
       Linking.openURL(Linking.createURL('/'))
     } catch (err) {
