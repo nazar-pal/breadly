@@ -1,6 +1,9 @@
 import { Storage } from '@/lib/storage/mmkv'
 import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
-import { useUserSessionInitializingState } from '@/lib/storage/user-session-store'
+import {
+  useUserSessionActions,
+  useUserSessionInitializingState
+} from '@/lib/storage/user-session-store'
 import {
   handleAuthenticatedSession,
   handleGuestSession
@@ -19,6 +22,7 @@ export function UserSessionInitializer({
   const { isSignedIn, userId: clerkId } = useAuth()
   const { session, isMigrating, isInitializing } =
     useUserSessionInitializingState()
+  const { setIsInitializing } = useUserSessionActions()
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -34,8 +38,9 @@ export function UserSessionInitializer({
         if (__DEV__) console.log(`✅ Guest session ready: ${guestId}`)
       }
     }
+    setIsInitializing(true)
     initializeSession()
-  }, [isSignedIn, clerkId])
+  }, [isSignedIn, clerkId, setIsInitializing])
 
   // Show loading state during initialization or migration
   if (isInitializing || isMigrating || !session) {
