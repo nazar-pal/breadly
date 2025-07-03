@@ -1,88 +1,108 @@
+import { SidebarModal } from '@/components/sidebar-menu'
+import { SettingsDropdown } from '@/components/tabs-header/settings-dropdown'
+import { SidebarTrigger } from '@/components/tabs-header/sidebar-trigger'
 import {
+  Camera,
   ChartBar,
-  ChartLine,
-  CirclePlus,
-  List,
+  Receipt,
   Settings,
+  TrendingUp,
   Wallet
 } from '@/lib/icons'
 import { Tabs } from 'expo-router'
 import type { LucideIcon } from 'lucide-react-native'
+import React from 'react'
 
 function TabBarIcon({ Icon, focused }: { Icon: LucideIcon; focused: boolean }) {
   return (
     <Icon
+      size={24}
       className={focused ? 'text-primary' : 'text-muted-foreground'}
-      strokeWidth={2}
+      strokeWidth={focused ? 2.5 : 2}
     />
   )
 }
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '500'
-        }
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Operations',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={List} focused={focused} />
-          )
-        }}
-      />
-      <Tabs.Screen
-        name="categories"
-        options={{
-          title: 'Categories',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={ChartBar} focused={focused} />
-          )
-        }}
-      />
-      <Tabs.Screen
-        name="statistics"
-        options={{
-          title: 'Statistics',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={ChartLine} focused={focused} />
-          )
-        }}
-      />
-      <Tabs.Screen
-        name="accounts"
-        options={{
-          title: 'Accounts',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={Wallet} focused={focused} />
-          )
-        }}
-      />
-      <Tabs.Screen
-        name="ai"
-        options={{
-          title: 'AI',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={CirclePlus} focused={focused} />
-          )
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon Icon={Settings} focused={focused} />
-          )
-        }}
-      />
-    </Tabs>
+    <>
+      <Tabs
+        screenOptions={({ route }) => ({
+          headerShadowVisible: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            height: 60,
+            paddingTop: 8,
+            paddingBottom: 8
+          },
+
+          headerLeft: () => <SidebarTrigger />,
+          headerRight: () => {
+            // Only show settings dropdown on categories tab
+            if (route.name === 'categories') {
+              return <SettingsDropdown />
+            }
+            return null
+          }
+        })}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Operations',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Receipt} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="categories"
+          options={{
+            title: 'Categories',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={ChartBar} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="statistics"
+          options={{
+            title: 'Statistics',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={TrendingUp} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="accounts"
+          options={{
+            title: 'Accounts',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Wallet} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="ai"
+          options={{
+            title: 'AI',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Camera} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Settings',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Settings} focused={focused} />
+            )
+          }}
+        />
+      </Tabs>
+
+      <SidebarModal />
+    </>
   )
 }

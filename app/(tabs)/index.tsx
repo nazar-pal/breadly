@@ -48,12 +48,7 @@ export default function OperationsScreen() {
   // Show loading state
   if (isLoading) {
     return (
-      <View
-        className="flex-1 bg-background"
-        style={{
-          paddingTop: insets.top
-        }}
-      >
+      <View className="flex-1 bg-background">
         <View className="px-4 py-4">
           <Text className="text-3xl font-bold text-foreground">Operations</Text>
         </View>
@@ -69,12 +64,7 @@ export default function OperationsScreen() {
   // Show error state
   if (error) {
     return (
-      <View
-        className="flex-1 bg-background"
-        style={{
-          paddingTop: insets.top
-        }}
-      >
+      <View className="flex-1 bg-background">
         <View className="px-4 py-4">
           <Text className="text-3xl font-bold text-foreground">Operations</Text>
         </View>
@@ -88,12 +78,7 @@ export default function OperationsScreen() {
   }
 
   return (
-    <View
-      className="flex-1 bg-background"
-      style={{
-        paddingTop: insets.top
-      }}
-    >
+    <View className="flex-1 bg-background">
       <View className="px-4 py-4">
         <Text className="text-3xl font-bold text-foreground">Operations</Text>
       </View>

@@ -7,7 +7,6 @@ import React from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function GestureDetectorContainer({
   children,
@@ -46,7 +45,6 @@ function GestureDetectorContainer({
 }
 
 export default function CategoriesLayout() {
-  const insets = useSafeAreaInsets()
   return (
     <GestureDetectorContainer
       canNavigate={true}
@@ -54,13 +52,7 @@ export default function CategoriesLayout() {
       navigateNext={() => console.log('Navigate next')}
     >
       <CategoriesContextProvider>
-        <View
-          className="flex-1 bg-background"
-          style={{
-            paddingTop: insets.top
-          }}
-          collapsable={false}
-        >
+        <View className="flex-1 bg-background" collapsable={false}>
           <CategoriesHeader />
           <Slot />
           <CalculatorModal />

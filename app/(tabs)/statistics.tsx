@@ -244,7 +244,7 @@ export default function StatisticsScreen() {
   const insets = useSafeAreaInsets()
 
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background">
       <View className="border-b border-border/10 px-4 py-4">
         <View className="flex-row items-center justify-between">
           <Text className="text-2xl font-bold text-foreground">Statistics</Text>

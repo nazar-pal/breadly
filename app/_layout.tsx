@@ -1,6 +1,6 @@
 import './global.css'
 
-import { UserSessionInitializer } from '@/components/auth'
+import { UserSessionInitializer } from '@/components/user-session-initializer'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'

@@ -5,14 +5,10 @@ import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'
 import React from 'react'
-import { Image, Text } from 'react-native'
+import { Image, Text, View } from 'react-native'
 
 // Handle any pending authentication sessions
 WebBrowser.maybeCompleteAuthSession()
-
-interface GoogleOAuthButtonProps {
-  onError?: (error: string) => void
-}
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -26,10 +22,17 @@ export const useWarmUpBrowser = () => {
   }, [])
 }
 
-export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
+export function GoogleOAuthButton() {
   useWarmUpBrowser()
 
   const { startSSOFlow } = useSSO()
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+
+  const handleGoogleAuthError = (error: string) => {
+    setErrorMessage(error)
+    // Clear error after 5 seconds
+    setTimeout(() => setErrorMessage(null), 5000)
+  }
 
   async function handleSignInWithGoogle() {
     try {
@@ -88,7 +91,7 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
         console.log('signUp', JSON.stringify(signUp, null, 2))
       }
 
-      onError?.(
+      handleGoogleAuthError(
         'Sign-in requires additional steps. Please complete the verification prompts and try again.'
       )
     } catch (err) {
@@ -97,30 +100,43 @@ export function GoogleOAuthButton({ onError }: GoogleOAuthButtonProps) {
       // Handle Clerk API errors
       if (isClerkAPIResponseError(err)) {
         const errorMessage = err.errors.map(error => error.message).join(', ')
-        onError?.(errorMessage)
+        handleGoogleAuthError(errorMessage)
       } else {
         // Handle other types of errors
         const errorMessage =
           err instanceof Error
             ? err.message
             : 'Failed to sign in with Google. Please try again.'
-        onError?.(errorMessage)
+        handleGoogleAuthError(errorMessage)
       }
     }
   }
 
   return (
-    <Button
-      variant="outline"
-      onPress={handleSignInWithGoogle}
-      className="mb-4 flex-row items-center gap-3 rounded-lg border-border/60 bg-card py-4 shadow-sm active:scale-[0.98] active:bg-accent"
-    >
-      <Image
-        source={require('@/assets/images/google-icon.png')}
-        className="size-5"
-        resizeMode="contain"
-      />
-      <Text className="text-base text-foreground">Continue with Google</Text>
-    </Button>
+    <>
+      <Text className="mb-4 text-lg font-semibold text-foreground">
+        Sign in to save your data
+      </Text>
+
+      <Button
+        variant="outline"
+        onPress={handleSignInWithGoogle}
+        className="mb-4 flex-row items-center gap-3 rounded-lg border-border/60 bg-card py-4 shadow-sm active:scale-[0.98] active:bg-accent"
+      >
+        <Image
+          source={require('@/assets/images/google-icon.png')}
+          className="size-5"
+          resizeMode="contain"
+        />
+        <Text className="text-base text-foreground">Continue with Google</Text>
+      </Button>
+
+      {/* Error Message */}
+      {errorMessage && (
+        <View className="mt-4 rounded-lg bg-destructive/10 p-3">
+          <Text className="text-sm text-destructive">{errorMessage}</Text>
+        </View>
+      )}
+    </>
   )
 }
