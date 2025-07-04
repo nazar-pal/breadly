@@ -14,11 +14,13 @@ import { runOnJS } from 'react-native-reanimated'
 function GestureDetectorContainer({
   children,
   canNavigate,
+  canNavigateForward,
   navigatePrevious,
   navigateNext
 }: {
   children: React.ReactNode
   canNavigate: boolean
+  canNavigateForward: boolean
   navigatePrevious: () => void
   navigateNext: () => void
 }) {
@@ -39,7 +41,10 @@ function GestureDetectorContainer({
           runOnJS(navigatePrevious)()
         } else if (translationX < -30) {
           // Swipe left - go to next period
-          runOnJS(navigateNext)()
+          if (canNavigateForward) {
+            runOnJS(navigateNext)()
+          }
+          // Note: No animation for blocked navigation - header animations provide feedback
         }
       }
     })
@@ -52,18 +57,12 @@ export default function CategoriesLayout() {
   const { canNavigate, canNavigateForward } = useDateRangeState()
   const { navigatePrevious, navigateNext } = useCategoriesActions()
 
-  // Create a wrapper for navigateNext that respects future date limits
-  const handleNavigateNext = () => {
-    if (canNavigateForward) {
-      navigateNext()
-    }
-  }
-
   return (
     <GestureDetectorContainer
       canNavigate={canNavigate}
+      canNavigateForward={canNavigateForward}
       navigatePrevious={navigatePrevious}
-      navigateNext={handleNavigateNext}
+      navigateNext={navigateNext}
     >
       <View className="flex-1 bg-background" collapsable={false}>
         <CategoriesHeader />
