@@ -72,7 +72,7 @@ export function CategoriesHeader() {
 
       {/* Tab Navigation */}
       <View className="mt-1 flex-row gap-2">
-        <Link href="/(tabs)/categories" asChild>
+        <Link href="/(tabs)/(categories)" asChild>
           <Pressable
             className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{
@@ -104,7 +104,7 @@ export function CategoriesHeader() {
           </Pressable>
         </Link>
 
-        <Link href="/(tabs)/categories/incomes" asChild>
+        <Link href="/(tabs)/(categories)/incomes" asChild>
           <Pressable
             className="mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2"
             style={{

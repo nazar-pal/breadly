@@ -48,15 +48,10 @@ export default function OperationsScreen() {
   // Show loading state
   if (isLoading) {
     return (
-      <View className="flex-1 bg-background">
-        <View className="px-4 py-4">
-          <Text className="text-3xl font-bold text-foreground">Operations</Text>
-        </View>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="text-center text-foreground">
-            Loading operations...
-          </Text>
-        </View>
+      <View className="flex-1 items-center justify-center px-4">
+        <Text className="text-center text-foreground">
+          Loading transactions...
+        </Text>
       </View>
     )
   }
@@ -64,25 +59,16 @@ export default function OperationsScreen() {
   // Show error state
   if (error) {
     return (
-      <View className="flex-1 bg-background">
-        <View className="px-4 py-4">
-          <Text className="text-3xl font-bold text-foreground">Operations</Text>
-        </View>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="text-center text-destructive">
-            Error loading operations: {error.message}
-          </Text>
-        </View>
+      <View className="flex-1 items-center justify-center px-4">
+        <Text className="text-center text-destructive">
+          Error loading transactions: {error.message}
+        </Text>
       </View>
     )
   }
 
   return (
     <View className="flex-1 bg-background">
-      <View className="px-4 py-4">
-        <Text className="text-3xl font-bold text-foreground">Operations</Text>
-      </View>
-
       {/* Filter Tabs */}
       <View className="mb-4 px-4">
         <ScrollView
@@ -148,7 +134,7 @@ export default function OperationsScreen() {
             <Card>
               <CardContent className="p-4">
                 <Text className="text-center text-muted-foreground">
-                  No operations found for the selected filter
+                  No transactions found for the selected filter
                 </Text>
               </CardContent>
             </Card>

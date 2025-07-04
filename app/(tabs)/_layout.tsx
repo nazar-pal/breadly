@@ -28,7 +28,6 @@ export default function TabLayout() {
     <>
       <Tabs
         screenOptions={({ route }) => ({
-          headerShadowVisible: false,
           tabBarShowLabel: false,
           tabBarStyle: {
             minHeight: 64,
@@ -39,7 +38,7 @@ export default function TabLayout() {
           headerLeft: () => <SidebarTrigger />,
           headerRight: () => {
             // Only show settings dropdown on categories tab
-            if (route.name === 'categories') {
+            if (route.name === '(categories)') {
               return <SettingsDropdown />
             }
             return null
@@ -47,20 +46,29 @@ export default function TabLayout() {
         })}
       >
         <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Operations',
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Receipt} focused={focused} />
-            )
-          }}
-        />
-        <Tabs.Screen
-          name="categories"
+          name="(categories)"
           options={{
             title: 'Categories',
             tabBarIcon: ({ focused }) => (
               <TabBarIcon Icon={ChartBar} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="ai"
+          options={{
+            title: 'AI',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Camera} focused={focused} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="transactions"
+          options={{
+            title: 'Operations',
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon Icon={Receipt} focused={focused} />
             )
           }}
         />
@@ -82,15 +90,7 @@ export default function TabLayout() {
             )
           }}
         />
-        <Tabs.Screen
-          name="ai"
-          options={{
-            title: 'AI',
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Camera} focused={focused} />
-            )
-          }}
-        />
+
         <Tabs.Screen
           name="settings"
           options={{
