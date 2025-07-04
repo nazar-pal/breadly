@@ -16,7 +16,7 @@ import React from 'react'
 function TabBarIcon({ Icon, focused }: { Icon: LucideIcon; focused: boolean }) {
   return (
     <Icon
-      size={24}
+      size={32}
       className={focused ? 'text-primary' : 'text-muted-foreground'}
       strokeWidth={focused ? 2.5 : 2}
     />
@@ -31,7 +31,7 @@ export default function TabLayout() {
           headerShadowVisible: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            height: 60,
+            minHeight: 64,
             paddingTop: 8,
             paddingBottom: 8
           },
