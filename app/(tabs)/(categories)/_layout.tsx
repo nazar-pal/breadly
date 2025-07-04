@@ -1,6 +1,5 @@
 import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
-import { CategoryModal } from '@/components/categories/modal-category'
 import {
   useCategoriesActions,
   useDateRangeState
@@ -75,7 +74,6 @@ export default function CategoriesLayout() {
         <CategoriesHeader />
         <Slot />
         <CalculatorModal />
-        <CategoryModal />
       </View>
     </GestureDetectorContainer>
   )

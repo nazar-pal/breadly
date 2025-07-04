@@ -111,6 +111,24 @@ export function useGetCategories({
   return result
 }
 
+export function useGetCategory({
+  userId,
+  categoryId
+}: {
+  userId: string
+  categoryId: string
+}) {
+  const query = db
+    .select()
+    .from(categories)
+    .where(and(eq(categories.userId, userId), eq(categories.id, categoryId)))
+    .limit(1)
+
+  const result = useQuery(toCompilableQuery(query))
+
+  return result
+}
+
 export function useSumTransactions({
   userId,
   categoryId,

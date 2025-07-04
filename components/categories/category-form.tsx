@@ -1,15 +1,12 @@
 import { useUserSession } from '@/lib/hooks'
 import { Check } from '@/lib/icons'
 import { createCategory, updateCategory } from '@/lib/powersync/data/mutations'
-import {
-  useCategoriesActions,
-  useCategoryModalState
-} from '@/lib/storage/categories-store'
+import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
+import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { CategoryFormIcon, IconName } from './category-form-icon'
-import { useCategoryType } from './lib/use-category-type'
 
 interface CategoryFormData {
   name: string
@@ -17,24 +14,32 @@ interface CategoryFormData {
   selectedIcon: IconName
 }
 
-export function CategoryForm() {
-  const { userId } = useUserSession()
-  const { categoryToEdit: category } = useCategoryModalState()
-  const { closeCategoryModal } = useCategoriesActions()
+interface CategoryFormProps {
+  category?: CategorySelectSQLite
+  categoryType: 'income' | 'expense'
+}
 
-  const categoryType = useCategoryType()
+// Utility to calculate default icon based on props
+function getDefaultIcon(
+  category: CategorySelectSQLite | undefined,
+  categoryType: 'income' | 'expense'
+): IconName {
+  if (category?.icon) return category.icon as IconName
+  return (categoryType === 'income' ? 'PiggyBank' : 'Coffee') as IconName
+}
+
+export function CategoryForm({ category, categoryType }: CategoryFormProps) {
+  const { userId } = useUserSession()
+
   const isEditMode = Boolean(category)
 
-  // Get initial values based on edit mode
-  const getInitialIcon = (): IconName => {
-    if (isEditMode && category?.icon) {
-      return category.icon as IconName
-    }
-    return (categoryType === 'income' ? 'PiggyBank' : 'Coffee') as IconName
-  }
+  // Memoized helper to determine the correct default icon
+  const getInitialIcon = () => getDefaultIcon(category, categoryType)
 
   // Local state for icon selection with immediate visual feedback
-  const [selectedIcon, setSelectedIcon] = useState<IconName>(getInitialIcon())
+  const [selectedIcon, setSelectedIcon] = useState<IconName>(() =>
+    getInitialIcon()
+  )
 
   const {
     control,
@@ -103,7 +108,7 @@ export function CategoryForm() {
       setSelectedIcon(
         (categoryType === 'income' ? 'PiggyBank' : 'Coffee') as IconName
       )
-      closeCategoryModal()
+      router.back()
     } catch (error) {
       console.error('Error saving category:', error)
     }
@@ -192,7 +197,7 @@ export function CategoryForm() {
       <View className="flex-row gap-3 border-t border-border/50 px-6 pt-6">
         <Pressable
           className="flex-1 items-center justify-center rounded-xl border border-border py-4"
-          onPress={closeCategoryModal}
+          onPress={() => router.back()}
         >
           <Text className="text-base font-semibold text-foreground">
             Cancel

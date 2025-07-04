@@ -45,10 +45,6 @@ type CategoriesState = {
   // Add Transaction Modal State
   addTransactionModalVisible: boolean
 
-  // Category Modal State (Add/Edit)
-  categoryModalVisible: boolean
-  categoryToEdit: CategoryData | null
-
   // Feedback State for unsuccessful navigation
   failedNavigateNextCounter: number
 }
@@ -73,14 +69,8 @@ type CategoriesActions = {
   openAddTransactionModal: (categoryId: string) => void
   closeAddTransactionModal: () => void
 
-  // Category Modal Actions (Add/Edit)
-  openCategoryModal: (category?: CategoryData) => void
-  closeCategoryModal: () => void
-
   // Combined Actions for common workflows
   handleCategoryPress: (categoryId: string) => void
-  handleCategoryLongPress: (category: CategoryData) => void
-  handleAddCategory: () => void
 
   // Feedback Actions
   notifyFailedNavigateNext: () => void
@@ -174,8 +164,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
     customDateRange: null,
     selectedCategory: null,
     addTransactionModalVisible: false,
-    categoryModalVisible: false,
-    categoryToEdit: null,
     failedNavigateNextCounter: 0,
 
     // Actions
@@ -308,32 +296,10 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
           selectedCategory: null
         }),
 
-      // Category Modal Actions (Add/Edit)
-      openCategoryModal: (category?: CategoryData) =>
-        set({
-          categoryModalVisible: true,
-          categoryToEdit: category || null
-        }),
-      closeCategoryModal: () =>
-        set({
-          categoryModalVisible: false,
-          categoryToEdit: null
-        }),
-
       // Combined Actions for common workflows
       handleCategoryPress: (categoryId: string) => {
         const { actions } = get()
         actions.openAddTransactionModal(categoryId)
-      },
-
-      handleCategoryLongPress: (category: CategoryData) => {
-        const { actions } = get()
-        actions.openCategoryModal(category)
-      },
-
-      handleAddCategory: () => {
-        const { actions } = get()
-        actions.openCategoryModal()
       },
 
       // Feedback Actions
@@ -359,8 +325,6 @@ export const useCategoriesState = () => {
       // Category UI State
       selectedCategory: state.selectedCategory,
       addTransactionModalVisible: state.addTransactionModalVisible,
-      categoryModalVisible: state.categoryModalVisible,
-      categoryToEdit: state.categoryToEdit,
 
       // Feedback
       failedNavigateNextCounter: state.failedNavigateNextCounter
@@ -474,15 +438,6 @@ export const useDateRangeState = () => {
         failedNavigateNextCounter: state.failedNavigateNextCounter
       }
     })
-  )
-}
-
-export const useCategoryModalState = () => {
-  return categoriesStore(
-    useShallow(state => ({
-      categoryModalVisible: state.categoryModalVisible,
-      categoryToEdit: state.categoryToEdit
-    }))
   )
 }
 

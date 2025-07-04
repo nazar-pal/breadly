@@ -69,6 +69,7 @@ export default function RootLayout() {
                     <Stack.Screen name="(tabs)" />
                     <Stack.Screen name="transactions" />
                     <Stack.Screen name="accounts" />
+                    <Stack.Screen name="categories" />
                     <Stack.Screen name="+not-found" />
                   </Stack>
                 </ThemeProvider>
