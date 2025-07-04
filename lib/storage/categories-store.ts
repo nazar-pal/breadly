@@ -48,6 +48,9 @@ type CategoriesState = {
   // Category Modal State (Add/Edit)
   categoryModalVisible: boolean
   categoryToEdit: CategoryData | null
+
+  // Feedback State for unsuccessful navigation
+  failedNavigateNextCounter: number
 }
 
 type CategoriesActions = {
@@ -78,6 +81,9 @@ type CategoriesActions = {
   handleCategoryPress: (categoryId: string) => void
   handleCategoryLongPress: (category: CategoryData) => void
   handleAddCategory: () => void
+
+  // Feedback Actions
+  notifyFailedNavigateNext: () => void
 }
 
 type CategoriesStore = CategoriesState & {
@@ -170,6 +176,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
     addTransactionModalVisible: false,
     categoryModalVisible: false,
     categoryToEdit: null,
+    failedNavigateNextCounter: 0,
 
     // Actions
     actions: {
@@ -327,7 +334,13 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       handleAddCategory: () => {
         const { actions } = get()
         actions.openCategoryModal()
-      }
+      },
+
+      // Feedback Actions
+      notifyFailedNavigateNext: () =>
+        set(state => ({
+          failedNavigateNextCounter: state.failedNavigateNextCounter + 1
+        }))
     }
   }
 })
@@ -347,7 +360,10 @@ export const useCategoriesState = () => {
       selectedCategory: state.selectedCategory,
       addTransactionModalVisible: state.addTransactionModalVisible,
       categoryModalVisible: state.categoryModalVisible,
-      categoryToEdit: state.categoryToEdit
+      categoryToEdit: state.categoryToEdit,
+
+      // Feedback
+      failedNavigateNextCounter: state.failedNavigateNextCounter
     }))
   )
 }
@@ -454,7 +470,8 @@ export const useDateRangeState = () => {
         formattedRange,
         canNavigate,
         canNavigateForward,
-        getModeDisplayName
+        getModeDisplayName,
+        failedNavigateNextCounter: state.failedNavigateNextCounter
       }
     })
   )

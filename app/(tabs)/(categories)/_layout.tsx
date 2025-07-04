@@ -16,13 +16,15 @@ function GestureDetectorContainer({
   canNavigate,
   canNavigateForward,
   navigatePrevious,
-  navigateNext
+  navigateNext,
+  onNavigateNextBlocked
 }: {
   children: React.ReactNode
   canNavigate: boolean
   canNavigateForward: boolean
   navigatePrevious: () => void
   navigateNext: () => void
+  onNavigateNextBlocked: () => void
 }) {
   // Create pan gesture for full-screen swipe support
   const panGesture = Gesture.Pan()
@@ -43,6 +45,9 @@ function GestureDetectorContainer({
           // Swipe left - go to next period
           if (canNavigateForward) {
             runOnJS(navigateNext)()
+          } else {
+            // Trigger feedback for blocked navigation
+            runOnJS(onNavigateNextBlocked)()
           }
           // Note: No animation for blocked navigation - header animations provide feedback
         }
@@ -55,7 +60,8 @@ function GestureDetectorContainer({
 export default function CategoriesLayout() {
   // Get date range state and navigation actions from store
   const { canNavigate, canNavigateForward } = useDateRangeState()
-  const { navigatePrevious, navigateNext } = useCategoriesActions()
+  const { navigatePrevious, navigateNext, notifyFailedNavigateNext } =
+    useCategoriesActions()
 
   return (
     <GestureDetectorContainer
@@ -63,6 +69,7 @@ export default function CategoriesLayout() {
       canNavigateForward={canNavigateForward}
       navigatePrevious={navigatePrevious}
       navigateNext={navigateNext}
+      onNavigateNextBlocked={notifyFailedNavigateNext}
     >
       <View className="flex-1 bg-background" collapsable={false}>
         <CategoriesHeader />

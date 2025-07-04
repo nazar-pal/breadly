@@ -21,17 +21,20 @@ import { DateRangeModal } from './modal-transactions-date-range'
 function AnimatedValue({
   value,
   style,
-  animationKey
+  animationKey,
+  shakeKey
 }: {
   value: string | number
   style?: any
-  animationKey: string
+  animationKey: string | number
+  shakeKey?: string | number
 }) {
   const translateY = useSharedValue(0)
+  const translateX = useSharedValue(0)
   const opacity = useSharedValue(1)
 
+  // Vertical slide / fade when the displayed value changes (normal behaviour)
   useEffect(() => {
-    // Trigger animation when value changes
     translateY.value = withSequence(
       withTiming(-30, { duration: 200 }), // Slide up and fade out
       withTiming(30, { duration: 0 }), // Jump to bottom position
@@ -42,10 +45,26 @@ function AnimatedValue({
       withTiming(0, { duration: 200 }), // Fade out
       withTiming(1, { duration: 200 }) // Fade in
     )
-  }, [animationKey]) // Re-run animation when key changes
+  }, [animationKey])
+
+  // Horizontal shake when shakeKey changes (error feedback)
+  useEffect(() => {
+    if (shakeKey === undefined) return
+
+    translateX.value = withSequence(
+      withTiming(-6, { duration: 50 }),
+      withTiming(6, { duration: 50 }),
+      withTiming(-6, { duration: 50 }),
+      withTiming(6, { duration: 50 }),
+      withTiming(0, { duration: 50 })
+    )
+  }, [shakeKey])
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
+    transform: [
+      { translateY: translateY.value },
+      { translateX: translateX.value }
+    ],
     opacity: opacity.value
   }))
 
@@ -64,7 +83,8 @@ export function CategoriesHeader() {
     formattedRange,
     canNavigate,
     canNavigateForward,
-    getModeDisplayName
+    getModeDisplayName,
+    failedNavigateNextCounter
   } = useDateRangeState()
 
   const {
@@ -75,12 +95,25 @@ export function CategoriesHeader() {
     navigateNext
   } = useCategoriesActions()
 
-  // Create a wrapper for navigateNext that respects future date limits
-  const handleNavigateNext = () => {
-    if (canNavigateForward) {
-      navigateNext()
-    }
+  // Local feedback state
+  const [shakeKey, setShakeKey] = React.useState(0)
+  const [highlightOn, setHighlightOn] = React.useState(false)
+
+  // Helper: trigger shake + red flash
+  const triggerError = () => {
+    setShakeKey(prev => prev + 1)
+    setHighlightOn(true)
+    setTimeout(() => setHighlightOn(false), 600)
   }
+
+  // Listen for failed navigation attempts coming from outside (e.g., swipe gesture)
+  const prevFailedCounterRef = React.useRef(failedNavigateNextCounter)
+  useEffect(() => {
+    if (failedNavigateNextCounter !== prevFailedCounterRef.current) {
+      triggerError()
+      prevFailedCounterRef.current = failedNavigateNextCounter
+    }
+  }, [failedNavigateNextCounter, triggerError])
 
   const totalExpensesResult = useSumTransactions({
     userId,
@@ -98,6 +131,14 @@ export function CategoriesHeader() {
 
   // Animation key for date range only
   const dateRangeKey = `${formattedRange}-${dateRangeMode}`
+
+  const handleNavigateNext = () => {
+    if (canNavigateForward) {
+      navigateNext()
+    } else {
+      triggerError()
+    }
+  }
 
   return (
     <View className="px-4 py-2">
@@ -120,21 +161,23 @@ export function CategoriesHeader() {
           <AnimatedValue
             value={formattedRange}
             animationKey={dateRangeKey}
+            shakeKey={shakeKey}
             style={{
               fontSize: 14,
               fontWeight: '600',
-              color: colors.text
+              color: highlightOn ? colors.notification : colors.text
             }}
           />
           <AnimatedValue
             value={getModeDisplayName(dateRangeMode)}
             animationKey={dateRangeKey}
+            shakeKey={shakeKey}
             style={{
               marginTop: 2,
               fontSize: 10,
               textTransform: 'uppercase',
               letterSpacing: 1,
-              color: colors.text
+              color: highlightOn ? colors.notification : colors.text
             }}
           />
         </Pressable>
