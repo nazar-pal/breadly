@@ -1,5 +1,5 @@
+import { SettingsDropdown } from '@/components/categories/settings-dropdown'
 import { SidebarModal } from '@/components/sidebar-menu'
-import { SettingsDropdown } from '@/components/tabs-header/settings-dropdown'
 import { SidebarTrigger } from '@/components/tabs-header/sidebar-trigger'
 import {
   Camera,
@@ -35,19 +35,13 @@ export default function TabLayout() {
             paddingBottom: 8
           },
 
-          headerLeft: () => <SidebarTrigger />,
-          headerRight: () => {
-            // Only show settings dropdown on categories tab
-            if (route.name === '(categories)') {
-              return <SettingsDropdown />
-            }
-            return null
-          }
+          headerLeft: () => <SidebarTrigger />
         })}
       >
         <Tabs.Screen
           name="(categories)"
           options={{
+            headerRight: () => <SettingsDropdown />,
             title: 'Categories',
             tabBarIcon: ({ focused }) => (
               <TabBarIcon Icon={ChartBar} focused={focused} />
