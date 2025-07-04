@@ -1,5 +1,9 @@
 import { X } from '@/lib/icons'
-import React, { use } from 'react'
+import {
+  useCategoriesActions,
+  useCategoryModalState
+} from '@/lib/storage/categories-store'
+import React from 'react'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -11,20 +15,15 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { CategoriesContext } from './categories-context'
 import { CategoryForm } from './category-form'
 import { useCategoryType } from './lib/use-category-type'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CategoryModal() {
-  const { categoryUI } = use(CategoriesContext)
-
-  const {
-    categoryModalVisible: visible,
-    categoryToEdit: category,
-    handleCloseCategoryModal: onClose
-  } = categoryUI
+  const { categoryModalVisible: visible, categoryToEdit: category } =
+    useCategoryModalState()
+  const { closeCategoryModal } = useCategoriesActions()
 
   const insets = useSafeAreaInsets()
 
@@ -39,7 +38,7 @@ export function CategoryModal() {
         visible={visible}
         animationType="slide"
         transparent={true}
-        onRequestClose={onClose}
+        onRequestClose={closeCategoryModal}
       >
         <KeyboardAvoidingView
           className="flex-1"
@@ -50,7 +49,7 @@ export function CategoryModal() {
             {/* Backdrop */}
             <Pressable
               className="absolute inset-0 bg-black/20"
-              onPress={onClose}
+              onPress={closeCategoryModal}
             />
 
             {/* Modal Content */}
@@ -68,7 +67,7 @@ export function CategoryModal() {
                   {modalTitle}
                 </Text>
                 <Pressable
-                  onPress={onClose}
+                  onPress={closeCategoryModal}
                   className="rounded-full p-2 active:bg-muted"
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >

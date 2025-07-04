@@ -1,4 +1,8 @@
-import React, { use } from 'react'
+import {
+  useCategoriesActions,
+  useTransactionModalState
+} from '@/lib/storage/categories-store'
+import React from 'react'
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -9,21 +13,17 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { QuickCalculator } from '../quick-calculator'
-import { CategoriesContext } from './categories-context'
 import { useCategoryType } from './lib/use-category-type'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
-  const { categoryUI } = use(CategoriesContext)
+  const { addTransactionModalVisible, selectedCategory } =
+    useTransactionModalState()
+  const { closeAddTransactionModal } = useCategoriesActions()
 
   const insets = useSafeAreaInsets()
   const activeCategoryType = useCategoryType()
-  const {
-    addTransactionModalVisible,
-    selectedCategory,
-    handleCloseAddTransactionModal
-  } = categoryUI
 
   return (
     <Modal
@@ -31,7 +31,7 @@ export function CalculatorModal() {
       className="bg-secondary"
       animationType="slide"
       transparent={true}
-      onRequestClose={handleCloseAddTransactionModal}
+      onRequestClose={closeAddTransactionModal}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -39,7 +39,7 @@ export function CalculatorModal() {
       >
         <Pressable
           className="absolute inset-0"
-          onPress={handleCloseAddTransactionModal}
+          onPress={closeAddTransactionModal}
         />
         <View
           className="rounded-t-3xl bg-secondary pt-6"
@@ -50,7 +50,7 @@ export function CalculatorModal() {
             <QuickCalculator
               type={activeCategoryType}
               categoryId={selectedCategory}
-              onClose={handleCloseAddTransactionModal}
+              onClose={closeAddTransactionModal}
             />
           )}
         </View>

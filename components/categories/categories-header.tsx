@@ -1,8 +1,11 @@
 import { useUserSession } from '@/lib/hooks'
-import { useDateRange } from '@/lib/hooks/useDateRange'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
+import {
+  useCategoriesActions,
+  useDateRangeState
+} from '@/lib/storage/categories-store'
 import { Link } from 'expo-router'
-import React, { useState } from 'react'
+import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useCategoryType } from './lib/use-category-type'
 import { DateRangeModal } from './modal-transactions-date-range'
@@ -10,24 +13,30 @@ import { DateRangeModal } from './modal-transactions-date-range'
 export function CategoriesHeader() {
   const { userId } = useUserSession()
   const activeCategoryType = useCategoryType()
+
+  // Use enhanced date range state from categories store
   const {
-    mode,
-    setMode,
+    isDateRangeModalOpen,
+    dateRangeMode,
     formattedRange,
     canNavigate,
-    navigatePrevious,
-    navigateNext,
+    canNavigateForward,
     getModeDisplayName
-  } = useDateRange()
+  } = useDateRangeState()
 
-  const [dateRangeModalVisible, setDateRangeModalVisible] = useState(false)
+  const {
+    openDateRangeModal,
+    closeDateRangeModal,
+    setDateRangeMode,
+    navigatePrevious,
+    navigateNext
+  } = useCategoriesActions()
 
-  const handleDateRangePress = () => {
-    setDateRangeModalVisible(true)
-  }
-
-  const handleDateRangeModalClose = () => {
-    setDateRangeModalVisible(false)
+  // Create a wrapper for navigateNext that respects future date limits
+  const handleNavigateNext = () => {
+    if (canNavigateForward) {
+      navigateNext()
+    }
   }
 
   const totalExpensesResult = useSumTransactions({
@@ -60,12 +69,12 @@ export function CategoriesHeader() {
           </Text>
         </View>
 
-        <Pressable onPress={handleDateRangePress} className="items-end">
+        <Pressable onPress={openDateRangeModal} className="items-end">
           <Text className="text-right text-sm font-semibold text-foreground">
             {formattedRange}
           </Text>
           <Text className="mt-0.5 text-[10px] uppercase tracking-wider text-foreground">
-            {getModeDisplayName(mode)}
+            {getModeDisplayName(dateRangeMode)}
           </Text>
         </Pressable>
       </View>
@@ -139,13 +148,13 @@ export function CategoriesHeader() {
 
       {/* Date Range Modal */}
       <DateRangeModal
-        visible={dateRangeModalVisible}
-        currentMode={mode}
-        onSelectMode={setMode}
-        onClose={handleDateRangeModalClose}
+        visible={isDateRangeModalOpen}
+        currentMode={dateRangeMode}
+        onSelectMode={setDateRangeMode}
+        onClose={closeDateRangeModal}
         canNavigate={canNavigate}
         navigatePrevious={navigatePrevious}
-        navigateNext={navigateNext}
+        navigateNext={handleNavigateNext}
         formattedRange={formattedRange}
       />
     </View>

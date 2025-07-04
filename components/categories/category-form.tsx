@@ -1,10 +1,13 @@
 import { useUserSession } from '@/lib/hooks'
 import { Check } from '@/lib/icons'
 import { createCategory, updateCategory } from '@/lib/powersync/data/mutations'
-import React, { use, useEffect, useState } from 'react'
+import {
+  useCategoriesActions,
+  useCategoryModalState
+} from '@/lib/storage/categories-store'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { CategoriesContext } from './categories-context'
 import { CategoryFormIcon, IconName } from './category-form-icon'
 import { useCategoryType } from './lib/use-category-type'
 
@@ -16,10 +19,8 @@ interface CategoryFormData {
 
 export function CategoryForm() {
   const { userId } = useUserSession()
-  const { categoryUI } = use(CategoriesContext)
-
-  const { categoryToEdit: category, handleCloseCategoryModal: onClose } =
-    categoryUI
+  const { categoryToEdit: category } = useCategoryModalState()
+  const { closeCategoryModal } = useCategoriesActions()
 
   const categoryType = useCategoryType()
   const isEditMode = Boolean(category)
@@ -102,7 +103,7 @@ export function CategoryForm() {
       setSelectedIcon(
         (categoryType === 'income' ? 'PiggyBank' : 'Coffee') as IconName
       )
-      onClose()
+      closeCategoryModal()
     } catch (error) {
       console.error('Error saving category:', error)
     }
@@ -191,7 +192,7 @@ export function CategoryForm() {
       <View className="flex-row gap-3 border-t border-border/50 px-6 pt-6">
         <Pressable
           className="flex-1 items-center justify-center rounded-xl border border-border py-4"
-          onPress={onClose}
+          onPress={closeCategoryModal}
         >
           <Text className="text-base font-semibold text-foreground">
             Cancel

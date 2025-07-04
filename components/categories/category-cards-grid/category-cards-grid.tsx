@@ -1,20 +1,14 @@
-import React, { use } from 'react'
+import { useCategoriesActions } from '@/lib/storage/categories-store'
+import React from 'react'
 import { ScrollView } from 'react-native'
-import { CategoriesContext } from '../categories-context'
 import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 
 export function CategoryCardsGrid() {
   const categories = useGetCategoriesWithAmounts()
-
-  const {
-    categoryUI: {
-      handleCategoryPress,
-      handleCategoryLongPress,
-      handleAddCategory
-    }
-  } = use(CategoriesContext)
+  const { handleCategoryPress, handleCategoryLongPress, handleAddCategory } =
+    useCategoriesActions()
 
   return (
     <ScrollView
@@ -32,7 +26,14 @@ export function CategoryCardsGrid() {
             key={category.id}
             category={category}
             onPress={handleCategoryPress}
-            onLongPress={() => handleCategoryLongPress(category)}
+            onLongPress={() =>
+              handleCategoryLongPress({
+                id: category.id,
+                name: category.name,
+                description: category.description,
+                icon: category.icon
+              })
+            }
             className="w-[47%] rounded-2xl border border-border bg-card p-3"
           />
         )

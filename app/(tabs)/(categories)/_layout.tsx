@@ -1,7 +1,10 @@
-import { CategoriesContextProvider } from '@/components/categories/categories-context'
 import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
 import { CategoryModal } from '@/components/categories/modal-category'
+import {
+  useCategoriesActions,
+  useDateRangeState
+} from '@/lib/storage/categories-store'
 import { Slot } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
@@ -45,21 +48,29 @@ function GestureDetectorContainer({
 }
 
 export default function CategoriesLayout() {
+  // Get date range state and navigation actions from store
+  const { canNavigate, canNavigateForward } = useDateRangeState()
+  const { navigatePrevious, navigateNext } = useCategoriesActions()
+
+  // Create a wrapper for navigateNext that respects future date limits
+  const handleNavigateNext = () => {
+    if (canNavigateForward) {
+      navigateNext()
+    }
+  }
+
   return (
     <GestureDetectorContainer
-      canNavigate={true}
-      navigatePrevious={() => console.log('Navigate previous')}
-      navigateNext={() => console.log('Navigate next')}
+      canNavigate={canNavigate}
+      navigatePrevious={navigatePrevious}
+      navigateNext={handleNavigateNext}
     >
-      <CategoriesContextProvider>
-        <View className="flex-1 bg-background" collapsable={false}>
-          <CategoriesHeader />
-          <Slot />
-          <CalculatorModal />
-
-          <CategoryModal />
-        </View>
-      </CategoriesContextProvider>
+      <View className="flex-1 bg-background" collapsable={false}>
+        <CategoriesHeader />
+        <Slot />
+        <CalculatorModal />
+        <CategoryModal />
+      </View>
     </GestureDetectorContainer>
   )
 }
