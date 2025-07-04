@@ -1,8 +1,27 @@
 import { DateRange, DateRangeMode } from '@/lib/hooks/useDateRange'
-import { Check, ChevronLeft, ChevronRight, X } from '@/lib/icons'
-import React, { useState } from 'react'
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native'
-import { Calendar } from 'react-native-calendars'
+import { Check, ChevronLeft, ChevronRight } from '@/lib/icons'
+import React, { useEffect, useState } from 'react'
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native'
+import { Calendar, DateData } from 'react-native-calendars'
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView
+} from 'react-native-gesture-handler'
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming
+} from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface DateRangeModalProps {
@@ -62,16 +81,75 @@ export function DateRangeModal({
     end?: string
   }>({})
 
+  // Animation values for swipe to dismiss
+  const translateY = useSharedValue(0)
+  const opacity = useSharedValue(1)
+
+  const handleClose = () => {
+    setShowCustomPicker(false)
+    setCustomRange({})
+    setSelectedDates({})
+    onClose()
+  }
+
+  const animateClose = () => {
+    'worklet'
+    runOnJS(handleClose)()
+  }
+
+  const panGesture = Gesture.Pan()
+    .onBegin(() => {
+      'worklet'
+      // Initial touch
+    })
+    .onUpdate(event => {
+      'worklet'
+      const newTranslateY = Math.max(0, event.translationY)
+      translateY.value = newTranslateY
+
+      // Fade out as user drags down
+      const progress = Math.min(newTranslateY / 200, 1)
+      opacity.value = 1 - progress * 0.3
+    })
+    .onEnd(event => {
+      'worklet'
+      const shouldClose = event.translationY > 120 || event.velocityY > 800
+
+      if (shouldClose) {
+        translateY.value = withTiming(500, { duration: 200 })
+        opacity.value = withTiming(0, { duration: 200 }, () => {
+          // Call JS to close modal after animation finishes
+          animateClose()
+        })
+      } else {
+        translateY.value = withSpring(0, { damping: 20, stiffness: 180 })
+        opacity.value = withSpring(1, { damping: 20, stiffness: 180 })
+      }
+    })
+
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+    opacity: opacity.value
+  }))
+
+  // Reset shared values when modal becomes visible to avoid stale off-screen positions.
+  useEffect(() => {
+    if (visible) {
+      translateY.value = 0
+      opacity.value = 1
+    }
+  }, [visible])
+
   const handleModeSelect = (mode: DateRangeMode) => {
     if (mode === 'custom') {
       setShowCustomPicker(true)
     } else {
       onSelectMode(mode)
-      onClose()
+      handleClose()
     }
   }
 
-  const handleDayPress = (day: any) => {
+  const handleDayPress = (day: DateData) => {
     const dateString = day.dateString
     const primaryColor = '#6366F1'
 
@@ -128,10 +206,7 @@ export function DateRangeModal({
         end: new Date(customRange.end)
       }
       onSelectMode('custom', dateRange)
-      setShowCustomPicker(false)
-      setCustomRange({})
-      setSelectedDates({})
-      onClose()
+      handleClose()
     }
   }
 
@@ -144,159 +219,158 @@ export function DateRangeModal({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="none"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
-      <View className="flex-1 justify-end">
-        <Pressable
-          className="absolute inset-0"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }}
-          onPress={onClose}
-        />
-        <View
-          className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-background"
-          style={{
-            paddingBottom: insets.bottom + 16
-          }}
-        >
-          {/* Header with Navigation */}
-          <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
-            {!showCustomPicker && canNavigate && navigatePrevious && (
-              <Pressable
-                onPress={navigatePrevious}
-                className="bg-card-secondary rounded p-2"
-              >
-                <ChevronLeft size={18} color="#1A202C" />
-              </Pressable>
-            )}
-
-            <View className="mx-4 flex-1 items-center">
-              <Text className="text-center text-lg font-semibold text-foreground">
-                {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
-              </Text>
-              {!showCustomPicker && formattedRange && (
-                <Text className="mt-0.5 text-center text-[11px] text-foreground">
-                  {formattedRange}
-                </Text>
-              )}
-            </View>
-
-            {!showCustomPicker && canNavigate && navigateNext && (
-              <Pressable
-                onPress={navigateNext}
-                className="bg-card-secondary rounded p-2"
-              >
-                <ChevronRight size={18} color="#1A202C" />
-              </Pressable>
-            )}
-
-            <Pressable
-              onPress={showCustomPicker ? handleCustomRangeCancel : onClose}
-              className="p-2"
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View className="flex-1 justify-end">
+          <TouchableWithoutFeedback
+            onPress={handleClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close modal"
+          >
+            <View className="absolute inset-0 bg-black/10" />
+          </TouchableWithoutFeedback>
+          <GestureDetector gesture={panGesture}>
+            <Animated.View
+              className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-background"
+              style={[
+                {
+                  paddingBottom: insets.bottom + 16
+                },
+                animatedModalStyle
+              ]}
             >
-              <X size={20} color="#1A202C" />
-            </Pressable>
-          </View>
+              {/* Drag Indicator */}
+              <View className="items-center py-3">
+                <View className="h-1 w-10 rounded-full bg-muted" />
+              </View>
 
-          {!showCustomPicker ? (
-            // Mode Selection
-            <ScrollView
-              className="flex-grow px-5 pb-5 pt-3"
-              showsVerticalScrollIndicator={false}
-            >
-              <View className="flex-row flex-wrap justify-between">
-                {MODE_OPTIONS.map(option => (
+              {/* Header with Navigation */}
+              <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
+                {!showCustomPicker && canNavigate && navigatePrevious && (
                   <Pressable
-                    key={option.mode}
-                    className="my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3"
-                    style={{
-                      backgroundColor:
-                        currentMode === option.mode
-                          ? 'rgba(99, 102, 241, 0.1)' // colors.iconBackground.primary
-                          : '#FFFFFF', // colors.card
-                      borderColor:
-                        currentMode === option.mode
-                          ? '#6366F1' // colors.primary
-                          : '#E2E8F0' // colors.border
-                    }}
-                    onPress={() => handleModeSelect(option.mode)}
+                    onPress={navigatePrevious}
+                    className="rounded bg-secondary p-2"
                   >
-                    <View className="flex-1">
-                      <Text
-                        className="mb-0.5 text-[15px] font-semibold"
-                        style={{
-                          color:
-                            currentMode === option.mode
-                              ? '#6366F1' // colors.primary
-                              : '#1A202C' // colors.text
-                        }}
-                      >
-                        {option.label}
-                      </Text>
-                      <Text className="text-xs text-foreground">
-                        {option.description}
-                      </Text>
-                    </View>
-                    {currentMode === option.mode && (
-                      <Check size={16} color="#6366F1" />
-                    )}
+                    <ChevronLeft size={18} className="text-foreground" />
                   </Pressable>
-                ))}
-              </View>
-            </ScrollView>
-          ) : (
-            // Custom Date Picker
-            <View className="flex-grow px-5 pb-5 pt-3">
-              <Calendar
-                onDayPress={handleDayPress}
-                markingType="period"
-                markedDates={selectedDates}
-                theme={{
-                  backgroundColor: '#F5F5F5', // colors.background
-                  calendarBackground: '#F5F5F5', // colors.background
-                  textSectionTitleColor: '#4A5568', // colors.textSecondary
-                  selectedDayBackgroundColor: '#6366F1', // colors.primary
-                  selectedDayTextColor: '#F5F5F5', // colors.background
-                  todayTextColor: '#6366F1', // colors.primary
-                  dayTextColor: '#1A202C', // colors.text
-                  textDisabledColor: '#4A5568', // colors.textSecondary
-                  arrowColor: '#6366F1', // colors.primary
-                  monthTextColor: '#1A202C', // colors.text
-                  indicatorColor: '#6366F1' // colors.primary
-                }}
-              />
+                )}
 
-              {/* Custom Range Actions */}
-              <View className="flex-row gap-3 pt-5">
-                <Pressable
-                  className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-secondary py-3"
-                  onPress={handleCustomRangeCancel}
-                >
-                  <Text className="text-base font-semibold text-foreground">
-                    Cancel
+                <View className="mx-4 flex-1 items-center">
+                  <Text className="text-center text-lg font-semibold text-foreground">
+                    {showCustomPicker ? 'Select Custom Range' : 'Date Range'}
                   </Text>
-                </Pressable>
+                  {!showCustomPicker && formattedRange && (
+                    <Text className="mt-0.5 text-center text-[11px] text-foreground">
+                      {formattedRange}
+                    </Text>
+                  )}
+                </View>
 
-                <Pressable
-                  className="flex-[0.6] flex-row items-center justify-center gap-1 rounded-2xl py-3"
-                  style={{
-                    backgroundColor:
-                      customRange.start && customRange.end
-                        ? '#6366F1' // colors.primary
-                        : '#CBD5E0' // colors.button.primaryBgDisabled
-                  }}
-                  onPress={handleCustomRangeConfirm}
-                  disabled={!customRange.start || !customRange.end}
-                >
-                  <Check size={16} color="#FFFFFF" />
-                  <Text className="text-base font-semibold">Confirm</Text>
-                </Pressable>
+                {!showCustomPicker && canNavigate && navigateNext && (
+                  <Pressable
+                    onPress={navigateNext}
+                    className="rounded bg-secondary p-2"
+                  >
+                    <ChevronRight size={18} className="text-foreground" />
+                  </Pressable>
+                )}
               </View>
-            </View>
-          )}
+
+              {!showCustomPicker ? (
+                // Mode Selection
+                <ScrollView
+                  className="flex-grow px-5 pb-5 pt-3"
+                  showsVerticalScrollIndicator={false}
+                >
+                  <View className="flex-row flex-wrap justify-between">
+                    {MODE_OPTIONS.map(option => (
+                      <Pressable
+                        key={option.mode}
+                        className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 ${
+                          currentMode === option.mode
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border bg-card'
+                        }`}
+                        onPress={() => handleModeSelect(option.mode)}
+                      >
+                        <View className="flex-1">
+                          <Text
+                            className={`mb-0.5 text-[15px] font-semibold ${
+                              currentMode === option.mode
+                                ? 'text-primary'
+                                : 'text-foreground'
+                            }`}
+                          >
+                            {option.label}
+                          </Text>
+                          <Text className="text-xs text-muted-foreground">
+                            {option.description}
+                          </Text>
+                        </View>
+                        {currentMode === option.mode && (
+                          <Check size={16} className="text-primary" />
+                        )}
+                      </Pressable>
+                    ))}
+                  </View>
+                </ScrollView>
+              ) : (
+                // Custom Date Picker
+                <View className="flex-grow px-5 pb-5 pt-3">
+                  <Calendar
+                    onDayPress={handleDayPress}
+                    markingType="period"
+                    markedDates={selectedDates}
+                    theme={{
+                      backgroundColor: '#F5F5F5', // colors.background
+                      calendarBackground: '#F5F5F5', // colors.background
+                      textSectionTitleColor: '#4A5568', // colors.textSecondary
+                      selectedDayBackgroundColor: '#6366F1', // colors.primary
+                      selectedDayTextColor: '#F5F5F5', // colors.background
+                      todayTextColor: '#6366F1', // colors.primary
+                      dayTextColor: '#1A202C', // colors.text
+                      textDisabledColor: '#4A5568', // colors.textSecondary
+                      arrowColor: '#6366F1', // colors.primary
+                      monthTextColor: '#1A202C', // colors.text
+                      indicatorColor: '#6366F1' // colors.primary
+                    }}
+                  />
+
+                  {/* Custom Range Actions */}
+                  <View className="flex-row gap-3 pt-5">
+                    <Pressable
+                      className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-secondary py-3"
+                      onPress={handleCustomRangeCancel}
+                    >
+                      <Text className="text-base font-semibold text-foreground">
+                        Cancel
+                      </Text>
+                    </Pressable>
+
+                    <Pressable
+                      className={`flex-[0.6] flex-row items-center justify-center gap-1 rounded-2xl py-3 ${
+                        customRange.start && customRange.end
+                          ? 'bg-primary'
+                          : 'bg-muted'
+                      }`}
+                      onPress={handleCustomRangeConfirm}
+                      disabled={!customRange.start || !customRange.end}
+                    >
+                      <Check size={16} className="text-primary-foreground" />
+                      <Text className="text-base font-semibold text-primary-foreground">
+                        Confirm
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+            </Animated.View>
+          </GestureDetector>
         </View>
-      </View>
+      </GestureHandlerRootView>
     </Modal>
   )
 }
