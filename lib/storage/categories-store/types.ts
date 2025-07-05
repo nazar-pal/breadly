@@ -59,11 +59,8 @@ export type CategoriesStore = CategoriesState & {
 
 export type DateRangeMode =
   | 'day'
-  | '7days'
   | 'week'
   | 'month'
-  | '30days'
-  | '365days'
   | 'year'
   | 'alltime'
   | 'custom'

@@ -43,12 +43,6 @@ export function useDateRange() {
           end: endOfDay(currentDate)
         }
 
-      case '7days':
-        return {
-          start: startOfDay(currentDate),
-          end: endOfDay(addDays(currentDate, 6))
-        }
-
       case 'week':
         return {
           start: startOfWeek(currentDate, { weekStartsOn: 1 }),
@@ -59,18 +53,6 @@ export function useDateRange() {
         return {
           start: startOfMonth(currentDate),
           end: endOfMonth(currentDate)
-        }
-
-      case '30days':
-        return {
-          start: startOfDay(currentDate),
-          end: endOfDay(addDays(currentDate, 29))
-        }
-
-      case '365days':
-        return {
-          start: startOfDay(currentDate),
-          end: endOfDay(addDays(currentDate, 364))
         }
 
       case 'year':
@@ -111,20 +93,11 @@ export function useDateRange() {
       case 'day':
         newDate = subDays(state.currentDate, 1)
         break
-      case '7days':
-        newDate = subDays(state.currentDate, 7)
-        break
       case 'week':
         newDate = subWeeks(state.currentDate, 1)
         break
       case 'month':
         newDate = subMonths(state.currentDate, 1)
-        break
-      case '30days':
-        newDate = subDays(state.currentDate, 30)
-        break
-      case '365days':
-        newDate = subDays(state.currentDate, 365)
         break
       case 'year':
         newDate = subYears(state.currentDate, 1)
@@ -148,20 +121,11 @@ export function useDateRange() {
       case 'day':
         newDate = addDays(state.currentDate, 1)
         break
-      case '7days':
-        newDate = addDays(state.currentDate, 7)
-        break
       case 'week':
         newDate = addWeeks(state.currentDate, 1)
         break
       case 'month':
         newDate = addMonths(state.currentDate, 1)
-        break
-      case '30days':
-        newDate = addDays(state.currentDate, 30)
-        break
-      case '365days':
-        newDate = addDays(state.currentDate, 365)
         break
       case 'year':
         newDate = addYears(state.currentDate, 1)
@@ -218,11 +182,8 @@ export function useDateRange() {
   const getModeDisplayName = (mode: DateRangeMode): string => {
     const modeNames: Record<DateRangeMode, string> = {
       day: 'Day',
-      '7days': '7 Days',
       week: 'Week',
       month: 'Month',
-      '30days': '30 Days',
-      '365days': '365 Days',
       year: 'Year',
       alltime: 'All Time',
       custom: 'Custom Range'

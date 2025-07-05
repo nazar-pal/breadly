@@ -1,6 +1,5 @@
 import { DateRange, DateRangeMode } from '@/lib/storage/categories-store'
 import {
-  addDays,
   endOfDay,
   endOfMonth,
   endOfWeek,
@@ -24,12 +23,6 @@ export const calculateDateRange = (
         end: endOfDay(currentDate)
       }
 
-    case '7days':
-      return {
-        start: startOfDay(currentDate),
-        end: endOfDay(addDays(currentDate, 6))
-      }
-
     case 'week':
       return {
         start: startOfWeek(currentDate, { weekStartsOn: 1 }),
@@ -40,18 +33,6 @@ export const calculateDateRange = (
       return {
         start: startOfMonth(currentDate),
         end: endOfMonth(currentDate)
-      }
-
-    case '30days':
-      return {
-        start: startOfDay(currentDate),
-        end: endOfDay(addDays(currentDate, 29))
-      }
-
-    case '365days':
-      return {
-        start: startOfDay(currentDate),
-        end: endOfDay(addDays(currentDate, 364))
       }
 
     case 'year':

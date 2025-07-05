@@ -44,20 +44,11 @@ export const useDateRangeState = () => {
           case 'day':
             nextDate = addDays(currentDate, 1)
             break
-          case '7days':
-            nextDate = addDays(currentDate, 7)
-            break
           case 'week':
             nextDate = addWeeks(currentDate, 1)
             break
           case 'month':
             nextDate = addMonths(currentDate, 1)
-            break
-          case '30days':
-            nextDate = addDays(currentDate, 30)
-            break
-          case '365days':
-            nextDate = addDays(currentDate, 365)
             break
           case 'year':
             nextDate = addYears(currentDate, 1)
@@ -81,11 +72,8 @@ export const useDateRangeState = () => {
       const getModeDisplayName = (mode: DateRangeMode): string => {
         const modeNames: Record<DateRangeMode, string> = {
           day: 'Day',
-          '7days': '7 Days',
           week: 'Week',
           month: 'Month',
-          '30days': '30 Days',
-          '365days': '365 Days',
           year: 'Year',
           alltime: 'All Time',
           custom: 'Custom Range'

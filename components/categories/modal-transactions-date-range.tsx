@@ -35,11 +35,8 @@ const MODE_OPTIONS: {
   description: string
 }[] = [
   { mode: 'day', label: 'Day', description: 'Single day view' },
-  { mode: '7days', label: '7 Days', description: 'Last 7 days' },
   { mode: 'week', label: 'Week', description: 'Calendar week (Mon-Sun)' },
   { mode: 'month', label: 'Month', description: 'Calendar month' },
-  { mode: '30days', label: '30 Days', description: 'Last 30 days' },
-  { mode: '365days', label: '365 Days', description: 'Last 365 days' },
   { mode: 'year', label: 'Year', description: 'Calendar year' },
   { mode: 'alltime', label: 'All Time', description: 'All available data' },
   {

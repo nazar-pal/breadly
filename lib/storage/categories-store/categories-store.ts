@@ -61,20 +61,11 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
           case 'day':
             newDate = subDays(currentDate, 1)
             break
-          case '7days':
-            newDate = subDays(currentDate, 7)
-            break
           case 'week':
             newDate = subWeeks(currentDate, 1)
             break
           case 'month':
             newDate = subMonths(currentDate, 1)
-            break
-          case '30days':
-            newDate = subDays(currentDate, 30)
-            break
-          case '365days':
-            newDate = subDays(currentDate, 365)
             break
           case 'year':
             newDate = subYears(currentDate, 1)
@@ -99,20 +90,11 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
           case 'day':
             newDate = addDays(currentDate, 1)
             break
-          case '7days':
-            newDate = addDays(currentDate, 7)
-            break
           case 'week':
             newDate = addWeeks(currentDate, 1)
             break
           case 'month':
             newDate = addMonths(currentDate, 1)
-            break
-          case '30days':
-            newDate = addDays(currentDate, 30)
-            break
-          case '365days':
-            newDate = addDays(currentDate, 365)
             break
           case 'year':
             newDate = addYears(currentDate, 1)
