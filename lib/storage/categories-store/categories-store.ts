@@ -35,8 +35,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       // Date Range Modal Actions
       openDateRangeModal: () => set({ isDateRangeModalOpen: true }),
       closeDateRangeModal: () => set({ isDateRangeModalOpen: false }),
-      toggleDateRangeModal: () =>
-        set(state => ({ isDateRangeModalOpen: !state.isDateRangeModalOpen })),
 
       // Date Range Navigation Actions
       setDateRange: (dateRange: DateRange) => {
@@ -136,10 +134,8 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       setCustomDateRange: (range: CustomDateRange) => set({ dateRange: range }),
 
       // Category Selection Actions
-      selectCategory: (categoryId: string) =>
+      setCategoryForTransaction: (categoryId: string) =>
         set({ addTransactionSelectedCategory: categoryId }),
-      clearSelectedCategory: () =>
-        set({ addTransactionSelectedCategory: null }),
 
       // Add Transaction Modal Actions
       openAddTransactionModal: (categoryId: string) =>
