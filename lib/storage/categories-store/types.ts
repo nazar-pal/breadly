@@ -58,6 +58,7 @@ export type DateRangeMode =
   | 'custom'
 
 export interface DateRange {
+  mode: DateRangeMode
   start: Date
   end: Date
 }

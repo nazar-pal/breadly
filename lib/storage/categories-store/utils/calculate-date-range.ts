@@ -18,24 +18,28 @@ export const calculateDateRange = (
   switch (mode) {
     case 'day':
       return {
+        mode,
         start: startOfDay(currentDate),
         end: endOfDay(currentDate)
       }
 
     case 'week':
       return {
+        mode,
         start: startOfWeek(currentDate, { weekStartsOn: 1 }),
         end: endOfWeek(currentDate, { weekStartsOn: 1 })
       }
 
     case 'month':
       return {
+        mode,
         start: startOfMonth(currentDate),
         end: endOfMonth(currentDate)
       }
 
     case 'year':
       return {
+        mode,
         start: startOfYear(currentDate),
         end: endOfYear(currentDate)
       }
@@ -43,12 +47,14 @@ export const calculateDateRange = (
     // TODO: Review this
     case 'alltime':
       return {
+        mode,
         start: new Date(2020, 0, 1), // Arbitrary start date
         end: new Date()
       }
 
     default:
       return {
+        mode,
         start: startOfWeek(currentDate, { weekStartsOn: 1 }),
         end: endOfWeek(currentDate, { weekStartsOn: 1 })
       }

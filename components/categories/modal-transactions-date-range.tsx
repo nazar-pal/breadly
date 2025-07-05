@@ -206,6 +206,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
   const handleCustomRangeConfirm = () => {
     if (customRange.start && customRange.end) {
       const dateRange: DateRange = {
+        mode: 'custom',
         start: new Date(customRange.start),
         end: new Date(customRange.end)
       }
