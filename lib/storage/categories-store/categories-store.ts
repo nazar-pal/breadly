@@ -43,7 +43,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         }
 
         set({
-          dateRangeMode: mode,
           currentDate: new Date(),
           customDateRange: customRange || null,
           dateRange:
@@ -55,13 +54,13 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
       navigatePrevious: () => {
         const state = get()
-        const { dateRangeMode, currentDate, customDateRange } = state
+        const { dateRange, currentDate, customDateRange } = state
 
-        if (dateRangeMode === 'alltime' || dateRangeMode === 'custom') return
+        if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
         let newDate = currentDate
 
-        switch (dateRangeMode) {
+        switch (dateRange.mode) {
           case 'day':
             newDate = subDays(currentDate, 1)
             break
@@ -79,17 +78,17 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         set({
           currentDate: newDate,
           dateRange:
-            customDateRange || calculateDateRange(dateRangeMode, newDate)
+            customDateRange || calculateDateRange(dateRange.mode, newDate)
         })
       },
 
       navigateNext: () => {
         const state = get()
-        const { dateRangeMode, currentDate, customDateRange } = state
+        const { dateRange, currentDate, customDateRange } = state
 
         if (
-          dateRangeMode === 'alltime' ||
-          dateRangeMode === 'custom' ||
+          dateRange.mode === 'alltime' ||
+          dateRange.mode === 'custom' ||
           !customDateRange ||
           !customDateRange.start
         )
@@ -97,7 +96,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         let newDate = currentDate
 
-        switch (dateRangeMode) {
+        switch (dateRange.mode) {
           case 'day':
             newDate = addDays(currentDate, 1)
             break
@@ -114,7 +113,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         // Check if the new date range would extend into the future
         const newRange =
-          customDateRange || calculateDateRange(dateRangeMode, newDate)
+          customDateRange || calculateDateRange(dateRange.mode, newDate)
         const today = new Date()
 
         // Don't allow navigation if the new range start date is after today

@@ -75,7 +75,7 @@ export function CategoriesHeader() {
   const { colors } = useTheme()
 
   // Use enhanced date range state from categories store
-  const { dateRangeMode, formattedRange, failedNavigateNextCounter } =
+  const { dateRange, formattedRange, failedNavigateNextCounter } =
     useDateRangeState()
 
   const { openDateRangeModal } = useCategoriesActions()
@@ -115,7 +115,7 @@ export function CategoriesHeader() {
   const netBalance = totalIncome - totalExpenses
 
   // Animation key for date range only
-  const dateRangeKey = `${formattedRange}-${dateRangeMode}`
+  const dateRangeKey = `${formattedRange}-${dateRange.mode}`
 
   return (
     <>
@@ -146,7 +146,7 @@ export function CategoriesHeader() {
             }}
           />
           <AnimatedValue
-            value={getModeDisplayName(dateRangeMode)}
+            value={getModeDisplayName(dateRange.mode)}
             animationKey={dateRangeKey}
             shakeKey={shakeKey}
             style={{

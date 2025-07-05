@@ -6,59 +6,56 @@ import { calculateDateRange } from '../utils/calculate-date-range'
 export const useDateRangeState = () => {
   return categoriesStore(
     useShallow(state => {
-      const { start, end, mode } = state.dateRange
+      const { dateRange } = state
 
       // Format date range for display
       const formattedRange = (() => {
-        if (state.dateRangeMode === 'alltime' || !start) {
+        if (dateRange.mode === 'alltime' || !dateRange.start) {
           return 'All Time'
         }
 
-        if (state.dateRangeMode === 'day') {
-          return format(start, 'MMM d, yyyy')
+        if (dateRange.mode === 'day') {
+          return format(dateRange.start, 'MMM d, yyyy')
         }
 
-        if (start.getFullYear() === end.getFullYear()) {
-          if (start.getMonth() === end.getMonth()) {
-            return `${format(start, 'MMM d')} - ${format(end, 'd, yyyy')}`
+        if (dateRange.start.getFullYear() === dateRange.end.getFullYear()) {
+          if (dateRange.start.getMonth() === dateRange.end.getMonth()) {
+            return `${format(dateRange.start, 'MMM d')} - ${format(dateRange.end, 'd, yyyy')}`
           }
-          return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`
+          return `${format(dateRange.start, 'MMM d')} - ${format(dateRange.end, 'MMM d, yyyy')}`
         }
 
-        return `${format(start, 'MMM d, yyyy')} - ${format(end, 'MMM d, yyyy')}`
+        return `${format(dateRange.start, 'MMM d, yyyy')} - ${format(dateRange.end, 'MMM d, yyyy')}`
       })()
 
       // Check if navigation is enabled
       const baseCanNavigate =
-        state.dateRangeMode !== 'alltime' && state.dateRangeMode !== 'custom'
+        dateRange.mode !== 'alltime' && dateRange.mode !== 'custom'
 
       // Also check if we can navigate forward without going into the future
       const canNavigateForward = (() => {
         if (!baseCanNavigate) return false
 
-        if (state.dateRange.mode === 'custom') return false
+        let nextDate = state.currentDate
 
-        const { dateRangeMode, currentDate } = state
-        let nextDate = currentDate
-
-        switch (dateRangeMode) {
+        switch (dateRange.mode) {
           case 'day':
-            nextDate = addDays(currentDate, 1)
+            nextDate = addDays(state.currentDate, 1)
             break
           case 'week':
-            nextDate = addWeeks(currentDate, 1)
+            nextDate = addWeeks(state.currentDate, 1)
             break
           case 'month':
-            nextDate = addMonths(currentDate, 1)
+            nextDate = addMonths(state.currentDate, 1)
             break
           case 'year':
-            nextDate = addYears(currentDate, 1)
+            nextDate = addYears(state.currentDate, 1)
             break
           default:
             return false
         }
 
-        const nextRange = calculateDateRange(dateRangeMode, nextDate)
+        const nextRange = calculateDateRange(dateRange.mode, nextDate)
         const today = new Date()
         return nextRange.start != null && nextRange.start <= today
       })()
@@ -67,7 +64,6 @@ export const useDateRangeState = () => {
 
       return {
         isDateRangeModalOpen: state.isDateRangeModalOpen,
-        dateRangeMode: state.dateRangeMode,
         currentDate: state.currentDate,
         dateRange: state.dateRange,
         customDateRange: state.customDateRange,

@@ -68,7 +68,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
 
   const {
     isDateRangeModalOpen,
-    dateRangeMode,
+    dateRange,
     formattedRange,
     canNavigate,
     canNavigateForward
@@ -295,7 +295,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
                       <Pressable
                         key={option.mode}
                         className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 ${
-                          dateRangeMode === option.mode
+                          dateRange.mode === option.mode
                             ? 'border-primary bg-primary/10'
                             : 'border-border bg-card'
                         }`}
@@ -304,7 +304,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
                         <View className="flex-1">
                           <Text
                             className={`mb-0.5 text-[15px] font-semibold ${
-                              dateRangeMode === option.mode
+                              dateRange.mode === option.mode
                                 ? 'text-primary'
                                 : 'text-foreground'
                             }`}
@@ -315,7 +315,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
                             {option.description}
                           </Text>
                         </View>
-                        {dateRangeMode === option.mode && (
+                        {dateRange.mode === option.mode && (
                           <Check size={16} className="text-primary" />
                         )}
                       </Pressable>
