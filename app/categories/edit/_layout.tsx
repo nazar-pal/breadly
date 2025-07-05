@@ -18,6 +18,12 @@ export default function EditCategoryLayout() {
       }}
     >
       <Stack.Screen name="(main)" options={{ title: 'Edit Categories' }} />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: 'Edit Category'
+        }}
+      />
     </Stack>
   )
 }

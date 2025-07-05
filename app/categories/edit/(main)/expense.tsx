@@ -3,7 +3,7 @@ import { router } from 'expo-router'
 
 export default function EditExpenseCategoriesScreen() {
   function handleCategoryPress(id: string) {
-    router.push(`/categories/${id}/edit-existing`)
+    router.push(`/categories/edit/${id}`)
   }
 
   return (
