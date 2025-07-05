@@ -1,6 +1,7 @@
-import { DateRange, DateRangeMode } from '@/lib/hooks/useDateRange'
 import { Check, ChevronLeft, ChevronRight } from '@/lib/icons'
 import {
+  DateRange,
+  DateRangeMode,
   useCategoriesActions,
   useDateRangeState
 } from '@/lib/storage/categories-store'

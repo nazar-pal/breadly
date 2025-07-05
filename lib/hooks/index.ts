@@ -1,6 +1,5 @@
 export { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
 export { useMigrationPreview } from './use-migration-preview'
 export { useUserSession } from './use-user-session'
-export { useDateRange } from './useDateRange'
 export { useFrameworkReady } from './useFrameworkReady'
 export { useTransactions } from './useTransactions'
