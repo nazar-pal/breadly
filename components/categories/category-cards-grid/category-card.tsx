@@ -69,8 +69,8 @@ export function CategoryCard({
       </View>
 
       {isEditMode && (
-        <View className="absolute right-0 top-0">
-          <Edit2 size={16} className="text-muted-foreground" />
+        <View className="absolute right-1.5 top-1.5 rounded-lg border border-primary/20 bg-primary/15 p-1.5 backdrop-blur-md">
+          <Edit2 size={13} className="text-primary" strokeWidth={2.5} />
         </View>
       )}
     </Pressable>
