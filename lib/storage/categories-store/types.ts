@@ -1,11 +1,3 @@
-// Types for category data
-export interface CategoryData {
-  id: string
-  name: string
-  description: string | null
-  icon: string
-}
-
 export type CategoriesState = {
   // Date Range Modal State
   isDateRangeModalOpen: boolean
@@ -68,11 +60,4 @@ export type DateRangeMode =
 export interface DateRange {
   start: Date
   end: Date
-}
-
-export interface DateRangeState {
-  mode: DateRangeMode
-  currentDate: Date
-  dateRange: DateRange
-  customRange?: DateRange
 }
