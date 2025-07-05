@@ -1,13 +1,14 @@
 import { Text } from '@/components/ui/text'
 import { Edit2, Settings } from '@/lib/icons'
+import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Modal, Pressable, View } from 'react-native'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 
 export function SettingsDropdown() {
   const handleEditPress = () => {
-    // For now, just close the dropdown as requested
-    // Future functionality can be added here
+    router.push('/categories/edit/expense')
+    setVisible(false)
   }
 
   const [visible, setVisible] = useState(false)

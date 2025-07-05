@@ -1,13 +1,15 @@
 import { CategoryCardsGrid } from '@/components/categories/category-cards-grid/category-cards-grid'
-import { useCategoriesActions } from '@/lib/storage/categories-store'
+import { router } from 'expo-router'
 
-export default function CategoriesExpenseScreen() {
-  const { handleCategoryPress } = useCategoriesActions()
+export default function EditExpenseCategoriesScreen() {
+  function handleCategoryPress(id: string) {
+    router.push(`/categories/${id}/edit-existing`)
+  }
 
   return (
     <CategoryCardsGrid
       categoryType="expense"
-      isEditMode={false}
+      isEditMode={true}
       onPress={handleCategoryPress}
       onLongPress={() => {
         console.log('long press')

@@ -1,4 +1,5 @@
 import { CategoriesHeader } from '@/components/categories/categories-header'
+import { CategoriesHeaderNavBar } from '@/components/categories/categories-header-nav-bar'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
 import {
   useCategoriesActions,
@@ -71,7 +72,10 @@ export default function CategoriesLayout() {
       onNavigateNextBlocked={notifyFailedNavigateNext}
     >
       <View className="flex-1 bg-background" collapsable={false}>
-        <CategoriesHeader />
+        <View className="px-4 py-2">
+          <CategoriesHeader />
+          <CategoriesHeaderNavBar />
+        </View>
         <Slot />
         <CalculatorModal />
       </View>

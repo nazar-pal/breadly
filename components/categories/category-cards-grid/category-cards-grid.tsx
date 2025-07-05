@@ -1,18 +1,18 @@
-import { useCategoriesActions } from '@/lib/storage/categories-store'
-import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'
 import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 
-export function CategoryCardsGrid() {
-  const categories = useGetCategoriesWithAmounts()
-  const { handleCategoryPress } = useCategoriesActions()
+interface Props {
+  categoryType: 'income' | 'expense'
+  isEditMode: boolean
+  onPress: (categoryId: string) => void
+  onLongPress: (categoryId: string) => void
+}
 
-  function handleCategoryLongPress(id: string) {
-    router.push(`/categories/${id}/edit-existing`)
-  }
+export function CategoryCardsGrid({ isEditMode, onPress, onLongPress }: Props) {
+  const categories = useGetCategoriesWithAmounts()
 
   return (
     <ScrollView
@@ -29,8 +29,9 @@ export function CategoryCardsGrid() {
           <CategoryCard
             key={category.id}
             category={category}
-            onPress={handleCategoryPress}
-            onLongPress={() => handleCategoryLongPress(category.id)}
+            isEditMode={isEditMode}
+            onPress={() => onPress(category.id)}
+            onLongPress={() => onLongPress(category.id)}
             className="w-[47%] rounded-2xl border border-border bg-card p-3"
           />
         )

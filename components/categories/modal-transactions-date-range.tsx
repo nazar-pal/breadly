@@ -1,5 +1,9 @@
 import { DateRange, DateRangeMode } from '@/lib/hooks/useDateRange'
 import { Check, ChevronLeft, ChevronRight } from '@/lib/icons'
+import {
+  useCategoriesActions,
+  useDateRangeState
+} from '@/lib/storage/categories-store'
 import React, { useEffect, useState } from 'react'
 import {
   Modal,
@@ -24,18 +28,6 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-interface DateRangeModalProps {
-  visible: boolean
-  currentMode: DateRangeMode
-  onSelectMode: (mode: DateRangeMode, customRange?: DateRange) => void
-  onClose: () => void
-  // Navigation props
-  canNavigate?: boolean
-  navigatePrevious?: () => void
-  navigateNext?: () => void
-  formattedRange?: string
-}
-
 const MODE_OPTIONS: {
   mode: DateRangeMode
   label: string
@@ -56,16 +48,7 @@ const MODE_OPTIONS: {
   }
 ]
 
-export function DateRangeModal({
-  visible,
-  currentMode,
-  onSelectMode,
-  onClose,
-  canNavigate = false,
-  navigatePrevious,
-  navigateNext,
-  formattedRange
-}: DateRangeModalProps) {
+export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
   const insets = useSafeAreaInsets()
   const [showCustomPicker, setShowCustomPicker] = useState(false)
   const [selectedDates, setSelectedDates] = useState<{
@@ -85,11 +68,34 @@ export function DateRangeModal({
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
 
+  const {
+    isDateRangeModalOpen,
+    dateRangeMode,
+    formattedRange,
+    canNavigate,
+    canNavigateForward
+  } = useDateRangeState()
+
+  const {
+    closeDateRangeModal,
+    setDateRangeMode,
+    navigatePrevious,
+    navigateNext
+  } = useCategoriesActions()
+
+  const handleNavigateNext = () => {
+    if (canNavigateForward) {
+      navigateNext()
+    } else {
+      triggerError()
+    }
+  }
+
   const handleClose = () => {
     setShowCustomPicker(false)
     setCustomRange({})
     setSelectedDates({})
-    onClose()
+    closeDateRangeModal()
   }
 
   const animateClose = () => {
@@ -132,19 +138,19 @@ export function DateRangeModal({
     opacity: opacity.value
   }))
 
-  // Reset shared values when modal becomes visible to avoid stale off-screen positions.
+  // Reset shared values when modal becomes isDateRangeModalOpen to avoid stale off-screen positions.
   useEffect(() => {
-    if (visible) {
+    if (isDateRangeModalOpen) {
       translateY.value = 0
       opacity.value = 1
     }
-  }, [visible])
+  }, [isDateRangeModalOpen])
 
   const handleModeSelect = (mode: DateRangeMode) => {
     if (mode === 'custom') {
       setShowCustomPicker(true)
     } else {
-      onSelectMode(mode)
+      setDateRangeMode(mode)
       handleClose()
     }
   }
@@ -205,7 +211,7 @@ export function DateRangeModal({
         start: new Date(customRange.start),
         end: new Date(customRange.end)
       }
-      onSelectMode('custom', dateRange)
+      setDateRangeMode('custom', dateRange)
       handleClose()
     }
   }
@@ -218,7 +224,7 @@ export function DateRangeModal({
 
   return (
     <Modal
-      visible={visible}
+      visible={isDateRangeModalOpen}
       animationType="none"
       transparent={true}
       onRequestClose={handleClose}
@@ -269,9 +275,9 @@ export function DateRangeModal({
                   )}
                 </View>
 
-                {!showCustomPicker && canNavigate && navigateNext && (
+                {!showCustomPicker && canNavigate && handleNavigateNext && (
                   <Pressable
-                    onPress={navigateNext}
+                    onPress={handleNavigateNext}
                     className="rounded bg-secondary p-2"
                   >
                     <ChevronRight size={18} className="text-foreground" />
@@ -290,7 +296,7 @@ export function DateRangeModal({
                       <Pressable
                         key={option.mode}
                         className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 ${
-                          currentMode === option.mode
+                          dateRangeMode === option.mode
                             ? 'border-primary bg-primary/10'
                             : 'border-border bg-card'
                         }`}
@@ -299,7 +305,7 @@ export function DateRangeModal({
                         <View className="flex-1">
                           <Text
                             className={`mb-0.5 text-[15px] font-semibold ${
-                              currentMode === option.mode
+                              dateRangeMode === option.mode
                                 ? 'text-primary'
                                 : 'text-foreground'
                             }`}
@@ -310,7 +316,7 @@ export function DateRangeModal({
                             {option.description}
                           </Text>
                         </View>
-                        {currentMode === option.mode && (
+                        {dateRangeMode === option.mode && (
                           <Check size={16} className="text-primary" />
                         )}
                       </Pressable>
