@@ -4,6 +4,7 @@ import {
   useCategoriesActions,
   useDateRangeState
 } from '@/lib/storage/categories-store'
+import { getModeDisplayName } from '@/lib/storage/categories-store/utils/get-mode-display-name'
 import { useTheme } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -74,12 +75,8 @@ export function CategoriesHeader() {
   const { colors } = useTheme()
 
   // Use enhanced date range state from categories store
-  const {
-    dateRangeMode,
-    formattedRange,
-    getModeDisplayName,
-    failedNavigateNextCounter
-  } = useDateRangeState()
+  const { dateRangeMode, formattedRange, failedNavigateNextCounter } =
+    useDateRangeState()
 
   const { openDateRangeModal } = useCategoriesActions()
 

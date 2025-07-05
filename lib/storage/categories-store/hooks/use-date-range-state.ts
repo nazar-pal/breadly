@@ -1,4 +1,3 @@
-import { DateRangeMode } from '@/lib/storage/categories-store/'
 import { addDays, addMonths, addWeeks, addYears, format } from 'date-fns'
 import { useShallow } from 'zustand/shallow'
 import { categoriesStore } from '../categories-store'
@@ -66,19 +65,6 @@ export const useDateRangeState = () => {
 
       const canNavigate = baseCanNavigate
 
-      // Get mode display name
-      const getModeDisplayName = (mode: DateRangeMode): string => {
-        const modeNames: Record<DateRangeMode, string> = {
-          day: 'Day',
-          week: 'Week',
-          month: 'Month',
-          year: 'Year',
-          alltime: 'All Time',
-          custom: 'Custom Range'
-        }
-        return modeNames[mode]
-      }
-
       return {
         isDateRangeModalOpen: state.isDateRangeModalOpen,
         dateRangeMode: state.dateRangeMode,
@@ -88,7 +74,6 @@ export const useDateRangeState = () => {
         formattedRange,
         canNavigate,
         canNavigateForward,
-        getModeDisplayName,
         failedNavigateNextCounter: state.failedNavigateNextCounter
       }
     })
