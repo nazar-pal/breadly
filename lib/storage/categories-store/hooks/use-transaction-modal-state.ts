@@ -5,7 +5,7 @@ export const useTransactionModalState = () => {
   return categoriesStore(
     useShallow(state => ({
       isAddTransactionModalOpen: state.isAddTransactionModalOpen,
-      selectedCategory: state.selectedCategory
+      addTransactionSelectedCategory: state.addTransactionSelectedCategory
     }))
   )
 }

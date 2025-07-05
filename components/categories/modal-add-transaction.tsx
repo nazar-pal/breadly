@@ -18,7 +18,7 @@ import { useCategoryType } from './lib/use-category-type'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
-  const { isAddTransactionModalOpen, selectedCategory } =
+  const { isAddTransactionModalOpen, addTransactionSelectedCategory } =
     useTransactionModalState()
   const { closeAddTransactionModal } = useCategoriesActions()
 
@@ -46,10 +46,10 @@ export function CalculatorModal() {
           style={{ height: SCREEN_HEIGHT * 0.8, paddingBottom: insets.bottom }}
         >
           <View className="mb-4 h-1 w-10 self-center rounded-full bg-accent-foreground" />
-          {selectedCategory && (
+          {addTransactionSelectedCategory && (
             <QuickCalculator
               type={activeCategoryType}
-              categoryId={selectedCategory}
+              categoryId={addTransactionSelectedCategory}
               onClose={closeAddTransactionModal}
             />
           )}

@@ -11,7 +11,7 @@ export const useCategoriesState = () => {
       dateRange: state.dateRange,
 
       // Category UI State
-      selectedCategory: state.selectedCategory,
+      addTransactionSelectedCategory: state.addTransactionSelectedCategory,
       isAddTransactionModalOpen: state.isAddTransactionModalOpen,
 
       // Feedback

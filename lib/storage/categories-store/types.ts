@@ -7,7 +7,7 @@ export type CategoriesState = {
   dateRange: DateRange
 
   // Category Selection State
-  selectedCategory: string | null
+  addTransactionSelectedCategory: string | null
 
   // Add Transaction Modal State
   isAddTransactionModalOpen: boolean
