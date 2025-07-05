@@ -10,7 +10,7 @@ export type CategoriesState = {
   selectedCategory: string | null
 
   // Add Transaction Modal State
-  addTransactionModalVisible: boolean
+  isAddTransactionModalOpen: boolean
 
   // Feedback State for unsuccessful navigation
   failedNavigateNextCounter: number

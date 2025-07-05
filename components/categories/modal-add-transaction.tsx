@@ -18,7 +18,7 @@ import { useCategoryType } from './lib/use-category-type'
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
-  const { addTransactionModalVisible, selectedCategory } =
+  const { isAddTransactionModalOpen, selectedCategory } =
     useTransactionModalState()
   const { closeAddTransactionModal } = useCategoriesActions()
 
@@ -27,7 +27,7 @@ export function CalculatorModal() {
 
   return (
     <Modal
-      visible={addTransactionModalVisible}
+      visible={isAddTransactionModalOpen}
       className="bg-secondary"
       animationType="slide"
       transparent={true}

@@ -12,7 +12,7 @@ export const useCategoriesState = () => {
 
       // Category UI State
       selectedCategory: state.selectedCategory,
-      addTransactionModalVisible: state.addTransactionModalVisible,
+      isAddTransactionModalOpen: state.isAddTransactionModalOpen,
 
       // Feedback
       failedNavigateNextCounter: state.failedNavigateNextCounter

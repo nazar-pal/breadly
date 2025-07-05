@@ -4,7 +4,7 @@ import { categoriesStore } from '../categories-store'
 export const useTransactionModalState = () => {
   return categoriesStore(
     useShallow(state => ({
-      addTransactionModalVisible: state.addTransactionModalVisible,
+      isAddTransactionModalOpen: state.isAddTransactionModalOpen,
       selectedCategory: state.selectedCategory
     }))
   )

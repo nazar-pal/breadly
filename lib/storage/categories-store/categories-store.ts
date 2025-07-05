@@ -27,7 +27,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
     currentDate: initialDate,
     dateRange: calculateDateRange(initialMode, initialDate),
     selectedCategory: null,
-    addTransactionModalVisible: false,
+    isAddTransactionModalOpen: false,
     failedNavigateNextCounter: 0,
 
     // Actions
@@ -144,11 +144,11 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       openAddTransactionModal: (categoryId: string) =>
         set({
           selectedCategory: categoryId,
-          addTransactionModalVisible: true
+          isAddTransactionModalOpen: true
         }),
       closeAddTransactionModal: () =>
         set({
-          addTransactionModalVisible: false,
+          isAddTransactionModalOpen: false,
           selectedCategory: null
         }),
 
