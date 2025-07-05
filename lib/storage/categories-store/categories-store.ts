@@ -38,14 +38,18 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
       // Date Range Navigation Actions
       setDateRangeMode: (mode: DateRangeMode, customRange?: DateRange) => {
-        const newCurrentDate =
-          mode === 'custom' && customRange ? customRange.start : new Date()
+        if (mode === 'custom' && !customRange) {
+          return
+        }
 
         set({
           dateRangeMode: mode,
-          currentDate: newCurrentDate,
+          currentDate: new Date(),
           customDateRange: customRange || null,
-          dateRange: calculateDateRange(mode, newCurrentDate, customRange)
+          dateRange:
+            mode === 'custom'
+              ? customRange!
+              : calculateDateRange(mode, new Date())
         })
       },
 
@@ -74,7 +78,8 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         set({
           currentDate: newDate,
-          dateRange: calculateDateRange(dateRangeMode, newDate, customDateRange)
+          dateRange:
+            customDateRange || calculateDateRange(dateRangeMode, newDate)
         })
       },
 
@@ -102,11 +107,8 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         }
 
         // Check if the new date range would extend into the future
-        const newRange = calculateDateRange(
-          dateRangeMode,
-          newDate,
-          customDateRange
-        )
+        const newRange =
+          customDateRange || calculateDateRange(dateRangeMode, newDate)
         const today = new Date()
 
         // Don't allow navigation if the new range start date is after today

@@ -12,9 +12,8 @@ import {
 
 // Helper function to calculate date range based on mode and current date
 export const calculateDateRange = (
-  mode: DateRangeMode,
-  currentDate: Date,
-  customRange?: DateRange | null
+  mode: Exclude<DateRangeMode, 'custom'>,
+  currentDate: Date
 ): DateRange => {
   switch (mode) {
     case 'day':
@@ -41,19 +40,12 @@ export const calculateDateRange = (
         end: endOfYear(currentDate)
       }
 
+    // TODO: Review this
     case 'alltime':
       return {
         start: new Date(2020, 0, 1), // Arbitrary start date
         end: new Date()
       }
-
-    case 'custom':
-      return (
-        customRange || {
-          start: startOfWeek(currentDate, { weekStartsOn: 1 }),
-          end: endOfWeek(currentDate, { weekStartsOn: 1 })
-        }
-      )
 
     default:
       return {

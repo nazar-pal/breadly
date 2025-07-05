@@ -37,7 +37,14 @@ export const useDateRangeState = () => {
       const canNavigateForward = (() => {
         if (!baseCanNavigate) return false
 
-        const { dateRangeMode, currentDate, customDateRange } = state
+        if (
+          state.dateRangeMode === 'custom' ||
+          state.dateRangeMode === 'alltime'
+        ) {
+          return false
+        }
+
+        const { dateRangeMode, currentDate } = state
         let nextDate = currentDate
 
         switch (dateRangeMode) {
@@ -57,11 +64,7 @@ export const useDateRangeState = () => {
             return false
         }
 
-        const nextRange = calculateDateRange(
-          dateRangeMode,
-          nextDate,
-          customDateRange
-        )
+        const nextRange = calculateDateRange(dateRangeMode, nextDate)
         const today = new Date()
         return nextRange.start <= today
       })()
