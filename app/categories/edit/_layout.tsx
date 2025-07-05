@@ -21,7 +21,8 @@ export default function EditCategoryLayout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: 'Edit Category'
+          title: 'Edit Category',
+          animation: 'none'
         }}
       />
     </Stack>
