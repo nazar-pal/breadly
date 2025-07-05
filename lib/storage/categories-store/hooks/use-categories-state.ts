@@ -9,7 +9,6 @@ export const useCategoriesState = () => {
       isDateRangeModalOpen: state.isDateRangeModalOpen,
       currentDate: state.currentDate,
       dateRange: state.dateRange,
-      customDateRange: state.customDateRange,
 
       // Category UI State
       selectedCategory: state.selectedCategory,

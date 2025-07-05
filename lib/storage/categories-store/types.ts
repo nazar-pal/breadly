@@ -5,7 +5,6 @@ export type CategoriesState = {
   // Date Range Navigation State
   currentDate: Date
   dateRange: DateRange
-  customDateRange: DateRange | null
 
   // Category Selection State
   selectedCategory: string | null
@@ -24,10 +23,10 @@ export type CategoriesActions = {
   toggleDateRangeModal: () => void
 
   // Date Range Navigation Actions
-  setDateRangeMode: (mode: DateRangeMode, customRange?: DateRange) => void
+  setDateRange: (dateRange: DateRange) => void
+  setDateRangeMode: (mode: Exclude<DateRangeMode, 'custom'>) => void
   navigatePrevious: () => void
   navigateNext: () => void
-  setCustomDateRange: (range: DateRange | null) => void
 
   // Category Selection Actions
   selectCategory: (categoryId: string) => void
@@ -56,19 +55,22 @@ export const dateRangeModes = [
 
 export type DateRangeMode = (typeof dateRangeModes)[number]
 
-export type DateRange =
-  | {
-      mode: Exclude<DateRangeMode, 'custom' | 'alltime'>
-      start: Date
-      end: Date
-    }
-  | {
-      mode: 'custom'
-      start: Date
-      end: Date
-    }
-  | {
-      mode: 'alltime'
-      start: null
-      end: Date
-    }
+export type PeriodDateRange = {
+  mode: Exclude<DateRangeMode, 'custom' | 'alltime'>
+  start: Date
+  end: Date
+}
+
+export type CustomDateRange = {
+  mode: 'custom'
+  start: Date
+  end: Date
+}
+
+export type AllTimeDateRange = {
+  mode: 'alltime'
+  start: null
+  end: null
+}
+
+export type DateRange = PeriodDateRange | CustomDateRange | AllTimeDateRange

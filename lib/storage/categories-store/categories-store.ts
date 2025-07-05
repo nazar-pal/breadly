@@ -1,4 +1,8 @@
-import { DateRange, DateRangeMode } from '@/lib/storage/categories-store/'
+import {
+  CustomDateRange,
+  DateRange,
+  DateRangeMode
+} from '@/lib/storage/categories-store/'
 import {
   addDays,
   addMonths,
@@ -20,10 +24,8 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
   return {
     // State
     isDateRangeModalOpen: false,
-    dateRangeMode: initialMode,
     currentDate: initialDate,
     dateRange: calculateDateRange(initialMode, initialDate),
-    customDateRange: null,
     selectedCategory: null,
     addTransactionModalVisible: false,
     failedNavigateNextCounter: 0,
@@ -37,24 +39,36 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         set(state => ({ isDateRangeModalOpen: !state.isDateRangeModalOpen })),
 
       // Date Range Navigation Actions
-      setDateRangeMode: (mode: DateRangeMode, customRange?: DateRange) => {
-        if (mode === 'custom' && !customRange) {
+      setDateRange: (dateRange: DateRange) => {
+        set({
+          currentDate: new Date(),
+          dateRange:
+            dateRange.mode === 'custom'
+              ? dateRange
+              : dateRange.mode === 'alltime'
+                ? { mode: 'alltime', start: null, end: null }
+                : calculateDateRange(dateRange.mode, new Date())
+        })
+      },
+
+      setDateRangeMode: (mode: Exclude<DateRangeMode, 'custom'>) => {
+        if (mode === 'alltime') {
+          set({
+            dateRange: { mode: 'alltime', start: null, end: null }
+          })
           return
         }
 
-        set({
-          currentDate: new Date(),
-          customDateRange: customRange || null,
-          dateRange:
-            mode === 'custom'
-              ? customRange!
-              : calculateDateRange(mode, new Date())
+        set(state => {
+          return {
+            dateRange: calculateDateRange(mode, state.currentDate)
+          }
         })
       },
 
       navigatePrevious: () => {
         const state = get()
-        const { dateRange, currentDate, customDateRange } = state
+        const { dateRange, currentDate } = state
 
         if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
@@ -77,22 +91,15 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         set({
           currentDate: newDate,
-          dateRange:
-            customDateRange || calculateDateRange(dateRange.mode, newDate)
+          dateRange: calculateDateRange(dateRange.mode, newDate)
         })
       },
 
       navigateNext: () => {
         const state = get()
-        const { dateRange, currentDate, customDateRange } = state
+        const { dateRange, currentDate } = state
 
-        if (
-          dateRange.mode === 'alltime' ||
-          dateRange.mode === 'custom' ||
-          !customDateRange ||
-          !customDateRange.start
-        )
-          return
+        if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
         let newDate = currentDate
 
@@ -112,8 +119,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         }
 
         // Check if the new date range would extend into the future
-        const newRange =
-          customDateRange || calculateDateRange(dateRange.mode, newDate)
+        const newRange = calculateDateRange(dateRange.mode, newDate)
         const today = new Date()
 
         // Don't allow navigation if the new range start date is after today
@@ -127,8 +133,7 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         })
       },
 
-      setCustomDateRange: (range: DateRange | null) =>
-        set({ customDateRange: range }),
+      setCustomDateRange: (range: CustomDateRange) => set({ dateRange: range }),
 
       // Category Selection Actions
       selectCategory: (categoryId: string) =>

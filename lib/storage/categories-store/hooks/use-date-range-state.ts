@@ -66,7 +66,6 @@ export const useDateRangeState = () => {
         isDateRangeModalOpen: state.isDateRangeModalOpen,
         currentDate: state.currentDate,
         dateRange: state.dateRange,
-        customDateRange: state.customDateRange,
         formattedRange,
         canNavigate,
         canNavigateForward,

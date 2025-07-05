@@ -76,6 +76,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
 
   const {
     closeDateRangeModal,
+    setDateRange,
     setDateRangeMode,
     navigatePrevious,
     navigateNext
@@ -210,7 +211,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
         start: new Date(customRange.start),
         end: new Date(customRange.end)
       }
-      setDateRangeMode('custom', dateRange)
+      setDateRange(dateRange)
       handleClose()
     }
   }

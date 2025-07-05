@@ -1,4 +1,4 @@
-import { DateRange, DateRangeMode } from '@/lib/storage/categories-store'
+import { DateRange } from '@/lib/storage/categories-store'
 import {
   endOfDay,
   endOfMonth,
@@ -10,11 +10,17 @@ import {
   startOfYear
 } from 'date-fns'
 
+type AllowedDateRange = Exclude<
+  DateRange,
+  { mode: 'custom' } | { mode: 'alltime' }
+>
+type AllowedDateRangeMode = AllowedDateRange['mode']
+
 // Helper function to calculate date range based on mode and current date
 export const calculateDateRange = (
-  mode: Exclude<DateRangeMode, 'custom'>,
+  mode: AllowedDateRangeMode,
   currentDate: Date
-): DateRange => {
+): AllowedDateRange => {
   switch (mode) {
     case 'day':
       return {
@@ -42,20 +48,6 @@ export const calculateDateRange = (
         mode,
         start: startOfYear(currentDate),
         end: endOfYear(currentDate)
-      }
-
-    case 'alltime':
-      return {
-        mode,
-        start: null,
-        end: new Date()
-      }
-
-    default:
-      return {
-        mode,
-        start: startOfWeek(currentDate, { weekStartsOn: 1 }),
-        end: endOfWeek(currentDate, { weekStartsOn: 1 })
       }
   }
 }
