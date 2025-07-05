@@ -148,12 +148,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
           selectedCategory: null
         }),
 
-      // Combined Actions for common workflows
-      handleCategoryPress: (categoryId: string) => {
-        const { actions } = get()
-        actions.openAddTransactionModal(categoryId)
-      },
-
       // Feedback Actions
       notifyFailedNavigateNext: () =>
         set(state => ({

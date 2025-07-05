@@ -2,12 +2,12 @@ import { CategoryCardsGrid } from '@/components/categories/category-cards-grid/c
 import { useCategoriesActions } from '@/lib/storage/categories-store'
 
 export default function CategoriesIncomeScreen() {
-  const { handleCategoryPress } = useCategoriesActions()
+  const { openAddTransactionModal } = useCategoriesActions()
   return (
     <CategoryCardsGrid
       categoryType="income"
       isEditMode={false}
-      onPress={handleCategoryPress}
+      onPress={openAddTransactionModal}
       onLongPress={() => {
         console.log('long press')
       }}

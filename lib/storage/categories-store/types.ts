@@ -38,9 +38,6 @@ export type CategoriesActions = {
   openAddTransactionModal: (categoryId: string) => void
   closeAddTransactionModal: () => void
 
-  // Combined Actions for common workflows
-  handleCategoryPress: (categoryId: string) => void
-
   // Feedback Actions
   notifyFailedNavigateNext: () => void
 }
@@ -49,13 +46,16 @@ export type CategoriesStore = CategoriesState & {
   actions: CategoriesActions
 }
 
-export type DateRangeMode =
-  | 'day'
-  | 'week'
-  | 'month'
-  | 'year'
-  | 'alltime'
-  | 'custom'
+export const dateRangeModes = [
+  'day',
+  'week',
+  'month',
+  'year',
+  'alltime',
+  'custom'
+] as const
+
+export type DateRangeMode = (typeof dateRangeModes)[number]
 
 export type DateRange =
   | {
