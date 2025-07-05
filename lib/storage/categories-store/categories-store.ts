@@ -87,7 +87,13 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         const state = get()
         const { dateRangeMode, currentDate, customDateRange } = state
 
-        if (dateRangeMode === 'alltime' || dateRangeMode === 'custom') return
+        if (
+          dateRangeMode === 'alltime' ||
+          dateRangeMode === 'custom' ||
+          !customDateRange ||
+          !customDateRange.start
+        )
+          return
 
         let newDate = currentDate
 

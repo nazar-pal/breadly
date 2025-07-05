@@ -57,8 +57,19 @@ export type DateRangeMode =
   | 'alltime'
   | 'custom'
 
-export interface DateRange {
-  mode: DateRangeMode
-  start: Date
-  end: Date
-}
+export type DateRange =
+  | {
+      mode: Exclude<DateRangeMode, 'custom' | 'alltime'>
+      start: Date
+      end: Date
+    }
+  | {
+      mode: 'custom'
+      start: Date
+      end: Date
+    }
+  | {
+      mode: 'alltime'
+      start: null
+      end: Date
+    }

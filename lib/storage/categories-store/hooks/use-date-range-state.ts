@@ -7,11 +7,11 @@ import { calculateDateRange } from '../utils/calculate-date-range'
 export const useDateRangeState = () => {
   return categoriesStore(
     useShallow(state => {
-      const { start, end } = state.dateRange
+      const { start, end, mode } = state.dateRange
 
       // Format date range for display
       const formattedRange = (() => {
-        if (state.dateRangeMode === 'alltime') {
+        if (state.dateRangeMode === 'alltime' || !start) {
           return 'All Time'
         }
 
@@ -37,12 +37,7 @@ export const useDateRangeState = () => {
       const canNavigateForward = (() => {
         if (!baseCanNavigate) return false
 
-        if (
-          state.dateRangeMode === 'custom' ||
-          state.dateRangeMode === 'alltime'
-        ) {
-          return false
-        }
+        if (state.dateRange.mode === 'custom') return false
 
         const { dateRangeMode, currentDate } = state
         let nextDate = currentDate
@@ -66,7 +61,7 @@ export const useDateRangeState = () => {
 
         const nextRange = calculateDateRange(dateRangeMode, nextDate)
         const today = new Date()
-        return nextRange.start <= today
+        return nextRange.start != null && nextRange.start <= today
       })()
 
       const canNavigate = baseCanNavigate

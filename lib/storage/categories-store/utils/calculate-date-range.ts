@@ -44,11 +44,10 @@ export const calculateDateRange = (
         end: endOfYear(currentDate)
       }
 
-    // TODO: Review this
     case 'alltime':
       return {
         mode,
-        start: new Date(2020, 0, 1), // Arbitrary start date
+        start: null,
         end: new Date()
       }
 
