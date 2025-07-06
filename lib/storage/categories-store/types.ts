@@ -3,7 +3,6 @@ export type CategoriesState = {
   isDateRangeModalOpen: boolean
 
   // Date Range Navigation State
-  currentDate: Date
   dateRange: DateRange
 
   // Feedback State for unsuccessful navigation

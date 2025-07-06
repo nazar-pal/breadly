@@ -7,7 +7,6 @@ export const checkCanNavigateBackward = (dateRange: DateRange): boolean => {
 }
 
 export const checkCanNavigateForward = (
-  currentDate: Date,
   dateRange: DateRange,
   referenceDate: Date = new Date()
 ): boolean => {
@@ -15,6 +14,9 @@ export const checkCanNavigateForward = (
     return false
   }
 
+  // For period date ranges, we can use the start date as the current date reference
+  // since the start date represents the beginning of the current period
+  const currentDate = dateRange.start
   const nextDate = navigateDateByMode(currentDate, dateRange.mode, 'next')
   const nextRange = calculateDateRange(dateRange.mode, nextDate)
 

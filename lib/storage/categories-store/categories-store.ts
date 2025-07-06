@@ -11,7 +11,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
   return {
     // State
     isDateRangeModalOpen: false,
-    currentDate: initialDate,
     dateRange: calculateDateRange(initialMode, initialDate),
     failedNavigateNextCounter: 0,
 
@@ -24,7 +23,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       // Date Range Navigation Actions
       setDateRange: (dateRange: DateRange) => {
         set({
-          currentDate: new Date(),
           dateRange:
             dateRange.mode === 'custom'
               ? dateRange
@@ -43,37 +41,48 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         }
 
         set(state => {
+          // For period date ranges, we can use the current start date as reference
+          // or default to current date if it's a different mode
+          const referenceDate =
+            state.dateRange.mode !== 'alltime' &&
+            state.dateRange.mode !== 'custom'
+              ? state.dateRange.start
+              : new Date()
+
           return {
-            dateRange: calculateDateRange(mode, state.currentDate)
+            dateRange: calculateDateRange(mode, referenceDate)
           }
         })
       },
 
       navigatePrevious: () => {
         const state = get()
-        const { dateRange, currentDate } = state
+        const { dateRange } = state
 
         if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
         const newDate = navigateDateByMode(
-          currentDate,
+          dateRange.start,
           dateRange.mode,
           'previous'
         )
 
         set({
-          currentDate: newDate,
           dateRange: calculateDateRange(dateRange.mode, newDate)
         })
       },
 
       navigateNext: () => {
         const state = get()
-        const { dateRange, currentDate } = state
+        const { dateRange } = state
 
         if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
-        const newDate = navigateDateByMode(currentDate, dateRange.mode, 'next')
+        const newDate = navigateDateByMode(
+          dateRange.start,
+          dateRange.mode,
+          'next'
+        )
 
         // Check if the new date range would extend into the future
         const newRange = calculateDateRange(dateRange.mode, newDate)
@@ -87,7 +96,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         }
 
         set({
-          currentDate: newDate,
           dateRange: newRange
         })
       },

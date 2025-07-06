@@ -7,7 +7,6 @@ export const useCategoriesState = () => {
     useShallow(state => ({
       // Date Range State
       isDateRangeModalOpen: state.isDateRangeModalOpen,
-      currentDate: state.currentDate,
       dateRange: state.dateRange,
 
       // Feedback

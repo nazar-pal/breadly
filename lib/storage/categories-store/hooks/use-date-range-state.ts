@@ -15,14 +15,10 @@ export const useDateRangeState = () => {
       const formattedRange = formatDateRange(dateRange)
 
       const canNavigateBackward = checkCanNavigateBackward(dateRange)
-      const canNavigateForward = checkCanNavigateForward(
-        state.currentDate,
-        dateRange
-      )
+      const canNavigateForward = checkCanNavigateForward(dateRange)
 
       return {
         isDateRangeModalOpen: state.isDateRangeModalOpen,
-        currentDate: state.currentDate,
         dateRange: state.dateRange,
         formattedRange,
         canNavigateBackward,
