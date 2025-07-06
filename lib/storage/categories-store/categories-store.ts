@@ -26,8 +26,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
     isDateRangeModalOpen: false,
     currentDate: initialDate,
     dateRange: calculateDateRange(initialMode, initialDate),
-    addTransactionSelectedCategory: null,
-    isAddTransactionModalOpen: false,
     failedNavigateNextCounter: 0,
 
     // Actions
@@ -132,22 +130,6 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
       },
 
       setCustomDateRange: (range: CustomDateRange) => set({ dateRange: range }),
-
-      // Category Selection Actions
-      setCategoryForTransaction: (categoryId: string) =>
-        set({ addTransactionSelectedCategory: categoryId }),
-
-      // Add Transaction Modal Actions
-      openAddTransactionModal: (categoryId: string) =>
-        set({
-          addTransactionSelectedCategory: categoryId,
-          isAddTransactionModalOpen: true
-        }),
-      closeAddTransactionModal: () =>
-        set({
-          isAddTransactionModalOpen: false,
-          addTransactionSelectedCategory: null
-        }),
 
       // Feedback Actions
       notifyFailedNavigateNext: () =>

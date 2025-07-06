@@ -1,8 +1,8 @@
 import { CategoryCardsGrid } from '@/components/categories/category-cards-grid/category-cards-grid'
-import { useCategoriesActions } from '@/lib/storage/categories-store'
+import { useAddTransactionActions } from '@/lib/storage/add-transaction-store'
 
 export default function CategoriesIncomeScreen() {
-  const { openAddTransactionModal } = useCategoriesActions()
+  const { openAddTransactionModal } = useAddTransactionActions()
   return (
     <CategoryCardsGrid
       categoryType="income"

@@ -1,7 +1,7 @@
 import {
-  useCategoriesActions,
-  useTransactionModalState
-} from '@/lib/storage/categories-store'
+  useAddTransactionActions,
+  useAddTransactionState
+} from '@/lib/storage/add-transaction-store'
 import React from 'react'
 import {
   Dimensions,
@@ -19,8 +19,8 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export function CalculatorModal() {
   const { isAddTransactionModalOpen, addTransactionSelectedCategory } =
-    useTransactionModalState()
-  const { closeAddTransactionModal } = useCategoriesActions()
+    useAddTransactionState()
+  const { closeAddTransactionModal } = useAddTransactionActions()
 
   const insets = useSafeAreaInsets()
   const activeCategoryType = useCategoryType()

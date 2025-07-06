@@ -6,10 +6,6 @@ export type CategoriesState = {
   currentDate: Date
   dateRange: DateRange
 
-  // Add Transaction Modal State
-  isAddTransactionModalOpen: boolean
-  addTransactionSelectedCategory: string | null
-
   // Feedback State for unsuccessful navigation
   failedNavigateNextCounter: number
 }
@@ -24,11 +20,6 @@ export type CategoriesActions = {
   setDateRangeMode: (mode: Exclude<DateRangeMode, 'custom'>) => void
   navigatePrevious: () => void
   navigateNext: () => void
-
-  // Add Transaction Modal Actions
-  openAddTransactionModal: (categoryId: string) => void
-  closeAddTransactionModal: () => void
-  setCategoryForTransaction: (categoryId: string) => void
 
   // Feedback Actions
   notifyFailedNavigateNext: () => void

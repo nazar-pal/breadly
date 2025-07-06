@@ -10,10 +10,6 @@ export const useCategoriesState = () => {
       currentDate: state.currentDate,
       dateRange: state.dateRange,
 
-      // Category UI State
-      addTransactionSelectedCategory: state.addTransactionSelectedCategory,
-      isAddTransactionModalOpen: state.isAddTransactionModalOpen,
-
       // Feedback
       failedNavigateNextCounter: state.failedNavigateNextCounter
     }))
