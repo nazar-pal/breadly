@@ -1,9 +1,5 @@
-import {
-  CustomDateRange,
-  DateRange,
-  DateRangeMode
-} from '@/lib/storage/categories-store/'
 import { create } from 'zustand'
+import type { CustomDateRange, DateRange, DateRangeMode } from './types'
 import { CategoriesStore } from './types'
 import { calculateDateRange } from './utils/calculate-date-range'
 import { navigateDateByMode } from './utils/date-navigation'
@@ -82,7 +78,11 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
         // Check if the new date range would extend into the future
         const newRange = calculateDateRange(dateRange.mode, newDate)
 
-        if (newRange.start > new Date()) {
+        if (newRange.end > new Date()) {
+          // Provide feedback to UI that forward navigation is not possible
+          set(state => ({
+            failedNavigateNextCounter: state.failedNavigateNextCounter + 1
+          }))
           return
         }
 

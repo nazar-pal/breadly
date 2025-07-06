@@ -1,4 +1,4 @@
-import { DateRangeMode } from '@/lib/storage/categories-store/'
+import type { DateRangeMode } from '../types'
 
 const modeNames: Record<DateRangeMode, string> = {
   day: 'Day',
