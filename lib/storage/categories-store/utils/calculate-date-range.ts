@@ -1,4 +1,3 @@
-import { DateRange } from '@/lib/storage/categories-store'
 import {
   endOfDay,
   endOfMonth,
@@ -9,6 +8,7 @@ import {
   startOfWeek,
   startOfYear
 } from 'date-fns'
+import type { DateRange } from '../types'
 
 type AllowedDateRange = Exclude<
   DateRange,
