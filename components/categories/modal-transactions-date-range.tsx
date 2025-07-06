@@ -70,7 +70,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
     isDateRangeModalOpen,
     dateRange,
     formattedRange,
-    canNavigate,
+    canNavigateBackward,
     canNavigateForward
   } = useDateRangeState()
 
@@ -255,14 +255,16 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
 
               {/* Header with Navigation */}
               <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
-                {!showCustomPicker && canNavigate && navigatePrevious && (
-                  <Pressable
-                    onPress={navigatePrevious}
-                    className="rounded bg-secondary p-2"
-                  >
-                    <ChevronLeft size={18} className="text-foreground" />
-                  </Pressable>
-                )}
+                {!showCustomPicker &&
+                  canNavigateBackward &&
+                  navigatePrevious && (
+                    <Pressable
+                      onPress={navigatePrevious}
+                      className="rounded bg-secondary p-2"
+                    >
+                      <ChevronLeft size={18} className="text-foreground" />
+                    </Pressable>
+                  )}
 
                 <View className="mx-4 flex-1 items-center">
                   <Text className="text-center text-lg font-semibold text-foreground">
@@ -275,14 +277,16 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
                   )}
                 </View>
 
-                {!showCustomPicker && canNavigate && handleNavigateNext && (
-                  <Pressable
-                    onPress={handleNavigateNext}
-                    className="rounded bg-secondary p-2"
-                  >
-                    <ChevronRight size={18} className="text-foreground" />
-                  </Pressable>
-                )}
+                {!showCustomPicker &&
+                  canNavigateBackward &&
+                  handleNavigateNext && (
+                    <Pressable
+                      onPress={handleNavigateNext}
+                      className="rounded bg-secondary p-2"
+                    >
+                      <ChevronRight size={18} className="text-foreground" />
+                    </Pressable>
+                  )}
               </View>
 
               {!showCustomPicker ? (

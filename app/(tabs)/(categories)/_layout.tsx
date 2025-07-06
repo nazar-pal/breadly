@@ -13,14 +13,14 @@ import { runOnJS } from 'react-native-reanimated'
 
 function GestureDetectorContainer({
   children,
-  canNavigate,
+  canNavigateBackward,
   canNavigateForward,
   navigatePrevious,
   navigateNext,
   onNavigateNextBlocked
 }: {
   children: React.ReactNode
-  canNavigate: boolean
+  canNavigateBackward: boolean
   canNavigateForward: boolean
   navigatePrevious: () => void
   navigateNext: () => void
@@ -31,8 +31,6 @@ function GestureDetectorContainer({
     .minDistance(30)
     .onEnd(event => {
       'worklet'
-      // Only handle swipes if navigation is enabled
-      if (!canNavigate) return
 
       const { translationX, velocityX } = event
 
@@ -40,7 +38,13 @@ function GestureDetectorContainer({
       if (Math.abs(velocityX) > 200) {
         if (translationX > 30) {
           // Swipe right - go to previous period
-          runOnJS(navigatePrevious)()
+          if (canNavigateBackward) {
+            runOnJS(navigatePrevious)()
+          } else {
+            // Trigger feedback for blocked navigation
+            runOnJS(onNavigateNextBlocked)()
+          }
+          // Note: No animation for blocked navigation - header animations provide feedback
         } else if (translationX < -30) {
           // Swipe left - go to next period
           if (canNavigateForward) {
@@ -59,13 +63,13 @@ function GestureDetectorContainer({
 
 export default function CategoriesLayout() {
   // Get date range state and navigation actions from store
-  const { canNavigate, canNavigateForward } = useDateRangeState()
+  const { canNavigateBackward, canNavigateForward } = useDateRangeState()
   const { navigatePrevious, navigateNext, notifyFailedNavigateNext } =
     useCategoriesActions()
 
   return (
     <GestureDetectorContainer
-      canNavigate={canNavigate}
+      canNavigateBackward={canNavigateBackward}
       canNavigateForward={canNavigateForward}
       navigatePrevious={navigatePrevious}
       navigateNext={navigateNext}

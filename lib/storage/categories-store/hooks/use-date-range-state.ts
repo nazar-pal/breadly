@@ -60,14 +60,12 @@ export const useDateRangeState = () => {
         return nextRange.start != null && nextRange.start <= today
       })()
 
-      const canNavigate = baseCanNavigate
-
       return {
         isDateRangeModalOpen: state.isDateRangeModalOpen,
         currentDate: state.currentDate,
         dateRange: state.dateRange,
         formattedRange,
-        canNavigate,
+        canNavigateBackward: baseCanNavigate,
         canNavigateForward,
         failedNavigateNextCounter: state.failedNavigateNextCounter
       }
