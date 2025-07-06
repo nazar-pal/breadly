@@ -84,10 +84,14 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
           'next'
         )
 
-        // Check if the new date range would extend into the future
+        // Check if the new date range would start in the future
         const newRange = calculateDateRange(dateRange.mode, newDate)
+        const today = new Date()
 
-        if (newRange.end > new Date()) {
+        // Compare the start of the new range with today's date
+        // We use the start of the range because we want to allow navigation
+        // to any period that has already started
+        if (newRange.start > today) {
           // Provide feedback to UI that forward navigation is not possible
           set(state => ({
             failedNavigateNextCounter: state.failedNavigateNextCounter + 1

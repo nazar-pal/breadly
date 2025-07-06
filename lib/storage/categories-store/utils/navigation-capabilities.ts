@@ -20,5 +20,7 @@ export const checkCanNavigateForward = (
   const nextDate = navigateDateByMode(currentDate, dateRange.mode, 'next')
   const nextRange = calculateDateRange(dateRange.mode, nextDate)
 
+  // Check if the next range starts at or before the reference date
+  // This allows navigation to any period that has already started
   return nextRange.start != null && nextRange.start <= referenceDate
 }
