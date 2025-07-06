@@ -2,9 +2,9 @@ import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CategoriesHeaderNavBar } from '@/components/categories/categories-header-nav-bar'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
 import {
-  useCategoriesActions,
-  useDateRangeState
-} from '@/lib/storage/categories-store'
+  useCategoriesDateRangeActions,
+  useCategoriesDateRangeAdvancedState
+} from '@/lib/storage/categories-date-range-store'
 import { Slot } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
@@ -63,9 +63,10 @@ function GestureDetectorContainer({
 
 export default function CategoriesLayout() {
   // Get date range state and navigation actions from store
-  const { canNavigateBackward, canNavigateForward } = useDateRangeState()
+  const { canNavigateBackward, canNavigateForward } =
+    useCategoriesDateRangeAdvancedState()
   const { navigatePrevious, navigateNext, notifyFailedNavigateNext } =
-    useCategoriesActions()
+    useCategoriesDateRangeActions()
 
   return (
     <GestureDetectorContainer

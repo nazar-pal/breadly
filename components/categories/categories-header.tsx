@@ -1,10 +1,10 @@
 import { useUserSession } from '@/lib/hooks'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import {
-  useCategoriesActions,
-  useDateRangeState
-} from '@/lib/storage/categories-store'
-import { getModeDisplayName } from '@/lib/storage/categories-store/utils/get-mode-display-name'
+  useCategoriesDateRangeActions,
+  useCategoriesDateRangeAdvancedState
+} from '@/lib/storage/categories-date-range-store'
+import { getModeDisplayName } from '@/lib/storage/categories-date-range-store/utils/get-mode-display-name'
 import { useTheme } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -76,9 +76,9 @@ export function CategoriesHeader() {
 
   // Use enhanced date range state from categories store
   const { dateRange, formattedRange, failedNavigateNextCounter } =
-    useDateRangeState()
+    useCategoriesDateRangeAdvancedState()
 
-  const { openDateRangeModal } = useCategoriesActions()
+  const { openDateRangeModal } = useCategoriesDateRangeActions()
 
   // Local feedback state
   const [shakeKey, setShakeKey] = React.useState(0)

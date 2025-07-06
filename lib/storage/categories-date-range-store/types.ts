@@ -1,34 +1,36 @@
-export type CategoriesState = {
-  // Date Range Modal State
+export type CategoriesDateRangeStoreState = {
+  // Modal state
   isDateRangeModalOpen: boolean
 
-  // Date Range Navigation State
+  // Current date range selection
   dateRange: DateRange
 
-  // Feedback State for unsuccessful navigation
+  // UI feedback for failed navigation attempts
   failedNavigateNextCounter: number
 }
 
-export type CategoriesActions = {
-  // Date Range Modal Actions
+export type CategoriesDateRangeStoreActions = {
+  // Modal management
   openDateRangeModal: () => void
   closeDateRangeModal: () => void
 
-  // Date Range Navigation Actions
+  // Date range selection
   setDateRange: (dateRange: DateRange) => void
   setDateRangeMode: (mode: Exclude<DateRangeMode, 'custom'>) => void
+
+  // Navigation
   navigatePrevious: () => void
   navigateNext: () => void
 
-  // Feedback Actions
+  // UI feedback
   notifyFailedNavigateNext: () => void
 }
 
-export type CategoriesStore = CategoriesState & {
-  actions: CategoriesActions
+export type CategoriesDateRangeStore = CategoriesDateRangeStoreState & {
+  actions: CategoriesDateRangeStoreActions
 }
 
-export const dateRangeModes = [
+export const DATE_RANGE_MODES = [
   'day',
   'week',
   'month',
@@ -37,7 +39,7 @@ export const dateRangeModes = [
   'custom'
 ] as const
 
-export type DateRangeMode = (typeof dateRangeModes)[number]
+export type DateRangeMode = (typeof DATE_RANGE_MODES)[number]
 
 export type PeriodDateRange = {
   mode: Exclude<DateRangeMode, 'custom' | 'alltime'>

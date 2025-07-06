@@ -2,9 +2,9 @@ import { Check, ChevronLeft, ChevronRight } from '@/lib/icons'
 import {
   DateRange,
   DateRangeMode,
-  useCategoriesActions,
-  useDateRangeState
-} from '@/lib/storage/categories-store'
+  useCategoriesDateRangeActions,
+  useCategoriesDateRangeAdvancedState
+} from '@/lib/storage/categories-date-range-store'
 import React, { useEffect, useState } from 'react'
 import {
   Modal,
@@ -72,7 +72,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
     formattedRange,
     canNavigateBackward,
     canNavigateForward
-  } = useDateRangeState()
+  } = useCategoriesDateRangeAdvancedState()
 
   const {
     closeDateRangeModal,
@@ -80,7 +80,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
     setDateRangeMode,
     navigatePrevious,
     navigateNext
-  } = useCategoriesActions()
+  } = useCategoriesDateRangeActions()
 
   const handleNavigateNext = () => {
     if (canNavigateForward) {
