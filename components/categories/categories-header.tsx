@@ -2,9 +2,8 @@ import { useUserSession } from '@/lib/hooks'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import {
   useCategoriesDateRangeActions,
-  useCategoriesDateRangeAdvancedState
+  useCategoriesDateRangeState
 } from '@/lib/storage/categories-date-range-store'
-import { getModeDisplayName } from '@/lib/storage/categories-date-range-store/utils/get-mode-display-name'
 import { useTheme } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -14,6 +13,8 @@ import Animated, {
   withSequence,
   withTiming
 } from 'react-native-reanimated'
+import { formatDateRange } from './lib/format-date-range'
+import { getModeDisplayName } from './lib/get-mode-display-name'
 import { DateRangeModal } from './modal-transactions-date-range'
 
 // Animated Text Component for slide transitions
@@ -75,8 +76,8 @@ export function CategoriesHeader() {
   const { colors } = useTheme()
 
   // Use enhanced date range state from categories store
-  const { dateRange, formattedRange, failedNavigateNextCounter } =
-    useCategoriesDateRangeAdvancedState()
+  const { dateRange, failedNavigateNextCounter } = useCategoriesDateRangeState()
+  const formattedRange = formatDateRange(dateRange)
 
   const { openDateRangeModal } = useCategoriesDateRangeActions()
 

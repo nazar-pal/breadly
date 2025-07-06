@@ -21,9 +21,6 @@ export type CategoriesDateRangeStoreActions = {
   // Navigation
   navigatePrevious: () => void
   navigateNext: () => void
-
-  // UI feedback
-  notifyFailedNavigateNext: () => void
 }
 
 export type CategoriesDateRangeStore = CategoriesDateRangeStoreState & {

@@ -1,19 +1,18 @@
 import { create } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 import {
   INITIAL_DATE_RANGE_MODE,
   type AllTimeDateRange,
   type CategoriesDateRangeStore,
-  type CustomDateRange,
   type DateRange,
   type DateRangeMode,
   type PeriodDateRange
 } from './types'
 import {
+  calculateTargetDate,
+  canNavigateBackward,
   canNavigateForward,
-  createPeriodDateRange,
-  createValidatedCustomDateRange,
-  isPeriodDateRange,
-  navigateDate
+  createPeriodDateRange
 } from './utils'
 
 export const categoriesDateRangeStore = create<CategoriesDateRangeStore>(
@@ -30,79 +29,69 @@ export const categoriesDateRangeStore = create<CategoriesDateRangeStore>(
       closeDateRangeModal: () => set({ isDateRangeModalOpen: false }),
 
       // Date range selection
-      setDateRange: (dateRange: DateRange) => {
-        set({ dateRange })
-      },
-
+      setDateRange: (dateRange: DateRange) => set({ dateRange }),
       setDateRangeMode: (mode: Exclude<DateRangeMode, 'custom'>) => {
-        let newDateRange: AllTimeDateRange | PeriodDateRange = {
+        let dateRange: AllTimeDateRange | PeriodDateRange = {
           mode: 'alltime',
           start: null,
           end: null
         }
         if (mode !== 'alltime')
-          newDateRange = createPeriodDateRange(mode, new Date())
+          dateRange = createPeriodDateRange(mode, new Date())
 
-        set({ dateRange: newDateRange })
-      },
-
-      setCustomDateRange: (range: CustomDateRange) => {
-        // Validate the custom range before setting
-        try {
-          const validatedRange = createValidatedCustomDateRange(
-            range.start,
-            range.end
-          )
-          set({ dateRange: validatedRange })
-        } catch (error) {
-          // In a real app, you might want to handle this error differently
-          console.error('Invalid custom date range:', error)
-        }
+        set({ dateRange })
       },
 
       // Navigation
       navigatePrevious: () => {
-        const state = get()
-        const { dateRange } = state
-
-        if (!isPeriodDateRange(dateRange)) return
-
-        const previousDate = navigateDate(
-          dateRange.start,
-          dateRange.mode,
-          'previous'
-        )
-        const newDateRange = createPeriodDateRange(dateRange.mode, previousDate)
-
-        set({ dateRange: newDateRange })
-      },
-
-      navigateNext: () => {
-        const state = get()
-        const { dateRange } = state
-
-        if (!isPeriodDateRange(dateRange)) return
-
-        const nextDate = navigateDate(dateRange.start, dateRange.mode, 'next')
-        const newDateRange = createPeriodDateRange(dateRange.mode, nextDate)
-
-        // Check if navigation is allowed
-        if (!canNavigateForward(newDateRange)) {
+        const { dateRange } = get()
+        if (!canNavigateBackward(dateRange)) {
           set(state => ({
             failedNavigateNextCounter: state.failedNavigateNextCounter + 1
           }))
           return
         }
 
-        set({ dateRange: newDateRange })
+        const previousDate = calculateTargetDate(
+          dateRange.start,
+          dateRange.mode,
+          'previous'
+        )
+
+        set({ dateRange: createPeriodDateRange(dateRange.mode, previousDate) })
       },
 
-      // UI feedback
-      notifyFailedNavigateNext: () => {
-        set(state => ({
-          failedNavigateNextCounter: state.failedNavigateNextCounter + 1
-        }))
+      navigateNext: () => {
+        const { dateRange } = get()
+
+        if (!canNavigateForward(dateRange)) {
+          set(state => ({
+            failedNavigateNextCounter: state.failedNavigateNextCounter + 1
+          }))
+          return
+        }
+
+        const nextDate = calculateTargetDate(
+          dateRange.start,
+          dateRange.mode,
+          'next'
+        )
+
+        set({ dateRange: createPeriodDateRange(dateRange.mode, nextDate) })
       }
     }
   })
 )
+
+export const useCategoriesDateRangeState = () => {
+  return categoriesDateRangeStore(
+    useShallow(state => ({
+      isDateRangeModalOpen: state.isDateRangeModalOpen,
+      dateRange: state.dateRange,
+      failedNavigateNextCounter: state.failedNavigateNextCounter
+    }))
+  )
+}
+
+export const useCategoriesDateRangeActions = () =>
+  categoriesDateRangeStore(state => state.actions)

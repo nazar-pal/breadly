@@ -1,9 +1,11 @@
 import { Check, ChevronLeft, ChevronRight } from '@/lib/icons'
 import {
+  canNavigateBackward,
+  canNavigateForward,
   DateRange,
   DateRangeMode,
   useCategoriesDateRangeActions,
-  useCategoriesDateRangeAdvancedState
+  useCategoriesDateRangeState
 } from '@/lib/storage/categories-date-range-store'
 import React, { useEffect, useState } from 'react'
 import {
@@ -28,6 +30,8 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { validateCustomDateRange } from './lib/date-range-validation'
+import { formatDateRange } from './lib/format-date-range'
 
 const MODE_OPTIONS: {
   mode: DateRangeMode
@@ -66,13 +70,9 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
 
-  const {
-    isDateRangeModalOpen,
-    dateRange,
-    formattedRange,
-    canNavigateBackward,
-    canNavigateForward
-  } = useCategoriesDateRangeAdvancedState()
+  const { isDateRangeModalOpen, dateRange } = useCategoriesDateRangeState()
+
+  const formattedRange = formatDateRange(dateRange)
 
   const {
     closeDateRangeModal,
@@ -83,7 +83,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
   } = useCategoriesDateRangeActions()
 
   const handleNavigateNext = () => {
-    if (canNavigateForward) {
+    if (canNavigateForward(dateRange)) {
       navigateNext()
     } else {
       triggerError()
@@ -206,6 +206,12 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
 
   const handleCustomRangeConfirm = () => {
     if (customRange.start && customRange.end) {
+      const { isValid, error } = validateCustomDateRange(
+        new Date(customRange.start),
+        new Date(customRange.end)
+      )
+      if (!isValid) throw new Error(error)
+
       const dateRange: DateRange = {
         mode: 'custom',
         start: new Date(customRange.start),
@@ -256,7 +262,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
               {/* Header with Navigation */}
               <View className="min-h-[60px] flex-row items-center border-b border-border px-4 py-4">
                 {!showCustomPicker &&
-                  canNavigateBackward &&
+                  canNavigateBackward(dateRange) &&
                   navigatePrevious && (
                     <Pressable
                       onPress={navigatePrevious}
@@ -278,7 +284,7 @@ export function DateRangeModal({ triggerError }: { triggerError: () => void }) {
                 </View>
 
                 {!showCustomPicker &&
-                  canNavigateBackward &&
+                  canNavigateForward(dateRange) &&
                   handleNavigateNext && (
                     <Pressable
                       onPress={handleNavigateNext}

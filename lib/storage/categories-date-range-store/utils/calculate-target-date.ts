@@ -12,12 +12,11 @@ import type { PeriodDateRange } from '../types'
 
 export type NavigationDirection = 'previous' | 'next'
 
-export const navigateDate = (
+export const calculateTargetDate = (
   currentDate: Date,
   mode: PeriodDateRange['mode'],
   direction: NavigationDirection
 ): Date => {
-  // Create a new date to avoid mutating the input
   const date = new Date(currentDate)
   const isNext = direction === 'next'
 
@@ -30,12 +29,7 @@ export const navigateDate = (
       return isNext ? addMonths(date, 1) : subMonths(date, 1)
     case 'year':
       return isNext ? addYears(date, 1) : subYears(date, 1)
-    default: {
-      const _exhaustiveCheck: never = mode
-      throw new Error(`Unhandled date range mode: ${String(_exhaustiveCheck)}`)
-    }
+    default:
+      throw new Error(`Unsupported mode: ${mode}`)
   }
 }
-
-// Legacy function name for backward compatibility
-export const navigateDateByMode = navigateDate

@@ -1,22 +1,22 @@
-import type { DateRange } from '../types'
+import type { DateRange, PeriodDateRange } from '../types'
 import { createPeriodDateRange } from './calculate-date-range'
-import { isPeriodDateRange } from './check-mode'
-import { navigateDate } from './date-navigation'
+import { calculateTargetDate } from './calculate-target-date'
+import { isPeriodDateRange } from './check-date-range-mode'
 
-export const canNavigateBackward = (dateRange: DateRange): boolean => {
+export const canNavigateBackward = (
+  dateRange: DateRange
+): dateRange is PeriodDateRange => {
   return isPeriodDateRange(dateRange)
 }
 
 export const canNavigateForward = (
   dateRange: DateRange,
   referenceDate: Date = new Date()
-): boolean => {
-  if (!isPeriodDateRange(dateRange)) {
-    return false
-  }
+): dateRange is PeriodDateRange => {
+  if (!isPeriodDateRange(dateRange)) return false
 
   // Calculate the next date range
-  const nextDate = navigateDate(dateRange.start, dateRange.mode, 'next')
+  const nextDate = calculateTargetDate(dateRange.start, dateRange.mode, 'next')
   const nextRange = createPeriodDateRange(dateRange.mode, nextDate)
 
   // Check if the next range starts at or before the reference date
