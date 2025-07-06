@@ -49,5 +49,10 @@ export const calculateDateRange = (
         start: startOfYear(currentDate),
         end: endOfYear(currentDate)
       }
+
+    /* istanbul ignore next */
+    default: {
+      throw new Error(`Unhandled date range mode: ${String(mode)}`)
+    }
   }
 }

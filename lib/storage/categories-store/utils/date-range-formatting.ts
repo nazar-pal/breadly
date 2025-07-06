@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { DateRange } from '../types'
+import type { DateRange } from '../types'
 
 export const formatDateRange = (dateRange: DateRange): string => {
   if (dateRange.mode === 'alltime' || !dateRange.start) {

@@ -8,7 +8,7 @@ import {
   subWeeks,
   subYears
 } from 'date-fns'
-import { DateRangeMode } from '../types'
+import type { DateRangeMode } from '../types'
 
 export const navigateDateByMode = (
   currentDate: Date,
@@ -26,5 +26,9 @@ export const navigateDateByMode = (
       return isNext ? addMonths(currentDate, 1) : subMonths(currentDate, 1)
     case 'year':
       return isNext ? addYears(currentDate, 1) : subYears(currentDate, 1)
+    /* istanbul ignore next */
+    default: {
+      throw new Error(`Unhandled date range mode: ${String(mode)}`)
+    }
   }
 }
