@@ -3,19 +3,10 @@ import {
   DateRange,
   DateRangeMode
 } from '@/lib/storage/categories-store/'
-import {
-  addDays,
-  addMonths,
-  addWeeks,
-  addYears,
-  subDays,
-  subMonths,
-  subWeeks,
-  subYears
-} from 'date-fns'
 import { create } from 'zustand'
 import { CategoriesStore } from './types'
 import { calculateDateRange } from './utils/calculate-date-range'
+import { navigateDateByMode } from './utils/date-navigation'
 
 export const categoriesStore = create<CategoriesStore>((set, get) => {
   const initialDate = new Date()
@@ -68,22 +59,11 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
-        let newDate = currentDate
-
-        switch (dateRange.mode) {
-          case 'day':
-            newDate = subDays(currentDate, 1)
-            break
-          case 'week':
-            newDate = subWeeks(currentDate, 1)
-            break
-          case 'month':
-            newDate = subMonths(currentDate, 1)
-            break
-          case 'year':
-            newDate = subYears(currentDate, 1)
-            break
-        }
+        const newDate = navigateDateByMode(
+          currentDate,
+          dateRange.mode,
+          'previous'
+        )
 
         set({
           currentDate: newDate,
@@ -97,29 +77,12 @@ export const categoriesStore = create<CategoriesStore>((set, get) => {
 
         if (dateRange.mode === 'alltime' || dateRange.mode === 'custom') return
 
-        let newDate = currentDate
-
-        switch (dateRange.mode) {
-          case 'day':
-            newDate = addDays(currentDate, 1)
-            break
-          case 'week':
-            newDate = addWeeks(currentDate, 1)
-            break
-          case 'month':
-            newDate = addMonths(currentDate, 1)
-            break
-          case 'year':
-            newDate = addYears(currentDate, 1)
-            break
-        }
+        const newDate = navigateDateByMode(currentDate, dateRange.mode, 'next')
 
         // Check if the new date range would extend into the future
         const newRange = calculateDateRange(dateRange.mode, newDate)
-        const today = new Date()
 
-        // Don't allow navigation if the new range start date is after today
-        if (newRange.start > today) {
+        if (newRange.start > new Date()) {
           return
         }
 
