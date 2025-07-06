@@ -60,3 +60,5 @@ export type AllTimeDateRange = {
 }
 
 export type DateRange = PeriodDateRange | CustomDateRange | AllTimeDateRange
+
+export const INITIAL_DATE_RANGE_MODE: PeriodDateRange['mode'] = 'month'

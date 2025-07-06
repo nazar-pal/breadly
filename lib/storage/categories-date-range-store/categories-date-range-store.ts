@@ -1,11 +1,12 @@
 import { create } from 'zustand'
-import type {
-  AllTimeDateRange,
-  CategoriesDateRangeStore,
-  CustomDateRange,
-  DateRange,
-  DateRangeMode,
-  PeriodDateRange
+import {
+  INITIAL_DATE_RANGE_MODE,
+  type AllTimeDateRange,
+  type CategoriesDateRangeStore,
+  type CustomDateRange,
+  type DateRange,
+  type DateRangeMode,
+  type PeriodDateRange
 } from './types'
 import {
   canNavigateForward,
@@ -14,17 +15,6 @@ import {
   isPeriodDateRange,
   navigateDate
 } from './utils'
-
-const INITIAL_DATE_RANGE_MODE: DateRangeMode = 'week'
-
-const createDateRangeFromMode = (
-  mode: Exclude<DateRangeMode, 'custom'>
-): AllTimeDateRange | PeriodDateRange => {
-  if (mode === 'alltime') {
-    return { mode: 'alltime', start: null, end: null }
-  }
-  return createPeriodDateRange(mode, new Date())
-}
 
 export const categoriesDateRangeStore = create<CategoriesDateRangeStore>(
   (set, get) => ({
@@ -50,7 +40,8 @@ export const categoriesDateRangeStore = create<CategoriesDateRangeStore>(
           start: null,
           end: null
         }
-        if (mode !== 'alltime') newDateRange = createDateRangeFromMode(mode)
+        if (mode !== 'alltime')
+          newDateRange = createPeriodDateRange(mode, new Date())
 
         set({ dateRange: newDateRange })
       },
