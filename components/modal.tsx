@@ -95,7 +95,7 @@ export function Modal({
           </TouchableWithoutFeedback>
           <GestureDetector gesture={panGesture}>
             <Animated.View
-              className="max-h-[80%] min-h-[50%] rounded-t-3xl bg-background"
+              className="h-[80%] rounded-t-3xl bg-background"
               style={[
                 {
                   paddingBottom: insets.bottom + 16
