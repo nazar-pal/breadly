@@ -1,12 +1,12 @@
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, asc, eq, gte, lte, sum } from 'drizzle-orm'
-import { currencies } from '../schema/table_1_currencies'
-import { userPreferences } from '../schema/table_3_user-preferences'
-import { accounts } from '../schema/table_6_accounts'
-import { transactions } from '../schema/table_7_transactions'
-import { db } from '../system'
-import { categories, CATEGORY_TYPE } from './../schema/table_4_categories'
+import { currencies } from '../../schema/table_1_currencies'
+import { userPreferences } from '../../schema/table_3_user-preferences'
+import { categories, CATEGORY_TYPE } from '../../schema/table_4_categories'
+import { accounts } from '../../schema/table_6_accounts'
+import { transactions } from '../../schema/table_7_transactions'
+import { db } from '../../system'
 
 export function useGetTransaction({
   userId,

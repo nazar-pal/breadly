@@ -2,10 +2,10 @@ import { asyncTryCatch } from '@/lib/utils/index'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod/v4'
-import { userPreferences } from '../schema/table_3_user-preferences'
-import { db } from '../system'
-import { categories } from './../schema/table_4_categories'
-import { accounts } from './../schema/table_6_accounts'
+import { userPreferences } from '../../schema/table_3_user-preferences'
+import { categories } from '../../schema/table_4_categories'
+import { accounts } from '../../schema/table_6_accounts'
+import { db } from '../../system'
 
 // -------------------- Category Mutations --------------------
 
