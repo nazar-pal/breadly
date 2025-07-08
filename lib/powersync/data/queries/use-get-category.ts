@@ -11,11 +11,13 @@ export function useGetCategory({
   userId: string
   categoryId: string
 }) {
-  const query = db
-    .select()
-    .from(categories)
-    .where(and(eq(categories.userId, userId), eq(categories.id, categoryId)))
-    .limit(1)
+  const query = db.query.categories.findMany({
+    where: and(eq(categories.userId, userId), eq(categories.id, categoryId)),
+    with: {
+      budgets: true
+    },
+    limit: 1
+  })
 
   const result = useQuery(toCompilableQuery(query))
 

@@ -1,7 +1,13 @@
 import { useUserSession } from '@/lib/hooks'
 import { Check } from '@/lib/icons'
-import { createCategory, updateCategory } from '@/lib/powersync/data/mutations'
+import {
+  createCategory,
+  createOrUpdateBudget,
+  updateCategory
+} from '@/lib/powersync/data/mutations'
 import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
+import { BudgetSelectSQLite } from '@/lib/powersync/schema/table_5_budgets'
+import { randomUUID } from 'expo-crypto'
 import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -12,10 +18,16 @@ interface CategoryFormData {
   name: string
   description: string
   selectedIcon: IconName
+  monthlyBudget: string
+}
+
+// Type for category with budgets included (from useGetCategories query)
+type CategoryWithBudgets = CategorySelectSQLite & {
+  budgets?: BudgetSelectSQLite[]
 }
 
 interface CategoryFormProps {
-  category?: CategorySelectSQLite
+  category?: CategoryWithBudgets
   categoryType: 'income' | 'expense'
 }
 
@@ -51,7 +63,11 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
     defaultValues: {
       name: isEditMode && category ? category.name : '',
       description: isEditMode && category ? category.description || '' : '',
-      selectedIcon: getInitialIcon()
+      selectedIcon: getInitialIcon(),
+      monthlyBudget:
+        isEditMode && category && category.budgets?.[0]?.amount
+          ? category.budgets[0].amount.toString()
+          : ''
     }
   })
 
@@ -65,12 +81,14 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
       setValue('name', category.name)
       setValue('description', category.description || '')
       setValue('selectedIcon', initialIcon)
+      setValue('monthlyBudget', category.budgets?.[0]?.amount?.toString() || '')
     } else {
       // Reset form for create mode
       reset({
         name: '',
         description: '',
-        selectedIcon: initialIcon
+        selectedIcon: initialIcon,
+        monthlyBudget: ''
       })
     }
   }, [category, isEditMode, categoryType, setValue, reset])
@@ -79,6 +97,8 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
     if (!data.name.trim()) return
 
     try {
+      let categoryId: string
+
       if (isEditMode && category) {
         // Update existing category
         await updateCategory({
@@ -90,17 +110,38 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
             icon: selectedIcon as string
           }
         })
+        categoryId = category.id
       } else {
-        // Create new category
-        await createCategory({
+        // Create new category with pre-generated ID
+        categoryId = randomUUID()
+        const [error] = await createCategory({
           userId,
           data: {
+            id: categoryId,
             name: data.name.trim(),
             description: data.description.trim() || '',
             icon: selectedIcon as string,
             type: categoryType
           }
         })
+
+        if (error) {
+          console.error('Error creating category:', error)
+          return
+        }
+      }
+
+      // Handle budget creation/update if amount is provided
+      if (data.monthlyBudget && data.monthlyBudget.trim() !== '') {
+        const budgetAmount = parseFloat(data.monthlyBudget.trim())
+        if (!isNaN(budgetAmount) && budgetAmount > 0) {
+          await createOrUpdateBudget({
+            userId,
+            categoryId,
+            amount: budgetAmount,
+            startDate: new Date()
+          })
+        }
       }
 
       // Reset form and close modal
@@ -182,6 +223,38 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
             )}
           />
         </View>
+
+        {/* Monthly Budget Limit - Only show for expense categories */}
+        {categoryType === 'expense' && (
+          <View>
+            <Text className="mb-3 text-sm font-semibold text-foreground">
+              Monthly Spend Limit
+            </Text>
+            <Controller
+              control={control}
+              name="monthlyBudget"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <TextInput
+                    className="rounded-xl border border-border bg-card px-4 py-4 text-base text-foreground"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter monthly limit (optional)"
+                    placeholderTextColor="#94A3B8"
+                    keyboardType="numeric"
+                  />
+                  {value && value.trim() !== '' && (
+                    <Text className="mt-1 text-xs text-muted-foreground">
+                      You&apos;ll be notified when spending approaches this
+                      limit
+                    </Text>
+                  )}
+                </View>
+              )}
+            />
+          </View>
+        )}
 
         {/* Icon Selection */}
         <CategoryFormIcon
