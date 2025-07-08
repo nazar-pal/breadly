@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useUserSession } from '@/lib/hooks'
 import { useTransactions } from '@/lib/hooks/useTransactions'
-import { MessageSquare, Save } from '@/lib/icons'
+import { ChevronDown, CreditCard, MessageSquare, Save, Tag } from '@/lib/icons'
 import { useGetAccounts, useGetCategories } from '@/lib/powersync/data/queries'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
@@ -142,31 +142,73 @@ export function QuickCalculator({
   return (
     <View className="bg-secondary p-4">
       {/* Header */}
-      <View className="mb-6 flex-row items-center justify-between">
-        <View className="flex-row items-center gap-2">
+      <View className="mb-6">
+        {/* Category and Account Selection */}
+        <View className="mb-4 flex-row gap-2">
+          {/* Category Selector */}
           <Pressable
-            className="rounded bg-card px-3 py-2 active:bg-muted"
+            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-3 shadow-sm active:bg-muted/50"
             onPress={() => setShowCategoryModal(true)}
           >
-            <Text className="text-lg font-semibold text-foreground">
-              {selectedCategory?.name || 'Select Category'}
-            </Text>
+            <View className="flex-1 flex-row items-center">
+              <View className="mr-2 rounded-lg bg-primary/10 p-1.5">
+                <Tag size={16} className="text-primary" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Category
+                </Text>
+                <Text
+                  className="text-sm font-semibold text-foreground"
+                  numberOfLines={1}
+                >
+                  {selectedCategory?.name || 'Select Category'}
+                </Text>
+              </View>
+            </View>
+            <ChevronDown size={16} className="ml-1 text-muted-foreground" />
           </Pressable>
+
+          {/* Account Selector */}
           <Pressable
-            className="rounded bg-card px-3 py-2 active:bg-muted"
+            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-3 shadow-sm active:bg-muted/50"
             onPress={() => setShowAccountModal(true)}
           >
-            <Text className="text-sm font-medium text-foreground">
-              {selectedAccount?.name || 'Select Account'}
-            </Text>
+            <View className="flex-1 flex-row items-center">
+              <View className="mr-2 rounded-lg bg-primary/10 p-1.5">
+                <CreditCard size={16} className="text-primary" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Account
+                </Text>
+                <Text
+                  className="text-sm font-semibold text-foreground"
+                  numberOfLines={1}
+                >
+                  {selectedAccount?.name || 'Select Account'}
+                </Text>
+              </View>
+            </View>
+            <ChevronDown size={16} className="ml-1 text-muted-foreground" />
           </Pressable>
         </View>
-        <Pressable
-          onPress={() => setShowCommentModal(true)}
-          className="p-2 active:opacity-70"
-        >
-          <MessageSquare size={24} className="text-muted-foreground" />
-        </Pressable>
+
+        {/* Comment Button */}
+        <View className="flex-row justify-end">
+          <Pressable
+            onPress={() => setShowCommentModal(true)}
+            className="flex-row items-center rounded-lg bg-card px-3 py-2 active:bg-muted/50"
+          >
+            <MessageSquare size={18} className="mr-2 text-muted-foreground" />
+            <Text className="text-sm font-medium text-muted-foreground">
+              {comment ? 'Edit Note' : 'Add Note'}
+            </Text>
+            {comment && (
+              <View className="ml-2 h-2 w-2 rounded-full bg-primary" />
+            )}
+          </Pressable>
+        </View>
       </View>
 
       {/* Display */}
