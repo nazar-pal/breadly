@@ -15,7 +15,7 @@ export function useGetTransaction({
   userId: string
   transactionId: string
 }) {
-  const query = db.query.transactions.findFirst({
+  const query = db.query.transactions.findMany({
     where: and(
       eq(transactions.userId, userId),
       eq(transactions.id, transactionId)
@@ -30,7 +30,8 @@ export function useGetTransaction({
           attachment: true
         }
       }
-    }
+    },
+    limit: 1
   })
 
   const result = useQuery(toCompilableQuery(query))
@@ -65,11 +66,12 @@ export function useGetAccount({
   userId: string
   accountId: string
 }) {
-  const query = db.query.accounts.findFirst({
+  const query = db.query.accounts.findMany({
     where: and(eq(accounts.userId, userId), eq(accounts.id, accountId)),
     with: {
       currency: true
-    }
+    },
+    limit: 1
   })
 
   const result = useQuery(toCompilableQuery(query))
@@ -165,11 +167,12 @@ export function useSumTransactions({
 }
 
 export function useGetUserPreferences({ userId }: { userId: string }) {
-  const query = db.query.userPreferences.findFirst({
+  const query = db.query.userPreferences.findMany({
     where: eq(userPreferences.userId, userId),
     with: {
       defaultCurrency: true
-    }
+    },
+    limit: 1
   })
 
   const result = useQuery(toCompilableQuery(query))
