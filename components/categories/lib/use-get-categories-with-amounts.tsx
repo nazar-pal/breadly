@@ -15,7 +15,8 @@ export function useGetCategoriesWithAmounts(): CategoryWithAmounts[] {
 
   const { data: categories } = useGetCategories({
     userId,
-    type
+    type,
+    parentId: null // Only get parent categories (no subcategories)
   })
 
   const categoriesWithAmounts = categories.map(category => ({

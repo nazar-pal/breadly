@@ -8,6 +8,7 @@ import {
   TrendingUp
 } from '@/lib/icons'
 import {
+  useGetCategories,
   useGetCategory,
   useSumTransactions
 } from '@/lib/powersync/data/queries'
@@ -41,6 +42,13 @@ export function CategoryDetailsModal() {
     userId,
     categoryId: categoryDetailsSelectedCategory ?? '',
     type: category?.[0]?.type || 'expense'
+  })
+
+  // Get subcategories for this category using the unified hook
+  const { data: subcategories } = useGetCategories({
+    userId,
+    type: category?.[0]?.type || 'expense',
+    parentId: categoryDetailsSelectedCategory ?? ''
   })
 
   const categoryData = category?.[0]
@@ -146,6 +154,56 @@ export function CategoryDetailsModal() {
               </View>
             </View>
           </Card>
+
+          {/* Subcategories Section */}
+          {subcategories && subcategories.length > 0 && (
+            <Card className="mb-6 p-4">
+              <View className="mb-4 flex-row items-center gap-2">
+                <Tag size={18} className="text-primary" />
+                <Text className="text-base font-semibold text-foreground">
+                  Subcategories ({subcategories.length})
+                </Text>
+              </View>
+
+              <View className="gap-3">
+                {subcategories.map((subcategory: any, index: number) => {
+                  const subcategoryAmount = subcategory.transactions.reduce(
+                    (acc: number, tx: any) => acc + tx.amount,
+                    0
+                  )
+
+                  return (
+                    <View key={subcategory.id}>
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-1">
+                          <Text className="text-sm font-medium text-foreground">
+                            {subcategory.name}
+                          </Text>
+                          {subcategory.description && (
+                            <Text className="mt-1 text-xs text-muted-foreground">
+                              {subcategory.description}
+                            </Text>
+                          )}
+                        </View>
+                        <Text
+                          className={`text-sm font-semibold ${
+                            categoryData.type === 'income'
+                              ? 'text-income'
+                              : 'text-expense'
+                          }`}
+                        >
+                          ${subcategoryAmount.toFixed(2)}
+                        </Text>
+                      </View>
+                      {index < subcategories.length - 1 && (
+                        <Separator className="mt-3" />
+                      )}
+                    </View>
+                  )
+                })}
+              </View>
+            </Card>
+          )}
 
           {/* Budget Progress Card */}
           {categoryData?.type === 'expense' && monthlyBudget && (
