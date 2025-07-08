@@ -1,8 +1,10 @@
+import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import React from 'react'
 import { ScrollView } from 'react-native'
 import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
+import { CategoryCardExtended } from './category-card-extended'
 
 interface Props {
   categoryType: 'income' | 'expense'
@@ -13,6 +15,7 @@ interface Props {
 
 export function CategoryCardsGrid({ isEditMode, onPress, onLongPress }: Props) {
   const categories = useGetCategoriesWithAmounts()
+  const { viewType } = useCategoryViewStore()
 
   return (
     <ScrollView
@@ -25,8 +28,12 @@ export function CategoryCardsGrid({ isEditMode, onPress, onLongPress }: Props) {
       }}
     >
       {categories.map(category => {
+        // Choose the appropriate card component based on view type
+        const CardComponent =
+          viewType === 'extended' ? CategoryCardExtended : CategoryCard
+
         return (
-          <CategoryCard
+          <CardComponent
             key={category.id}
             category={category}
             isEditMode={isEditMode}

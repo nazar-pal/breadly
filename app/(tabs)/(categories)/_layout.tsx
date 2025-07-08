@@ -1,5 +1,6 @@
 import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CategoriesHeaderNavBar } from '@/components/categories/categories-header-nav-bar'
+import { CategoryViewToggle } from '@/components/categories/category-view-toggle'
 import { CalculatorModal } from '@/components/categories/modal-add-transaction'
 import { CategoryDetailsModal } from '@/components/categories/modal-category-details'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
@@ -43,6 +44,7 @@ export default function CategoriesLayout() {
           <CategoriesHeader />
           <CategoriesHeaderNavBar />
         </View>
+        <CategoryViewToggle />
         <Slot />
         <CalculatorModal />
         <CategoryDetailsModal />
