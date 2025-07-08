@@ -1,11 +1,18 @@
-import React, { useEffect } from 'react'
-import { Modal as RNModal, TouchableWithoutFeedback, View } from 'react-native'
+import { cn } from '@/lib/utils/cn'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import {
+  Modal as RNModal,
+  ModalProps as RNModalProps,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native'
 import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView
 } from 'react-native-gesture-handler'
 import Animated, {
+  interpolate,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -14,99 +21,215 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+// Animation constants for better maintainability
+const ANIMATION_CONFIG = {
+  DISMISS_THRESHOLD: 120,
+  VELOCITY_THRESHOLD: 800,
+  FADE_DISTANCE: 200,
+  FADE_OPACITY: 0.3,
+  CLOSE_DURATION: 200,
+  SPRING_CONFIG: { damping: 20, stiffness: 180 }
+} as const
+
+// Custom props that are specific to our enhanced modal
+interface CustomModalProps {
+  /** Content to render inside the modal */
+  children: React.ReactNode
+  /** Controls modal visibility */
+  isVisible: boolean
+  /** Callback fired when modal should close */
+  onClose: () => void
+  /** Custom className for the modal container */
+  className?: string
+  /** Custom className for the backdrop */
+  backdropClassName?: string
+  /** Custom className for the drag indicator */
+  dragIndicatorClassName?: string
+  /** Modal height as percentage (0-1) or fixed value */
+  height?: number | `${number}%`
+  /** Whether to show the drag indicator */
+  showDragIndicator?: boolean
+  /** Whether to enable swipe to dismiss */
+  enableSwipeToClose?: boolean
+  /** Whether to enable tap outside to close */
+  enableBackdropClose?: boolean
+  /** Custom backdrop opacity (0-1) */
+  backdropOpacity?: number
+  /** Custom animation duration in ms */
+  animationDuration?: number
+  /** Custom close threshold for swipe gesture */
+  closeThreshold?: number
+  /** Additional safe area padding */
+  additionalSafeAreaPadding?: number
+  /** Accessibility label for the backdrop */
+  backdropAccessibilityLabel?: string
+}
+
+// Combine custom props with all native Modal props
+export interface ModalProps
+  extends CustomModalProps,
+    Omit<RNModalProps, 'visible' | 'children' | 'onRequestClose'> {}
+
 export function Modal({
   children,
   isVisible,
-  onClose
-}: {
-  children: React.ReactNode
-  isVisible: boolean
-  onClose: () => void
-}) {
+  onClose,
+  className,
+  backdropClassName,
+  dragIndicatorClassName,
+  height = '80%',
+  showDragIndicator = true,
+  enableSwipeToClose = true,
+  enableBackdropClose = true,
+  backdropOpacity = 0.1,
+  animationDuration = ANIMATION_CONFIG.CLOSE_DURATION,
+  closeThreshold = ANIMATION_CONFIG.DISMISS_THRESHOLD,
+  additionalSafeAreaPadding = 16,
+  backdropAccessibilityLabel = 'Close modal',
+  // Spread all other native Modal props
+  ...nativeModalProps
+}: ModalProps) {
   const insets = useSafeAreaInsets()
 
   // Animation values for swipe to dismiss
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
 
-  const animateClose = () => {
+  // Memoized height calculation
+  const modalHeight = useMemo(() => {
+    if (typeof height === 'string' && height.endsWith('%')) {
+      const percentage = parseFloat(height.replace('%', '')) / 100
+      return `${percentage * 100}%`
+    }
+    if (typeof height === 'number') {
+      return height <= 1 ? `${height * 100}%` : height
+    }
+    return '80%'
+  }, [height])
+
+  // Optimized close handler
+  const handleClose = useCallback(() => {
     'worklet'
     runOnJS(onClose)()
-  }
+  }, [onClose])
 
-  const panGesture = Gesture.Pan()
-    .onBegin(() => {
-      'worklet'
-      // Initial touch
-    })
-    .onUpdate(event => {
-      'worklet'
-      const newTranslateY = Math.max(0, event.translationY)
-      translateY.value = newTranslateY
+  // Gesture handler with improved performance
+  const panGesture = useMemo(() => {
+    if (!enableSwipeToClose) {
+      return Gesture.Pan().enabled(false)
+    }
 
-      // Fade out as user drags down
-      const progress = Math.min(newTranslateY / 200, 1)
-      opacity.value = 1 - progress * 0.3
-    })
-    .onEnd(event => {
-      'worklet'
-      const shouldClose = event.translationY > 120 || event.velocityY > 800
+    return Gesture.Pan()
+      .onBegin(() => {
+        'worklet'
+        // Reset any ongoing animations for responsive feel
+      })
+      .onUpdate(event => {
+        'worklet'
+        // Only allow downward swipes
+        const newTranslateY = Math.max(0, event.translationY)
+        translateY.value = newTranslateY
 
-      if (shouldClose) {
-        translateY.value = withTiming(500, { duration: 200 })
-        opacity.value = withTiming(0, { duration: 200 }, () => {
-          // Call JS to close modal after animation finishes
-          animateClose()
-        })
-      } else {
-        translateY.value = withSpring(0, { damping: 20, stiffness: 180 })
-        opacity.value = withSpring(1, { damping: 20, stiffness: 180 })
-      }
-    })
+        // Smooth fade out based on drag progress
+        const progress = Math.min(
+          newTranslateY / ANIMATION_CONFIG.FADE_DISTANCE,
+          1
+        )
+        opacity.value = 1 - progress * ANIMATION_CONFIG.FADE_OPACITY
+      })
+      .onEnd(event => {
+        'worklet'
+        const shouldClose =
+          event.translationY > closeThreshold ||
+          event.velocityY > ANIMATION_CONFIG.VELOCITY_THRESHOLD
 
+        if (shouldClose) {
+          // Animate out and close
+          translateY.value = withTiming(500, { duration: animationDuration })
+          opacity.value = withTiming(0, { duration: animationDuration }, () => {
+            handleClose()
+          })
+        } else {
+          // Spring back to original position
+          translateY.value = withSpring(0, ANIMATION_CONFIG.SPRING_CONFIG)
+          opacity.value = withSpring(1, ANIMATION_CONFIG.SPRING_CONFIG)
+        }
+      })
+  }, [enableSwipeToClose, closeThreshold, animationDuration, handleClose])
+
+  // Animated styles with improved interpolation
   const animatedModalStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
     opacity: opacity.value
   }))
 
-  // Reset shared values when modal becomes isVisible to avoid stale off-screen positions.
+  const animatedBackdropStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(opacity.value, [0, 1], [0, backdropOpacity])
+  }))
+
+  // Reset animation values when modal opens
   useEffect(() => {
     if (isVisible) {
       translateY.value = 0
       opacity.value = 1
     }
-  }, [isVisible])
+  }, [isVisible, translateY, opacity])
+
+  // Handle backdrop press
+  const handleBackdropPress = useCallback(() => {
+    if (enableBackdropClose) {
+      onClose()
+    }
+  }, [enableBackdropClose, onClose])
 
   return (
     <RNModal
-      visible={isVisible}
-      animationType="none"
       transparent={true}
+      animationType="slide"
+      {...nativeModalProps}
+      visible={isVisible}
       onRequestClose={onClose}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View className="flex-1 justify-end">
+          {/* Backdrop */}
           <TouchableWithoutFeedback
-            onPress={onClose}
+            onPress={handleBackdropPress}
             accessibilityRole="button"
-            accessibilityLabel="Close modal"
+            accessibilityLabel={backdropAccessibilityLabel}
+            disabled={!enableBackdropClose}
           >
-            <View className="absolute inset-0 bg-black/10" />
+            <Animated.View
+              className={cn('absolute inset-0 bg-black', backdropClassName)}
+              style={animatedBackdropStyle}
+            />
           </TouchableWithoutFeedback>
+
+          {/* Modal Content */}
           <GestureDetector gesture={panGesture}>
             <Animated.View
-              className="h-[80%] rounded-t-3xl bg-background"
+              className={cn('rounded-t-3xl bg-secondary', className)}
               style={[
                 {
-                  paddingBottom: insets.bottom + 16
+                  height: modalHeight as any,
+                  paddingBottom: insets.bottom + additionalSafeAreaPadding
                 },
                 animatedModalStyle
               ]}
             >
               {/* Drag Indicator */}
-              <View className="items-center py-3">
-                <View className="h-1 w-10 rounded-full bg-muted" />
-              </View>
+              {showDragIndicator && (
+                <View className="items-center py-3">
+                  <View
+                    className={cn(
+                      'h-1 w-10 rounded-full bg-secondary-foreground',
+                      dragIndicatorClassName
+                    )}
+                    accessibilityLabel="Drag to dismiss"
+                    accessibilityHint="Swipe down to close this modal"
+                  />
+                </View>
+              )}
 
               {children}
             </Animated.View>
@@ -116,3 +239,6 @@ export function Modal({
     </RNModal>
   )
 }
+
+// Export default for convenient importing
+export default Modal
