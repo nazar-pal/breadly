@@ -25,7 +25,7 @@ interface TransactionWithRelations {
 }
 
 // Transform database transaction to Operation type expected by OperationListItem
-export const transformTransactionToOperation = (
+const transformTransactionToOperation = (
   tx: TransactionWithRelations
 ): Operation => {
   const baseOperation = {
@@ -70,48 +70,6 @@ export const transformTransactionsToOperations = (
   transactions: TransactionWithRelations[]
 ): Operation[] => {
   return transactions.map(transformTransactionToOperation)
-}
-
-export const filterOperationsByType = (
-  operations: Operation[],
-  type: string
-) => {
-  switch (type) {
-    case 'expense':
-      return operations.filter(op => op.type === 'expense')
-    case 'income':
-      return operations.filter(op => op.type === 'income')
-    case 'transfer':
-      return operations.filter(
-        op =>
-          op.type === 'other' &&
-          'transactionType' in op &&
-          op.transactionType === 'exchange'
-      )
-    default:
-      return operations
-  }
-}
-
-export const getTodaysOperations = (operations: Operation[]): Operation[] => {
-  const today = new Date().toISOString().split('T')[0]
-  return operations.filter(operation => operation.date === today)
-}
-
-export const calculateTotals = (operations: Operation[]) => {
-  const expenses = filterOperationsByType(operations, 'expense')
-  const incomes = filterOperationsByType(operations, 'income')
-
-  const totalExpenses = expenses.reduce((sum, op) => sum + op.amount, 0)
-  const totalIncome = incomes.reduce((sum, op) => sum + op.amount, 0)
-  const netAmount = totalIncome - totalExpenses
-
-  return {
-    expenses: totalExpenses,
-    income: totalIncome,
-    net: netAmount,
-    count: operations.length
-  }
 }
 
 export type { TransactionWithRelations }
