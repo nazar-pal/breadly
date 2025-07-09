@@ -13,7 +13,14 @@ import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { CategoryFormIcon, IconName } from './category-form-icon'
+import {
+  ExpenseIconName,
+  expenseIcons,
+  IconName,
+  IncomeIconName,
+  incomeIcons
+} from './category-form-icon'
+import { IconSelectionModal } from './modal-icon-selection'
 
 interface SubcategoryData {
   id?: string // For existing subcategories
@@ -45,7 +52,13 @@ function getDefaultIcon(
   categoryType: 'income' | 'expense'
 ): IconName {
   if (category?.icon) return category.icon as IconName
-  return (categoryType === 'income' ? 'PiggyBank' : 'Coffee') as IconName
+
+  // Use specific icons that we know exist in each icon set
+  if (categoryType === 'income') {
+    return 'PiggyBank' as IncomeIconName
+  } else {
+    return 'Coffee' as ExpenseIconName
+  }
 }
 
 export function CategoryForm({ category, categoryType }: CategoryFormProps) {
@@ -67,6 +80,9 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
   const [selectedIcon, setSelectedIcon] = useState<IconName>(() =>
     getInitialIcon()
   )
+
+  // State for icon selection modal
+  const [isIconModalVisible, setIsIconModalVisible] = useState(false)
 
   const {
     control,
@@ -518,13 +534,50 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
         </View>
 
         {/* Icon Selection */}
-        <CategoryFormIcon
-          selectedIcon={selectedIcon}
-          onIconSelect={iconName => {
-            setSelectedIcon(iconName)
-            setValue('selectedIcon', iconName)
-          }}
-        />
+        <View>
+          <Text className="mb-3 text-sm font-semibold text-foreground">
+            Icon
+          </Text>
+          <Pressable
+            onPress={() => setIsIconModalVisible(true)}
+            className="rounded-xl border border-border bg-card p-4"
+          >
+            <View className="flex-row items-center justify-between">
+              <Text className="text-sm text-muted-foreground">
+                Choose an icon for your category
+              </Text>
+              <View className="flex-row items-center gap-2">
+                <View
+                  className="h-8 w-8 items-center justify-center rounded-lg border border-border"
+                  style={{
+                    backgroundColor:
+                      categoryType === 'income'
+                        ? 'rgba(16, 185, 129, 0.1)'
+                        : 'rgba(99, 102, 241, 0.1)'
+                  }}
+                >
+                  {(() => {
+                    const iconSet =
+                      categoryType === 'income' ? incomeIcons : expenseIcons
+                    const IconComponent =
+                      iconSet[selectedIcon as keyof typeof iconSet]
+                    return IconComponent ? (
+                      <IconComponent
+                        size={16}
+                        color={
+                          categoryType === 'income' ? '#10B981' : '#6366F1'
+                        }
+                      />
+                    ) : null
+                  })()}
+                </View>
+                <Text className="text-xs text-muted-foreground">
+                  Tap to change
+                </Text>
+              </View>
+            </View>
+          </Pressable>
+        </View>
       </ScrollView>
 
       {/* Footer */}
@@ -551,6 +604,18 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
           </Text>
         </Pressable>
       </View>
+
+      {/* Icon Selection Modal */}
+      <IconSelectionModal
+        isVisible={isIconModalVisible}
+        onClose={() => setIsIconModalVisible(false)}
+        selectedIcon={selectedIcon}
+        onIconSelect={(iconName: IconName) => {
+          setSelectedIcon(iconName)
+          setValue('selectedIcon', iconName)
+        }}
+        categoryType={categoryType}
+      />
     </>
   )
 }
