@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useUserSession } from '@/lib/hooks'
-import { useTransactions } from '@/lib/hooks/useTransactions'
 import { ChevronDown, CreditCard, MessageSquare, Save, Tag } from '@/lib/icons'
+import { createTransaction } from '@/lib/powersync/data/mutations'
 import { useGetAccounts, useGetCategories } from '@/lib/powersync/data/queries'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
@@ -40,7 +40,7 @@ export function QuickCalculator({
     userId,
     accountType: 'payment'
   })
-  const { createTransaction } = useTransactions()
+  // Transaction mutation will be called directly
 
   // Find selected category and account
   const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
@@ -117,18 +117,27 @@ export function QuickCalculator({
 
   const handleSubmit = async () => {
     const amount = parseFloat(currentInput)
-    if (amount > 0 && selectedAccount && selectedCategory) {
+    if (amount > 0 && selectedAccount && selectedCategory && userId) {
       setIsSubmitting(true)
       try {
-        await createTransaction({
-          type,
-          accountId: selectedAccount.id,
-          categoryId: selectedCategory.id,
-          amount: amount,
-          currencyId: selectedAccount.currencyId,
-          txDate: new Date(),
-          notes: comment || undefined
+        const [error] = await createTransaction({
+          userId,
+          data: {
+            type,
+            accountId: selectedAccount.id,
+            categoryId: selectedCategory.id,
+            amount: amount,
+            currencyId: selectedAccount.currencyId,
+            txDate: new Date(),
+            notes: comment || null,
+            createdAt: new Date()
+          }
         })
+
+        if (error) {
+          console.error('Failed to create transaction:', error)
+          throw error
+        }
 
         onClose()
       } catch (error) {

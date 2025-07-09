@@ -1,49 +1,60 @@
 import { OperationListItem } from '@/components/accounts/operation-list-item'
 import { Card, CardContent } from '@/components/ui/card'
-import { useTransactions } from '@/lib/hooks/useTransactions'
-import { cn } from '@/lib/utils'
-import React, { useMemo, useState } from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { useUserSession } from '@/lib/hooks'
+import { useGetTransactions } from '@/lib/powersync/data/queries'
+import { transformTransactionsToOperations } from '@/lib/powersync/data/queries/utils/transform-transactions'
+import React from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-type FilterType = 'all' | 'expense' | 'income' | 'transfer'
 
 export default function OperationsScreen() {
   const insets = useSafeAreaInsets()
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
+  const { userId } = useUserSession()
 
-  // Use the new transactions hook
+  // Calculate date ranges
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  // Get today's transactions
   const {
-    operations,
-    expenses,
-    incomes,
-    transfers,
-    todaysOperations,
-    isLoading,
-    error
-  } = useTransactions()
+    data: todaysTransactionsData = [],
+    isLoading: isLoadingToday,
+    error: todayError
+  } = useGetTransactions({
+    userId: userId || '',
+    dateFrom: today,
+    dateTo: tomorrow
+  })
 
-  // Filter operations based on active filter
-  const filteredOperations = useMemo(() => {
-    switch (activeFilter) {
-      case 'expense':
-        return expenses
-      case 'income':
-        return incomes
-      case 'transfer':
-        return transfers
-      default:
-        return operations
-    }
-  }, [activeFilter, operations, expenses, incomes, transfers])
+  // Get all transactions before today
+  const {
+    data: previousTransactionsData = [],
+    isLoading: isLoadingPrevious,
+    error: previousError
+  } = useGetTransactions({
+    userId: userId || '',
+    dateTo: yesterday
+  })
 
-  // Calculate counts for filter buttons
-  const filterButtons = [
-    { key: 'all', label: 'All', count: operations.length },
-    { key: 'expense', label: 'Expenses', count: expenses.length },
-    { key: 'income', label: 'Income', count: incomes.length },
-    { key: 'transfer', label: 'Transfers', count: transfers.length }
-  ]
+  // Transform data to operations
+  const todaysOperations = transformTransactionsToOperations(
+    todaysTransactionsData
+  )
+  const previousOperations = transformTransactionsToOperations(
+    previousTransactionsData
+  )
+
+  // Combine all operations
+  const allOperations = [...todaysOperations, ...previousOperations]
+
+  const isLoading = isLoadingToday || isLoadingPrevious
+  const error = todayError || previousError
 
   // Show loading state
   if (isLoading) {
@@ -69,37 +80,6 @@ export default function OperationsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Filter Tabs */}
-      <View className="mb-4 px-4">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 8 }}
-        >
-          {filterButtons.map(filter => (
-            <Pressable
-              key={filter.key}
-              className={cn(
-                'mr-2 min-w-[80px] items-center rounded-full px-4 py-2',
-                activeFilter === filter.key ? 'bg-primary' : 'bg-secondary'
-              )}
-              onPress={() => setActiveFilter(filter.key as FilterType)}
-            >
-              <Text
-                className={cn(
-                  'text-sm font-medium',
-                  activeFilter === filter.key
-                    ? 'text-primary-foreground'
-                    : 'text-foreground'
-                )}
-              >
-                {filter.label} ({filter.count})
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="px-4"
@@ -122,19 +102,17 @@ export default function OperationsScreen() {
         {/* All Operations */}
         <View className="mb-6">
           <Text className="mb-3 text-lg font-semibold text-foreground">
-            {activeFilter === 'all'
-              ? 'All Operations'
-              : `${filterButtons.find(f => f.key === activeFilter)?.label} Operations`}
+            All Operations
           </Text>
-          {filteredOperations.length > 0 ? (
-            filteredOperations.map(operation => (
+          {allOperations.length > 0 ? (
+            allOperations.map(operation => (
               <OperationListItem key={operation.id} operation={operation} />
             ))
           ) : (
             <Card>
               <CardContent className="p-4">
                 <Text className="text-center text-muted-foreground">
-                  No transactions found for the selected filter
+                  No transactions found
                 </Text>
               </CardContent>
             </Card>
