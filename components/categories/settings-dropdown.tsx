@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
-import { SquarePen } from '@/lib/icons'
-import { Link } from 'expo-router'
+import { Settings } from '@/lib/icons'
 import React from 'react'
+import { useSettingsModalStore } from './lib/settings-modal-store'
 
 export function SettingsDropdown() {
+  const { open } = useSettingsModalStore()
+
   return (
-    <Link href="/categories/edit/expense" asChild>
-      <Button variant="ghost" size="icon" className="mr-4">
-        <SquarePen size={24} className="text-foreground" />
-      </Button>
-    </Link>
+    <Button variant="ghost" size="icon" className="mr-4" onPress={open}>
+      <Settings size={24} className="text-foreground" />
+    </Button>
   )
 }
