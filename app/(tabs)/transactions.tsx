@@ -2,7 +2,6 @@ import { OperationListItem } from '@/components/accounts/operation-list-item'
 import { Card, CardContent } from '@/components/ui/card'
 import { useUserSession } from '@/lib/hooks'
 import { useGetTransactions } from '@/lib/powersync/data/queries'
-import { transformTransactionsToOperations } from '@/lib/powersync/data/queries/utils/transform-transactions'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -42,16 +41,12 @@ export default function OperationsScreen() {
     dateTo: yesterday
   })
 
-  // Transform data to operations
-  const todaysOperations = transformTransactionsToOperations(
-    todaysTransactionsData
-  )
-  const previousOperations = transformTransactionsToOperations(
-    previousTransactionsData
-  )
+  // Use transaction data directly
+  const todaysTransactions = todaysTransactionsData
+  const previousTransactions = previousTransactionsData
 
-  // Combine all operations
-  const allOperations = [...todaysOperations, ...previousOperations]
+  // Combine all transactions
+  const allTransactions = [...todaysTransactions, ...previousTransactions]
 
   const isLoading = isLoadingToday || isLoadingPrevious
   const error = todayError || previousError
@@ -87,26 +82,26 @@ export default function OperationsScreen() {
           paddingBottom: insets.bottom + 32
         }}
       >
-        {/* Today's Operations */}
-        {todaysOperations.length > 0 && (
+        {/* Today's Transactions */}
+        {todaysTransactions.length > 0 && (
           <View className="mb-6">
             <Text className="mb-3 text-lg font-semibold text-foreground">
-              Today&apos;s Operations
+              Today&apos;s Transactions
             </Text>
-            {todaysOperations.map(operation => (
-              <OperationListItem key={operation.id} operation={operation} />
+            {todaysTransactions.map(transaction => (
+              <OperationListItem key={transaction.id} operation={transaction} />
             ))}
           </View>
         )}
 
-        {/* All Operations */}
+        {/* All Transactions */}
         <View className="mb-6">
           <Text className="mb-3 text-lg font-semibold text-foreground">
-            All Operations
+            All Transactions
           </Text>
-          {allOperations.length > 0 ? (
-            allOperations.map(operation => (
-              <OperationListItem key={operation.id} operation={operation} />
+          {allTransactions.length > 0 ? (
+            allTransactions.map(transaction => (
+              <OperationListItem key={transaction.id} operation={transaction} />
             ))
           ) : (
             <Card>

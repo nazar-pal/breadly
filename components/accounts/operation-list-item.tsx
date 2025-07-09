@@ -4,9 +4,6 @@ import { Link } from 'expo-router'
 import {
   ArrowRight,
   Calendar,
-  CreditCard,
-  Mic,
-  Receipt,
   RefreshCw,
   TrendingDown,
   TrendingUp
@@ -14,48 +11,34 @@ import {
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 
-export type OperationType = 'expense' | 'income' | 'debt' | 'other'
-
-interface BaseOperation {
+interface Transaction {
   id: string
+  type: 'expense' | 'income' | 'transfer'
   amount: number
-  category: string
-  date: string
-  description: string
-  hasPhoto?: boolean
-  hasVoice?: boolean
+  txDate: Date
+  notes: string | null
+  account: {
+    id: string
+    name: string
+    type: string
+  }
+  counterAccount?: {
+    id: string
+    name: string
+    type: string
+  } | null
+  category?: {
+    id: string
+    name: string
+    type: string
+    icon: string
+  } | null
 }
 
-interface ExpenseOperation extends BaseOperation {
-  type: 'expense'
-}
-
-interface IncomeOperation extends BaseOperation {
-  type: 'income'
-}
-
-interface DebtOperation extends BaseOperation {
-  type: 'debt'
-  debtType: 'paid' | 'received'
-  creditor?: string
-  debtor?: string
-}
-
-interface OtherOperation extends BaseOperation {
-  type: 'other'
-  transactionType: 'fee' | 'refund' | 'exchange'
-}
-
-type Operation =
-  | ExpenseOperation
-  | IncomeOperation
-  | DebtOperation
-  | OtherOperation
-
-export type { Operation }
+export type { Transaction }
 
 interface OperationCardProps {
-  operation: Operation
+  operation: Transaction
 }
 
 interface OperationConfig {
@@ -63,7 +46,7 @@ interface OperationConfig {
   colorClass: string
   bgColorClass: string
   prefix: string
-  subtext?: (operation: Operation) => string | null
+  subtext?: (transaction: Transaction) => string | null
 }
 
 const OPERATION_CONFIGS: Record<string, OperationConfig> = {
@@ -79,64 +62,24 @@ const OPERATION_CONFIGS: Record<string, OperationConfig> = {
     bgColorClass: 'bg-destructive/10',
     prefix: '-'
   },
-  'debt-paid': {
-    icon: TrendingDown,
-    colorClass: 'text-destructive',
-    bgColorClass: 'bg-destructive/10',
-    prefix: '-',
-    subtext: op =>
-      op.type === 'debt' && op.creditor
-        ? `Paid to ${op.creditor}`
-        : 'Debt Payment'
-  },
-  'debt-received': {
-    icon: TrendingUp,
-    colorClass: 'text-success',
-    bgColorClass: 'bg-success/10',
-    prefix: '+',
-    subtext: op =>
-      op.type === 'debt' && op.debtor
-        ? `Received from ${op.debtor}`
-        : 'Debt Received'
-  },
-  'other-fee': {
-    icon: CreditCard,
-    colorClass: 'text-primary',
-    bgColorClass: 'bg-primary/10',
-    prefix: '-',
-    subtext: () => 'Transaction Fee'
-  },
-  'other-refund': {
-    icon: TrendingUp,
-    colorClass: 'text-success',
-    bgColorClass: 'bg-success/10',
-    prefix: '+',
-    subtext: () => 'Refund Received'
-  },
-  'other-exchange': {
+  transfer: {
     icon: RefreshCw,
     colorClass: 'text-primary',
     bgColorClass: 'bg-primary/10',
     prefix: '-',
-    subtext: () => 'Currency Exchange'
+    subtext: tx =>
+      tx.counterAccount ? `Transfer to ${tx.counterAccount.name}` : 'Transfer'
   }
 }
 
-const getOperationConfig = (operation: Operation): OperationConfig => {
-  switch (operation.type) {
+const getOperationConfig = (transaction: Transaction): OperationConfig => {
+  switch (transaction.type) {
     case 'income':
       return OPERATION_CONFIGS.income
     case 'expense':
       return OPERATION_CONFIGS.expense
-    case 'debt':
-      return operation.debtType === 'paid'
-        ? OPERATION_CONFIGS['debt-paid']
-        : OPERATION_CONFIGS['debt-received']
-    case 'other':
-      return (
-        OPERATION_CONFIGS[`other-${operation.transactionType}`] ||
-        OPERATION_CONFIGS['other-fee']
-      )
+    case 'transfer':
+      return OPERATION_CONFIGS.transfer
     default:
       return OPERATION_CONFIGS.expense
   }
@@ -147,12 +90,15 @@ export function OperationListItem({ operation }: OperationCardProps) {
   const IconComponent = config.icon
   const subtext = config.subtext?.(operation)
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
     })
   }
+
+  const description = operation.notes || `${operation.type} transaction`
+  const categoryName = operation.category?.name || 'Uncategorized'
 
   return (
     <Link href={`/transactions/${operation.id}`} asChild>
@@ -175,7 +121,7 @@ export function OperationListItem({ operation }: OperationCardProps) {
                     className="mr-2 flex-1 text-sm font-medium text-foreground"
                     numberOfLines={1}
                   >
-                    {operation.description}
+                    {description}
                   </Text>
                   <Text
                     className={cn(
@@ -194,24 +140,19 @@ export function OperationListItem({ operation }: OperationCardProps) {
                         className="text-[11px] font-medium text-muted-foreground"
                         numberOfLines={1}
                       >
-                        {operation.category}
+                        {categoryName}
                       </Text>
                     </View>
                     <View className="flex-row items-center gap-1">
                       <Calendar size={12} className="text-muted-foreground" />
                       <Text className="text-[11px] text-muted-foreground">
-                        {formatDate(operation.date)}
+                        {formatDate(operation.txDate)}
                       </Text>
                     </View>
                   </View>
 
                   <View className="flex-row items-center">
-                    {operation.hasPhoto && (
-                      <Receipt size={14} className="text-muted-foreground" />
-                    )}
-                    {operation.hasVoice && (
-                      <Mic size={14} className="ml-1 text-muted-foreground" />
-                    )}
+                    {/* TODO: Add attachment support */}
                     <ArrowRight
                       size={14}
                       className="ml-1 text-muted-foreground"
