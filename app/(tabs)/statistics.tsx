@@ -6,7 +6,7 @@ import {
 } from '@/components/statistics'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { Calendar, DollarSign, TrendingUp } from '@/lib/icons'
+import { DollarSign, TrendingUp } from '@/lib/icons'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -16,18 +16,6 @@ export default function StatisticsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View className="border-b border-border/10 px-4 py-4">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-foreground">Statistics</Text>
-          <View className="rounded-full bg-primary/10 p-2">
-            <Calendar size={20} className="text-primary" />
-          </View>
-        </View>
-        <Text className="mt-1 text-sm text-muted-foreground">
-          Track your financial progress
-        </Text>
-      </View>
-
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
