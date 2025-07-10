@@ -1,7 +1,7 @@
 import { OperationListItem } from '@/components/accounts/operation-list-item'
-import { Card, CardContent } from '@/components/ui/card'
 import { useUserSession } from '@/lib/hooks'
 import { useGetTransactions } from '@/lib/powersync/data/queries'
+import { Link } from 'expo-router'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -21,35 +21,24 @@ export default function OperationsScreen() {
   yesterday.setDate(yesterday.getDate() - 1)
 
   // Get today's transactions
-  const {
-    data: todaysTransactionsData = [],
-    isLoading: isLoadingToday,
-    error: todayError
-  } = useGetTransactions({
-    userId: userId || '',
-    dateFrom: today,
-    dateTo: tomorrow
-  })
+  const { data: todaysTransactions, isLoading: isLoadingToday } =
+    useGetTransactions({
+      userId,
+      dateFrom: today,
+      dateTo: tomorrow
+    })
 
   // Get all transactions before today
-  const {
-    data: previousTransactionsData = [],
-    isLoading: isLoadingPrevious,
-    error: previousError
-  } = useGetTransactions({
-    userId: userId || '',
-    dateTo: yesterday
-  })
-
-  // Use transaction data directly
-  const todaysTransactions = todaysTransactionsData
-  const previousTransactions = previousTransactionsData
-
-  // Combine all transactions
-  const allTransactions = [...todaysTransactions, ...previousTransactions]
+  const { data: earlierTransactions, isLoading: isLoadingPrevious } =
+    useGetTransactions({
+      userId,
+      dateTo: yesterday
+    })
 
   const isLoading = isLoadingToday || isLoadingPrevious
-  const error = todayError || previousError
+
+  const hasToday = todaysTransactions.length > 0
+  const hasEarlier = earlierTransactions.length > 0
 
   // Show loading state
   if (isLoading) {
@@ -62,12 +51,19 @@ export default function OperationsScreen() {
     )
   }
 
-  // Show error state
-  if (error) {
+  // No transactions at all
+  if (!hasToday && !hasEarlier) {
     return (
-      <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-center text-destructive">
-          Error loading transactions: {error.message}
+      <View className="flex-1 items-center justify-center bg-background px-4">
+        <Text className="mb-2 text-center text-foreground">
+          You haven’t created any transactions yet.
+        </Text>
+        <Text className="text-center text-muted-foreground">
+          Head over to the{' '}
+          <Link href="/(tabs)/(categories)" className="text-primary underline">
+            Categories
+          </Link>{' '}
+          screen to add your first one!
         </Text>
       </View>
     )
@@ -77,42 +73,39 @@ export default function OperationsScreen() {
     <View className="flex-1 bg-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="px-4"
+        className="my-4 px-4"
         contentContainerStyle={{
           paddingBottom: insets.bottom + 32
         }}
       >
         {/* Today's Transactions */}
-        {todaysTransactions.length > 0 && (
+        <View className="mb-6">
+          <Text className="mb-3 text-lg font-semibold text-foreground">
+            Today&apos;s Transactions
+          </Text>
+
+          {hasToday ? (
+            todaysTransactions.map(tx => (
+              <OperationListItem key={tx.id} operation={tx} />
+            ))
+          ) : (
+            <Text className="text-muted-foreground">
+              Don&apos;t forget to input your transactions when you make them 📝
+            </Text>
+          )}
+        </View>
+
+        {/* Earlier Transactions */}
+        {hasEarlier && (
           <View className="mb-6">
             <Text className="mb-3 text-lg font-semibold text-foreground">
-              Today&apos;s Transactions
+              Earlier Transactions
             </Text>
-            {todaysTransactions.map(transaction => (
-              <OperationListItem key={transaction.id} operation={transaction} />
+            {earlierTransactions.map(tx => (
+              <OperationListItem key={tx.id} operation={tx} />
             ))}
           </View>
         )}
-
-        {/* All Transactions */}
-        <View className="mb-6">
-          <Text className="mb-3 text-lg font-semibold text-foreground">
-            All Transactions
-          </Text>
-          {allTransactions.length > 0 ? (
-            allTransactions.map(transaction => (
-              <OperationListItem key={transaction.id} operation={transaction} />
-            ))
-          ) : (
-            <Card>
-              <CardContent className="p-4">
-                <Text className="text-center text-muted-foreground">
-                  No transactions found
-                </Text>
-              </CardContent>
-            </Card>
-          )}
-        </View>
       </ScrollView>
     </View>
   )
