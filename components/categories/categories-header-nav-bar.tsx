@@ -1,5 +1,6 @@
 import { useUserSession } from '@/lib/hooks'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
+import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { useTheme } from '@react-navigation/native'
 import { Link } from 'expo-router'
 import React from 'react'
@@ -15,13 +16,19 @@ export function CategoriesHeaderNavBar({
   const activeCategoryType = useCategoryType()
   const { colors } = useTheme()
 
+  const { dateRange } = useCategoriesDateRangeState()
+
   const totalExpensesResult = useSumTransactions({
     userId,
-    type: 'expense'
+    type: 'expense',
+    transactionsFrom: dateRange.start ?? undefined,
+    transactionsTo: dateRange.end ?? undefined
   })
   const totalIncomeResult = useSumTransactions({
     userId,
-    type: 'income'
+    type: 'income',
+    transactionsFrom: dateRange.start ?? undefined,
+    transactionsTo: dateRange.end ?? undefined
   })
 
   const totalExpenses = Number(totalExpensesResult.data?.[0]?.totalAmount || 0)

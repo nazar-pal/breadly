@@ -103,11 +103,15 @@ export function CategoriesHeader() {
 
   const totalExpensesResult = useSumTransactions({
     userId,
-    type: 'expense'
+    type: 'expense',
+    transactionsFrom: dateRange.start ?? undefined,
+    transactionsTo: dateRange.end ?? undefined
   })
   const totalIncomeResult = useSumTransactions({
     userId,
-    type: 'income'
+    type: 'income',
+    transactionsFrom: dateRange.start ?? undefined,
+    transactionsTo: dateRange.end ?? undefined
   })
 
   const totalExpenses = Number(totalExpensesResult.data?.[0]?.totalAmount || 0)
