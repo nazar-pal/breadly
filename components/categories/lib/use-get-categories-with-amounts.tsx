@@ -9,14 +9,22 @@ export interface CategoryWithAmounts
   amount: number
 }
 
-export function useGetCategoriesWithAmounts(): CategoryWithAmounts[] {
+export function useGetCategoriesWithAmounts({
+  transactionsFrom,
+  transactionsTo
+}: {
+  transactionsFrom: Date | null
+  transactionsTo: Date | null
+}): CategoryWithAmounts[] {
   const { userId } = useUserSession()
   const type = useCategoryType()
 
   const { data: categories } = useGetCategories({
     userId,
     type,
-    parentId: null // Only get parent categories (no subcategories)
+    parentId: null, // Only get parent categories (no subcategories)
+    transactionsFrom: transactionsFrom ?? undefined,
+    transactionsTo: transactionsTo ?? undefined
   })
 
   const categoriesWithAmounts = categories.map(category => ({

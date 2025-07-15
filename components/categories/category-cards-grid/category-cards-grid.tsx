@@ -1,3 +1,4 @@
+import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import React from 'react'
 import { ScrollView } from 'react-native'
@@ -14,7 +15,12 @@ interface Props {
 }
 
 export function CategoryCardsGrid({ isEditMode, onPress, onLongPress }: Props) {
-  const categories = useGetCategoriesWithAmounts()
+  const { dateRange } = useCategoriesDateRangeState()
+
+  const categories = useGetCategoriesWithAmounts({
+    transactionsFrom: dateRange.start,
+    transactionsTo: dateRange.end
+  })
   const { viewType } = useCategoryViewStore()
 
   return (
