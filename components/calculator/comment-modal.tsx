@@ -4,14 +4,20 @@ import { Text } from '@/components/ui/text'
 import { Check } from '@/lib/icons'
 import React from 'react'
 import { Modal, Pressable, View } from 'react-native'
-import { CommentModalProps } from '../quick-calculator/types'
+
+interface Props {
+  visible: boolean
+  comment: string
+  onChangeComment: (comment: string) => void
+  onClose: () => void
+}
 
 export function CommentModal({
   visible,
   comment,
   onChangeComment,
   onClose
-}: CommentModalProps) {
+}: Props) {
   return (
     <Modal
       visible={visible}

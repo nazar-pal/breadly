@@ -7,15 +7,13 @@ import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './comment-modal'
 
-export function Calculator({
-  type,
-  isDisabled,
-  handleSubmit
-}: {
+interface Props {
   type: 'expense' | 'income'
   isDisabled: boolean
   handleSubmit: (amount: number, comment: string) => void
-}) {
+}
+
+export function Calculator({ type, isDisabled, handleSubmit }: Props) {
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
 

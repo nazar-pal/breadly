@@ -2,17 +2,19 @@ import { Text } from '@/components/ui/text'
 import React from 'react'
 import { Pressable } from 'react-native'
 
+interface Props {
+  label: string | React.ReactNode
+  onPress: () => void
+  variant?: 'default' | 'operation' | 'equal' | 'special'
+  isWide?: boolean
+}
+
 export function CalculatorButton({
   label,
   onPress,
   variant = 'default',
   isWide = false
-}: {
-  label: string | React.ReactNode
-  onPress: () => void
-  variant?: 'default' | 'operation' | 'equal' | 'special'
-  isWide?: boolean
-}) {
+}: Props) {
   const getButtonClasses = () => {
     const baseClasses =
       'h-[60px] items-center justify-center rounded-2xl shadow-sm'

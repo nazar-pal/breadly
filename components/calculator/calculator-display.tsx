@@ -1,15 +1,17 @@
 import { Text } from '@/components/ui/text'
 import { View } from 'react-native'
 
+interface Props {
+  comment: string
+  expression: string[]
+  currentInput: string
+}
+
 export function CalculatorDisplay({
   comment,
   expression,
   currentInput
-}: {
-  comment: string
-  expression: string[]
-  currentInput: string
-}) {
+}: Props) {
   const getDisplayExpression = (
     expression: string[],
     currentInput: string

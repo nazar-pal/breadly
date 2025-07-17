@@ -2,17 +2,19 @@ import React, { useState } from 'react'
 import { View } from 'react-native'
 import { CalculatorButton } from './calculator-button'
 
+interface Props {
+  currentInput: string
+  setCurrentInput: React.Dispatch<React.SetStateAction<string>>
+  expression: string[]
+  setExpression: React.Dispatch<React.SetStateAction<string[]>>
+}
+
 export function CalculatorKeypad({
   currentInput,
   setCurrentInput,
   expression,
   setExpression
-}: {
-  currentInput: string
-  setCurrentInput: React.Dispatch<React.SetStateAction<string>>
-  expression: string[]
-  setExpression: React.Dispatch<React.SetStateAction<string[]>>
-}) {
+}: Props) {
   const [isNewNumber, setIsNewNumber] = useState(true)
 
   const evaluateExpression = (exp: string[]): number => {
