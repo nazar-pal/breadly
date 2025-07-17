@@ -119,42 +119,50 @@ export function Modal({
       return Gesture.Pan().enabled(false)
     }
 
-    return Gesture.Pan()
-      .onBegin(() => {
-        'worklet'
-        // Reset any ongoing animations for responsive feel
-      })
-      .onUpdate(event => {
-        'worklet'
-        // Only allow downward swipes
-        const newTranslateY = Math.max(0, event.translationY)
-        translateY.value = newTranslateY
+    return (
+      Gesture.Pan()
+        // Only activate for downward swipes to allow horizontal scrolling in children
+        .activeOffsetY(20)
+        .onBegin(() => {
+          'worklet'
+          // Reset any ongoing animations for responsive feel
+        })
+        .onUpdate(event => {
+          'worklet'
+          // Only allow downward swipes
+          const newTranslateY = Math.max(0, event.translationY)
+          translateY.value = newTranslateY
 
-        // Smooth fade out based on drag progress
-        const progress = Math.min(
-          newTranslateY / ANIMATION_CONFIG.FADE_DISTANCE,
-          1
-        )
-        opacity.value = 1 - progress * ANIMATION_CONFIG.FADE_OPACITY
-      })
-      .onEnd(event => {
-        'worklet'
-        const shouldClose =
-          event.translationY > closeThreshold ||
-          event.velocityY > ANIMATION_CONFIG.VELOCITY_THRESHOLD
+          // Smooth fade out based on drag progress
+          const progress = Math.min(
+            newTranslateY / ANIMATION_CONFIG.FADE_DISTANCE,
+            1
+          )
+          opacity.value = 1 - progress * ANIMATION_CONFIG.FADE_OPACITY
+        })
+        .onEnd(event => {
+          'worklet'
+          const shouldClose =
+            event.translationY > closeThreshold ||
+            event.velocityY > ANIMATION_CONFIG.VELOCITY_THRESHOLD
 
-        if (shouldClose) {
-          // Animate out and close
-          translateY.value = withTiming(500, { duration: animationDuration })
-          opacity.value = withTiming(0, { duration: animationDuration }, () => {
-            handleClose()
-          })
-        } else {
-          // Spring back to original position
-          translateY.value = withSpring(0, ANIMATION_CONFIG.SPRING_CONFIG)
-          opacity.value = withSpring(1, ANIMATION_CONFIG.SPRING_CONFIG)
-        }
-      })
+          if (shouldClose) {
+            // Animate out and close
+            translateY.value = withTiming(500, { duration: animationDuration })
+            opacity.value = withTiming(
+              0,
+              { duration: animationDuration },
+              () => {
+                handleClose()
+              }
+            )
+          } else {
+            // Spring back to original position
+            translateY.value = withSpring(0, ANIMATION_CONFIG.SPRING_CONFIG)
+            opacity.value = withSpring(1, ANIMATION_CONFIG.SPRING_CONFIG)
+          }
+        })
+    )
   }, [enableSwipeToClose, closeThreshold, animationDuration, handleClose])
 
   // Animated styles with improved interpolation
