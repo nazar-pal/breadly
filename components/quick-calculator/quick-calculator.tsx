@@ -248,7 +248,11 @@ export function QuickCalculator({
           ${getDisplayExpression(expression, currentInput)}
         </Text>
         {comment && (
-          <Text className="mt-2 text-right text-xs text-muted-foreground">
+          <Text
+            className="mt-2 text-right text-xs text-muted-foreground"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {comment}
           </Text>
         )}
