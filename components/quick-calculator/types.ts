@@ -11,14 +11,18 @@ export interface CalcButtonProps {
   isWide?: boolean
 }
 
+export interface Category {
+  id: string
+  name: string
+  type: string
+  parentId: string | null
+  icon: string
+}
+
 export interface CategoryModalProps {
   visible: boolean
   type: 'expense' | 'income'
-  categories: {
-    id: string
-    name: string
-    type: string
-  }[]
+  categories: Category[]
   selectedCategoryId: string
   onSelectCategory: (categoryId: string) => void
   onClose: () => void

@@ -10,6 +10,7 @@ import { AccountModal } from './account-modal'
 import { CalcButton } from './calc-button'
 import { CategoryModal } from './category-modal'
 import { CommentModal } from './comment-modal'
+import { SubcategorySelection } from './subcategory-selection'
 import { QuickCalculatorProps } from './types'
 import { evaluateExpression, getDisplayExpression } from './utils'
 
@@ -27,23 +28,27 @@ export function QuickCalculator({
   const [comment, setComment] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] =
     useState(initialCategoryId)
+  const [selectedParentCategoryId, setSelectedParentCategoryId] =
+    useState<string>(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { userId } = useUserSession()
 
-  // Hooks
-  const { data: categories = [] } = useGetCategories({
+  // Get parent categories for modal selection
+  const { data: parentCategories = [] } = useGetCategories({
     userId,
-    type: 'expense'
+    type,
+    parentId: null // Only parent categories
   })
+
   const { data: accounts = [] } = useGetAccounts({
     userId,
     accountType: 'payment'
   })
-  // Transaction mutation will be called directly
 
-  // Find selected category and account
-  const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
+  const selectedParentCategory = parentCategories.find(
+    cat => cat.id === selectedParentCategoryId
+  )
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
 
   // Auto-select first payment account if none selected
@@ -115,9 +120,16 @@ export function QuickCalculator({
     }
   }
 
+  const handleParentCategorySelect = (categoryId: string) => {
+    setSelectedParentCategoryId(categoryId)
+    // Set the parent category as selected by default
+    // If subcategories exist, the user can select one to override this
+    setSelectedCategoryId(categoryId)
+  }
+
   const handleSubmit = async () => {
     const amount = parseFloat(currentInput)
-    if (amount > 0 && selectedAccount && selectedCategory && userId) {
+    if (amount > 0 && selectedAccount && selectedCategoryId && userId) {
       setIsSubmitting(true)
       try {
         const [error] = await createTransaction({
@@ -125,7 +137,7 @@ export function QuickCalculator({
           data: {
             type,
             accountId: selectedAccount.id,
-            categoryId: selectedCategory.id,
+            categoryId: selectedCategoryId,
             amount: amount,
             currencyId: selectedAccount.currencyId,
             txDate: new Date(),
@@ -171,7 +183,7 @@ export function QuickCalculator({
                   className="text-sm font-semibold text-foreground"
                   numberOfLines={1}
                 >
-                  {selectedCategory?.name || 'Select Category'}
+                  {selectedParentCategory?.name || 'Select Category'}
                 </Text>
               </View>
             </View>
@@ -203,11 +215,21 @@ export function QuickCalculator({
           </Pressable>
         </View>
 
-        {/* Comment Button */}
-        <View className="flex-row justify-end">
+        {/* Subcategories and Add Note Row */}
+
+        <View className="flex-row items-center justify-between">
+          {/* Subcategory Badges - Scrollable */}
+          <SubcategorySelection
+            selectedParentCategoryId={selectedParentCategoryId}
+            selectedCategoryId={selectedCategoryId}
+            setSelectedCategoryId={setSelectedCategoryId}
+            type={type}
+          />
+
+          {/* Add Note Button */}
           <Pressable
             onPress={() => setShowCommentModal(true)}
-            className="flex-row items-center rounded-lg bg-card px-3 py-2 active:bg-muted/50"
+            className="ml-auto flex-row items-center rounded-lg bg-card px-3 py-2 active:bg-muted/50"
           >
             <MessageSquare size={18} className="mr-2 text-muted-foreground" />
             <Text className="text-sm font-medium text-muted-foreground">
@@ -304,7 +326,7 @@ export function QuickCalculator({
         variant="default"
         size="lg"
         className="mt-4 w-full flex-row items-center justify-center rounded-xl"
-        disabled={isSubmitting || !selectedAccount || !selectedCategory}
+        disabled={isSubmitting || !selectedAccount || !selectedCategoryId}
       >
         <Save size={20} className="mr-2 text-primary-foreground" />
         <Text>
@@ -318,9 +340,9 @@ export function QuickCalculator({
       <CategoryModal
         visible={showCategoryModal}
         type={type}
-        categories={categories}
-        selectedCategoryId={selectedCategoryId}
-        onSelectCategory={setSelectedCategoryId}
+        categories={parentCategories}
+        selectedCategoryId={selectedParentCategoryId}
+        onSelectCategory={handleParentCategorySelect}
         onClose={() => setShowCategoryModal(false)}
       />
 
