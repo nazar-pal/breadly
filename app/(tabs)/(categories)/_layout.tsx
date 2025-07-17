@@ -1,8 +1,8 @@
 import { CategoriesHeader } from '@/components/categories/categories-header'
 import { CategoriesHeaderNavBar } from '@/components/categories/categories-header-nav-bar'
-import { CalculatorModal } from '@/components/categories/modal-add-transaction'
 import { CategoryDetailsModal } from '@/components/categories/modal-category-details'
 import { SettingsModal } from '@/components/categories/modal-settings'
+import { ModalAddTransaction } from '@/components/modal-add-transaction'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
 import { Slot } from 'expo-router'
 import React from 'react'
@@ -45,7 +45,7 @@ export default function CategoriesLayout() {
           <CategoriesHeaderNavBar />
         </View>
         <Slot />
-        <CalculatorModal />
+        <ModalAddTransaction />
         <CategoryDetailsModal />
         <SettingsModal />
       </View>

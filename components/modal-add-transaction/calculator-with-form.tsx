@@ -6,16 +6,21 @@ import { useGetAccounts, useGetCategories } from '@/lib/powersync/data/queries'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { Calculator } from '../calculator'
-import { AccountModal } from './account-modal'
-import { CategoryModal } from './category-modal'
+import { AccountModal } from './modal-account-select'
+import { CategoryModal } from './modal-category-select'
 import { SubcategorySelection } from './subcategory-selection'
-import { QuickCalculatorProps } from './types'
 
-export function QuickCalculator({
+interface Props {
+  type: 'expense' | 'income'
+  categoryId: string
+  onClose: () => void
+}
+
+export function CalculatorWithForm({
   type,
   categoryId: initialCategoryId,
   onClose
-}: QuickCalculatorProps) {
+}: Props) {
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [showAccountModal, setShowAccountModal] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] =

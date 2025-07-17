@@ -1,13 +1,13 @@
+import { Modal } from '@/components/modal'
 import {
   useAddTransactionActions,
   useAddTransactionState
 } from '@/lib/storage/add-transaction-store'
 import React from 'react'
-import { Modal } from '../modal'
-import { QuickCalculator } from '../quick-calculator'
-import { useCategoryType } from './lib/use-category-type'
+import { useCategoryType } from '../categories/lib/use-category-type'
+import { CalculatorWithForm } from './calculator-with-form'
 
-export function CalculatorModal() {
+export function ModalAddTransaction() {
   const { isAddTransactionModalOpen, addTransactionSelectedCategory } =
     useAddTransactionState()
   const { closeAddTransactionModal } = useAddTransactionActions()
@@ -20,7 +20,7 @@ export function CalculatorModal() {
       onClose={closeAddTransactionModal}
     >
       {addTransactionSelectedCategory && (
-        <QuickCalculator
+        <CalculatorWithForm
           type={activeCategoryType}
           categoryId={addTransactionSelectedCategory}
           onClose={closeAddTransactionModal}

@@ -1,9 +1,3 @@
-export interface QuickCalculatorProps {
-  type: 'expense' | 'income'
-  categoryId: string
-  onClose: () => void
-}
-
 export interface Category {
   id: string
   name: string
@@ -30,12 +24,5 @@ export interface AccountModalProps {
   }[]
   selectedAccountId: string
   onSelectAccount: (accountId: string) => void
-  onClose: () => void
-}
-
-export interface CommentModalProps {
-  visible: boolean
-  comment: string
-  onChangeComment: (comment: string) => void
   onClose: () => void
 }
