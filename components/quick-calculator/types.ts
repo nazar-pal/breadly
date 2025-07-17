@@ -4,13 +4,6 @@ export interface QuickCalculatorProps {
   onClose: () => void
 }
 
-export interface CalcButtonProps {
-  label: string | React.ReactNode
-  onPress: () => void
-  variant?: 'default' | 'operation' | 'equal' | 'special'
-  isWide?: boolean
-}
-
 export interface Category {
   id: string
   name: string

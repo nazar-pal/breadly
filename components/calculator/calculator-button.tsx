@@ -1,14 +1,18 @@
 import { Text } from '@/components/ui/text'
 import React from 'react'
 import { Pressable } from 'react-native'
-import { CalcButtonProps } from './types'
 
-export function CalcButton({
+export function CalculatorButton({
   label,
   onPress,
   variant = 'default',
   isWide = false
-}: CalcButtonProps) {
+}: {
+  label: string | React.ReactNode
+  onPress: () => void
+  variant?: 'default' | 'operation' | 'equal' | 'special'
+  isWide?: boolean
+}) {
   const getButtonClasses = () => {
     const baseClasses =
       'h-[60px] items-center justify-center rounded-2xl shadow-sm'

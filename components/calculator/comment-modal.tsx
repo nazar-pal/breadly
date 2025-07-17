@@ -4,7 +4,7 @@ import { Text } from '@/components/ui/text'
 import { Check } from '@/lib/icons'
 import React from 'react'
 import { Modal, Pressable, View } from 'react-native'
-import { CommentModalProps } from './types'
+import { CommentModalProps } from '../quick-calculator/types'
 
 export function CommentModal({
   visible,
