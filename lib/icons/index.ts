@@ -1,6 +1,7 @@
 import {
   AlignLeft,
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUp,
   Banknote,
@@ -63,6 +64,7 @@ import { iconWithClassName } from './iconWithClassName'
 const icons = [
   AlignLeft,
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   Shirt,
   Users,
@@ -128,6 +130,7 @@ icons.forEach(icon => {
 export {
   AlignLeft,
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUp,
   Banknote,

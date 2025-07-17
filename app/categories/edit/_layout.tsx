@@ -1,10 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { iconWithClassName } from '@/lib/icons/iconWithClassName'
+import { ArrowLeft } from '@/lib/icons'
 import { router, Stack } from 'expo-router'
-import { ArrowLeftIcon } from 'lucide-react-native'
 import React from 'react'
-
-iconWithClassName(ArrowLeftIcon)
 
 export default function EditCategoryLayout() {
   return (
@@ -12,7 +9,7 @@ export default function EditCategoryLayout() {
       screenOptions={{
         headerLeft: () => (
           <Button variant="ghost" size="icon" onPress={() => router.back()}>
-            <ArrowLeftIcon className="text-foreground" />
+            <ArrowLeft size={24} className="text-foreground" />
           </Button>
         )
       }}
