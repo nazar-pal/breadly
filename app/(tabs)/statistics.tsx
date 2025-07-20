@@ -4,9 +4,10 @@ import {
   StatCard,
   TopTransactions
 } from '@/components/statistics'
+import { SummaryCard } from '@/components/statistics/summary-card'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { DollarSign, TrendingUp } from '@/lib/icons'
+import { TrendingUp } from '@/lib/icons'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -25,22 +26,8 @@ export default function StatisticsScreen() {
         }}
       >
         <View className="mb-4 flex-row gap-3">
-          <StatCard
-            title="Monthly Income"
-            amount={mockStats.currentMonth.income}
-            trend={8.5}
-            trendLabel="vs last month"
-            variant="income"
-            icon={DollarSign}
-          />
-          <StatCard
-            title="Monthly Expenses"
-            amount={mockStats.currentMonth.expenses}
-            trend={12.5}
-            trendLabel="vs last month"
-            variant="expense"
-            icon={DollarSign}
-          />
+          <SummaryCard type="income" />
+          <SummaryCard type="expense" />
         </View>
 
         <Card className="mb-4">
