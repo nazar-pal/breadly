@@ -15,9 +15,6 @@ export function CategoryBreakdown() {
     type: 'expense'
   })
 
-  // Get top 5 categories by spent amount
-  const topCategories = [...categories].slice(0, 5)
-
   const { data: totalSpent } = useSumTransactions({
     userId,
     type: 'expense'
@@ -30,12 +27,12 @@ export function CategoryBreakdown() {
       </Text>
       <Card>
         <CardContent className="p-4">
-          {topCategories.map((category, index) => {
+          {categories.map((category, index) => {
             return (
               <CategoryBreakdownItem
                 key={category.id}
                 category={category}
-                lastItemInList={index === topCategories.length - 1}
+                lastItemInList={index === categories.length - 1}
                 totalSpent={totalSpent ? Number(totalSpent[0]?.totalAmount) : 0}
               />
             )
