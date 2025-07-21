@@ -1,5 +1,6 @@
 import {
   AlignLeft,
+  Archive,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
@@ -63,6 +64,7 @@ import { iconWithClassName } from './iconWithClassName'
 // Process all icons with className support
 const icons = [
   AlignLeft,
+  Archive,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
@@ -129,6 +131,7 @@ icons.forEach(icon => {
 // Export all icons
 export {
   AlignLeft,
+  Archive,
   ArrowDown,
   ArrowLeft,
   ArrowRight,

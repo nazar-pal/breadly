@@ -1,4 +1,5 @@
 export { useSumMonthlyMetrics } from '../../../../components/statistics/lib/use-sum-monthly-metrics'
+export { useCheckCategoryDependencies } from './use-check-category-dependencies'
 export { useGetAccount } from './use-get-account'
 export { useGetAccounts } from './use-get-accounts'
 export { useGetAverageMonthlyExpenses } from './use-get-average-monthly-expenses'
