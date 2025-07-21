@@ -4,14 +4,11 @@ import { AUTO_MIGRATE_KEY } from '@/lib/storage/mmkv/keys'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, Text, View } from 'react-native'
 
-// Handle any pending authentication sessions
-WebBrowser.maybeCompleteAuthSession()
-
 export const useWarmUpBrowser = () => {
-  React.useEffect(() => {
+  useEffect(() => {
     // Preloads the browser for Android devices to reduce authentication load time
     // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
     void WebBrowser.warmUpAsync()
@@ -22,11 +19,14 @@ export const useWarmUpBrowser = () => {
   }, [])
 }
 
+// Handle any pending authentication sessions
+WebBrowser.maybeCompleteAuthSession()
+
 export function GoogleOAuthButton() {
   useWarmUpBrowser()
 
   const { startSSOFlow } = useSSO()
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handleGoogleAuthError = (error: string) => {
     setErrorMessage(error)
@@ -43,7 +43,10 @@ export function GoogleOAuthButton() {
           // For web, defaults to current path
           // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
           // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
-          redirectUrl: AuthSession.makeRedirectUri()
+          redirectUrl: AuthSession.makeRedirectUri({
+            scheme: 'myapp',
+            path: '/'
+          })
         })
 
       if (__DEV__) console.log('authSessionResult', authSessionResult)
