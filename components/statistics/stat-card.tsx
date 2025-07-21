@@ -1,75 +1,163 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { ArrowDown, ArrowUp } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { LucideIcon } from 'lucide-react-native'
 import React from 'react'
 import { Text, View } from 'react-native'
 
+type Variant = 'default' | 'income' | 'expense'
+
+interface Props {
+  title: string
+  amount: number
+  trend?: number
+  trendLabel?: string
+  progress?: number
+  progressLabel?: string
+  variant?: Variant
+  icon?: LucideIcon
+}
+
+// Helper function to format amount with proper currency display
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(Math.abs(amount))
+}
+
+// Helper function to get trend color based on variant and trend direction
+function getTrendColor(variant: Variant, trend: number): string {
+  if (variant === 'default') {
+    return trend > 0 ? 'text-income' : 'text-expense'
+  }
+
+  // For income: increase is good (green), decrease is bad (red)
+  if (variant === 'income') {
+    return trend < 0 ? 'text-expense' : 'text-income'
+  }
+
+  // For expense: decrease is good (green), increase is bad (red)
+  return trend < 0 ? 'text-income' : 'text-expense'
+}
+
+// Helper function to get amount text color
+function getAmountColor(variant: Variant): string {
+  switch (variant) {
+    case 'income':
+      return 'text-income'
+    case 'expense':
+      return 'text-expense'
+    default:
+      return 'text-foreground'
+  }
+}
+
+// Helper function to get icon styling
+function getIconStyling(variant: Variant): string {
+  switch (variant) {
+    case 'income':
+      return 'bg-income/10 text-income'
+    case 'expense':
+      return 'bg-expense/10 text-expense'
+    default:
+      return 'bg-primary/10 text-primary'
+  }
+}
+
+// Helper function to get progress indicator color
+function getProgressColor(variant: Variant): string {
+  switch (variant) {
+    case 'income':
+      return 'bg-income'
+    case 'expense':
+      return 'bg-expense'
+    default:
+      return 'bg-primary'
+  }
+}
+
 export function StatCard({
   title,
   amount,
   trend,
   trendLabel,
+  progress,
+  progressLabel,
   variant = 'default',
   icon: Icon
-}: {
-  title: string
-  amount: number
-  trend?: number
-  trendLabel?: string
-  variant?: 'default' | 'income' | 'expense'
-  icon?: LucideIcon
-}) {
-  const variants = {
-    default: {
-      trend: trend && trend > 0 ? 'text-income' : 'text-expense',
-      icon: 'bg-primary/10 text-primary'
-    },
-    income: {
-      trend: 'text-income',
-      icon: 'bg-income/10 text-income'
-    },
-    expense: {
-      trend: 'text-expense',
-      icon: 'bg-expense/10 text-expense'
-    }
-  }
+}: Props) {
+  const trendColor = trend !== undefined ? getTrendColor(variant, trend) : ''
+  const amountColor = getAmountColor(variant)
+  const iconStyling = getIconStyling(variant)
+  const progressColor = getProgressColor(variant)
 
   return (
     <Card className="flex-1">
       <CardContent className="p-4">
-        <View className="mb-3 flex-row items-center justify-between gap-2">
-          <Text className="text-sm font-medium text-muted-foreground">
+        {/* Header with title and icon */}
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text
+            className="text-sm font-medium text-muted-foreground"
+            numberOfLines={1}
+          >
             {title}
           </Text>
           {Icon && (
-            <View className={cn('rounded-full p-2', variants[variant].icon)}>
-              <Icon size={14} className={variants[variant].icon} />
+            <View className={cn('rounded-full p-2', iconStyling)}>
+              <Icon size={16} />
             </View>
           )}
         </View>
-        <Text className="mb-2 text-2xl font-bold text-foreground">
-          ${amount.toFixed(2)}
+
+        {/* Amount display */}
+        <Text className={cn('mb-3 text-2xl font-bold', amountColor)}>
+          {amount < 0 && '-'}
+          {formatCurrency(amount)}
         </Text>
+
+        {/* Trend information */}
         {trend !== undefined && (
-          <View className="flex-row items-center gap-1">
-            <View className={cn('rounded-full p-1')}>
+          <View className="mb-3 flex-row items-center gap-1.5">
+            <View className="rounded-full p-0.5">
               {trend > 0 ? (
-                <ArrowUp size={12} className={variants[variant].trend} />
+                <ArrowUp size={14} className={trendColor} />
               ) : (
-                <ArrowDown size={12} className={variants[variant].trend} />
+                <ArrowDown size={14} className={trendColor} />
               )}
             </View>
-            <Text
-              className={cn('text-sm font-semibold', variants[variant].trend)}
-            >
-              {Math.abs(trend)}%
+            <Text className={cn('text-sm font-medium', trendColor)}>
+              {Math.abs(trend).toFixed(1)}%
             </Text>
             {trendLabel && (
-              <Text className="ml-1 text-xs text-muted-foreground">
+              <Text className="text-sm text-muted-foreground">
                 {trendLabel}
               </Text>
             )}
+          </View>
+        )}
+
+        {/* Progress bar section */}
+        {progress !== undefined && (
+          <View className="space-y-2">
+            {progressLabel && (
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm text-muted-foreground">
+                  {progressLabel}
+                </Text>
+                <Text className={cn('text-sm font-medium', amountColor)}>
+                  {progress.toFixed(1)}%
+                </Text>
+              </View>
+            )}
+            <Progress
+              value={Math.min(Math.max(progress, 0), 100)}
+              className="h-2"
+              indicatorClassName={progressColor}
+            />
           </View>
         )}
       </CardContent>
