@@ -29,6 +29,7 @@ import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import { Modal } from '../modal'
+import { CategoryBudgetModal } from '../statistics/modal-category-budget'
 import { Badge } from '../ui/badge'
 import { Card } from '../ui/card'
 import { Progress } from '../ui/progress'
@@ -43,6 +44,7 @@ export function CategoryDetailsModal() {
   const { userId } = useUserSession()
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdatingArchiveStatus, setIsUpdatingArchiveStatus] = useState(false)
+  const [showBudgetModal, setShowBudgetModal] = useState(false)
 
   const { data: category } = useGetCategory({
     userId: userId,
@@ -442,6 +444,75 @@ export function CategoryDetailsModal() {
             </Card>
           )}
 
+          {/* Monthly Budget Card */}
+          {categoryData?.type === 'expense' && (
+            <Card className="mb-6 p-4">
+              <View className="mb-4 flex-row items-center justify-between">
+                <View className="flex-row items-center gap-2">
+                  <DollarSign size={18} className="text-primary" />
+                  <Text className="text-base font-semibold text-foreground">
+                    Monthly Budget
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => setShowBudgetModal(true)}
+                  className="flex-row items-center gap-2 rounded-lg border border-border bg-card px-3 py-2"
+                >
+                  <Edit2 size={14} className="text-primary" />
+                  <Text className="text-sm font-medium text-primary">
+                    {budgetAmount > 0 ? 'Edit' : 'Set Budget'}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {budgetAmount > 0 ? (
+                <View>
+                  <View className="mb-3 flex-row items-center justify-between">
+                    <Text className="text-sm font-medium text-foreground">
+                      Budget Limit
+                    </Text>
+                    <Text className="text-lg font-bold text-foreground">
+                      ${budgetAmount.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-sm font-medium text-foreground">
+                      Spent This Month
+                    </Text>
+                    <Text
+                      className={`text-lg font-bold ${
+                        isOverBudget ? 'text-red-500' : 'text-expense'
+                      }`}
+                    >
+                      ${totalAmount.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View className="mt-3 flex-row items-center justify-between">
+                    <Text className="text-xs text-muted-foreground">
+                      {isOverBudget
+                        ? `$${(totalAmount - budgetAmount).toFixed(2)} over budget`
+                        : `$${remainingBudget.toFixed(2)} remaining`}
+                    </Text>
+                    <Text
+                      className={`text-xs ${
+                        isOverBudget ? 'text-red-500' : 'text-green-600'
+                      }`}
+                    >
+                      {budgetProgress.toFixed(1)}% used
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <View className="rounded-lg bg-muted/30 p-4">
+                  <Text className="text-center text-sm text-muted-foreground">
+                    No monthly budget set. Tap &quot;Set Budget&quot; to add a
+                    spending limit for this category.
+                  </Text>
+                </View>
+              )}
+            </Card>
+          )}
+
           {/* Budget Progress Card */}
           {categoryData?.type === 'expense' && monthlyBudget && (
             <Card className="mb-6 p-4">
@@ -622,6 +693,15 @@ export function CategoryDetailsModal() {
           </Card>
         </View>
       </ScrollView>
+
+      {categoryData && (
+        <CategoryBudgetModal
+          isVisible={showBudgetModal}
+          onClose={() => setShowBudgetModal(false)}
+          category={categoryData}
+          currentBudget={budgetAmount}
+        />
+      )}
     </Modal>
   )
 }
