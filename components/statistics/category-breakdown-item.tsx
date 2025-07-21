@@ -3,21 +3,23 @@ import { useUserSession } from '@/lib/hooks'
 import { ChevronRight } from '@/lib/icons'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
-import { isSameMonth } from 'date-fns'
+import { endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { CategoryBudgetModal } from './modal-category-budget'
 
 // Type for category with budget relations (from useGetCategories)
-type CategoryWithBudgets = {
+interface CategoryWithBudgets {
   id: string
   name: string
+  type: 'expense' | 'income'
   parentId?: string | null
   budgets?: {
     id: string
     amount: number
-    period: string
+    currency: string
     startDate: Date
+    endDate: Date
   }[]
   [key: string]: any // Allow other category properties
 }
@@ -58,9 +60,14 @@ export function CategoryBreakdownItem({
 
   // Get current month budget for this category
   const now = new Date()
-  const currentMonthBudget = category.budgets?.find(
-    budget => budget.period === 'monthly' && isSameMonth(budget.startDate, now)
-  )
+  const currentMonthStart = startOfMonth(now)
+  const currentMonthEnd = endOfMonth(now)
+
+  const currentMonthBudget = category.budgets?.find(budget => {
+    const budgetStart = new Date(budget.startDate)
+    const budgetEnd = new Date(budget.endDate)
+    return budgetStart <= currentMonthEnd && budgetEnd >= currentMonthStart
+  })
 
   const budgetAmount = currentMonthBudget ? currentMonthBudget.amount : 0
   const budgetProgress =

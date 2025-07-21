@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useUserSession } from '@/lib/hooks'
 import { Check, Plus, X } from '@/lib/icons'
 import {
@@ -5,7 +6,10 @@ import {
   createOrUpdateBudget,
   updateCategory
 } from '@/lib/powersync/data/mutations'
-import { useGetCategories } from '@/lib/powersync/data/queries'
+import {
+  useGetCategories,
+  useGetUserPreferences
+} from '@/lib/powersync/data/queries'
 import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
 import { BudgetSelectSQLite } from '@/lib/powersync/schema/table_5_budgets'
 import { randomUUID } from 'expo-crypto'
@@ -63,8 +67,13 @@ function getDefaultIcon(
 
 export function CategoryForm({ category, categoryType }: CategoryFormProps) {
   const { userId } = useUserSession()
+  const { data: userPreferences } = useGetUserPreferences({ userId })
 
   const isEditMode = Boolean(category)
+
+  // Get user's default currency with fallback
+  const defaultCurrency =
+    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY.code
 
   // Fetch existing subcategories when editing a category
   const { data: existingSubcategories } = useGetCategories({
@@ -212,7 +221,8 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
             userId,
             categoryId,
             amount: budgetAmount,
-            startDate: new Date()
+            startDate: new Date(),
+            currency: defaultCurrency
           })
         }
       }
@@ -263,7 +273,8 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
                     userId,
                     categoryId: subcategory.id,
                     amount: budgetAmount,
-                    startDate: new Date()
+                    startDate: new Date(),
+                    currency: defaultCurrency
                   })
                 }
               }
@@ -301,7 +312,8 @@ export function CategoryForm({ category, categoryType }: CategoryFormProps) {
                     userId,
                     categoryId: subcategoryId,
                     amount: budgetAmount,
-                    startDate: new Date()
+                    startDate: new Date(),
+                    currency: defaultCurrency
                   })
                 }
               }

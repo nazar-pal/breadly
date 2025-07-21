@@ -1,7 +1,7 @@
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { and, eq, gte, lte, sum } from 'drizzle-orm'
+import { and, eq, sum } from 'drizzle-orm'
 import { budgets } from '../../schema/table_5_budgets'
 import { db } from '../../system'
 
@@ -11,11 +11,16 @@ import { db } from '../../system'
  * @param userId - The user ID to filter budgets
  * @returns Object containing data array with total budget, isLoading state, and other query metadata
  */
-export function useGetMonthlyBudget({ userId }: { userId: string }) {
+export function useGetMonthlyBudget({
+  userId,
+  startDate = new Date()
+}: {
+  userId: string
+  startDate?: Date
+}) {
   // Get current month boundaries
-  const now = new Date()
-  const monthStart = startOfMonth(now)
-  const monthEnd = endOfMonth(now)
+  const monthStart = startOfMonth(startDate)
+  const monthEnd = endOfMonth(startDate)
 
   // Query for total monthly budget amount
   const query = db
@@ -26,9 +31,8 @@ export function useGetMonthlyBudget({ userId }: { userId: string }) {
     .where(
       and(
         eq(budgets.userId, userId),
-        eq(budgets.period, 'monthly'),
-        gte(budgets.startDate, monthStart),
-        lte(budgets.startDate, monthEnd)
+        eq(budgets.startDate, monthStart),
+        eq(budgets.endDate, monthEnd)
       )
     )
 

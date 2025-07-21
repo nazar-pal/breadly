@@ -1,4 +1,5 @@
 import { asyncTryCatch } from '@/lib/utils/index'
+import { endOfMonth, startOfMonth } from 'date-fns'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { budgets } from '../../schema/table_5_budgets'
@@ -7,26 +8,35 @@ import { db } from '../../system'
 const budgetInsertSchema = createInsertSchema(budgets)
 const budgetUpdateSchema = createUpdateSchema(budgets).pick({
   amount: true,
-  startDate: true
+  currency: true,
+  startDate: true,
+  endDate: true
 })
 
 export async function createOrUpdateBudget({
   userId,
   categoryId,
   amount,
+  currency,
   startDate = new Date()
 }: {
   userId: string
   categoryId: string
   amount: number
+  currency: string
   startDate?: Date
 }) {
-  // Check if a monthly budget already exists for this category
+  // Calculate month boundaries for the given start date
+  const monthStart = startOfMonth(startDate)
+  const monthEnd = endOfMonth(startDate)
+
+  // Check if a monthly budget already exists for this category and month
   const existingBudget = await db.query.budgets.findFirst({
     where: and(
       eq(budgets.userId, userId),
       eq(budgets.categoryId, categoryId),
-      eq(budgets.period, 'monthly')
+      eq(budgets.startDate, monthStart),
+      eq(budgets.endDate, monthEnd)
     )
   })
 
@@ -34,7 +44,9 @@ export async function createOrUpdateBudget({
     // Update existing budget
     const parsedData = budgetUpdateSchema.parse({
       amount,
-      startDate
+      currency,
+      startDate: monthStart,
+      endDate: monthEnd
     })
 
     const [error, result] = await asyncTryCatch(
@@ -51,8 +63,9 @@ export async function createOrUpdateBudget({
       userId,
       categoryId,
       amount,
-      period: 'monthly',
-      startDate
+      currency,
+      startDate: monthStart,
+      endDate: monthEnd
     })
 
     const [error, result] = await asyncTryCatch(

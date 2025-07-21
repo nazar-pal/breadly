@@ -7,8 +7,9 @@ import { db } from '../../system'
 
 const budgetUpdateSchema = createUpdateSchema(budgets).pick({
   amount: true,
-  period: true,
-  startDate: true
+  currency: true,
+  startDate: true,
+  endDate: true
 })
 
 export async function updateBudget({

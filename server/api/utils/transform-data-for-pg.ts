@@ -32,7 +32,7 @@ export function transformDataForPostgres(data: any, table: string): any {
 
   // Date fields (date only - need YYYY-MM-DD string format)
   const dateFields: Record<string, string[]> = {
-    budgets: ['start_date'],
+    budgets: ['start_date', 'end_date'],
     accounts: ['savings_target_date', 'debt_due_date'],
     transactions: ['tx_date'],
     categories: [],

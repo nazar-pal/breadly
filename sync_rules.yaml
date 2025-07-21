@@ -47,15 +47,16 @@ bucket_definitions:
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (convert start_date)
+      # User's budgets (convert start_date and end_date)
       - |
         SELECT
           id,
           user_id,
           category_id,
           CAST(amount AS real) AS amount,
-          period,
-          (unixepoch(start_date) * 1000) AS start_date
+          currency,
+          (unixepoch(start_date) * 1000) AS start_date,
+          (unixepoch(end_date) * 1000) AS end_date
         FROM budgets
         WHERE user_id = bucket.user_id
 

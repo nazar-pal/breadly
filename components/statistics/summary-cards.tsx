@@ -1,4 +1,3 @@
-import { StatCard } from '@/components/statistics'
 import { useUserSession } from '@/lib/hooks'
 import { DollarSign, TrendingDown, TrendingUp } from '@/lib/icons'
 import { useGetAverageMonthlyExpenses } from '@/lib/powersync/data/queries/use-get-average-monthly-expenses'
@@ -6,6 +5,7 @@ import { useGetMonthlyBudget } from '@/lib/powersync/data/queries/use-get-monthl
 import React from 'react'
 import { View } from 'react-native'
 import { useSumMonthlyMetrics } from './lib/use-sum-monthly-metrics'
+import { StatCard } from './stat-card'
 
 export function SummaryCards() {
   const { userId } = useUserSession()

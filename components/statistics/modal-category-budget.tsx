@@ -2,9 +2,11 @@ import { Modal } from '@/components/modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
+import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useUserSession } from '@/lib/hooks'
 import { DollarSign } from '@/lib/icons'
 import { createOrUpdateBudget } from '@/lib/powersync/data/mutations'
+import { useGetUserPreferences } from '@/lib/powersync/data/queries'
 import { startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { Alert, View } from 'react-native'
@@ -16,8 +18,9 @@ type CategoryWithBudgets = {
   budgets?: {
     id: string
     amount: number
-    period: string
+    currency: string
     startDate: Date
+    endDate: Date
   }[]
   [key: string]: any
 }
@@ -38,10 +41,15 @@ export function CategoryBudgetModal({
   currentBudget
 }: CategoryBudgetModalProps) {
   const { userId } = useUserSession()
+  const { data: userPreferences } = useGetUserPreferences({ userId })
   const [budgetAmount, setBudgetAmount] = useState(
     currentBudget > 0 ? currentBudget.toString() : ''
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Get user's default currency with fallback
+  const defaultCurrency =
+    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY.code
 
   const handleSave = async () => {
     const amount = parseFloat(budgetAmount)
@@ -60,7 +68,8 @@ export function CategoryBudgetModal({
       userId,
       categoryId: category.id,
       amount,
-      startDate
+      startDate,
+      currency: defaultCurrency
     })
 
     if (error) {

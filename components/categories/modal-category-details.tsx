@@ -16,6 +16,7 @@ import {
   useCategoryDetailsActions,
   useCategoryDetailsState
 } from '@/lib/storage/category-details-store'
+import { endOfMonth, startOfMonth } from 'date-fns'
 import { router } from 'expo-router'
 import React from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
@@ -55,9 +56,15 @@ export function CategoryDetailsModal() {
   const totalAmount = Number(totalSpent?.[0]?.totalAmount || 0)
 
   // Budget calculations
-  const monthlyBudget = categoryData?.budgets?.find(
-    budget => budget.period === 'monthly'
-  )
+  const now = new Date()
+  const currentMonthStart = startOfMonth(now)
+  const currentMonthEnd = endOfMonth(now)
+
+  const monthlyBudget = categoryData?.budgets?.find(budget => {
+    const budgetStart = new Date(budget.startDate)
+    const budgetEnd = new Date(budget.endDate)
+    return budgetStart <= currentMonthEnd && budgetEnd >= currentMonthStart
+  })
   const budgetAmount = monthlyBudget?.amount || 0
   const budgetProgress =
     budgetAmount > 0 ? Math.min((totalAmount / budgetAmount) * 100, 100) : 0

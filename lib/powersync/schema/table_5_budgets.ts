@@ -25,9 +25,11 @@ import {
   text,
   uniqueIndex
 } from 'drizzle-orm/sqlite-core'
+import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
+  isoCurrencyCodeColumn,
   monetaryAmountColumn,
   uuidPrimaryKey
 } from './utils'
@@ -35,22 +37,6 @@ import {
 // ============================================================================
 // Budgets table - Category-based spending limits
 // ============================================================================
-
-/**
- * Budget period types for tracking spending limits
- * - daily: Daily budget limits (for strict daily spending control)
- * - weekly: Weekly budget limits (for weekly allowances)
- * - monthly: Monthly budget limits (most common budget period)
- * - quarterly: Quarterly budget limits (for seasonal planning)
- * - yearly: Annual budget limits (for long-term financial planning)
- */
-const BUDGET_PERIOD = [
-  'daily',
-  'weekly',
-  'monthly',
-  'quarterly',
-  'yearly'
-] as const
 
 /**
  * Budget tracking for categories
@@ -74,20 +60,23 @@ export const budgets = sqliteTable(
       .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(), // Category this budget applies to
     amount: monetaryAmountColumn(), // Budget limit amount
-    period: text({ enum: BUDGET_PERIOD }).default('monthly').notNull(), // Budget time period
-    startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull() // When this budget period starts
+    currency: isoCurrencyCodeColumn('currency')
+      .references(() => currencies.code)
+      .notNull(), // Budget currency (e.g., USD in USD/EUR)
+    startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull(), // When this budget period starts
+    endDate: integer('end_date', { mode: 'timestamp_ms' }).notNull() // When this budget period ends
   },
   table => [
     // Performance indexes for common query patterns
     index('budgets_user_idx').on(table.userId), // User's budgets lookup
     index('budgets_category_idx').on(table.categoryId), // Category budgets lookup
-    index('budgets_user_period_idx').on(table.userId, table.period), // Budgets by period
 
-    // Prevent duplicate budgets for same category+period+start date
-    uniqueIndex('budgets_category_period_start_unq').on(
+    // Prevent duplicate budgets for same category+start date+end date
+    uniqueIndex('budgets_category_start_end_unq').on(
       table.categoryId,
-      table.period,
-      table.startDate
+      table.currency,
+      table.startDate,
+      table.endDate
     ),
 
     // Business rule constraints
