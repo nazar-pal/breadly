@@ -11,10 +11,12 @@ export interface CategoryWithAmounts
 
 export function useGetCategoriesWithAmounts({
   transactionsFrom,
-  transactionsTo
+  transactionsTo,
+  isArchived
 }: {
   transactionsFrom: Date | null
   transactionsTo: Date | null
+  isArchived: boolean
 }): CategoryWithAmounts[] {
   const { userId } = useUserSession()
   const type = useCategoryType()
@@ -24,7 +26,8 @@ export function useGetCategoriesWithAmounts({
     type,
     parentId: null, // Only get parent categories (no subcategories)
     transactionsFrom: transactionsFrom ?? undefined,
-    transactionsTo: transactionsTo ?? undefined
+    transactionsTo: transactionsTo ?? undefined,
+    isArchived
   })
 
   const categoriesWithAmounts = categories.map(category => ({

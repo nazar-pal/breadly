@@ -28,13 +28,15 @@ export function useGetCategories({
   type,
   parentId,
   transactionsFrom,
-  transactionsTo
+  transactionsTo,
+  isArchived
 }: {
   userId: string
   type: (typeof CATEGORY_TYPE)[number]
   parentId?: string | null // undefined = all categories, null = parent categories only, string = subcategories of that parent
   transactionsFrom?: Date
   transactionsTo?: Date
+  isArchived?: boolean
 }) {
   // Build the where conditions based on parentId parameter
   const parentCondition =
@@ -48,7 +50,10 @@ export function useGetCategories({
     where: and(
       eq(categories.userId, userId),
       eq(categories.type, type),
-      parentCondition
+      parentCondition,
+      isArchived === undefined
+        ? undefined
+        : eq(categories.isArchived, isArchived)
     ),
     with: {
       budgets: true,
