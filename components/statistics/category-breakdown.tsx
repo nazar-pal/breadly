@@ -1,15 +1,20 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { useUserSession } from '@/lib/hooks'
+import { ChevronDown, ChevronRight } from '@/lib/icons'
 import {
   useGetCategories,
   useSumTransactions
 } from '@/lib/powersync/data/queries'
-import React from 'react'
-import { Text, View } from 'react-native'
+import { cn } from '@/lib/utils'
+import React, { useState } from 'react'
+import { Pressable, Text, View } from 'react-native'
 import { CategoryBreakdownItem } from './category-breakdown-item'
 
 export function CategoryBreakdown() {
   const { userId } = useUserSession()
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set()
+  )
 
   // Get all categories to group them by parent-child relationships
   const { data: allCategories } = useGetCategories({
@@ -40,6 +45,16 @@ export function CategoryBreakdown() {
 
   const totalSpentAmount = totalSpent ? Number(totalSpent[0]?.totalAmount) : 0
 
+  const toggleCategory = (categoryId: string) => {
+    const newExpanded = new Set(expandedCategories)
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId)
+    } else {
+      newExpanded.add(categoryId)
+    }
+    setExpandedCategories(newExpanded)
+  }
+
   return (
     <View className="mb-6">
       <Text className="mb-4 text-lg font-semibold text-foreground">
@@ -47,42 +62,88 @@ export function CategoryBreakdown() {
       </Text>
       <Card>
         <CardContent className="p-4">
-          {parentCategories.map((parentCategory, parentIndex) => {
-            const isLastParent = parentIndex === parentCategories.length - 1
-            const categorySubcategories =
-              subcategoriesByParent[parentCategory.id] || []
+          <View className="w-full">
+            {parentCategories.map((parentCategory, index) => {
+              const categorySubcategories =
+                subcategoriesByParent[parentCategory.id] || []
+              const hasSubcategories = categorySubcategories.length > 0
+              const isExpanded = expandedCategories.has(parentCategory.id)
+              const isLastCategory = index === parentCategories.length - 1
 
-            return (
-              <View key={parentCategory.id}>
-                {/* Parent Category */}
-                <CategoryBreakdownItem
-                  category={parentCategory}
-                  totalSpent={totalSpentAmount}
-                  isParent={true}
-                  hasSubcategories={categorySubcategories.length > 0}
-                />
+              return (
+                <View
+                  key={parentCategory.id}
+                  className={cn(
+                    'border-b border-border/10',
+                    isLastCategory && 'border-b-0'
+                  )}
+                >
+                  {/* Parent Category */}
+                  {hasSubcategories ? (
+                    <Pressable
+                      onPress={() => toggleCategory(parentCategory.id)}
+                      className="w-full"
+                    >
+                      <View className="flex-row items-center">
+                        <View className="flex-1">
+                          <CategoryBreakdownItem
+                            category={parentCategory}
+                            totalSpent={totalSpentAmount}
+                            isParent={true}
+                            hasSubcategories={hasSubcategories}
+                            showChevron={false}
+                            disablePressable={true}
+                          />
+                        </View>
+                        <View className="px-2 py-4">
+                          {isExpanded ? (
+                            <ChevronDown
+                              size={18}
+                              className="text-muted-foreground"
+                            />
+                          ) : (
+                            <ChevronRight
+                              size={18}
+                              className="text-muted-foreground"
+                            />
+                          )}
+                        </View>
+                      </View>
+                    </Pressable>
+                  ) : (
+                    <View className="py-4">
+                      <CategoryBreakdownItem
+                        category={parentCategory}
+                        totalSpent={totalSpentAmount}
+                        isParent={true}
+                        hasSubcategories={false}
+                        showChevron={false}
+                        disablePressable={false}
+                      />
+                    </View>
+                  )}
 
-                {/* Subcategories */}
-                {categorySubcategories.map((subcategory, subIndex) => (
-                  <CategoryBreakdownItem
-                    key={subcategory.id}
-                    category={subcategory}
-                    totalSpent={totalSpentAmount}
-                    isParent={false}
-                    parentCategory={parentCategory}
-                    isLastSubcategory={
-                      subIndex === categorySubcategories.length - 1
-                    }
-                  />
-                ))}
-
-                {/* Add spacing between parent category groups */}
-                {!isLastParent && (
-                  <View className="my-4 border-b border-border/20" />
-                )}
-              </View>
-            )
-          })}
+                  {/* Subcategories */}
+                  {hasSubcategories && isExpanded && (
+                    <View className="pb-2">
+                      {categorySubcategories.map((subcategory, subIndex) => (
+                        <CategoryBreakdownItem
+                          key={subcategory.id}
+                          category={subcategory}
+                          totalSpent={totalSpentAmount}
+                          isParent={false}
+                          parentCategory={parentCategory}
+                          isLastSubcategory={
+                            subIndex === categorySubcategories.length - 1
+                          }
+                        />
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )
+            })}
+          </View>
         </CardContent>
       </Card>
     </View>
