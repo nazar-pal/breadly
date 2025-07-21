@@ -69,6 +69,7 @@ export function CategoryBreakdown() {
                     category={subcategory}
                     totalSpent={totalSpentAmount}
                     isParent={false}
+                    parentCategory={parentCategory}
                     isLastSubcategory={
                       subIndex === categorySubcategories.length - 1
                     }
