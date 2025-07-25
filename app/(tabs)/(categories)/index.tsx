@@ -9,7 +9,6 @@ export default function CategoriesExpenseScreen() {
   return (
     <CategoryCardsGrid
       categoryType="expense"
-      isEditMode={false}
       onPress={openAddTransactionModal}
       onLongPress={openCategoryDetailsModal}
     />

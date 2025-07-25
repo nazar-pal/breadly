@@ -8,7 +8,6 @@ export default function CategoriesIncomeScreen() {
   return (
     <CategoryCardsGrid
       categoryType="income"
-      isEditMode={false}
       onPress={openAddTransactionModal}
       onLongPress={openCategoryDetailsModal}
     />

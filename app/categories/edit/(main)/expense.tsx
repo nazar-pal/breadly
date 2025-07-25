@@ -1,4 +1,4 @@
-import { CategoryCardsGrid } from '@/components/categories/category-cards-grid/category-cards-grid'
+import { CategoryCardsEdit } from '@/components/categories/category-cards-edit'
 import { router } from 'expo-router'
 
 export default function EditExpenseCategoriesScreen() {
@@ -7,9 +7,8 @@ export default function EditExpenseCategoriesScreen() {
   }
 
   return (
-    <CategoryCardsGrid
+    <CategoryCardsEdit
       categoryType="expense"
-      isEditMode={true}
       onPress={handleCategoryPress}
       onLongPress={() => {
         console.log('long press')

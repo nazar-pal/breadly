@@ -6,13 +6,11 @@ import {
 } from '@/components/ui/accordion'
 import { Text } from '@/components/ui/text'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
-import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
-import { CategoryCardExtended } from './category-card-extended'
 
 interface Props {
   categoryType: 'income' | 'expense'
@@ -20,7 +18,7 @@ interface Props {
   onLongPress: (categoryId: string) => void
 }
 
-export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
+export function CategoryCardsEdit({ onPress, onLongPress }: Props) {
   const { dateRange } = useCategoriesDateRangeState()
 
   const categories = useGetCategoriesWithAmounts({
@@ -35,19 +33,13 @@ export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
     isArchived: true
   })
 
-  const { viewType } = useCategoryViewStore()
-
   return (
     <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
       {/* Main categories grid */}
       <View className="flex-1 flex-row flex-wrap gap-4">
         {categories.map(category => {
-          // Choose the appropriate card component based on view type
-          const CardComponent =
-            viewType === 'extended' ? CategoryCardExtended : CategoryCard
-
           return (
-            <CardComponent
+            <CategoryCard
               key={category.id}
               category={category}
               onPress={() => onPress(category.id)}
@@ -73,13 +65,8 @@ export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
               <AccordionContent>
                 <View className="flex-1 flex-row flex-wrap gap-4 pt-2">
                   {categoriesArchived.map(category => {
-                    const CardComponent =
-                      viewType === 'extended'
-                        ? CategoryCardExtended
-                        : CategoryCard
-
                     return (
-                      <CardComponent
+                      <CategoryCard
                         key={category.id}
                         category={category}
                         onPress={() => onPress(category.id)}

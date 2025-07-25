@@ -1,4 +1,3 @@
-import { Edit2 } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -7,7 +6,6 @@ import { CategoryCardIcon } from './category-card-icon'
 
 interface Props {
   category: CategoryWithAmounts
-  isEditMode: boolean
   className?: string
   onPress: (categoryId: string) => void
   onLongPress?: () => void
@@ -15,7 +13,6 @@ interface Props {
 
 export function CategoryCardExtended({
   category,
-  isEditMode,
   className,
   onPress,
   onLongPress
@@ -74,13 +71,6 @@ export function CategoryCardExtended({
           </Text>
         </View>
       </View>
-
-      {/* Edit Mode Indicator */}
-      {isEditMode && (
-        <View className="absolute right-2 top-2 rounded-lg border border-primary/20 bg-primary/15 p-1.5 backdrop-blur-md">
-          <Edit2 size={12} className="text-primary" strokeWidth={2.5} />
-        </View>
-      )}
     </Pressable>
   )
 }
