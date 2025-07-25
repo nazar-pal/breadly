@@ -59,9 +59,12 @@ export const userPreferencesRelations = relations(
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
   parent: one(categories, {
     fields: [categories.parentId],
-    references: [categories.id]
+    references: [categories.id],
+    relationName: 'subcategories'
   }), // Parent category relationship
-  children: many(categories), // Child categories relationship
+  subcategories: many(categories, {
+    relationName: 'subcategories'
+  }), // Child categories relationship
   transactions: many(transactions), // Transactions using this category
   budgets: many(budgets) // Budgets tracking this category
 }))
