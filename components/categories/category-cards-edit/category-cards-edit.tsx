@@ -5,12 +5,13 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Text } from '@/components/ui/text'
-import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
+import { useUserSession } from '@/lib/hooks'
+import { useGetCategoriesForEdit } from '@/lib/powersync/data/queries'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
-import { useGetCategoriesWithAmounts } from '../lib/use-get-categories-with-amounts'
+import { useCategoryType } from '../lib/use-category-type'
 import { ButtonAddCategory } from './button-add-category'
-import { CategoryCard } from './category-card'
+import { CategoryGroup } from './category-group'
 
 interface Props {
   categoryType: 'income' | 'expense'
@@ -19,37 +20,35 @@ interface Props {
 }
 
 export function CategoryCardsEdit({ onPress, onLongPress }: Props) {
-  const { dateRange } = useCategoriesDateRangeState()
+  const { userId } = useUserSession()
+  const type = useCategoryType()
 
-  const categories = useGetCategoriesWithAmounts({
-    transactionsFrom: dateRange.start,
-    transactionsTo: dateRange.end,
+  const { data: categories } = useGetCategoriesForEdit({
+    userId,
+    type,
     isArchived: false
   })
 
-  const categoriesArchived = useGetCategoriesWithAmounts({
-    transactionsFrom: dateRange.start,
-    transactionsTo: dateRange.end,
+  const { data: categoriesArchived } = useGetCategoriesForEdit({
+    userId,
+    type,
     isArchived: true
   })
 
   return (
-    <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
+    <ScrollView className="mt-4 flex-1">
       {/* Main categories grid */}
-      <View className="flex-1 flex-row flex-wrap gap-4">
-        {categories.map(category => {
-          return (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              onPress={() => onPress(category.id)}
-              onLongPress={() => onLongPress(category.id)}
-              className="w-[47%] rounded-2xl border border-border bg-card p-3"
-            />
-          )
-        })}
+      <View className="flex-1 flex-col gap-4">
+        {categories.map(categoryGroup => (
+          <CategoryGroup
+            key={categoryGroup.id}
+            categoryGroup={categoryGroup}
+            onPress={onPress}
+            onLongPress={onLongPress}
+          />
+        ))}
 
-        <ButtonAddCategory className="w-[47%] rounded-2xl border border-dashed border-border bg-muted/50 p-3" />
+        <ButtonAddCategory className="rounded-2xl border border-dashed border-border bg-muted/50 p-3" />
       </View>
 
       {/* Archived categories accordion */}
@@ -63,18 +62,16 @@ export function CategoryCardsEdit({ onPress, onLongPress }: Props) {
                 </Text>
               </AccordionTrigger>
               <AccordionContent>
-                <View className="flex-1 flex-row flex-wrap gap-4 pt-2">
-                  {categoriesArchived.map(category => {
-                    return (
-                      <CategoryCard
-                        key={category.id}
-                        category={category}
-                        onPress={() => onPress(category.id)}
-                        onLongPress={() => onLongPress(category.id)}
-                        className="w-[47%] rounded-2xl border border-dashed border-border bg-muted/50 p-3"
-                      />
-                    )
-                  })}
+                <View className="flex-1 flex-col gap-4 pt-2">
+                  {categoriesArchived.map(categoryGroup => (
+                    <CategoryGroup
+                      key={categoryGroup.id}
+                      categoryGroup={categoryGroup}
+                      isArchived={true}
+                      onPress={onPress}
+                      onLongPress={onLongPress}
+                    />
+                  ))}
                 </View>
               </AccordionContent>
             </AccordionItem>
