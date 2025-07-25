@@ -21,6 +21,7 @@ import {
   check,
   foreignKey,
   index,
+  integer,
   sqliteTable,
   text,
   uniqueIndex
@@ -68,6 +69,7 @@ export const categories = sqliteTable(
     name: nameColumn(), // Category display name
     description: descriptionColumn(), // Optional user notes about the category
     icon: text({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
+    sortOrder: integer('sort_order').notNull().default(1000),
     isArchived: isArchivedColumn(), // Soft deletion flag
     createdAt: createdAtColumn()
   },
