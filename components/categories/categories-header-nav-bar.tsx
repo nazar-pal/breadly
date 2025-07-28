@@ -7,11 +7,7 @@ import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useCategoryType } from './lib/use-category-type'
 
-export function CategoriesHeaderNavBar({
-  isEditMode
-}: {
-  isEditMode?: boolean
-}) {
+export function CategoriesHeaderNavBar() {
   const { userId } = useUserSession()
   const activeCategoryType = useCategoryType()
   const { colors } = useTheme()
@@ -36,11 +32,7 @@ export function CategoriesHeaderNavBar({
 
   return (
     <View className="mt-1 flex-row gap-2">
-      <Link
-        replace
-        href={isEditMode ? '/categories/edit/expense' : '/(tabs)/(categories)'}
-        asChild
-      >
+      <Link replace href="/(tabs)/(categories)" asChild>
         <Pressable
           className={`mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2 ${
             activeCategoryType === 'expense'
@@ -72,15 +64,7 @@ export function CategoriesHeaderNavBar({
         </Pressable>
       </Link>
 
-      <Link
-        replace
-        href={
-          isEditMode
-            ? '/categories/edit/income'
-            : '/(tabs)/(categories)/incomes'
-        }
-        asChild
-      >
+      <Link replace href="/(tabs)/(categories)/incomes" asChild>
         <Pressable
           className={`mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2 ${
             activeCategoryType === 'income'
