@@ -1,9 +1,16 @@
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from '@/lib/icons'
+import { Archive, ArchiveRestore, ArrowLeft } from '@/lib/icons'
+import {
+  useEditCategoriesActions,
+  useEditCategoriesState
+} from '@/lib/storage/edit-categories-store'
 import { router, Stack } from 'expo-router'
 import React from 'react'
 
 export default function EditCategoryLayout() {
+  const { showArchived } = useEditCategoriesState()
+  const { toggleArchive } = useEditCategoriesActions()
+
   return (
     <Stack
       screenOptions={{
@@ -14,7 +21,23 @@ export default function EditCategoryLayout() {
         )
       }}
     >
-      <Stack.Screen name="(main)" options={{ title: 'Edit Categories' }} />
+      <Stack.Screen
+        name="(main)"
+        options={{
+          title: showArchived
+            ? 'Edit Categories (Archived)'
+            : 'Edit Categories',
+          headerRight: () => (
+            <Button variant="ghost" size="icon" onPress={toggleArchive}>
+              {showArchived ? (
+                <ArchiveRestore size={24} className="text-foreground" />
+              ) : (
+                <Archive size={24} className="text-foreground" />
+              )}
+            </Button>
+          )
+        }}
+      />
       <Stack.Screen
         name="[id]"
         options={{
