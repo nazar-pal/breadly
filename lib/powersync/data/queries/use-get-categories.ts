@@ -68,7 +68,7 @@ export function useGetCategories({
         )
       }
     },
-    orderBy: [asc(categories.createdAt)]
+    orderBy: [asc(categories.sortOrder), asc(categories.name)]
   })
 
   const result = useQuery(toCompilableQuery(query))

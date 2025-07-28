@@ -25,9 +25,11 @@ export function useGetCategoriesForEdit({
     ),
     with: {
       // bring in sub-categories in the same query
-      subcategories: true
+      subcategories: {
+        orderBy: [asc(categories.sortOrder), asc(categories.name)]
+      }
     },
-    orderBy: [asc(categories.createdAt)]
+    orderBy: [asc(categories.sortOrder), asc(categories.name)]
   })
 
   return useQuery(toCompilableQuery(query))
