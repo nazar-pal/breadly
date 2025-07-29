@@ -6,7 +6,7 @@ import { ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCategoryType } from '../lib/use-category-type'
 import { ButtonAddCategory } from './button-add-category'
-import { CategoryGroup } from './category-group'
+import { CategoryCard } from './category-card'
 
 interface Props {
   categoryType: 'income' | 'expense'
@@ -22,7 +22,8 @@ export function CategoryCardsEdit({ onPress, onLongPress }: Props) {
   const { data: categories } = useGetCategoriesForEdit({
     userId,
     type,
-    isArchived
+    isArchived,
+    parentId: null
   })
 
   const insets = useSafeAreaInsets()
@@ -34,12 +35,13 @@ export function CategoryCardsEdit({ onPress, onLongPress }: Props) {
       showsVerticalScrollIndicator={false}
     >
       <View className="flex-1 flex-col gap-4">
-        {categories.map(categoryGroup => (
-          <CategoryGroup
-            key={categoryGroup.id}
-            categoryGroup={categoryGroup}
-            onPress={onPress}
-            onLongPress={onLongPress}
+        {categories.map(category => (
+          <CategoryCard
+            key={category.id}
+            className="rounded-xl border border-border/50 bg-muted/30 p-2"
+            category={category}
+            onPress={() => onPress(category.id)}
+            onLongPress={() => onLongPress(category.id)}
           />
         ))}
         {!isArchived && (

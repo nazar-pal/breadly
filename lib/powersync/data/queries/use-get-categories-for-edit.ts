@@ -7,18 +7,30 @@ import { db } from '../../system'
 export function useGetCategoriesForEdit({
   userId,
   type,
-  isArchived
+  parentId,
+  isArchived,
+  withSubcategories
 }: {
   userId: string
   type: (typeof CATEGORY_TYPE)[number]
+  parentId?: string | null
   isArchived?: boolean
+  withSubcategories?: boolean
 }) {
+  // Build the where conditions based on parentId parameter
+  const parentCondition =
+    parentId === undefined
+      ? undefined // No parent filter - get all categories
+      : parentId === null
+        ? isNull(categories.parentId) // Get only parent categories
+        : eq(categories.parentId, parentId) // Get subcategories of specific parent
+
   const query = db.query.categories.findMany({
     // root categories only
     where: and(
       eq(categories.userId, userId),
       eq(categories.type, type),
-      isNull(categories.parentId),
+      parentCondition,
       isArchived === undefined
         ? undefined
         : eq(categories.isArchived, isArchived)
