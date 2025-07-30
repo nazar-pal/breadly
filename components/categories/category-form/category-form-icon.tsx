@@ -58,7 +58,7 @@ import {
 } from '@/lib/icons'
 import React from 'react'
 import { Dimensions, Pressable, Text, View } from 'react-native'
-import { useCategoryType } from './lib/use-category-type'
+import { useCategoryType } from '../lib/use-category-type'
 
 // Get device dimensions
 const { width: screenWidth } = Dimensions.get('window')

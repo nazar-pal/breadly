@@ -4,7 +4,11 @@ import React from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Modal } from '../modal'
-import { expenseIcons, IconName, incomeIcons } from './category-form-icon'
+import {
+  expenseIcons,
+  IconName,
+  incomeIcons
+} from './category-form/category-form-icon'
 
 interface IconSelectionModalProps {
   isVisible: boolean
