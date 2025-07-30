@@ -1,45 +1,25 @@
 import { Edit2 } from '@/lib/icons'
 import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
 import { cn } from '@/lib/utils'
-import React, { useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import React, { ComponentProps } from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { CategoryCardIcon } from './category-card-icon'
 
-interface Props {
+interface Props extends ComponentProps<typeof TouchableOpacity> {
   category: CategorySelectSQLite
   className?: string
-  onPress: (categoryId: string) => void
-  onLongPress?: () => void
 }
 
-export function CategoryCard({
-  category,
-  className,
-  onPress,
-  onLongPress
-}: Props) {
-  const [isPressed, setIsPressed] = useState(false)
-
-  const handlePressIn = () => {
-    setIsPressed(true)
-  }
-
-  const handlePressOut = () => {
-    setIsPressed(false)
-  }
-
+export function CategoryCard({ category, className, ...props }: Props) {
   return (
-    <Pressable
+    <TouchableOpacity
       className={cn(
-        'relative flex-row items-center',
-        isPressed && 'opacity-70',
+        'relative flex-row items-center rounded-xl border border-border/50 bg-muted/30 p-2',
         className
       )}
-      onPress={() => onPress(category.id)}
-      onLongPress={onLongPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      delayLongPress={500}
+      delayLongPress={400}
+      activeOpacity={0.6}
+      {...props}
     >
       <CategoryCardIcon name={category.icon} type={category.type} />
 
@@ -58,6 +38,6 @@ export function CategoryCard({
       <View className="rounded-lg border border-primary/20 bg-primary/15 p-1.5 backdrop-blur-md">
         <Edit2 size={13} className="text-primary" strokeWidth={2.5} />
       </View>
-    </Pressable>
+    </TouchableOpacity>
   )
 }

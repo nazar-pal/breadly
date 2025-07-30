@@ -21,6 +21,7 @@ import { StatusBar } from 'expo-status-bar'
 import * as React from 'react'
 import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 const LIGHT_THEME: Theme = { ...DefaultTheme, colors: NAV_THEME.light }
 const DARK_THEME: Theme = { ...DarkTheme, colors: NAV_THEME.dark }
@@ -49,36 +50,38 @@ export default function RootLayout() {
   if (!isColorSchemeLoaded) return null
 
   return (
-    <ClerkProvider
-      publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      tokenCache={tokenCache}
-      __experimental_resourceCache={resourceCache}
-    >
-      <ClerkLoaded>
-        <UserSessionInitializer>
-          <GestureHandlerRootView className="flex-1">
-            <QueryClientProvider client={queryClient}>
-              <PowerSyncContextProvider>
-                <ThemeProvider
-                  value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-                >
-                  <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                  <Stack
-                    screenOptions={{ headerShown: false, animation: 'none' }}
+    <SafeAreaProvider>
+      <ClerkProvider
+        publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        tokenCache={tokenCache}
+        __experimental_resourceCache={resourceCache}
+      >
+        <ClerkLoaded>
+          <UserSessionInitializer>
+            <GestureHandlerRootView className="flex-1">
+              <QueryClientProvider client={queryClient}>
+                <PowerSyncContextProvider>
+                  <ThemeProvider
+                    value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
                   >
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="transactions" />
-                    <Stack.Screen name="accounts" />
-                    <Stack.Screen name="categories" />
-                    <Stack.Screen name="+not-found" />
-                  </Stack>
-                </ThemeProvider>
-              </PowerSyncContextProvider>
-            </QueryClientProvider>
-          </GestureHandlerRootView>
-        </UserSessionInitializer>
-      </ClerkLoaded>
-    </ClerkProvider>
+                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                    <Stack
+                      screenOptions={{ headerShown: false, animation: 'none' }}
+                    >
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen name="transactions" />
+                      <Stack.Screen name="accounts" />
+                      <Stack.Screen name="categories" />
+                      <Stack.Screen name="+not-found" />
+                    </Stack>
+                  </ThemeProvider>
+                </PowerSyncContextProvider>
+              </QueryClientProvider>
+            </GestureHandlerRootView>
+          </UserSessionInitializer>
+        </ClerkLoaded>
+      </ClerkProvider>
+    </SafeAreaProvider>
   )
 }
 

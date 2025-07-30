@@ -1,13 +1,18 @@
 import { EditCategoriesHeaderNavBar } from '@/components/categories/categories-edit-header-nav-bar'
 import { Slot } from 'expo-router'
 import React from 'react'
-import { View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function EditCategoriesLayout() {
   return (
-    <View className="flex-1 bg-background px-4" collapsable={false}>
+    <SafeAreaView
+      className="flex-1 bg-background px-4"
+      collapsable={false}
+      edges={['bottom']}
+      mode="padding"
+    >
       <EditCategoriesHeaderNavBar />
       <Slot />
-    </View>
+    </SafeAreaView>
   )
 }
