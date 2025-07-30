@@ -8,14 +8,12 @@ export function useGetCategoriesForEdit({
   userId,
   type,
   parentId,
-  isArchived,
-  withSubcategories
+  isArchived
 }: {
   userId: string
   type: (typeof CATEGORY_TYPE)[number]
   parentId?: string | null
   isArchived?: boolean
-  withSubcategories?: boolean
 }) {
   // Build the where conditions based on parentId parameter
   const parentCondition =

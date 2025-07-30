@@ -16,24 +16,33 @@ interface Params {
   parentId: string | null // null = reordering root categories, string = reordering subcategories within that parent
   categoryId: string
   targetIndex: number
+  isArchived: boolean
+  type: 'expense' | 'income'
 }
 
 async function baseFn({
   userId,
   parentId,
   categoryId,
-  targetIndex
+  targetIndex,
+  isArchived,
+  type
 }: Params): Promise<SuccessReturn> {
   if (targetIndex < 0) throw new Error('Target index must be non-negative')
+
+  const parentCondition =
+    parentId === null
+      ? isNull(categories.parentId)
+      : eq(categories.parentId, parentId)
 
   const categoriesResult = await db.query.categories.findMany({
     where: and(
       eq(categories.userId, userId),
-      parentId === null
-        ? isNull(categories.parentId)
-        : eq(categories.parentId, parentId)
+      eq(categories.type, type),
+      parentCondition,
+      eq(categories.isArchived, isArchived)
     ),
-    columns: { id: true, sortOrder: true },
+    columns: { id: true, sortOrder: true, name: true },
     orderBy: asc(categories.sortOrder)
   })
 
