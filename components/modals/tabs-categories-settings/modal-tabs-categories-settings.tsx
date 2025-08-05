@@ -58,7 +58,7 @@ export function TabsCategoriesSettings() {
                 onPress={() => viewType !== 'compact' && toggleViewType()}
                 className={`flex-1 flex-row items-center justify-center gap-2 rounded-xl px-4 py-3.5 transition-all ${
                   viewType === 'compact'
-                    ? 'border-2 border-primary/30 bg-primary/5 shadow-sm'
+                    ? 'border-2 border-primary/30 bg-primary/5'
                     : 'border border-border/60 bg-muted/30'
                 }`}
               >
@@ -86,7 +86,7 @@ export function TabsCategoriesSettings() {
                 onPress={() => viewType !== 'extended' && toggleViewType()}
                 className={`flex-1 flex-row items-center justify-center gap-2 rounded-xl px-4 py-3.5 transition-all ${
                   viewType === 'extended'
-                    ? 'border-2 border-primary/30 bg-primary/5 shadow-sm'
+                    ? 'border-2 border-primary/30 bg-primary/5'
                     : 'border border-border/60 bg-muted/30'
                 }`}
               >
