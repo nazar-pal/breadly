@@ -23,30 +23,21 @@ export function TabsCategoriesSettings() {
   }
 
   return (
-    <Modal
-      isVisible={visible}
-      onClose={close}
-      height="auto"
-      className="bg-background"
-    >
+    <Modal isVisible={visible} onClose={close} height="auto">
       <View className="px-6 pb-6">
         {/* Header */}
         <View className="mb-6 flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <View className="rounded-full bg-primary/10 p-2">
-              <Icon name="Settings" size={20} className="text-primary" />
-            </View>
+            <Icon name="Settings" size={20} className="text-primary" />
             <Text className="text-lg font-semibold text-foreground">
-              Display Settings
+              Categories Settings
             </Text>
           </View>
-          <View className="rounded-full bg-muted p-1">
-            <Icon name="Target" size={14} className="text-muted-foreground" />
-          </View>
+          <Icon name="Target" size={14} className="text-muted-foreground" />
         </View>
 
         {/* View Type Section */}
-        <Card className="mb-4 border-border/50">
+        <Card className="mb-4 border-border/50 bg-background/50">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-medium text-foreground">
               Category View
