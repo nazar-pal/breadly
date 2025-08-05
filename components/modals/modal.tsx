@@ -197,6 +197,7 @@ export function Modal({
     <RNModal
       transparent={true}
       animationType="slide"
+      statusBarTranslucent={true}
       {...nativeModalProps}
       visible={isVisible}
       onRequestClose={onClose}
@@ -219,7 +220,7 @@ export function Modal({
           {/* Modal Content */}
           <GestureDetector gesture={panGesture}>
             <Animated.View
-              className={cn('rounded-t-3xl bg-secondary', className)}
+              className={cn('rounded-t-3xl bg-popover', className)}
               style={[
                 {
                   ...(modalHeight && { height: modalHeight as any }),
@@ -234,7 +235,7 @@ export function Modal({
                 <View className="items-center py-3">
                   <View
                     className={cn(
-                      'h-1 w-10 rounded-full bg-secondary-foreground',
+                      'h-1 w-10 rounded-full bg-popover-foreground',
                       dragIndicatorClassName
                     )}
                     accessibilityLabel="Drag to dismiss"
