@@ -20,7 +20,7 @@ export function ButtonAddCategory({ className }: Props) {
   return (
     <Pressable
       className={cn(
-        'h-full flex-1 flex-row items-center justify-center gap-2',
+        'flex-1 flex-row items-center justify-center gap-2',
         className
       )}
       onPress={handleAddCategory}
