@@ -1,4 +1,4 @@
-import { Plus } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { Pressable, Text } from 'react-native'
@@ -19,7 +19,7 @@ export function AddAccountButton({
       )}
       onPress={onPress}
     >
-      <Plus size={16} className="text-primary" />
+      <Icon name="Plus" size={16} className="text-primary" />
       <Text className="text-sm font-semibold text-foreground">{label}</Text>
     </Pressable>
   )

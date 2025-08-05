@@ -1,17 +1,8 @@
 import { AccountTransactionItem } from '@/components/account-details/account-transaction-item'
+import { Icon, type IconName } from '@/components/icon'
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useUserSession } from '@/lib/hooks'
-import {
-  CreditCard,
-  DollarSign,
-  Edit2,
-  PiggyBank,
-  Trash2,
-  TrendingDown,
-  TrendingUp,
-  Wallet
-} from '@/lib/icons'
 import { deleteAccount } from '@/lib/powersync/data/mutations'
 import { useGetAccount } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
@@ -23,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 interface AccountTypeConfig {
   colorClass: string
   bgColorClass: string
-  icon: typeof Wallet
+  icon: IconName
   label: string
 }
 
@@ -31,25 +22,25 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
   payment: {
     colorClass: 'text-primary',
     bgColorClass: 'bg-primary/10',
-    icon: Wallet,
+    icon: 'Wallet',
     label: 'Payment Account'
   },
   credit: {
     colorClass: 'text-primary',
     bgColorClass: 'bg-primary/10',
-    icon: CreditCard,
+    icon: 'CreditCard',
     label: 'Credit Card'
   },
   saving: {
     colorClass: 'text-success',
     bgColorClass: 'bg-success/10',
-    icon: PiggyBank,
+    icon: 'PiggyBank',
     label: 'Savings Account'
   },
   debt: {
     colorClass: 'text-destructive',
     bgColorClass: 'bg-destructive/10',
-    icon: DollarSign,
+    icon: 'DollarSign',
     label: 'Debt Account'
   }
 }
@@ -57,7 +48,7 @@ const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
 interface AccountHeaderProps {
   name: string
   type: string
-  icon: typeof Wallet
+  icon: IconName
   colorClass: string
   bgColorClass: string
   onEdit: () => void
@@ -67,7 +58,7 @@ interface AccountHeaderProps {
 function AccountHeader({
   name,
   type,
-  icon: Icon,
+  icon,
   colorClass,
   bgColorClass,
   onEdit,
@@ -82,7 +73,7 @@ function AccountHeader({
             bgColorClass
           )}
         >
-          <Icon size={28} className={colorClass} />
+          <Icon name={icon} size={28} className={colorClass} />
         </View>
         <View>
           <Text className="text-2xl font-bold text-foreground">{name}</Text>
@@ -99,7 +90,7 @@ function AccountHeader({
             'border border-border/30'
           )}
         >
-          <Edit2 size={16} className="text-muted-foreground" />
+          <Icon name="Pencil" size={16} className="text-muted-foreground" />
         </Pressable>
         <Pressable
           onPress={onDelete}
@@ -110,7 +101,7 @@ function AccountHeader({
             'border border-destructive/30'
           )}
         >
-          <Trash2 size={16} className="text-destructive" />
+          <Icon name="Trash" size={16} className="text-destructive" />
         </Pressable>
       </View>
     </View>
@@ -158,10 +149,10 @@ function BalanceCard({
             {formatBalance(balance)}
           </Text>
           {balance > 0 && type === 'saving' && (
-            <TrendingUp size={24} className="text-success" />
+            <Icon name="TrendingUp" size={24} className="text-success" />
           )}
           {balance < 0 && type === 'payment' && (
-            <TrendingDown size={24} className="text-destructive" />
+            <Icon name="TrendingDown" size={24} className="text-destructive" />
           )}
         </View>
         {description && (

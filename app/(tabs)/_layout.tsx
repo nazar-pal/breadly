@@ -1,25 +1,27 @@
-import { SettingsDropdown } from '@/components/categories/settings-dropdown'
-import { SidebarModal } from '@/components/sidebar-menu'
-import { SidebarTrigger } from '@/components/tabs-header/sidebar-trigger'
-import {
-  Camera,
-  ChartBar,
-  Receipt,
-  Settings,
-  TrendingUp,
-  Wallet
-} from '@/lib/icons'
+import { Icon, type IconName } from '@/components/icon'
+import { SidebarModal, SidebarTrigger } from '@/components/sidebar-menu'
+import { Button } from '@/components/ui/button'
+import { useTabsCategoriesSettingsModalActions } from '@/lib/storage/tabs-categories-settings-modal-store'
 import { Tabs } from 'expo-router'
-import type { LucideIcon } from 'lucide-react-native'
 import React from 'react'
 
-function TabBarIcon({ Icon, focused }: { Icon: LucideIcon; focused: boolean }) {
+function TabBarIcon({ icon, focused }: { icon: IconName; focused: boolean }) {
   return (
     <Icon
+      name={icon}
       size={32}
       className={focused ? 'text-primary' : 'text-muted-foreground'}
       strokeWidth={focused ? 2.5 : 2}
     />
+  )
+}
+
+function SettingsDropdown() {
+  const { open } = useTabsCategoriesSettingsModalActions()
+  return (
+    <Button variant="ghost" size="icon" className="mr-4" onPress={open}>
+      <Icon name="Settings" size={24} className="text-foreground" />
+    </Button>
   )
 }
 
@@ -44,16 +46,7 @@ export default function TabLayout() {
             headerRight: () => <SettingsDropdown />,
             title: 'Categories',
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={ChartBar} focused={focused} />
-            )
-          }}
-        />
-        <Tabs.Screen
-          name="ai"
-          options={{
-            title: 'AI',
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Camera} focused={focused} />
+              <TabBarIcon icon="ChartBar" focused={focused} />
             )
           }}
         />
@@ -62,7 +55,7 @@ export default function TabLayout() {
           options={{
             title: 'Operations',
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Receipt} focused={focused} />
+              <TabBarIcon icon="Receipt" focused={focused} />
             )
           }}
         />
@@ -71,7 +64,7 @@ export default function TabLayout() {
           options={{
             title: 'Statistics',
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={TrendingUp} focused={focused} />
+              <TabBarIcon icon="TrendingUp" focused={focused} />
             )
           }}
         />
@@ -80,7 +73,7 @@ export default function TabLayout() {
           options={{
             title: 'Accounts',
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Wallet} focused={focused} />
+              <TabBarIcon icon="Wallet" focused={focused} />
             )
           }}
         />
@@ -90,7 +83,7 @@ export default function TabLayout() {
           options={{
             title: 'Settings',
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon Icon={Settings} focused={focused} />
+              <TabBarIcon icon="Settings" focused={focused} />
             )
           }}
         />

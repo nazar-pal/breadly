@@ -1,6 +1,6 @@
+import { Icon, type IconName } from '@/components/icon'
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
-import { CreditCard, DollarSign, PiggyBank, TrendingDown } from '@/lib/icons'
 import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
@@ -13,7 +13,7 @@ interface AccountCardProps {
 }
 
 interface AccountTypeConfig {
-  icon: typeof DollarSign
+  icon: IconName
   colorClass: string
   bgColorClass: string
   borderColorClass: string
@@ -22,28 +22,28 @@ interface AccountTypeConfig {
 
 const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
   payment: {
-    icon: DollarSign,
+    icon: 'DollarSign',
     colorClass: 'text-account-payment',
     bgColorClass: 'bg-account-payment/10',
     borderColorClass: 'border-l-account-payment',
     progressClass: 'bg-account-payment'
   },
   credit: {
-    icon: CreditCard,
+    icon: 'CreditCard',
     colorClass: 'text-account-payment',
     bgColorClass: 'bg-account-payment/10',
     borderColorClass: 'border-l-account-payment',
     progressClass: 'bg-account-payment'
   },
   saving: {
-    icon: PiggyBank,
+    icon: 'PiggyBank',
     colorClass: 'text-account-savings',
     bgColorClass: 'bg-account-savings/10',
     borderColorClass: 'border-l-account-savings',
     progressClass: 'bg-account-savings'
   },
   debt: {
-    icon: DollarSign,
+    icon: 'DollarSign',
     colorClass: 'text-account-debt',
     bgColorClass: 'bg-account-debt/10',
     borderColorClass: 'border-l-account-debt',
@@ -69,7 +69,7 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
   }
 
   const config = getAccountConfig()
-  const Icon = config.icon
+  const iconName = config.icon
 
   // Balance is already a number now
   const balanceAmount = account.balance || 0
@@ -153,7 +153,7 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
             config.bgColorClass
           )}
         >
-          <Icon size={16} className={config.colorClass} />
+          <Icon name={iconName} size={16} className={config.colorClass} />
         </View>
         <View className="min-w-0 flex-1">
           <Text
@@ -168,10 +168,18 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
         </View>
         <View className="flex-row items-center">
           {isNegativePayment && (
-            <TrendingDown size={12} className="mr-0.5 text-account-debt" />
+            <Icon
+              name="TrendingDown"
+              size={12}
+              className="mr-0.5 text-account-debt"
+            />
           )}
           {isPositiveSaving && (
-            <TrendingDown size={12} className="mr-0.5 text-account-savings" />
+            <Icon
+              name="TrendingDown"
+              size={12}
+              className="mr-0.5 text-account-savings"
+            />
           )}
           <Text
             className={cn(

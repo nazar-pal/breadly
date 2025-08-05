@@ -1,4 +1,4 @@
-import { X } from '@/lib/icons/'
+import { Icon } from '@/components/icon'
 import { cn } from '@/lib/utils'
 import * as DialogPrimitive from '@rn-primitives/dialog'
 import * as React from 'react'
@@ -96,7 +96,8 @@ function DialogContent({
               'web:group absolute right-4 top-4 rounded-sm p-0.5 opacity-70 web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none'
             }
           >
-            <X
+            <Icon
+              name="X"
               size={Platform.OS === 'web' ? 16 : 18}
               className={cn(
                 'text-muted-foreground',

@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
 import { useUserSession } from '@/lib/hooks'
-import { Check } from '@/lib/icons'
 import { createOrUpdateUserPreferences } from '@/lib/powersync/data/mutations'
 import { CurrencySelectSQLite } from '@/lib/powersync/schema/table_1_currencies'
 import { cn } from '@/lib/utils'
@@ -63,7 +63,7 @@ export function CurrencyItem({
 
       {isSelected && (
         <View className="ml-3">
-          <Check size={20} className="text-primary" />
+          <Icon name="Check" size={20} className="text-primary" />
         </View>
       )}
     </Pressable>

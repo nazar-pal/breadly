@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Switch } from '@/components/ui/switch'
 import { useColorScheme } from '@/lib/hooks/useColorScheme'
-import { Moon, Sun } from '@/lib/icons'
 import React from 'react'
 import { PreferenceItem } from './preference-item'
 
@@ -30,7 +30,7 @@ export function ThemePreferences() {
   return (
     <>
       <PreferenceItem
-        icon={<Sun size={20} className="text-primary" />}
+        icon={<Icon name="Sun" size={20} className="text-primary" />}
         title="Light Mode"
         rightElement={
           <Switch
@@ -40,7 +40,7 @@ export function ThemePreferences() {
         }
       />
       <PreferenceItem
-        icon={<Moon size={20} className="text-primary" />}
+        icon={<Icon name="Moon" size={20} className="text-primary" />}
         title="Dark Mode"
         className="pb-0"
         rightElement={

@@ -1,4 +1,4 @@
-import { X } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import React, { ReactNode } from 'react'
 import {
   Dimensions,
@@ -56,7 +56,7 @@ export function BaseAccountModal({
                   {title}
                 </Text>
                 <Pressable onPress={onClose} className="p-1">
-                  <X size={24} className="text-foreground" />
+                  <Icon name="X" size={24} className="text-foreground" />
                 </Pressable>
               </View>
             </View>

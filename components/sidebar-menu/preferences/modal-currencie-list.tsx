@@ -1,7 +1,7 @@
+import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useUserSession } from '@/lib/hooks'
-import { RefreshCw } from '@/lib/icons'
 import {
   useGetCurrencies,
   useGetUserPreferences
@@ -29,7 +29,11 @@ export function CurrencyList({ closeModal }: CurrencyListProps) {
   if (isLoading) {
     return (
       <View className="items-center justify-center py-12">
-        <RefreshCw size={32} className="mb-3 animate-spin text-primary" />
+        <Icon
+          name="RefreshCw"
+          size={32}
+          className="mb-3 animate-spin text-primary"
+        />
         <Text className="text-center text-base text-muted-foreground">
           Loading currencies...
         </Text>

@@ -1,5 +1,5 @@
+import { Icon } from '@/components/icon'
 import { TextClassContext } from '@/components/ui/text'
-import { ChevronDown } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import * as AccordionPrimitive from '@rn-primitives/accordion'
 import * as React from 'react'
@@ -91,7 +91,11 @@ function AccordionTrigger({
           >
             {children}
             <Animated.View style={chevronStyle}>
-              <ChevronDown size={18} className={'shrink-0 text-foreground'} />
+              <Icon
+                name="ChevronDown"
+                size={18}
+                className={'shrink-0 text-foreground'}
+              />
             </Animated.View>
           </Trigger>
         </AccordionPrimitive.Trigger>

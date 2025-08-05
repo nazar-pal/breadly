@@ -1,7 +1,7 @@
+import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
-import { Check } from '@/lib/icons'
 import React from 'react'
 import { Modal, Pressable, View } from 'react-native'
 
@@ -53,7 +53,11 @@ export function CommentModal({
               onPress={onClose}
               className="flex-1 flex-row items-center justify-center rounded-lg bg-primary py-2"
             >
-              <Check size={16} className="mr-1 text-primary-foreground" />
+              <Icon
+                name="Check"
+                size={16}
+                className="mr-1 text-primary-foreground"
+              />
               <Text className="text-base text-primary-foreground">Save</Text>
             </Button>
           </View>

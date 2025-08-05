@@ -1,13 +1,13 @@
+import { type IconName } from '@/components/icon'
 import { CategoryInsertSQLite } from '@/lib/powersync/schema/table_4_categories'
 import { AccountInsertSQLite } from '@/lib/powersync/schema/table_6_accounts'
-import { LucideIconName } from '@/lib/types'
 
 // Default categories shown to first-time guests
 type CategoryInsertSQLiteWithoutUserId = Omit<
   CategoryInsertSQLite,
   'userId'
 > & {
-  icon: LucideIconName
+  icon: IconName
 }
 
 export const DEFAULT_CATEGORIES: readonly CategoryInsertSQLiteWithoutUserId[] =

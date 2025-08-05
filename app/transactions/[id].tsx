@@ -1,7 +1,7 @@
+import { Icon } from '@/components/icon'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useUserSession } from '@/lib/hooks'
-import { Calendar, Mic, Tag } from '@/lib/icons'
 import { useGetTransaction } from '@/lib/powersync/data/queries'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
@@ -90,19 +90,19 @@ export default function TransactionDetailsScreen() {
         </CardHeader>
         <CardContent>
           <DetailItem
-            icon={<Calendar size={20} className="text-primary" />}
+            icon={<Icon name="Calendar" size={20} className="text-primary" />}
             label="Date"
             value={transaction.txDate.toLocaleDateString()}
           />
 
           <DetailItem
-            icon={<Tag size={20} className="text-primary" />}
+            icon={<Icon name="Tag" size={20} className="text-primary" />}
             label="Category"
             value={transaction.category?.name ?? 'No category'}
           />
 
           <DetailItem
-            icon={<Tag size={20} className="text-primary" />}
+            icon={<Icon name="Tag" size={20} className="text-primary" />}
             label="Description"
             value={transaction.notes ?? 'No description provided'}
             showBorder={false}
@@ -137,7 +137,7 @@ export default function TransactionDetailsScreen() {
           <CardContent>
             <View className="flex-row items-center rounded-lg bg-secondary/50 p-4">
               <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Mic size={20} className="text-primary" />
+                <Icon name="Mic" size={20} className="text-primary" />
               </View>
               <View>
                 <Text className="text-base font-medium text-foreground">

@@ -1,5 +1,7 @@
 import './global.css'
 
+import { CategoryDetailsFormModal } from '@/components/modals/category-details-form/modal-category-details-form'
+import { IconSelectionModal } from '@/components/modals/icon-selection'
 import { UserSessionInitializer } from '@/components/user-session-initializer'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
@@ -74,6 +76,8 @@ export default function RootLayout() {
                       <Stack.Screen name="categories" />
                       <Stack.Screen name="+not-found" />
                     </Stack>
+                    <CategoryDetailsFormModal />
+                    <IconSelectionModal />
                   </ThemeProvider>
                 </PowerSyncContextProvider>
               </QueryClientProvider>

@@ -1,11 +1,4 @@
-import {
-  ArrowDown,
-  Calendar,
-  CreditCard,
-  RefreshCw,
-  TrendingDown,
-  TrendingUp
-} from '@/lib/icons'
+import { Icon, type IconName } from '@/components/icon'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -27,29 +20,29 @@ interface AccountTransactionItemProps {
 type OperationType = AccountOperation['type']
 
 interface OperationConfig {
-  icon: typeof TrendingUp
+  icon: IconName
   colorClass: string
   bgColorClass: string
 }
 
 const OPERATION_CONFIGS: Record<OperationType, OperationConfig> = {
   income: {
-    icon: TrendingUp,
+    icon: 'TrendingUp',
     colorClass: 'text-success',
     bgColorClass: 'bg-success/10'
   },
   expense: {
-    icon: TrendingDown,
+    icon: 'TrendingDown',
     colorClass: 'text-destructive',
     bgColorClass: 'bg-destructive/10'
   },
   payment: {
-    icon: CreditCard,
+    icon: 'CreditCard',
     colorClass: 'text-primary',
     bgColorClass: 'bg-primary/10'
   },
   transfer: {
-    icon: RefreshCw,
+    icon: 'RefreshCw',
     colorClass: 'text-info',
     bgColorClass: 'bg-info/10'
   }
@@ -58,7 +51,7 @@ const OPERATION_CONFIGS: Record<OperationType, OperationConfig> = {
 const getOperationConfig = (type: OperationType): OperationConfig => {
   return (
     OPERATION_CONFIGS[type] || {
-      icon: ArrowDown,
+      icon: 'ArrowDown',
       colorClass: 'text-primary',
       bgColorClass: 'bg-primary/10'
     }
@@ -68,11 +61,7 @@ const getOperationConfig = (type: OperationType): OperationConfig => {
 export function AccountTransactionItem({
   operation
 }: AccountTransactionItemProps) {
-  const {
-    icon: IconComponent,
-    colorClass,
-    bgColorClass
-  } = getOperationConfig(operation.type)
+  const { icon, colorClass, bgColorClass } = getOperationConfig(operation.type)
   const isPositive = operation.amount > 0
 
   const formatAmount = (amount: number) => {
@@ -100,7 +89,7 @@ export function AccountTransactionItem({
             bgColorClass
           )}
         >
-          <IconComponent size={16} className={colorClass} />
+          <Icon name={icon} size={16} className={colorClass} />
         </View>
 
         <View className="min-w-0 flex-1">
@@ -117,7 +106,11 @@ export function AccountTransactionItem({
               </Text>
             </View>
             <View className="flex-row items-center gap-1">
-              <Calendar size={10} className="text-muted-foreground" />
+              <Icon
+                name="Calendar"
+                size={10}
+                className="text-muted-foreground"
+              />
               <Text className="text-[11px] text-muted-foreground">
                 {formatDate(operation.date)}
               </Text>

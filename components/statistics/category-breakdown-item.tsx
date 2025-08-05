@@ -1,12 +1,12 @@
+import { Icon } from '@/components/icon'
 import { Progress } from '@/components/ui/progress'
 import { useUserSession } from '@/lib/hooks'
-import { ChevronRight } from '@/lib/icons'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { cn } from '@/lib/utils'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { CategoryBudgetModal } from './modal-category-budget'
+import { CategoryBudgetModal } from '../modals/category-budget/category-budget'
 
 // Type for category with budget relations (from useGetCategories)
 interface CategoryWithBudgets {
@@ -110,7 +110,11 @@ export function CategoryBreakdownItem({
             </View>
           </View>
           {showChevron && hasSubcategories && (
-            <ChevronRight size={16} className="text-muted-foreground" />
+            <Icon
+              name="ChevronRight"
+              size={16}
+              className="text-muted-foreground"
+            />
           )}
         </View>
         <Text className="text-base font-semibold text-foreground">

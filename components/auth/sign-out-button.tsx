@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { LogOut } from '@/lib/icons'
 import { resetDatabaseAndCreateGuestSession } from '@/lib/powersync/data/database-reset'
 import { userSessionStore } from '@/lib/storage/user-session-store'
 import { useClerk } from '@clerk/clerk-expo'
@@ -58,7 +58,7 @@ export const SignOutButton = () => {
       className="h-14 w-full rounded-xl"
     >
       <View className="flex-row items-center gap-2">
-        <LogOut size={20} className="text-destructive-foreground" />
+        <Icon name="LogOut" size={20} className="text-destructive-foreground" />
         <Text className="text-base font-semibold">Sign Out</Text>
       </View>
     </Button>

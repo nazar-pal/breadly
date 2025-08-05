@@ -1,17 +1,21 @@
-import { CreditCard, PiggyBank, Receipt } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import { cn } from '@/lib/utils'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
-const ICONS = { index: CreditCard, savings: PiggyBank, debt: Receipt }
+const ICONS = {
+  index: 'CreditCard',
+  savings: 'PiggyBank',
+  debt: 'Receipt'
+} as const
 
 export function AccountsTabBar({ state, navigation }: MaterialTopTabBarProps) {
   return (
     <View className="flex-row">
       {state.routes.map((route, i) => {
         const focused = state.index === i
-        const Icon = ICONS[route.name as keyof typeof ICONS]
+        const iconName = ICONS[route.name as keyof typeof ICONS]
 
         const onPress = () => {
           if (!focused) navigation.navigate(route.name)
@@ -29,6 +33,7 @@ export function AccountsTabBar({ state, navigation }: MaterialTopTabBarProps) {
             onPress={onPress}
           >
             <Icon
+              name={iconName}
               size={20}
               className={cn(
                 'mr-1.5',

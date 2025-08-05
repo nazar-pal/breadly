@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { MessageSquare, Save } from '@/lib/icons'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
@@ -43,7 +43,7 @@ export function Calculator({ type, isDisabled, handleSubmit }: Props) {
             className="relative flex-row items-center justify-center rounded-xl bg-card active:scale-95"
             variant="outline"
           >
-            <MessageSquare size={24} className="text-foreground" />
+            <Icon name="MessageSquare" size={24} className="text-foreground" />
             {comment && (
               <View className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-primary" />
             )}
@@ -56,7 +56,11 @@ export function Calculator({ type, isDisabled, handleSubmit }: Props) {
             className="flex-1 flex-row items-center justify-center rounded-xl"
             disabled={isDisabled}
           >
-            <Save size={20} className="mr-2 text-primary-foreground" />
+            <Icon
+              name="Save"
+              size={20}
+              className="mr-2 text-primary-foreground"
+            />
             <Text>{`Save ${type === 'expense' ? 'Expense' : 'Income'}`}</Text>
           </Button>
         </View>

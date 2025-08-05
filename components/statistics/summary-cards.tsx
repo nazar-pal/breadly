@@ -1,5 +1,4 @@
 import { useUserSession } from '@/lib/hooks'
-import { DollarSign, TrendingDown, TrendingUp } from '@/lib/icons'
 import { useGetAverageMonthlyExpenses } from '@/lib/powersync/data/queries/use-get-average-monthly-expenses'
 import { useGetMonthlyBudget } from '@/lib/powersync/data/queries/use-get-monthly-budget'
 import React from 'react'
@@ -63,7 +62,7 @@ export function SummaryCards() {
           amount={totalIncome}
           trend={monthlyIncomeTrendPercentage}
           trendLabel="vs last month"
-          icon={DollarSign}
+          icon="DollarSign"
         />
         <StatCard
           title="Monthly Expenses"
@@ -71,7 +70,7 @@ export function SummaryCards() {
           amount={totalExpense}
           trend={monthlyExpenseTrendPercentage}
           trendLabel="vs last month"
-          icon={DollarSign}
+          icon="DollarSign"
         />
       </View>
 
@@ -82,7 +81,7 @@ export function SummaryCards() {
         variant={budgetRemaining >= 0 ? 'income' : 'expense'}
         progress={Math.min(Math.abs(savingsRate), 100)}
         progressLabel={budgetRemaining >= 0 ? 'Savings Rate' : 'Overspend Rate'}
-        icon={budgetRemaining >= 0 ? TrendingUp : TrendingDown}
+        icon={budgetRemaining >= 0 ? 'TrendingUp' : 'TrendingDown'}
       />
 
       <View className="my-6 flex-row gap-3">

@@ -1,5 +1,0 @@
-export { ButtonAddCategory } from './button-add-category'
-export { CategoryCard } from './category-card'
-export { CategoryCardIcon } from './category-card-icon'
-export { CategoryCardsEdit } from './category-cards-edit'
-export { CategoryGroup } from './category-group'

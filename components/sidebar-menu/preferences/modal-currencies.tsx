@@ -1,4 +1,4 @@
-import { X } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import React from 'react'
 import {
   Dimensions,
@@ -61,7 +61,7 @@ export function ModalCurrencies({
                 className="rounded-full p-2 active:bg-muted"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <X size={20} className="text-muted-foreground" />
+                <Icon name="X" size={20} className="text-muted-foreground" />
               </Pressable>
             </View>
 

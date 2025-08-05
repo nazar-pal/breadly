@@ -1,9 +1,8 @@
-import { CategoriesHeader } from '@/components/categories/categories-header'
-import { CategoriesHeaderNavBar } from '@/components/categories/categories-header-nav-bar'
-import { CategoryDetailsModal } from '@/components/categories/modal-category-details'
-import { SettingsModal } from '@/components/categories/modal-settings'
-import { ModalAddTransaction } from '@/components/modal-add-transaction'
+import { ModalAddTransaction } from '@/components/modals/add-transaction'
+import { CategoryDetailsModal } from '@/components/modals/category-details'
+import { TabsCategoriesSettings } from '@/components/modals/tabs-categories-settings'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
+import { TabsCategoriesHeader } from '@/screens/tabs-categories'
 import { Slot } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
@@ -40,14 +39,11 @@ export default function CategoriesLayout() {
   return (
     <GestureDetectorContainer>
       <View className="flex-1 bg-background" collapsable={false}>
-        <View className="px-4 py-2">
-          <CategoriesHeader />
-          <CategoriesHeaderNavBar />
-        </View>
+        <TabsCategoriesHeader />
         <Slot />
         <ModalAddTransaction />
         <CategoryDetailsModal />
-        <SettingsModal />
+        <TabsCategoriesSettings />
       </View>
     </GestureDetectorContainer>
   )

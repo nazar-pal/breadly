@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
 import { useMigrationPreview } from '@/lib/hooks'
-import { Shield } from '@/lib/icons'
 import React from 'react'
 import { View } from 'react-native'
 
@@ -12,7 +12,11 @@ export function DataLossWarning() {
   return (
     <View className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/30 dark:bg-blue-950/20">
       <View className="mb-2 flex-row items-center">
-        <Shield size={16} className="mr-2 text-blue-600 dark:text-blue-400" />
+        <Icon
+          name="Shield"
+          size={16}
+          className="mr-2 text-blue-600 dark:text-blue-400"
+        />
         <Text className="font-medium text-blue-800 dark:text-blue-200">
           Protect your financial data
         </Text>

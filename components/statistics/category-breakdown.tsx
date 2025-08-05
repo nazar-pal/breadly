@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Card, CardContent } from '@/components/ui/card'
 import { useUserSession } from '@/lib/hooks'
-import { ChevronDown, ChevronRight } from '@/lib/icons'
 import {
   useGetCategories,
   useSumTransactions
@@ -97,12 +97,14 @@ export function CategoryBreakdown() {
                         </View>
                         <View className="px-2 py-4">
                           {isExpanded ? (
-                            <ChevronDown
+                            <Icon
+                              name="ChevronDown"
                               size={18}
                               className="text-muted-foreground"
                             />
                           ) : (
-                            <ChevronRight
+                            <Icon
+                              name="ChevronRight"
                               size={18}
                               className="text-muted-foreground"
                             />

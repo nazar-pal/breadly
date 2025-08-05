@@ -1,4 +1,4 @@
-import { Check } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import React from 'react'
 import { Pressable, Text } from 'react-native'
 
@@ -29,7 +29,7 @@ export function ModalFooter({
         onPress={onSubmit}
         disabled={isLoading}
       >
-        <Check size={20} className="mr-2 text-primary-foreground" />
+        <Icon name="Check" size={20} className="mr-2 text-primary-foreground" />
         <Text className="text-base font-semibold text-primary-foreground">
           {isLoading
             ? 'Saving...'

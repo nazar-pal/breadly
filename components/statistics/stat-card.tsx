@@ -1,8 +1,7 @@
+import { Icon, type IconName } from '@/components/icon'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { ArrowDown, ArrowUp } from '@/lib/icons'
 import { cn } from '@/lib/utils'
-import { LucideIcon } from 'lucide-react-native'
 import React from 'react'
 import { Text, View } from 'react-native'
 
@@ -16,7 +15,7 @@ interface Props {
   progress?: number
   progressLabel?: string
   variant?: Variant
-  icon?: LucideIcon
+  icon?: IconName
 }
 
 // Helper function to format amount with proper currency display
@@ -88,7 +87,7 @@ export function StatCard({
   progress,
   progressLabel,
   variant = 'default',
-  icon: Icon
+  icon
 }: Props) {
   const trendColor = trend !== undefined ? getTrendColor(variant, trend) : ''
   const amountColor = getAmountColor(variant)
@@ -106,9 +105,9 @@ export function StatCard({
           >
             {title}
           </Text>
-          {Icon && (
+          {icon && (
             <View className={cn('rounded-full p-2', iconStyling)}>
-              <Icon size={16} />
+              <Icon name={icon} size={16} />
             </View>
           )}
         </View>
@@ -124,9 +123,9 @@ export function StatCard({
           <View className="mb-3 flex-row items-center gap-1.5">
             <View className="rounded-full p-0.5">
               {trend > 0 ? (
-                <ArrowUp size={14} className={trendColor} />
+                <Icon name="ArrowUp" size={14} className={trendColor} />
               ) : (
-                <ArrowDown size={14} className={trendColor} />
+                <Icon name="ArrowDown" size={14} className={trendColor} />
               )}
             </View>
             <Text className={cn('text-sm font-medium', trendColor)}>

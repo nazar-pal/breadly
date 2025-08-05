@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useUserSession } from '@/lib/hooks'
-import { ChevronRight, DollarSign } from '@/lib/icons'
 import { useGetUserPreferences } from '@/lib/powersync/data/queries'
 import React from 'react'
 import { ModalCurrencies } from './modal-currencies'
@@ -19,11 +19,15 @@ export function CurrencyPreference() {
   return (
     <>
       <PreferenceItem
-        icon={<DollarSign size={20} className="text-primary" />}
+        icon={<Icon name="DollarSign" size={20} className="text-primary" />}
         title="Default Currency"
         subtitle={`${currentCurrency.name} (${currentCurrency.symbol})`}
         rightElement={
-          <ChevronRight size={20} className="text-muted-foreground" />
+          <Icon
+            name="ChevronRight"
+            size={20}
+            className="text-muted-foreground"
+          />
         }
         onPress={() => setShowCurrencyModal(true)}
       />

@@ -1,5 +1,5 @@
+import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from '@/lib/icons'
 import { router, Stack } from 'expo-router'
 
 export default function TransactionsLayout() {
@@ -12,7 +12,7 @@ export default function TransactionsLayout() {
           headerTitleAlign: 'center',
           headerLeft: () => (
             <Button variant="ghost" size="icon" onPress={() => router.back()}>
-              <ArrowLeft size={24} className="text-foreground" />
+              <Icon name="ArrowLeft" size={24} className="text-foreground" />
             </Button>
           )
         }}
