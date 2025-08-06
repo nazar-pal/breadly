@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils/cn'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import {
   Modal as RNModal,
   ModalProps as RNModalProps,
@@ -96,7 +96,7 @@ export function Modal({
   const opacity = useSharedValue(1)
 
   // Memoized height calculation
-  const modalHeight = useMemo(() => {
+  const modalHeight = () => {
     if (height === 'auto') {
       return undefined // Let content determine height
     }
@@ -108,16 +108,16 @@ export function Modal({
       return height <= 1 ? `${height * 100}%` : height
     }
     return '80%'
-  }, [height])
+  }
 
   // Optimized close handler
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     'worklet'
     runOnJS(onClose)()
-  }, [onClose])
+  }
 
   // Gesture handler with improved performance
-  const panGesture = useMemo(() => {
+  const panGesture = () => {
     if (!enableSwipeToClose) {
       return Gesture.Pan().enabled(false)
     }
@@ -166,7 +166,7 @@ export function Modal({
           }
         })
     )
-  }, [enableSwipeToClose, closeThreshold, animationDuration, handleClose])
+  }
 
   // Animated styles with improved interpolation
   const animatedModalStyle = useAnimatedStyle(() => ({
@@ -187,11 +187,11 @@ export function Modal({
   }, [isVisible, translateY, opacity])
 
   // Handle backdrop press
-  const handleBackdropPress = useCallback(() => {
+  const handleBackdropPress = () => {
     if (enableBackdropClose) {
       onClose()
     }
-  }, [enableBackdropClose, onClose])
+  }
 
   return (
     <RNModal
@@ -218,7 +218,7 @@ export function Modal({
           </TouchableWithoutFeedback>
 
           {/* Modal Content */}
-          <GestureDetector gesture={panGesture}>
+          <GestureDetector gesture={panGesture()}>
             <Animated.View
               className={cn('rounded-t-3xl bg-popover', className)}
               style={[

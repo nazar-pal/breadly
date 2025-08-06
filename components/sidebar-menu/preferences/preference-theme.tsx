@@ -7,12 +7,9 @@ import { PreferenceItem } from './preference-item'
 function useThemePreferences() {
   const { colorScheme, setColorScheme } = useColorScheme()
 
-  const toggleTheme = React.useCallback(
-    (targetTheme: 'light' | 'dark') => {
-      setColorScheme(targetTheme)
-    },
-    [setColorScheme]
-  )
+  const toggleTheme = (targetTheme: 'light' | 'dark') => {
+    setColorScheme(targetTheme)
+  }
 
   return {
     currentTheme: colorScheme,

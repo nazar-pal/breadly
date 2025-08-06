@@ -10,7 +10,7 @@ import {
   useCategoryViewStore,
   type CategoryViewType
 } from '@/lib/storage/category-view-store'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
@@ -62,13 +62,12 @@ function CategoryGridSection({
   onLongPress
 }: CategoryGridSectionProps) {
   // Split items into pairs for a 2-column grid. We build the list inside
-  // useMemo so that we don’t accidentally recreate the array on every render
-  const pairs = useMemo(() => {
+  const pairs = () => {
     const list: (CategoryWithAmounts | typeof ADD_BUTTON_SENTINEL)[] =
       includeAddButton ? [...data, ADD_BUTTON_SENTINEL] : data
 
     return chunkArray(list)
-  }, [data, includeAddButton])
+  }
 
   const CardComponent =
     viewType === 'extended' ? CategoryCardExtended : CategoryCard
@@ -78,7 +77,7 @@ function CategoryGridSection({
 
   return (
     <>
-      {pairs.map((pair, pairIndex) => (
+      {pairs().map((pair, pairIndex) => (
         <View key={pairIndex} className="mb-4 flex-row gap-4">
           {pair.map(item => {
             if (item === ADD_BUTTON_SENTINEL) {
