@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { useUserSession } from '@/lib/hooks'
 import { useGetTopMonthlyExpenses } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Text, View } from 'react-native'
 

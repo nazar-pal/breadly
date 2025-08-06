@@ -3,10 +3,8 @@ import { CategoryInsertSQLite } from '@/lib/powersync/schema/table_4_categories'
 import { AccountInsertSQLite } from '@/lib/powersync/schema/table_6_accounts'
 
 // Default categories shown to first-time guests
-type CategoryInsertSQLiteWithoutUserId = Omit<
-  CategoryInsertSQLite,
-  'userId'
-> & {
+interface CategoryInsertSQLiteWithoutUserId
+  extends Omit<CategoryInsertSQLite, 'userId'> {
   icon: IconName
 }
 
@@ -29,7 +27,8 @@ export const DEFAULT_CATEGORIES: readonly CategoryInsertSQLiteWithoutUserId[] =
   ] as const
 
 // Default starter accounts
-type AccountInsertSQLiteWithoutUserId = Omit<AccountInsertSQLite, 'userId'>
+interface AccountInsertSQLiteWithoutUserId
+  extends Omit<AccountInsertSQLite, 'userId'> {}
 
 export const DEFAULT_ACCOUNTS: readonly AccountInsertSQLiteWithoutUserId[] = [
   { name: 'Cash', type: 'payment', currencyId: 'USD' },

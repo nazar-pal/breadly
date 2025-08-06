@@ -1,6 +1,6 @@
-import { useUserSession } from '@/lib/hooks'
 import { createAccount, updateAccount } from '@/lib/powersync/data/mutations'
 import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
+import { useUserSession } from '@/modules/session-and-migration'
 import React, { useEffect, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
 import { BaseAccountModal } from './base-account-modal'

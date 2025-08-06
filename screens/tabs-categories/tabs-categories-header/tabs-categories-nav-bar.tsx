@@ -1,6 +1,7 @@
-import { useCategoryType, useUserSession } from '@/lib/hooks'
+import { useCategoryType } from '@/lib/hooks'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
+import { useUserSession } from '@/modules/session-and-migration'
 import { useTheme } from '@react-navigation/native'
 import { Link } from 'expo-router'
 import React from 'react'

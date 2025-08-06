@@ -22,7 +22,7 @@ export function CategoryCardIcon({
   iconWithClassName(Icon)
 
   return (
-    <View className="size-9 items-center justify-center rounded-lg bg-muted/70">
+    <View className="h-9 w-9 items-center justify-center rounded-lg bg-muted/70">
       <Icon
         size={20}
         className={type === 'expense' ? 'text-expense' : 'text-income'}

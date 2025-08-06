@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Text } from '@/components/ui/text'
-import { useUserSession } from '@/lib/hooks'
 import { useGetCategories } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView } from 'react-native'
 

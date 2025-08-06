@@ -1,9 +1,9 @@
 import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
-import { useUserSession } from '@/lib/hooks'
 import { createOrUpdateUserPreferences } from '@/lib/powersync/data/mutations'
 import { CurrencySelectSQLite } from '@/lib/powersync/schema/table_1_currencies'
 import { cn } from '@/lib/utils'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Pressable, View } from 'react-native'
 

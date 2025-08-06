@@ -7,7 +7,7 @@ import {
   type AccountInsertSQLite
 } from '@/lib/powersync/schema/table_6_accounts'
 import { db } from '@/lib/powersync/system'
-import { DEFAULT_ACCOUNTS, DEFAULT_CATEGORIES } from './seed-data'
+import { DEFAULT_ACCOUNTS, DEFAULT_CATEGORIES } from '../../const/default-data'
 
 /**
  * Bulk-insert default categories & accounts for a guest

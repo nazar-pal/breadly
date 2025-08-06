@@ -1,12 +1,12 @@
 import { Icon, type IconName } from '@/components/icon'
 import { Modal } from '@/components/modals/modal'
-import { useUserSession } from '@/lib/hooks'
 import { updateCategory } from '@/lib/powersync/data/mutations'
 import { useGetCategory } from '@/lib/powersync/data/queries'
 import {
   useCategoryFormModalActions,
   useCategoryFormModalState
 } from '@/lib/storage/category-form-modal-store'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

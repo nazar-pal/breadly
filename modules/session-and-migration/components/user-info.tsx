@@ -1,15 +1,15 @@
-import { Text } from '@/components/ui/text'
-import { useUser } from '@clerk/clerk-expo'
-import React from 'react'
-import { View } from 'react-native'
-import { SignOutButton } from '../auth/sign-out-button'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from '../ui/accordion'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+} from '@/components/ui/accordion'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Text } from '@/components/ui/text'
+import { useUser } from '@clerk/clerk-expo'
+import React from 'react'
+import { View } from 'react-native'
+import { SignOutButton } from './sign-out-button'
 
 export function UserInfo() {
   const { user } = useUser()

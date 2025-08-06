@@ -1,6 +1,6 @@
-import { asyncTryCatch } from '@/lib/utils/index'
-import { checkDbForGuestData } from './check-db-for-guest-data'
-import { insertDefaultDataIntoDatabase } from './insert-default-data'
+import { asyncTryCatch } from '@/lib/utils'
+import { insertDefaultDataIntoDatabase } from '../data/mutations'
+import { checkDbForGuestData } from '../data/queries'
 
 /**
  * Seeds default categories and accounts for a new guest user on first app launch

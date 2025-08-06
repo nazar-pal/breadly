@@ -1,4 +1,3 @@
-import { useUserSession } from '@/lib/hooks'
 import {
   useCheckCategoryDependencies,
   useGetCategories,
@@ -9,6 +8,7 @@ import {
   useCategoryDetailsActions,
   useCategoryDetailsState
 } from '@/lib/storage/category-details-store'
+import { useUserSession } from '@/modules/session-and-migration'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { ScrollView, View } from 'react-native'

@@ -1,9 +1,4 @@
-import { iconWithClassName } from '@/components/icon/iconWithClassName'
-import {
-  House,
-  icons as lucideIcons,
-  type LucideIcon
-} from 'lucide-react-native'
+import { Icon, type IconName } from '@/components/icon'
 import { View } from 'react-native'
 
 export function CategoryCardIcon({
@@ -14,16 +9,12 @@ export function CategoryCardIcon({
   type: 'expense' | 'income'
 }) {
   // Convert to PascalCase (first letter uppercase, rest lowercase)
-  const iconName = name || 'House'
-
-  const Icon = (lucideIcons as Record<string, LucideIcon>)[iconName] || House
-
-  // Apply className support to the icon
-  iconWithClassName(Icon)
+  const iconName = (name || 'House') as IconName
 
   return (
-    <View className="size-9 items-center justify-center rounded-lg bg-muted/70">
+    <View className="h-9 w-9 items-center justify-center rounded-lg bg-muted/70">
       <Icon
+        name={iconName}
         size={20}
         className={type === 'expense' ? 'text-expense' : 'text-income'}
       />

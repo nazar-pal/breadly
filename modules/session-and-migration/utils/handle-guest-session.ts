@@ -1,8 +1,8 @@
-import { seedDefaultDataForGuestUser } from '@/lib/powersync/data/seeding'
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
-import { userSessionStore } from '@/lib/storage/user-session-store'
 import { randomUUID } from 'expo-crypto'
+import { userSessionStore } from '../store'
+import { seedDefaultDataForGuestUser } from './seed-default-data-for-guest-user'
 
 export async function handleGuestSession() {
   const { actions } = userSessionStore.getState()

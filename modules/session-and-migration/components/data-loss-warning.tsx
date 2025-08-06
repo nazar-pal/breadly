@@ -1,13 +1,15 @@
 import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
-import { useMigrationPreview } from '@/lib/hooks'
 import React from 'react'
 import { View } from 'react-native'
+import { useGetGuestDataStats } from '../data/queries'
+import { useUserSession } from '../hooks'
 
 export function DataLossWarning() {
-  const { stats, isLoading } = useMigrationPreview()
+  const { isGuest, userId } = useUserSession()
+  const { data: stats, isLoading } = useGetGuestDataStats({ userId })
 
-  if (isLoading || !stats || stats.total === 0) return null
+  if (isLoading || !stats || stats.total === 0 || !isGuest) return null
 
   return (
     <View className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/30 dark:bg-blue-950/20">

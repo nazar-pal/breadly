@@ -4,20 +4,9 @@ import { AUTO_MIGRATE_KEY } from '@/lib/storage/mmkv/keys'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Image, Text, View } from 'react-native'
-
-export const useWarmUpBrowser = () => {
-  useEffect(() => {
-    // Preloads the browser for Android devices to reduce authentication load time
-    // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
-    void WebBrowser.warmUpAsync()
-    return () => {
-      // Cleanup: closes browser when component unmounts
-      void WebBrowser.coolDownAsync()
-    }
-  }, [])
-}
+import { useWarmUpBrowser } from '../hooks'
 
 // Handle any pending authentication sessions
 WebBrowser.maybeCompleteAuthSession()
@@ -128,7 +117,7 @@ export function GoogleOAuthButton() {
       >
         <Image
           source={require('@/assets/images/google-icon.png')}
-          className="size-5"
+          className="h-5 w-5"
           resizeMode="contain"
         />
         <Text className="text-base text-foreground">Continue with Google</Text>

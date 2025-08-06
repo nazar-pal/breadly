@@ -1,5 +1,5 @@
-import { useUserSession } from '@/lib/hooks'
 import { useGetCategory } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

@@ -1,6 +1,7 @@
-import { useCategoryType, useUserSession } from '@/lib/hooks'
+import { useCategoryType } from '@/lib/hooks'
 import { useGetCategories } from '@/lib/powersync/data/queries'
 import { categories } from '@/lib/powersync/schema/table_4_categories'
+import { useUserSession } from '@/modules/session-and-migration'
 import { InferSelectModel } from 'drizzle-orm'
 
 export interface CategoryWithAmounts

@@ -2,9 +2,9 @@ import { Connector } from '@/lib/powersync/connector'
 import { powerSyncDb } from '@/lib/powersync/system'
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
-import { userSessionStore } from '@/lib/storage/user-session-store'
-import { asyncTryCatch } from '../try-catch'
-import { migrateGuestData } from './migrate-guest-data'
+import { asyncTryCatch } from '@/lib/utils/try-catch'
+import { migrateGuestDataToAuthenticatedUser } from '../data/mutations'
+import { userSessionStore } from '../store'
 
 export async function handleAuthenticatedSession(clerkUserId: string) {
   const { actions } = userSessionStore.getState()
@@ -26,12 +26,16 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
         // New account that was just created – migrate automatically.
         setIsMigrating(true)
 
-        if (__DEV__) console.log('🔍 Starting to migrate guest data...')
+        if (__DEV__)
+          console.log(
+            `🔍 Migrating data from guest ${existingGuestId} to user ${clerkUserId}`
+          )
         const [error] = await asyncTryCatch(
-          migrateGuestData(existingGuestId, clerkUserId)
+          migrateGuestDataToAuthenticatedUser(existingGuestId, clerkUserId)
         )
-        if (__DEV__) console.log('✅ Guest data migrated!')
-        if (error) console.error('❌ Failed to migrate guest data:', error)
+        if (__DEV__ && error)
+          console.error('❌ Failed to migrate guest data:', error)
+        if (__DEV__ && !error) console.log('✅ Guest data migrated!')
 
         // Clear flags & guest key so next guest session starts fresh
         Storage.removeItem(AUTO_MIGRATE_KEY)

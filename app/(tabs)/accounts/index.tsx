@@ -1,7 +1,7 @@
 import { AccountSection } from '@/components/accounts/account-section'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
-import { useUserSession } from '@/lib/hooks'
 import { useGetAccounts } from '@/lib/powersync/data/queries'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

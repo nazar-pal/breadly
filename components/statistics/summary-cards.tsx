@@ -1,6 +1,6 @@
-import { useUserSession } from '@/lib/hooks'
 import { useGetAverageMonthlyExpenses } from '@/lib/powersync/data/queries/use-get-average-monthly-expenses'
 import { useGetMonthlyBudget } from '@/lib/powersync/data/queries/use-get-monthly-budget'
+import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
 import { useSumMonthlyMetrics } from './lib/use-sum-monthly-metrics'

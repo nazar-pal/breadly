@@ -1,10 +1,10 @@
 import { ModalTransactionsDateRange } from '@/components/modals/transactions-date-range'
-import { useUserSession } from '@/lib/hooks'
 import { useSumTransactions } from '@/lib/powersync/data/queries'
 import {
   useCategoriesDateRangeActions,
   useCategoriesDateRangeState
 } from '@/lib/storage/categories-date-range-store'
+import { useUserSession } from '@/modules/session-and-migration'
 import { useTheme } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { Pressable, Text, View } from 'react-native'

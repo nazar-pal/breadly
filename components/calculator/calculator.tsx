@@ -45,7 +45,7 @@ export function Calculator({ type, isDisabled, handleSubmit }: Props) {
           >
             <Icon name="MessageSquare" size={24} className="text-foreground" />
             {comment && (
-              <View className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-primary" />
+              <View className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
             )}
           </Button>
 

@@ -3,6 +3,7 @@ import {
   useSidebarState,
   useTabsHeaderActions
 } from '@/lib/storage/tabs-header-store'
+import { GoogleOAuthButton, UserInfo } from '@/modules/session-and-migration'
 import { SignedIn, SignedOut } from '@clerk/clerk-expo'
 import React from 'react'
 import {
@@ -23,11 +24,9 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { GoogleOAuthButton } from '../auth/google-oauth-button'
-import { DataLossWarning } from './data-loss-warning'
+import { DataLossWarning } from '../../modules/session-and-migration/components/data-loss-warning'
 import { PowerSyncStatus } from './power-sync-status'
 import { Preferences } from './preferences/preferences'
-import { UserInfo } from './user-info'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.9, 400)
