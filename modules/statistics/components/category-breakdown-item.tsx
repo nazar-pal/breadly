@@ -1,4 +1,5 @@
 import { Icon } from '@/components/icon'
+import { CategoryBudgetModal } from '@/components/modals/category-budget'
 import { Progress } from '@/components/ui/progress'
 import { useSumTransactions } from '@/data/client/queries'
 import { cn } from '@/lib/utils'
@@ -6,7 +7,6 @@ import { useUserSession } from '@/modules/session-and-migration'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { CategoryBudgetModal } from '../modals/category-budget/category-budget'
 
 // Type for category with budget relations (from useGetCategories)
 interface CategoryWithBudgets {

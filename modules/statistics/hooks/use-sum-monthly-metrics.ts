@@ -1,4 +1,4 @@
-import { useSumTransactions } from '@/data/client/queries/use-sum-transactions'
+import { useSumTransactions } from '@/data/client/queries'
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns'
 
 /**

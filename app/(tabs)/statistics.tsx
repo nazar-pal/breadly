@@ -1,5 +1,5 @@
-import { CategoryBreakdown, TopExpenses } from '@/components/statistics'
-import { SummaryCards } from '@/components/statistics/summary-cards'
+import { CategoryBreakdown, TopExpenses } from '@/modules/statistics/components'
+import { SummaryCards } from '@/modules/statistics/components/summary-cards'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

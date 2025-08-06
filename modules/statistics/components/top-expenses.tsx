@@ -1,8 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { useGetTopMonthlyExpenses } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Text, View } from 'react-native'
+import { useGetTopMonthlyExpenses } from '../data/queries'
 
 export function TopExpenses() {
   const { userId } = useUserSession()

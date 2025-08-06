@@ -2,8 +2,8 @@ import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { endOfYear, getMonth, startOfYear } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
-import { transactions } from '../db-schema'
-import { db } from '../powersync/system'
+import { transactions } from '../../../../data/client/db-schema'
+import { db } from '../../../../data/client/powersync/system'
 
 /**
  * Hook to calculate the average monthly expense amount for the current year
