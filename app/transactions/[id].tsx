@@ -1,7 +1,7 @@
 import { Icon } from '@/components/icon'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { useGetTransaction } from '@/lib/powersync/data/queries'
+import { useGetTransaction } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'

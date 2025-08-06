@@ -1,8 +1,8 @@
 import { Icon } from '@/components/icon'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { CategoryCardIcon } from '@/screens/tabs-categories/category-card-icon'
 import { Text, View } from 'react-native'
-import { CategoryCardIcon } from '../../../screens/tabs-categories/category-card-icon'
-import { Badge } from '../../ui/badge'
-import { Card } from '../../ui/card'
 
 interface CategoryInfoCardProps {
   categoryData: any

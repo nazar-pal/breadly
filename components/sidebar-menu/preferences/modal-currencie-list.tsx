@@ -1,10 +1,7 @@
 import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
+import { useGetCurrencies, useGetUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
-import {
-  useGetCurrencies,
-  useGetUserPreferences
-} from '@/lib/powersync/data/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'

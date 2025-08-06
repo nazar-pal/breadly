@@ -3,7 +3,7 @@ import {
   useGetCategories,
   useGetCategory,
   useSumTransactions
-} from '@/lib/powersync/data/queries'
+} from '@/data/client/queries'
 import {
   useCategoryDetailsActions,
   useCategoryDetailsState

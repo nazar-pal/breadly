@@ -1,5 +1,5 @@
 import { Icon, type IconName } from '@/components/icon'
-import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
+import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import React from 'react'
 import { Text, View } from 'react-native'

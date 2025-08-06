@@ -1,7 +1,7 @@
 import { Icon, type IconName } from '@/components/icon'
 import { Modal } from '@/components/modals/modal'
-import { updateCategory } from '@/lib/powersync/data/mutations'
-import { useGetCategory } from '@/lib/powersync/data/queries'
+import { updateCategory } from '@/data/client/mutations'
+import { useGetCategory } from '@/data/client/queries'
 import {
   useCategoryFormModalActions,
   useCategoryFormModalState

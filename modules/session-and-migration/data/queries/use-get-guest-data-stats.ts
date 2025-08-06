@@ -1,9 +1,11 @@
-import { categories } from '@/lib/powersync/schema/table_4_categories'
-import { budgets } from '@/lib/powersync/schema/table_5_budgets'
-import { accounts } from '@/lib/powersync/schema/table_6_accounts'
-import { transactions } from '@/lib/powersync/schema/table_7_transactions'
-import { attachments } from '@/lib/powersync/schema/table_8_attachments'
-import { db } from '@/lib/powersync/system'
+import {
+  accounts,
+  attachments,
+  budgets,
+  categories,
+  transactions
+} from '@/data/client/db-schema'
+import { db } from '@/data/client/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { count, eq } from 'drizzle-orm'

@@ -1,6 +1,6 @@
+import { categories } from '@/data/client/db-schema'
+import { useGetCategories } from '@/data/client/queries'
 import { useCategoryType } from '@/lib/hooks'
-import { useGetCategories } from '@/lib/powersync/data/queries'
-import { categories } from '@/lib/powersync/schema/table_4_categories'
 import { useUserSession } from '@/modules/session-and-migration'
 import { InferSelectModel } from 'drizzle-orm'
 

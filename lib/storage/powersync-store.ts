@@ -1,4 +1,4 @@
-import { db, powerSyncDb } from '@/lib/powersync/system'
+import { db, powerSyncDb } from '@/data/client/powersync/system'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 

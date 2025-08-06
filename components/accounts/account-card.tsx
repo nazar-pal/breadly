@@ -1,7 +1,7 @@
 import { Icon, type IconName } from '@/components/icon'
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
-import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
+import { type AccountSelectSQLite } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'expo-router'
 import React from 'react'

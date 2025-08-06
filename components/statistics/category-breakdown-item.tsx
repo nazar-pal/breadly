@@ -1,6 +1,6 @@
 import { Icon } from '@/components/icon'
 import { Progress } from '@/components/ui/progress'
-import { useSumTransactions } from '@/lib/powersync/data/queries'
+import { useSumTransactions } from '@/data/client/queries'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'
 import { endOfMonth, startOfMonth } from 'date-fns'

@@ -1,5 +1,5 @@
-import { useGetAverageMonthlyExpenses } from '@/lib/powersync/data/queries/use-get-average-monthly-expenses'
-import { useGetMonthlyBudget } from '@/lib/powersync/data/queries/use-get-monthly-budget'
+import { useGetAverageMonthlyExpenses } from '@/data/client/queries/use-get-average-monthly-expenses'
+import { useGetMonthlyBudget } from '@/data/client/queries/use-get-monthly-budget'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'

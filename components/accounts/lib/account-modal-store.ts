@@ -1,4 +1,4 @@
-import { AccountSelectSQLite } from '@/lib/powersync/schema/table_6_accounts'
+import { type AccountSelectSQLite } from '@/data/client/db-schema'
 import { create } from 'zustand'
 
 type AccountType = 'saving' | 'payment' | 'debt'

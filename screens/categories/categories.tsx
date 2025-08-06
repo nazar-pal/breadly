@@ -1,6 +1,6 @@
+import { reorderCategories } from '@/data/client/mutations/reorder-categories/reorder-categories'
+import { useGetCategoriesForEdit } from '@/data/client/queries'
 import { useCategoryType } from '@/lib/hooks'
-import { reorderCategories } from '@/lib/powersync/data/mutations/reorder-categories/reorder-categories'
-import { useGetCategoriesForEdit } from '@/lib/powersync/data/queries'
 import { useEditCategoriesState } from '@/lib/storage/edit-categories-store'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'

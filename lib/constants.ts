@@ -1,4 +1,4 @@
-import { CurrencySelectSQLite } from './powersync/schema/table_1_currencies'
+import { CurrencySelectSQLite } from '@/data/client/db-schema'
 
 export const NAV_THEME = {
   light: {

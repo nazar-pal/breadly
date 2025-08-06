@@ -1,4 +1,4 @@
-import { powerSyncDb } from '@/lib/powersync/system'
+import { powerSyncDb } from '@/data/client/powersync/system'
 import { Storage } from '@/lib/storage/mmkv'
 import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
 import { asyncTryCatch } from '@/lib/utils/index'

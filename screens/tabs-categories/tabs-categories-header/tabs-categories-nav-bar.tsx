@@ -1,5 +1,5 @@
+import { useSumTransactions } from '@/data/client/queries'
 import { useCategoryType } from '@/lib/hooks'
-import { useSumTransactions } from '@/lib/powersync/data/queries'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { useUserSession } from '@/modules/session-and-migration'
 import { useTheme } from '@react-navigation/native'

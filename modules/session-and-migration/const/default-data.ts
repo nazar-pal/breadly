@@ -1,6 +1,8 @@
 import { type IconName } from '@/components/icon'
-import { CategoryInsertSQLite } from '@/lib/powersync/schema/table_4_categories'
-import { AccountInsertSQLite } from '@/lib/powersync/schema/table_6_accounts'
+import {
+  type AccountInsertSQLite,
+  type CategoryInsertSQLite
+} from '@/data/client/db-schema'
 
 // Default categories shown to first-time guests
 interface CategoryInsertSQLiteWithoutUserId

@@ -1,5 +1,5 @@
 import { Icon } from '@/components/icon'
-import { CategorySelectSQLite } from '@/lib/powersync/schema/table_4_categories'
+import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
 import React, { ComponentProps } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'

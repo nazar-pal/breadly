@@ -1,4 +1,4 @@
-import { useGetCategory } from '@/lib/powersync/data/queries'
+import { useGetCategory } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'

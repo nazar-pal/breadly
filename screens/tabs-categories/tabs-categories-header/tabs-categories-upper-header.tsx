@@ -1,5 +1,5 @@
 import { ModalTransactionsDateRange } from '@/components/modals/transactions-date-range'
-import { useSumTransactions } from '@/lib/powersync/data/queries'
+import { useSumTransactions } from '@/data/client/queries'
 import {
   useCategoriesDateRangeActions,
   useCategoriesDateRangeState

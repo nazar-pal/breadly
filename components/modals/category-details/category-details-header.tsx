@@ -2,7 +2,7 @@ import { Icon } from '@/components/icon'
 import {
   deleteCategory,
   setCategoryArchiveStatus
-} from '@/lib/powersync/data/mutations'
+} from '@/data/client/mutations'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'

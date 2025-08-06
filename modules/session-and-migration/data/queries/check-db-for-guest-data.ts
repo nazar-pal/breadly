@@ -1,7 +1,6 @@
-import { categories } from '@/lib/powersync/schema/table_4_categories'
-import { accounts } from '@/lib/powersync/schema/table_6_accounts'
-import { db } from '@/lib/powersync/system'
-import { asyncTryCatch } from '@/lib/utils/index'
+import { accounts, categories } from '@/data/client/db-schema'
+import { db } from '@/data/client/powersync/system'
+import { asyncTryCatch } from '@/lib/utils'
 import { count, eq } from 'drizzle-orm'
 
 /**

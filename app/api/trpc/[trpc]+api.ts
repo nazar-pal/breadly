@@ -1,7 +1,6 @@
+import { appRouter } from '@/data/server/api/root'
+import { createTRPCContext } from '@/data/server/api/trpc'
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-
-import { appRouter } from '@/server/api/root'
-import { createTRPCContext } from '@/server/api/trpc'
 
 /**
  * Configure basic CORS headers

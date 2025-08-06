@@ -1,6 +1,6 @@
 import { AccountSection } from '@/components/accounts/account-section'
 import { useAccountsUI } from '@/components/accounts/lib/use-accounts-UI'
-import { useGetAccounts } from '@/lib/powersync/data/queries'
+import { useGetAccounts } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'

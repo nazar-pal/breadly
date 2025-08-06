@@ -1,9 +1,6 @@
 import { Icon } from '@/components/icon'
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  useGetCategories,
-  useSumTransactions
-} from '@/lib/powersync/data/queries'
+import { useGetCategories, useSumTransactions } from '@/data/client/queries'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'
 import React, { useState } from 'react'

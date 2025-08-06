@@ -1,12 +1,10 @@
 import {
-  categories,
-  type CategoryInsertSQLite
-} from '@/lib/powersync/schema/table_4_categories'
-import {
   accounts,
-  type AccountInsertSQLite
-} from '@/lib/powersync/schema/table_6_accounts'
-import { db } from '@/lib/powersync/system'
+  categories,
+  type AccountInsertSQLite,
+  type CategoryInsertSQLite
+} from '@/data/client/db-schema'
+import { db } from '@/data/client/powersync/system'
 import { DEFAULT_ACCOUNTS, DEFAULT_CATEGORIES } from '../../const/default-data'
 
 /**

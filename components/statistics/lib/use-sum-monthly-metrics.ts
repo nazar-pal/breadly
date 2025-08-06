@@ -1,4 +1,4 @@
-import { useSumTransactions } from '@/lib/powersync/data/queries/use-sum-transactions'
+import { useSumTransactions } from '@/data/client/queries/use-sum-transactions'
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns'
 
 /**
