@@ -89,6 +89,8 @@ export function CategoryDetailsModal() {
     <Modal
       isVisible={isCategoryDetailsModalOpen}
       onClose={closeCategoryDetailsModal}
+      className="flex-1"
+      height="auto"
     >
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-6 pb-6">
