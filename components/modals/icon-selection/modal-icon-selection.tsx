@@ -43,48 +43,46 @@ export function IconSelectionModal() {
       showDragIndicator={false}
       enableSwipeToClose={true}
       enableBackdropClose={true}
-      className="bg-background"
+      className="flex-1 bg-background"
     >
-      <View className="flex-1">
-        <View
-          className="flex-row items-center border-b border-border/50 bg-background px-6 py-4"
-          style={{ paddingTop: insets.top + 16 }}
+      <View
+        className="flex-row items-center border-b border-border/50 bg-background px-6 py-4"
+        style={{ paddingTop: insets.top + 16 }}
+      >
+        <Pressable
+          onPress={closeCategoryFormModal}
+          className="mr-4 rounded-full p-2 active:scale-95"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Pressable
-            onPress={closeCategoryFormModal}
-            className="mr-4 rounded-full p-2 active:scale-95"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Icon
-              name="ArrowLeft"
-              size={24}
-              className="text-foreground"
-              strokeWidth={2}
-            />
-          </Pressable>
-          <Text className="flex-1 text-xl font-semibold text-foreground">
-            Choose an icon for your {categoryData.type} category
-          </Text>
-        </View>
-
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{
-            padding: 24,
-            paddingBottom: insets.bottom + 24,
-            flexGrow: 1
-          }}
-          showsVerticalScrollIndicator={true}
-          bounces={true}
-          alwaysBounceVertical={false}
-        >
-          <IconsGrid
-            categoryType={categoryData.type}
-            selectedIcon={categoryData.icon as IconName}
-            onIconSelect={handleIconSelect}
+          <Icon
+            name="ArrowLeft"
+            size={24}
+            className="text-foreground"
+            strokeWidth={2}
           />
-        </ScrollView>
+        </Pressable>
+        <Text className="flex-1 text-xl font-semibold text-foreground">
+          Choose an icon for your {categoryData.type} category
+        </Text>
       </View>
+
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          padding: 24,
+          paddingBottom: insets.bottom + 24,
+          flexGrow: 1
+        }}
+        showsVerticalScrollIndicator={true}
+        bounces={true}
+        alwaysBounceVertical={false}
+      >
+        <IconsGrid
+          categoryType={categoryData.type}
+          selectedIcon={categoryData.icon as IconName}
+          onIconSelect={handleIconSelect}
+        />
+      </ScrollView>
     </Modal>
   )
 }
