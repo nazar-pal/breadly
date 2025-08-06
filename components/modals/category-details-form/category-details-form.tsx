@@ -80,7 +80,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
   }
 
   return (
-    <View className="z-10 w-[92%] max-w-md rounded-2xl border border-border bg-background p-6 shadow-lg">
+    <>
       {/* Category Name */}
       <View>
         <Text className="mb-3 text-center text-lg font-bold text-foreground">
@@ -146,6 +146,6 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
           <Text className="text-base text-primary-foreground">Save</Text>
         </Button>
       </View>
-    </View>
+    </>
   )
 }
