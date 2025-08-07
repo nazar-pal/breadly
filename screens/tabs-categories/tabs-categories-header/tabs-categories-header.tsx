@@ -5,7 +5,7 @@ import { TabsCategoriesUpperHeader } from './tabs-categories-upper-header'
 
 export function TabsCategoriesHeader() {
   return (
-    <View className="px-4 py-2">
+    <View className="border-b border-border/60 bg-background/95 px-4 py-3">
       <TabsCategoriesUpperHeader />
       <TabsCategoriesNavBar />
     </View>

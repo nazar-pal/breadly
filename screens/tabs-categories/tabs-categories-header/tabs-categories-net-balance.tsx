@@ -1,6 +1,7 @@
 import { useSumTransactions } from '@/data/client/queries'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { useUserSession } from '@/modules/session-and-migration'
+import { formatCurrencyWithSign } from '@/modules/statistics/utils'
 import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -32,15 +33,15 @@ export function TabsCategoriesNetBalance() {
 
   return (
     <View className="flex-1">
-      <Text className="mb-0.5 text-xs text-foreground">Net Balance</Text>
+      <Text className="mb-0.5 text-xs text-muted-foreground">Net Balance</Text>
       <Text
         style={{
-          fontSize: 28,
+          fontSize: 26,
           fontWeight: 'bold',
           color: netBalance >= 0 ? colors.primary : colors.notification
         }}
       >
-        {`$${Math.abs(netBalance).toFixed(2)}`}
+        {formatCurrencyWithSign(netBalance)}
       </Text>
     </View>
   )

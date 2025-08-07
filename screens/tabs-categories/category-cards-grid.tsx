@@ -72,8 +72,8 @@ function CategoryGridSection({
   const CardComponent =
     viewType === 'extended' ? CategoryCardExtended : CategoryCard
   const cardClassName = isArchived
-    ? 'rounded-2xl border border-dashed border-border bg-muted/50 p-3'
-    : 'rounded-2xl border border-border bg-card p-3'
+    ? 'rounded-2xl border border-dashed border-border bg-muted/50 p-4 shadow-sm'
+    : 'rounded-2xl border border-border bg-card p-4 shadow-sm'
 
   return (
     <>
@@ -83,7 +83,7 @@ function CategoryGridSection({
             if (item === ADD_BUTTON_SENTINEL) {
               return (
                 <View key="add-button" className="flex-1">
-                  <ButtonAddCategory className="rounded-2xl border border-dashed border-border bg-muted/50 p-3" />
+                  <ButtonAddCategory className="rounded-2xl border border-dashed border-border bg-muted/50 p-4 shadow-sm" />
                 </View>
               )
             }
