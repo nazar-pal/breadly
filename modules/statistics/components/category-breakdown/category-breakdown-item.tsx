@@ -1,11 +1,10 @@
 import { Icon } from '@/components/icon'
-import { CategoryBudgetModal } from '@/components/modals/category-budget'
 import { Progress } from '@/components/ui/progress'
 import { useSumTransactions } from '@/data/client/queries'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'
 import { endOfMonth, startOfMonth } from 'date-fns'
-import React, { useState } from 'react'
+import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 // Type for category with budget relations (from useGetCategories)
@@ -33,6 +32,7 @@ interface CategoryBreakdownItemProps {
   parentCategory?: CategoryWithBudgets
   showChevron?: boolean
   disablePressable?: boolean
+  onOpenBudgetModal: (categoryId: string) => void
 }
 
 export function CategoryBreakdownItem({
@@ -43,10 +43,10 @@ export function CategoryBreakdownItem({
   isLastSubcategory = false,
   parentCategory,
   showChevron = true,
-  disablePressable = false
+  disablePressable = false,
+  onOpenBudgetModal
 }: CategoryBreakdownItemProps) {
   const { userId } = useUserSession()
-  const [showBudgetModal, setShowBudgetModal] = useState(false)
 
   const { data: spent } = useSumTransactions({
     userId,
@@ -74,9 +74,7 @@ export function CategoryBreakdownItem({
     budgetAmount > 0 ? (spentAmount / budgetAmount) * 100 : 0
   const isOverBudget = budgetAmount > 0 && spentAmount > budgetAmount
 
-  const handleLongPress = () => {
-    setShowBudgetModal(true)
-  }
+  const handleLongPress = () => onOpenBudgetModal(category.id)
 
   // Parent category content
   const parentContent = (
@@ -152,14 +150,6 @@ export function CategoryBreakdownItem({
             {parentContent}
           </Pressable>
         )}
-
-        <CategoryBudgetModal
-          isVisible={showBudgetModal}
-          onClose={() => setShowBudgetModal(false)}
-          category={category}
-          parentCategory={parentCategory}
-          currentBudget={budgetAmount}
-        />
       </>
     )
   }
@@ -232,14 +222,6 @@ export function CategoryBreakdownItem({
           </View>
         </View>
       </Pressable>
-
-      <CategoryBudgetModal
-        isVisible={showBudgetModal}
-        onClose={() => setShowBudgetModal(false)}
-        category={category}
-        parentCategory={parentCategory}
-        currentBudget={budgetAmount}
-      />
     </>
   )
 }

@@ -8,11 +8,12 @@ import {
   useCategoryDetailsActions,
   useCategoryDetailsState
 } from '@/lib/storage/category-details-store'
+import { CategoryBudgetForm } from '@/modules/budget/components'
 import { useUserSession } from '@/modules/session-and-migration'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 import { ScrollView, View } from 'react-native'
-import { CategoryBudgetModal } from '../category-budget/category-budget'
+import { CenteredModal } from '../centered-modal'
 import { Modal } from '../modal'
 import { BudgetProgressCard } from './budget-progress-card'
 import { BudgetSection } from './budget-section'
@@ -27,8 +28,11 @@ export function CategoryDetailsModal() {
     useCategoryDetailsState()
   const { closeCategoryDetailsModal } = useCategoryDetailsActions()
 
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false)
+  const openBudgetModal = () => setIsBudgetModalOpen(true)
+  const closeBudgetModal = () => setIsBudgetModalOpen(false)
+
   const { userId } = useUserSession()
-  const [showBudgetModal, setShowBudgetModal] = useState(false)
 
   const { data: category } = useGetCategory({
     userId: userId,
@@ -125,7 +129,7 @@ export function CategoryDetailsModal() {
             isOverBudget={isOverBudget}
             remainingBudget={remainingBudget}
             budgetProgress={budgetProgress}
-            onEditBudget={() => setShowBudgetModal(true)}
+            onEditBudget={openBudgetModal}
           />
 
           <BudgetProgressCard
@@ -149,15 +153,15 @@ export function CategoryDetailsModal() {
           />
         </View>
       </ScrollView>
-
-      {categoryData && (
-        <CategoryBudgetModal
-          isVisible={showBudgetModal}
-          onClose={() => setShowBudgetModal(false)}
-          category={categoryData}
-          currentBudget={budgetAmount}
+      <CenteredModal
+        visible={isBudgetModalOpen}
+        onRequestClose={closeBudgetModal}
+      >
+        <CategoryBudgetForm
+          categoryId={categoryDetailsSelectedCategory ?? ''}
+          onClose={closeBudgetModal}
         />
-      )}
+      </CenteredModal>
     </Modal>
   )
 }

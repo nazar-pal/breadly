@@ -2,8 +2,8 @@ import { useGetMonthlyBudget } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
-import { useGetAverageMonthlyExpenses } from '../data/queries'
-import { useSumMonthlyMetrics } from '../hooks/use-sum-monthly-metrics'
+import { useGetAverageMonthlyExpenses } from '../../data/queries'
+import { useSumMonthlyMetrics } from '../../hooks/use-sum-monthly-metrics'
 import { StatCard } from './stat-card'
 
 export function SummaryCards() {

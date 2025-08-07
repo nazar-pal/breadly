@@ -1,5 +1,3 @@
 export { CategoryBreakdown } from './category-breakdown'
-export { CategoryBreakdownItem } from './category-breakdown-item'
-export { StatCard } from './stat-card'
 export { SummaryCards } from './summary-cards'
 export { TopExpenses } from './top-expenses'

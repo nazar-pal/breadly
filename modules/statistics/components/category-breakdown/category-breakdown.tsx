@@ -7,7 +7,13 @@ import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { CategoryBreakdownItem } from './category-breakdown-item'
 
-export function CategoryBreakdown() {
+interface CategoryBreakdownProps {
+  onOpenBudgetModal: (categoryId: string) => void
+}
+
+export function CategoryBreakdown({
+  onOpenBudgetModal
+}: CategoryBreakdownProps) {
   const { userId } = useUserSession()
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set()
@@ -90,6 +96,7 @@ export function CategoryBreakdown() {
                             hasSubcategories={hasSubcategories}
                             showChevron={false}
                             disablePressable={true}
+                            onOpenBudgetModal={onOpenBudgetModal}
                           />
                         </View>
                         <View className="px-2 py-4">
@@ -118,6 +125,7 @@ export function CategoryBreakdown() {
                         hasSubcategories={false}
                         showChevron={false}
                         disablePressable={false}
+                        onOpenBudgetModal={onOpenBudgetModal}
                       />
                     </View>
                   )}
@@ -135,6 +143,7 @@ export function CategoryBreakdown() {
                           isLastSubcategory={
                             subIndex === categorySubcategories.length - 1
                           }
+                          onOpenBudgetModal={onOpenBudgetModal}
                         />
                       ))}
                     </View>
