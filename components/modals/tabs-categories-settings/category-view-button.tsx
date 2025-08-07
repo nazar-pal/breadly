@@ -26,21 +26,18 @@ export function CategoryViewButton({
     <Pressable
       onPress={onPress}
       className={cn(
-        'flex flex-1 flex-row items-center justify-center gap-2 rounded-xl border border-input bg-background px-4 py-3.5',
-        isSelected && 'border-2 border-primary/30'
+        'flex flex-1 flex-row items-center justify-center gap-2 rounded-xl border border-input bg-background px-4 py-3.5 active:opacity-90',
+        isSelected && 'border-primary/40 bg-primary/5'
       )}
     >
       <Icon
         name={icon}
         size={18}
-        className={cn(
-          'text-secondary-foreground',
-          isSelected && 'text-primary'
-        )}
+        className={cn('text-muted-foreground', isSelected && 'text-primary')}
       />
       <Text
         className={cn(
-          'text-sm font-medium text-secondary-foreground',
+          'text-sm font-medium text-foreground',
           isSelected && 'text-primary'
         )}
       >

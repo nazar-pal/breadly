@@ -34,16 +34,16 @@ export function TabsCategoriesSettings() {
               Categories Settings
             </Text>
           </View>
-          <Icon name="Target" size={14} className="text-secondary-foreground" />
+          <Icon name="Target" size={16} className="text-muted-foreground" />
         </View>
 
-        <Card className="mb-4 bg-secondary">
+        <Card className="mb-4">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium text-secondary-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Category View
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-row gap-2 bg-secondary/50 pt-0">
+          <CardContent className="flex-row gap-3 pt-0">
             <CategoryViewButton
               viewType="compact"
               currentViewType={viewType}
@@ -63,26 +63,22 @@ export function TabsCategoriesSettings() {
 
         <Pressable
           onPress={handleEditPress}
-          className="flex-row items-center justify-between rounded-xl border border-border/60 bg-secondary p-4"
+          className="flex-row items-center justify-between rounded-xl border border-border/60 bg-secondary p-4 active:opacity-80"
         >
           <View className="flex-row items-center gap-3">
-            <View className="rounded-lg bg-orange-500/10 p-2">
-              <Icon name="Pencil" size={16} className="text-orange-600" />
+            <View className="rounded-lg bg-primary/10 p-2">
+              <Icon name="Pencil" size={16} className="text-primary" />
             </View>
             <View>
-              <Text className="font-medium text-secondary-foreground">
+              <Text className="font-medium text-foreground">
                 Edit Categories
               </Text>
-              <Text className="text-xs text-secondary-foreground">
+              <Text className="text-xs text-muted-foreground">
                 Add, remove, or reorder categories
               </Text>
             </View>
           </View>
-          <Icon
-            name="Layers2"
-            size={14}
-            className="text-secondary-foreground"
-          />
+          <Icon name="Layers2" size={14} className="text-muted-foreground" />
         </Pressable>
       </View>
     </Modal>
