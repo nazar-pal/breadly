@@ -184,8 +184,16 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
     )
 
     // Additional guard: do not allow a range that goes beyond today
-    if (new Date(range.start) > new Date(todayString)) return
-    if (new Date(range.end) > new Date(todayString)) return
+    // Normalize to start of day to prevent timezone issues
+    const startDay = new Date(range.start)
+    startDay.setHours(0, 0, 0, 0)
+    const endDay = new Date(range.end)
+    endDay.setHours(0, 0, 0, 0)
+    const todayDay = new Date(todayString)
+    todayDay.setHours(0, 0, 0, 0)
+
+    if (startDay > todayDay) return
+    if (endDay > todayDay) return
 
     if (!isValid) throw new Error(error)
 
