@@ -53,10 +53,10 @@ export function ModeSelection({
         {MODE_OPTIONS.map(option => (
           <Pressable
             key={option.mode}
-            className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 ${
+            className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 active:opacity-90 ${
               dateRange.mode === option.mode
-                ? 'border-primary bg-primary/10'
-                : 'border-border bg-card'
+                ? 'border-primary/40 bg-primary/5'
+                : 'border-input bg-background'
             }`}
             onPress={() => handleModeSelect(option.mode)}
           >

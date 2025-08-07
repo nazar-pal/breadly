@@ -1,8 +1,10 @@
 import { Icon } from '@/components/icon'
+import { useColorScheme } from '@/lib/hooks/useColorScheme'
 import {
   DateRange,
   useCategoriesDateRangeActions
 } from '@/lib/storage/categories-date-range-store'
+import { cn } from '@/lib/utils'
 import { validateCustomDateRange } from '@/screens/tabs-categories/lib/date-range-validation'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -35,10 +37,59 @@ type MarkedDate = {
   startingDay?: boolean
   endingDay?: boolean
   color?: string
+  textColor?: string
 }
 
 export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
   const { setDateRange } = useCategoriesDateRangeActions()
+  const { colorScheme } = useColorScheme()
+  const isDark = colorScheme === 'dark'
+  const calendarTheme = {
+    backgroundColor: 'transparent',
+    calendarBackground: 'transparent',
+    textSectionTitleColor: isDark ? '#A1A1AA' : '#6B7280',
+    selectedDayBackgroundColor: PRIMARY_COLOR,
+    selectedDayTextColor: '#FFFFFF',
+    todayTextColor: PRIMARY_COLOR,
+    dayTextColor: isDark ? '#E5E7EB' : '#111827',
+    textDisabledColor: isDark ? '#6B7280' : '#9CA3AF',
+    arrowColor: PRIMARY_COLOR,
+    monthTextColor: isDark ? '#E5E7EB' : '#111827',
+    indicatorColor: PRIMARY_COLOR,
+    textDayFontSize: 16,
+    textDayHeaderFontSize: 12,
+    textMonthFontSize: 16,
+    arrowStyle: { padding: 8 },
+    stylesheet: {
+      calendar: {
+        main: {
+          container: {
+            backgroundColor: 'transparent'
+          },
+          week: {
+            backgroundColor: 'transparent'
+          }
+        },
+        header: {
+          week: {
+            backgroundColor: 'transparent'
+          }
+        }
+      },
+      day: {
+        basic: {
+          base: {
+            backgroundColor: 'transparent'
+          }
+        },
+        period: {
+          base: {
+            backgroundColor: 'transparent'
+          }
+        }
+      }
+    } as any
+  }
 
   /* --------------------------------------------------------------------------
    * Local state
@@ -68,7 +119,8 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
         selected: true,
         startingDay: day === start,
         endingDay: day === end,
-        color: PRIMARY_COLOR
+        color: PRIMARY_COLOR,
+        textColor: '#FFFFFF'
       }
       cursor.setDate(cursor.getDate() + 1)
     }
@@ -89,7 +141,8 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
         [dateString]: {
           selected: true,
           startingDay: true,
-          color: PRIMARY_COLOR
+          color: PRIMARY_COLOR,
+          textColor: '#FFFFFF'
         }
       })
       return
@@ -136,29 +189,30 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
 
   return (
     <View className="flex-grow px-5 pb-5 pt-3">
-      <Calendar
-        onDayPress={handleDayPress}
-        markingType="period"
-        markedDates={markedDates}
-        theme={{
-          backgroundColor: '#F5F5F5',
-          calendarBackground: '#F5F5F5',
-          textSectionTitleColor: '#4A5568',
-          selectedDayBackgroundColor: PRIMARY_COLOR,
-          selectedDayTextColor: '#F5F5F5',
-          todayTextColor: PRIMARY_COLOR,
-          dayTextColor: '#1A202C',
-          textDisabledColor: '#4A5568',
-          arrowColor: PRIMARY_COLOR,
-          monthTextColor: '#1A202C',
-          indicatorColor: PRIMARY_COLOR
-        }}
-      />
+      <View className="rounded-2xl border border-border bg-popover">
+        <Calendar
+          onDayPress={handleDayPress}
+          markingType="period"
+          markedDates={markedDates}
+          firstDay={1}
+          enableSwipeMonths
+          hideExtraDays
+          renderArrow={direction => (
+            <Icon
+              name={direction === 'left' ? 'ChevronLeft' : 'ChevronRight'}
+              size={18}
+              className="text-primary"
+            />
+          )}
+          style={{ padding: 8, backgroundColor: 'transparent' }}
+          theme={calendarTheme}
+        />
+      </View>
 
       {/* Action buttons ------------------------------------------------------*/}
       <View className="flex-row gap-3 pt-5">
         <Pressable
-          className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl bg-secondary py-3"
+          className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl border border-input bg-background py-3 active:opacity-90"
           onPress={handleCancel}
         >
           <Text className="text-base font-semibold text-foreground">
@@ -167,14 +221,22 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
         </Pressable>
 
         <Pressable
-          className={`flex-[0.6] flex-row items-center justify-center gap-1 rounded-2xl py-3 ${
+          className={cn(
+            'flex-[0.6] flex-row items-center justify-center gap-1 rounded-2xl py-3',
             range.start && range.end ? 'bg-primary' : 'bg-muted'
-          }`}
+          )}
           onPress={handleConfirm}
           disabled={!range.start || !range.end}
         >
           <Icon name="Check" size={16} className="text-primary-foreground" />
-          <Text className="text-base font-semibold text-primary-foreground">
+          <Text
+            className={cn(
+              'text-base font-semibold',
+              range.start && range.end
+                ? 'text-primary-foreground'
+                : 'text-muted-foreground'
+            )}
+          >
             Confirm
           </Text>
         </Pressable>

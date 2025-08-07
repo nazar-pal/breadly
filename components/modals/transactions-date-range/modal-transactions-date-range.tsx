@@ -25,7 +25,11 @@ export function ModalTransactionsDateRange({
   }
 
   return (
-    <Modal isVisible={isDateRangeModalOpen} onClose={closeDateRangeModal}>
+    <Modal
+      isVisible={isDateRangeModalOpen}
+      onClose={closeDateRangeModal}
+      height="auto"
+    >
       <Header
         triggerError={triggerError}
         showCustomPicker={isPickingCustomRange}
