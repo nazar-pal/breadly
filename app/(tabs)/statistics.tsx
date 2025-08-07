@@ -35,7 +35,7 @@ export default function StatisticsScreen() {
           paddingBottom: insets.bottom + 16
         }}
       >
-        <View className="px-4 py-4">
+        <View className="gap-6 px-4 py-4">
           <SummaryCards />
           <CategoryBreakdown onOpenBudgetModal={openBudgetModal} />
           <TopExpenses />

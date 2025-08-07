@@ -55,7 +55,7 @@ export function SummaryCards() {
 
   return (
     <>
-      <View className="mb-4 flex-row gap-3">
+      <View className="flex-row gap-3">
         <StatCard
           title="Monthly Income"
           variant="income"

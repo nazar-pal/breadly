@@ -13,7 +13,7 @@ export function TopExpenses() {
 
   if (isLoading) {
     return (
-      <View className="mb-6">
+      <View>
         <Text className="mb-4 text-lg font-semibold text-foreground">
           Top 5 Expenses
         </Text>
@@ -26,7 +26,7 @@ export function TopExpenses() {
 
   if (topExpenses.length === 0) {
     return (
-      <View className="mb-6">
+      <View>
         <Text className="mb-4 text-lg font-semibold text-foreground">
           Top 5 Expenses
         </Text>
@@ -54,7 +54,7 @@ export function TopExpenses() {
   }
 
   return (
-    <View className="mb-6">
+    <View>
       <Text className="mb-4 text-lg font-semibold text-foreground">
         Top 5 Expenses
       </Text>
