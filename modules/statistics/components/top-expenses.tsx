@@ -3,6 +3,7 @@ import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { useGetTopMonthlyExpenses } from '../data/queries'
+import { formatCurrency } from '../utils'
 
 export function TopExpenses() {
   const { userId } = useUserSession()
@@ -80,7 +81,7 @@ export function TopExpenses() {
               </View>
               <View className="items-end">
                 <Text className="text-lg font-bold text-destructive">
-                  ${Number(transaction.amount).toFixed(2)}
+                  {formatCurrency(Number(transaction.amount))}
                 </Text>
               </View>
             </View>

@@ -4,6 +4,7 @@ import React from 'react'
 import { View } from 'react-native'
 import { useGetAverageMonthlyExpenses } from '../../data/queries'
 import { useSumMonthlyMetrics } from '../../hooks/use-sum-monthly-metrics'
+import { calculatePercentageChange, calculateSavingsRate } from '../../utils'
 import { StatCard } from './stat-card'
 
 export function SummaryCards() {
@@ -33,15 +34,15 @@ export function SummaryCards() {
 
   const budgetRemaining = totalIncome - totalExpense
 
-  const monthlyIncomeTrendPercentage =
-    totalIncomeLastMonth !== 0
-      ? ((totalIncome - totalIncomeLastMonth) / totalIncomeLastMonth) * 100
-      : 0
+  const monthlyIncomeTrendPercentage = calculatePercentageChange(
+    totalIncome,
+    totalIncomeLastMonth
+  )
 
-  const monthlyExpenseTrendPercentage =
-    totalExpenseLastMonth !== 0
-      ? ((totalExpense - totalExpenseLastMonth) / totalExpenseLastMonth) * 100
-      : 0
+  const monthlyExpenseTrendPercentage = calculatePercentageChange(
+    totalExpense,
+    totalExpenseLastMonth
+  )
 
   const { totalMonthlyBudget } = useGetMonthlyBudget({ userId })
 
@@ -50,8 +51,7 @@ export function SummaryCards() {
   const { averageMonthlyExpense } = useGetAverageMonthlyExpenses({ userId })
 
   // Savings rate represents the percentage of income that remains after expenses for the current month
-  const savingsRate =
-    totalIncome !== 0 ? (budgetRemaining / totalIncome) * 100 : 0
+  const savingsRate = calculateSavingsRate(totalIncome, totalExpense)
 
   return (
     <>

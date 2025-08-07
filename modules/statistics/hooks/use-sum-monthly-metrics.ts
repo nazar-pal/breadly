@@ -1,3 +1,4 @@
+import { CATEGORY_TYPE } from '@/data/client/db-schema'
 import { useSumTransactions } from '@/data/client/queries'
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns'
 
@@ -15,7 +16,7 @@ export function useSumMonthlyMetrics({
   period = 'thisMonth'
 }: {
   userId: string
-  type: 'income' | 'expense'
+  type: (typeof CATEGORY_TYPE)[number]
   period?: 'thisMonth' | 'lastMonth'
 }) {
   const now = new Date()
