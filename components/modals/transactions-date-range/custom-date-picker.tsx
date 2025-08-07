@@ -91,6 +91,23 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
     } as any
   }
 
+  // Utility helpers -----------------------------------------------------------
+  const pad = (value: number) => `${value}`.padStart(2, '0')
+  const getTodayString = () => {
+    const now = new Date()
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+      now.getDate()
+    )}`
+  }
+  const todayString = getTodayString()
+  const [displayedMonth, setDisplayedMonth] = useState(() => {
+    const now = new Date()
+    return { year: now.getFullYear(), month: now.getMonth() + 1 }
+  })
+  const isAtCurrentMonth =
+    displayedMonth.year === new Date().getFullYear() &&
+    displayedMonth.month === new Date().getMonth() + 1
+
   /* --------------------------------------------------------------------------
    * Local state
    * ------------------------------------------------------------------------*/
@@ -133,6 +150,8 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
    * ------------------------------------------------------------------------*/
 
   const handleDayPress = ({ dateString }: DateData) => {
+    // Disallow selecting days after today
+    if (new Date(dateString) > new Date(todayString)) return
     // Start a new selection if there is no start date yet OR the user already
     // picked both dates and is starting over.
     if (!range.start || (range.start && range.end)) {
@@ -163,6 +182,10 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
       new Date(range.start),
       new Date(range.end)
     )
+
+    // Additional guard: do not allow a range that goes beyond today
+    if (new Date(range.start) > new Date(todayString)) return
+    if (new Date(range.end) > new Date(todayString)) return
 
     if (!isValid) throw new Error(error)
 
@@ -195,15 +218,28 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
           markingType="period"
           markedDates={markedDates}
           firstDay={1}
-          enableSwipeMonths
+          enableSwipeMonths={false}
           hideExtraDays
+          maxDate={todayString}
           renderArrow={direction => (
             <Icon
               name={direction === 'left' ? 'ChevronLeft' : 'ChevronRight'}
               size={18}
-              className="text-primary"
+              className={
+                direction === 'right' && isAtCurrentMonth
+                  ? 'text-muted-foreground/40'
+                  : 'text-primary'
+              }
             />
           )}
+          onMonthChange={m =>
+            setDisplayedMonth({ year: m.year, month: m.month })
+          }
+          onPressArrowLeft={subtractMonth => subtractMonth()}
+          onPressArrowRight={addMonth => {
+            if (!isAtCurrentMonth) addMonth()
+          }}
+          disableArrowRight={isAtCurrentMonth}
           style={{ padding: 8, backgroundColor: 'transparent' }}
           theme={calendarTheme}
         />
