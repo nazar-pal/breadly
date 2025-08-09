@@ -17,6 +17,7 @@ interface Props {
   progressLabel?: string
   variant?: Variant
   icon?: IconName
+  className?: string
 }
 
 export function StatCard({
@@ -27,7 +28,8 @@ export function StatCard({
   progress,
   progressLabel,
   variant = 'default',
-  icon
+  icon,
+  className
 }: Props) {
   // Helper function to get trend color based on variant and trend direction
   const getTrendColor = (trend: number): string => {
@@ -84,7 +86,7 @@ export function StatCard({
   const progressColor = getProgressColor()
 
   return (
-    <Card className="flex-1">
+    <Card className={cn('flex-1', className)}>
       <CardContent className="p-4">
         {/* Header with title and icon */}
         <View className="mb-4 flex-row items-center justify-between">
@@ -102,7 +104,7 @@ export function StatCard({
         </View>
 
         {/* Amount display */}
-        <Text className={cn('mb-3 text-2xl font-bold', amountColor)}>
+        <Text className={cn('mb-3 text-3xl font-bold', amountColor)}>
           {formatCurrencyWithSign(amount)}
         </Text>
 

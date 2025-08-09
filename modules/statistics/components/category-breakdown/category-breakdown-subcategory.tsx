@@ -1,3 +1,4 @@
+import { Icon, type IconName } from '@/components/icon'
 import { Progress } from '@/components/ui/progress'
 import { useGetCategories } from '@/data/client/queries'
 import { cn } from '@/lib/utils'
@@ -41,57 +42,70 @@ export function CategoryBreakdownSubcategory({
     <Pressable onLongPress={handleLongPress} delayLongPress={500}>
       <View
         className={cn(
-          'rounded-lg border border-border/20 bg-muted/30 p-3',
-          'min-h-[80px]'
+          'rounded-xl border border-border/20 bg-background/60 p-3',
+          'min-h-[92px]'
         )}
       >
-        <View className="mb-2">
-          <View className="mb-1 flex-row items-center gap-2">
-            <View className="h-2 w-2 rounded-full bg-primary/60" />
+        <View className="mb-2 flex-row items-center justify-between">
+          <View className="mr-2 flex-row items-center gap-3">
+            <View
+              className={cn(
+                'h-8 w-8 items-center justify-center rounded-full',
+                isOverBudgetValue ? 'bg-expense/10' : 'bg-primary/10'
+              )}
+            >
+              <Icon
+                name={(category.icon as IconName) ?? 'Circle'}
+                size={16}
+                className={cn(
+                  isOverBudgetValue ? 'text-expense' : 'text-primary'
+                )}
+              />
+            </View>
             <Text
-              className="flex-1 text-sm font-medium text-foreground"
+              className="max-w-[150px] text-sm font-semibold text-foreground"
               numberOfLines={1}
             >
               {category.name}
             </Text>
           </View>
-          <Text className="mb-1 text-xs text-muted-foreground">
+          <Text className="text-base font-bold text-foreground">
             {formatCurrency(spentAmount)}
-            {budgetAmount > 0 && (
-              <Text className="text-xs text-muted-foreground">
-                {' '}
-                of {formatCurrency(budgetAmount)}
-              </Text>
-            )}
           </Text>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-xs font-medium text-foreground/80">
-              {percentageOfTotal.toFixed(1)}%
-            </Text>
-            {budgetAmount > 0 && (
+        </View>
+        <View className="mb-2 flex-row items-center justify-between">
+          <Text className="text-xs font-medium text-muted-foreground">
+            {percentageOfTotal.toFixed(1)}% of total
+          </Text>
+          {budgetAmount > 0 && (
+            <View
+              className={cn(
+                'rounded-full px-2 py-0.5',
+                isOverBudgetValue ? 'bg-expense/10' : 'bg-muted/60'
+              )}
+            >
               <Text
                 className={cn(
-                  'text-xs font-medium',
+                  'text-[10px] font-medium',
                   isOverBudgetValue ? 'text-expense' : 'text-muted-foreground'
                 )}
               >
-                {budgetProgress.toFixed(0)}%
+                {budgetProgress.toFixed(0)}% of {formatCurrency(budgetAmount)}
               </Text>
-            )}
-          </View>
+            </View>
+          )}
         </View>
-        {/* Progress bar */}
         <Progress
           value={
             budgetAmount > 0 ? Math.min(budgetProgress, 100) : percentageOfTotal
           }
-          className="h-1.5 w-full"
+          className="h-2 w-full"
           indicatorClassName={cn(
             budgetAmount > 0
               ? isOverBudgetValue
-                ? 'bg-expense/70'
-                : 'bg-primary/70'
-              : 'bg-primary/70'
+                ? 'bg-expense'
+                : 'bg-primary'
+              : 'bg-primary'
           )}
         />
       </View>

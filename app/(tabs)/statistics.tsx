@@ -6,7 +6,7 @@ import {
   TopExpenses
 } from '@/modules/statistics/components'
 import React, { useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function StatisticsScreen() {
@@ -36,6 +36,12 @@ export default function StatisticsScreen() {
         }}
       >
         <View className="gap-6 px-4 py-4">
+          <View className="mb-1">
+            <Text className="text-2xl font-bold text-foreground">
+              Statistics
+            </Text>
+            <Text className="text-sm text-muted-foreground">This month</Text>
+          </View>
           <SummaryCards />
           <CategoryBreakdown onOpenBudgetModal={openBudgetModal} />
           <TopExpenses />

@@ -48,14 +48,12 @@ export function CategoryBreakdown({
 
   return (
     <View>
-      <View className="mb-4 flex-row items-center justify-between">
+      <View className="mb-3 flex-row items-center justify-between">
         <Text className="text-lg font-semibold text-foreground">
           Spending by Category
         </Text>
-        <View className="flex-row items-center gap-3">
-          <Text className="text-sm text-muted-foreground">
-            Show subcategories
-          </Text>
+        <View className="flex-row items-center gap-2 rounded-full bg-muted/40 px-3 py-1">
+          <Text className="text-xs text-muted-foreground">Subcategories</Text>
           <Switch
             checked={showSubcategories}
             onCheckedChange={setShowSubcategories}
@@ -63,7 +61,7 @@ export function CategoryBreakdown({
         </View>
       </View>
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <View className="w-full">
             {parentCategories.map((parentCategory, index) => {
               const categorySubcategories =
@@ -74,10 +72,7 @@ export function CategoryBreakdown({
               return (
                 <View
                   key={`${parentCategory.id}-${showSubcategories}`}
-                  className={cn(
-                    'border-b border-border/10',
-                    isLastCategory && 'border-b-0'
-                  )}
+                  className={cn('px-2', !isLastCategory && 'mb-2')}
                 >
                   {/* Parent Category */}
                   <CategoryBreakdownItem
@@ -92,10 +87,10 @@ export function CategoryBreakdown({
 
                   {/* Subcategories in Two-Column Layout */}
                   {showSubcategories && hasSubcategories && (
-                    <View className="px-4 pb-4">
-                      <View className="flex-row flex-wrap justify-between">
+                    <View className="px-2 pb-3">
+                      <View className="flex-row flex-wrap justify-between gap-y-2">
                         {categorySubcategories.map((subcategory, subIndex) => (
-                          <View key={subcategory.id} className="mb-2 w-[48%]">
+                          <View key={subcategory.id} className="w-[48%]">
                             <CategoryBreakdownItem
                               category={subcategory}
                               totalSpent={totalSpentAmount}

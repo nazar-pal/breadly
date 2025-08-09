@@ -43,15 +43,31 @@ export function CategoryBreakdownParent({
   const handleLongPress = () => onOpenBudgetModal(category.id)
 
   const content = (
-    <View className="flex-1 py-4">
-      <View className="mb-3 flex-row items-center justify-between">
-        <View className="flex-1 flex-row items-center gap-2">
-          <View className="h-3 w-3 rounded-full bg-primary" />
+    <View className="flex-1 py-3">
+      <View className="mb-2 flex-row items-center justify-between">
+        <View className="flex-1 flex-row items-center gap-3">
+          <View
+            className={cn(
+              'h-8 w-8 items-center justify-center rounded-full',
+              isOverBudgetValue ? 'bg-expense/10' : 'bg-primary/10'
+            )}
+          >
+            <Icon
+              name="Folder"
+              size={16}
+              className={cn(
+                isOverBudgetValue ? 'text-expense' : 'text-primary'
+              )}
+            />
+          </View>
           <View className="flex-1">
-            <Text className="text-base font-semibold text-foreground">
+            <Text
+              className="text-base font-semibold text-foreground"
+              numberOfLines={1}
+            >
               {category.name}
             </Text>
-            <View className="flex-row items-center gap-2">
+            <View className="mt-0.5 flex-row items-center gap-2">
               <Text className="text-sm text-muted-foreground">
                 {formatCurrency(spentAmount)}
               </Text>
@@ -60,16 +76,23 @@ export function CategoryBreakdownParent({
                   <Text className="text-sm text-muted-foreground">
                     of {formatCurrency(budgetAmount)}
                   </Text>
-                  <Text
+                  <View
                     className={cn(
-                      'text-xs font-medium',
-                      isOverBudgetValue
-                        ? 'text-expense'
-                        : 'text-muted-foreground'
+                      'rounded-full px-2 py-0.5',
+                      isOverBudgetValue ? 'bg-expense/10' : 'bg-muted/50'
                     )}
                   >
-                    ({budgetProgress.toFixed(0)}%)
-                  </Text>
+                    <Text
+                      className={cn(
+                        'text-[10px] font-medium',
+                        isOverBudgetValue
+                          ? 'text-expense'
+                          : 'text-muted-foreground'
+                      )}
+                    >
+                      {budgetProgress.toFixed(0)}% of budget
+                    </Text>
+                  </View>
                 </>
               )}
             </View>
@@ -82,7 +105,7 @@ export function CategoryBreakdownParent({
             />
           )}
         </View>
-        <Text className="text-base font-semibold text-foreground">
+        <Text className="text-lg font-bold text-foreground">
           {percentageOfTotal.toFixed(1)}%
         </Text>
       </View>
@@ -90,7 +113,7 @@ export function CategoryBreakdownParent({
         value={
           budgetAmount > 0 ? Math.min(budgetProgress, 100) : percentageOfTotal
         }
-        className="h-3"
+        className="h-2"
         indicatorClassName={cn(
           budgetAmount > 0
             ? isOverBudgetValue

@@ -13,27 +13,31 @@ export function TopExpenses() {
 
   if (isLoading) {
     return (
-      <View>
-        <Text className="mb-4 text-lg font-semibold text-foreground">
-          Top 5 Expenses
-        </Text>
-        <Text className="text-center text-muted-foreground">
-          Loading expenses...
-        </Text>
-      </View>
+      <Card>
+        <CardContent className="p-4">
+          <Text className="mb-4 text-lg font-semibold text-foreground">
+            Top 5 Expenses
+          </Text>
+          <Text className="text-center text-muted-foreground">
+            Loading expenses...
+          </Text>
+        </CardContent>
+      </Card>
     )
   }
 
   if (topExpenses.length === 0) {
     return (
-      <View>
-        <Text className="mb-4 text-lg font-semibold text-foreground">
-          Top 5 Expenses
-        </Text>
-        <Text className="text-center text-muted-foreground">
-          No expenses found for this month.
-        </Text>
-      </View>
+      <Card>
+        <CardContent className="p-4">
+          <Text className="mb-4 text-lg font-semibold text-foreground">
+            Top 5 Expenses
+          </Text>
+          <Text className="text-center text-muted-foreground">
+            No expenses found for this month.
+          </Text>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -54,14 +58,19 @@ export function TopExpenses() {
   }
 
   return (
-    <View>
-      <Text className="mb-4 text-lg font-semibold text-foreground">
-        Top 5 Expenses
-      </Text>
-      {topExpenses.map((transaction, index) => (
-        <Card key={transaction.id} className="mb-3">
-          <CardContent className="p-4">
-            <View className="flex-row items-start justify-between">
+    <Card>
+      <CardContent className="p-2">
+        <View className="mb-2 px-2 pt-2">
+          <Text className="text-lg font-semibold text-foreground">
+            Top 5 Expenses
+          </Text>
+        </View>
+        <View>
+          {topExpenses.map((transaction, index) => (
+            <View
+              key={transaction.id}
+              className="flex-row items-start justify-between px-3 py-3"
+            >
               <View className="mr-3 flex-1">
                 <View className="mb-1 flex-row items-center gap-2">
                   <View className="rounded-md bg-destructive/10 px-2 py-0.5">
@@ -85,9 +94,9 @@ export function TopExpenses() {
                 </Text>
               </View>
             </View>
-          </CardContent>
-        </Card>
-      ))}
-    </View>
+          ))}
+        </View>
+      </CardContent>
+    </Card>
   )
 }

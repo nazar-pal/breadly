@@ -55,7 +55,7 @@ export function SummaryCards() {
 
   return (
     <>
-      <View className="flex-row gap-3">
+      <View className="flex-row flex-wrap gap-3">
         <StatCard
           title="Monthly Income"
           variant="income"
@@ -63,6 +63,7 @@ export function SummaryCards() {
           trend={monthlyIncomeTrendPercentage}
           trendLabel="vs last month"
           icon="DollarSign"
+          className="min-w-[48%]"
         />
         <StatCard
           title="Monthly Expenses"
@@ -71,6 +72,7 @@ export function SummaryCards() {
           trend={monthlyExpenseTrendPercentage}
           trendLabel="vs last month"
           icon="DollarSign"
+          className="min-w-[48%]"
         />
       </View>
 
@@ -82,18 +84,21 @@ export function SummaryCards() {
         progress={Math.min(Math.abs(savingsRate), 100)}
         progressLabel={budgetRemaining >= 0 ? 'Savings Rate' : 'Overspend Rate'}
         icon={budgetRemaining >= 0 ? 'TrendingUp' : 'TrendingDown'}
+        className="mt-3"
       />
 
-      <View className="my-6 flex-row gap-3">
+      <View className="my-6 flex-row flex-wrap gap-3">
         <StatCard
           title="Budget Remaining"
           amount={remainingBudget}
           variant={remainingBudget < 0 ? 'expense' : 'default'}
+          className="min-w-[48%]"
         />
         <StatCard
           title="Avg. Monthly"
           amount={averageMonthlyExpense}
           variant="default"
+          className="min-w-[48%]"
         />
       </View>
     </>
