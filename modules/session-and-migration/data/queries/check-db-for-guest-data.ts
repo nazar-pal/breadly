@@ -22,9 +22,16 @@ export async function checkDbForGuestData(userId: string): Promise<boolean> {
       .limit(1)
   )
 
-  const categoryCount = !categoriesError
-    ? (categoriesResult?.[0]?.count ?? 0)
-    : 0
+  if (categoriesError) {
+    // If we cannot reliably determine existing data, default to "has data"
+    // to avoid accidental duplicate seeding.
+    console.warn(
+      `⚠️ [SEEDING] Category count failed for ${userId}: ${categoriesError.message}. Skipping seeding to avoid duplicates.`
+    )
+    return true
+  }
+
+  const categoryCount = categoriesResult?.[0]?.count ?? 0
 
   // If we have categories, no need to check accounts
   if (categoryCount > 0) {
@@ -43,7 +50,15 @@ export async function checkDbForGuestData(userId: string): Promise<boolean> {
       .limit(1)
   )
 
-  const accountCount = !accountsError ? (accountsResult?.[0]?.count ?? 0) : 0
+  if (accountsError) {
+    // Same defensive behavior as above
+    console.warn(
+      `⚠️ [SEEDING] Account count failed for ${userId}: ${accountsError.message}. Skipping seeding to avoid duplicates.`
+    )
+    return true
+  }
+
+  const accountCount = accountsResult?.[0]?.count ?? 0
   const hasData = accountCount > 0
 
   if (__DEV__) {

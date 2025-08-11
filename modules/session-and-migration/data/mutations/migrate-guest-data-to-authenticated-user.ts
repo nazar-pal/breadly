@@ -18,9 +18,11 @@ export async function migrateGuestDataToAuthenticatedUser(
   guestUserId: string,
   authenticatedUserId: string
 ) {
-  console.log(
-    `🔄 Starting migration from guest ${guestUserId} to user ${authenticatedUserId}`
-  )
+  if (__DEV__) {
+    console.log(
+      `🔄 Starting migration from guest ${guestUserId} to user ${authenticatedUserId}`
+    )
+  }
 
   // Wrap all updates in a transaction for atomicity
   await db.transaction(async tx => {
@@ -61,13 +63,18 @@ export async function migrateGuestDataToAuthenticatedUser(
       .where(eq(transactionAttachments.userId, guestUserId))
 
     // 7. Migrate user preferences (if any exist for guest)
+    // Note: userPreferences has both `id` (PowerSync PK) and `userId` fields.
+    // We must update BOTH to the authenticated user ID to maintain consistency
+    // and avoid sync/relationship issues.
     await tx
       .update(userPreferences)
-      .set({ userId: authenticatedUserId })
+      .set({ id: authenticatedUserId, userId: authenticatedUserId })
       .where(eq(userPreferences.userId, guestUserId))
 
-    console.log(
-      `✅ Successfully migrated all data from guest ${guestUserId} to user ${authenticatedUserId}`
-    )
+    if (__DEV__) {
+      console.log(
+        `✅ Successfully migrated all data from guest ${guestUserId} to user ${authenticatedUserId}`
+      )
+    }
   })
 }
