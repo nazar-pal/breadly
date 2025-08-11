@@ -1,4 +1,3 @@
-import { Connector } from '@/data/client/powersync/connector'
 import { powerSyncDb } from '@/data/client/powersync/system'
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
@@ -31,14 +30,18 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
         const [error] = await asyncTryCatch(
           migrateGuestDataToAuthenticatedUser(existingGuestId, clerkUserId)
         )
-        if (__DEV__ && error)
-          console.error('❌ Failed to migrate guest data:', error)
-        if (__DEV__ && !error) console.log('✅ Guest data migrated!')
-
-        // Clear flags & guest key so next guest session starts fresh
-        Storage.removeItem(AUTO_MIGRATE_KEY)
-        Storage.removeItem(GUEST_KEY)
-        setIsMigrating(false)
+        if (error) {
+          if (__DEV__) console.error('❌ Failed to migrate guest data:', error)
+          // IMPORTANT: Do NOT clear flags/guest key on failure so we can retry
+          // on the next app start or present a retry prompt.
+          setIsMigrating(false)
+        } else {
+          if (__DEV__) console.log('✅ Guest data migrated!')
+          // Clear flags & guest key so next guest session starts fresh
+          Storage.removeItem(AUTO_MIGRATE_KEY)
+          Storage.removeItem(GUEST_KEY)
+          setIsMigrating(false)
+        }
       } else {
         // Existing account sign-in – discard any local guest data to avoid
         // uploading default categories/accounts that were seeded locally.
@@ -58,26 +61,19 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
           )
         } else {
           if (__DEV__) console.log('🗑️ Local PowerSync database cleared')
-
-          // Immediately reconnect so that the existing cloud data syncs down
-          const [connectError] = await asyncTryCatch(
-            powerSyncDb.connect(new Connector())
-          )
-
-          if (connectError) {
-            console.error(
-              'Failed to reconnect PowerSync after clear:',
-              connectError
-            )
-          } else {
-            if (__DEV__) console.log('🔗 PowerSync reconnected after clear')
-          }
+          // Rely on PowerSyncContextProvider to reconnect based on isSignedIn
         }
 
         // Remove any stored guest identifier so future guest sessions start fresh
         Storage.removeItem(GUEST_KEY)
       }
     }
+  }
+
+  // Clear stale auto-migrate flag when authenticated without a guest
+  if (!existingGuestId && Storage.getItem(AUTO_MIGRATE_KEY) === 'true') {
+    if (__DEV__) console.log('🧹 Clearing stale AUTO_MIGRATE_KEY')
+    Storage.removeItem(AUTO_MIGRATE_KEY)
   }
 
   setSession({ userId: clerkUserId, isGuest: false })
