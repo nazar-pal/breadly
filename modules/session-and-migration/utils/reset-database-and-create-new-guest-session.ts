@@ -1,7 +1,7 @@
 import { powerSyncDb } from '@/data/client/powersync/system'
 import { Storage } from '@/lib/storage/mmkv'
 import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
-import { asyncTryCatch } from '@/lib/utils/index'
+import { asyncTryCatch } from '@/lib/utils'
 import { randomUUID } from 'expo-crypto'
 import { insertDefaultDataIntoDatabase } from '../data/mutations'
 

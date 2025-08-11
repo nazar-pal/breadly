@@ -3,15 +3,11 @@ import { insertDefaultDataIntoDatabase } from '../data/mutations'
 import { checkDbForGuestData } from '../data/queries'
 
 /**
- * Seeds default categories and accounts for a new guest user on first app launch
+ * Seeds default categories and accounts for a new guest user on first app launch.
  *
- * This function ensures users see valuable data immediately when they first open the app,
- * demonstrating the app's capabilities and providing a better onboarding experience.
- *
- * Safety checks:
- * 1. MMKV storage flag check (fast, synchronous)
- * 2. Database data check (slower, but thorough)
- * 3. Only seeds truly new users who have no existing data
+ * Ensures first-time guests immediately see meaningful data (better onboarding),
+ * while avoiding duplication by checking the database first. Only seeds users
+ * who have no existing data.
  *
  * @param guestUserId - The unique guest user ID to seed data for
  * @returns Promise with success status and optional error

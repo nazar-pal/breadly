@@ -2,15 +2,13 @@ import { Connector } from '@/data/client/powersync/connector'
 import { powerSyncDb } from '@/data/client/powersync/system'
 import { Storage } from '@/lib/storage/mmkv'
 import { AUTO_MIGRATE_KEY, GUEST_KEY } from '@/lib/storage/mmkv/keys'
-import { asyncTryCatch } from '@/lib/utils/try-catch'
+import { asyncTryCatch } from '@/lib/utils'
 import { migrateGuestDataToAuthenticatedUser } from '../data/mutations'
 import { userSessionStore } from '../store'
 
 export async function handleAuthenticatedSession(clerkUserId: string) {
   const { actions } = userSessionStore.getState()
   const { setSession, setIsInitializing, setIsMigrating } = actions
-
-  setIsInitializing(false)
 
   const existingGuestId = Storage.getItem(GUEST_KEY)
 
@@ -83,4 +81,5 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
   }
 
   setSession({ userId: clerkUserId, isGuest: false })
+  setIsInitializing(false)
 }

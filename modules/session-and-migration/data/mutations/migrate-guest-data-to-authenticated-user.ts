@@ -25,37 +25,44 @@ export async function migrateGuestDataToAuthenticatedUser(
   // Wrap all updates in a transaction for atomicity
   await db.transaction(async tx => {
     // 1. Migrate categories
-    tx.update(categories)
+    await tx
+      .update(categories)
       .set({ userId: authenticatedUserId })
       .where(eq(categories.userId, guestUserId))
 
     // 2. Migrate accounts
-    tx.update(accounts)
+    await tx
+      .update(accounts)
       .set({ userId: authenticatedUserId })
       .where(eq(accounts.userId, guestUserId))
 
     // 3. Migrate transactions
-    tx.update(transactions)
+    await tx
+      .update(transactions)
       .set({ userId: authenticatedUserId })
       .where(eq(transactions.userId, guestUserId))
 
     // 4. Migrate budgets
-    tx.update(budgets)
+    await tx
+      .update(budgets)
       .set({ userId: authenticatedUserId })
       .where(eq(budgets.userId, guestUserId))
 
     // 5. Migrate attachments
-    tx.update(attachments)
+    await tx
+      .update(attachments)
       .set({ userId: authenticatedUserId })
       .where(eq(attachments.userId, guestUserId))
 
     // 6. Migrate transaction attachments
-    tx.update(transactionAttachments)
+    await tx
+      .update(transactionAttachments)
       .set({ userId: authenticatedUserId })
       .where(eq(transactionAttachments.userId, guestUserId))
 
     // 7. Migrate user preferences (if any exist for guest)
-    tx.update(userPreferences)
+    await tx
+      .update(userPreferences)
       .set({ userId: authenticatedUserId })
       .where(eq(userPreferences.userId, guestUserId))
 
