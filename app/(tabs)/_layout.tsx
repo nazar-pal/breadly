@@ -1,5 +1,5 @@
 import { Icon, type IconName } from '@/components/icon'
-import { SidebarModal, SidebarTrigger } from '@/components/sidebar-menu'
+import { SidebarMenu, SidebarTrigger } from '@/components/sidebar-menu'
 import { Button } from '@/components/ui/button'
 import { useTabsCategoriesSettingsModalActions } from '@/lib/storage/tabs-categories-settings-modal-store'
 import { Tabs } from 'expo-router'
@@ -89,7 +89,7 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      <SidebarModal />
+      <SidebarMenu />
     </>
   )
 }

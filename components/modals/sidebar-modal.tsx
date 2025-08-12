@@ -1,10 +1,3 @@
-import { Text } from '@/components/ui/text'
-import {
-  useSidebarState,
-  useTabsHeaderActions
-} from '@/lib/storage/tabs-header-store'
-import { GoogleOAuthButton, UserInfo } from '@/modules/session-and-migration'
-import { SignedIn, SignedOut } from '@clerk/clerk-expo'
 import React from 'react'
 import {
   BackHandler,
@@ -24,19 +17,24 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { DataLossWarning } from '../../modules/session-and-migration/components/data-loss-warning'
-import { PowerSyncStatus } from './power-sync-status'
-import { Preferences } from './preferences/preferences'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.9, 400)
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-export function SidebarModal() {
+export function SidebarModal({
+  children,
+  footer,
+  visible,
+  onRequestClose
+}: {
+  children: React.ReactNode
+  footer: React.ReactNode
+  visible: boolean
+  onRequestClose: () => void
+}) {
   const insets = useSafeAreaInsets()
-  const visible = useSidebarState()
-  const { closeSidebar } = useTabsHeaderActions()
 
   const progress = useSharedValue(0)
   const dragX = useSharedValue(0)
@@ -47,13 +45,13 @@ export function SidebarModal() {
       const backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
         () => {
-          closeSidebar()
+          onRequestClose()
           return true
         }
       )
       return () => backHandler.remove()
     }
-  }, [visible, closeSidebar])
+  }, [visible, onRequestClose])
 
   // Animate open/close
   React.useEffect(() => {
@@ -89,7 +87,7 @@ export function SidebarModal() {
       if (shouldClose) {
         progress.value = withTiming(0, { duration: 200 }, finished => {
           if (finished) {
-            runOnJS(closeSidebar)()
+            runOnJS(onRequestClose)()
           }
         })
       } else {
@@ -125,7 +123,7 @@ export function SidebarModal() {
     >
       {/* Backdrop */}
       <AnimatedPressable
-        onPress={closeSidebar}
+        onPress={onRequestClose}
         className="absolute inset-0 bg-black"
         style={backdropStyle}
       />
@@ -147,18 +145,7 @@ export function SidebarModal() {
             removeClippedSubviews={true}
             bounces={false}
           >
-            <SignedOut>
-              <GoogleOAuthButton />
-              <DataLossWarning />
-            </SignedOut>
-
-            <SignedIn>
-              <UserInfo />
-            </SignedIn>
-
-            <PowerSyncStatus />
-
-            <Preferences />
+            {children}
           </ScrollView>
 
           {/* Footer */}
@@ -166,9 +153,7 @@ export function SidebarModal() {
             className="border-t border-border/10 bg-background px-6"
             style={{ paddingBottom: insets.bottom + 16 }}
           >
-            <Text className="py-4 text-center text-sm text-muted-foreground">
-              Breadly v1.0.0
-            </Text>
+            {footer}
           </View>
         </Animated.View>
       </GestureDetector>

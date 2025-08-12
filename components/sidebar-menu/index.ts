@@ -1,2 +1,2 @@
-export { SidebarModal } from './sidebar-modal'
+export { SidebarMenu } from './sidebar-menu'
 export { SidebarTrigger } from './sidebar-trigger'
