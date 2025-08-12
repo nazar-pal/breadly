@@ -19,7 +19,13 @@ export function CenteredModal({
   ...props
 }: Props) {
   return (
-    <Modal animationType="fade" transparent {...props}>
+    <Modal
+      animationType="fade"
+      transparent
+      statusBarTranslucent
+      onRequestClose={onRequestClose}
+      {...props}
+    >
       <View className="flex-1 items-center justify-center">
         {/* Semi-transparent backdrop */}
         <Pressable

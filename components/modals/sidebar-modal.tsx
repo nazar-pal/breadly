@@ -1,11 +1,11 @@
 import React from 'react'
 import {
   BackHandler,
-  Dimensions,
   Platform,
   Pressable,
   ScrollView,
-  View
+  View,
+  useWindowDimensions
 } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
@@ -18,8 +18,9 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window')
-const SIDEBAR_WIDTH = Math.min(SCREEN_WIDTH * 0.9, 400)
+// Compute width per render to handle rotation/split-screen
+const getSidebarWidth = (screenWidth: number) =>
+  Math.min(screenWidth * 0.9, 400)
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
@@ -35,6 +36,8 @@ export function SidebarModal({
   onRequestClose: () => void
 }) {
   const insets = useSafeAreaInsets()
+  const { width: screenWidth } = useWindowDimensions()
+  const sidebarWidth = getSidebarWidth(screenWidth)
 
   const progress = useSharedValue(0)
   const dragX = useSharedValue(0)
@@ -76,13 +79,13 @@ export function SidebarModal({
     .onUpdate(event => {
       'worklet'
       if (event.translationX < 0) {
-        dragX.value = Math.max(event.translationX, -SIDEBAR_WIDTH)
+        dragX.value = Math.max(event.translationX, -sidebarWidth)
       }
     })
     .onEnd(event => {
       'worklet'
       const shouldClose =
-        event.translationX < -SIDEBAR_WIDTH * 0.3 || event.velocityX < -800
+        event.translationX < -sidebarWidth * 0.3 || event.velocityX < -800
 
       if (shouldClose) {
         progress.value = withTiming(0, { duration: 200 }, finished => {
@@ -105,7 +108,7 @@ export function SidebarModal({
 
   // Sidebar animation
   const sidebarStyle = useAnimatedStyle(() => {
-    const translateX = interpolate(progress.value, [0, 1], [-SIDEBAR_WIDTH, 0])
+    const translateX = interpolate(progress.value, [0, 1], [-sidebarWidth, 0])
     return {
       transform: [{ translateX: translateX + dragX.value }]
     }
@@ -132,7 +135,7 @@ export function SidebarModal({
       <GestureDetector gesture={panGesture}>
         <Animated.View
           className="absolute bottom-0 left-0 top-0 overflow-hidden rounded-r-2xl bg-background shadow-2xl"
-          style={[{ width: SIDEBAR_WIDTH }, sidebarStyle]}
+          style={[{ width: sidebarWidth }, sidebarStyle]}
         >
           {/* Drag indicator */}
           <View className="absolute right-2 top-1/2 z-10 h-10 w-1 -translate-y-1/2 rounded-full bg-border/20" />

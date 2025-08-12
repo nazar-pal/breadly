@@ -213,6 +213,7 @@ export function Modal({
           >
             <Animated.View
               className={cn('absolute inset-0 bg-black', backdropClassName)}
+              pointerEvents={enableBackdropClose ? 'auto' : 'none'}
               style={animatedBackdropStyle}
             />
           </TouchableWithoutFeedback>
@@ -223,7 +224,10 @@ export function Modal({
               className={cn('rounded-t-3xl bg-popover', className)}
               style={[
                 {
-                  ...(modalHeight && { height: modalHeight as any }),
+                  ...(() => {
+                    const h = modalHeight()
+                    return h !== undefined ? { height: h as any } : {}
+                  })(),
                   ...(height === 'auto' && { maxHeight: '80%' }), // Prevent auto-sizing from taking full screen
                   paddingBottom: insets.bottom + additionalSafeAreaPadding
                 },
