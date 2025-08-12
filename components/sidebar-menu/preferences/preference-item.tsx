@@ -38,11 +38,11 @@ export function PreferenceItem({
         accessibilityRole={isInteractive ? 'button' : undefined}
       >
         <View className="flex-1 flex-row items-center">
-          <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-secondary">
+          <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
             {icon}
           </View>
           <View className="flex-1">
-            <Text className="text-base font-medium text-foreground">
+            <Text className="text-base font-medium text-popover-foreground">
               {title}
             </Text>
             {subtitle && (
@@ -54,7 +54,7 @@ export function PreferenceItem({
         </View>
         {rightElement && <View className="ml-3">{rightElement}</View>}
       </Container>
-      {showBorder && <View className="ml-13 h-px bg-border" />}
+      {showBorder && <View className="ml-13 h-px bg-border/20" />}
     </>
   )
 }

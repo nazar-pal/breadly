@@ -39,7 +39,7 @@ export function UserInfo() {
       className="native:max-w-md w-full max-w-sm"
     >
       <AccordionItem value="user-info">
-        <AccordionTrigger>
+        <AccordionTrigger className="rounded-xl border border-border/10 bg-popover px-4 py-4">
           <Avatar alt={displayName}>
             <AvatarImage source={{ uri: imageUrl }} />
             <AvatarFallback>
@@ -48,7 +48,7 @@ export function UserInfo() {
           </Avatar>
 
           <View className="ml-4 flex-1">
-            <Text className="mb-1 text-lg font-semibold text-foreground">
+            <Text className="mb-1 text-lg font-semibold text-popover-foreground">
               {displayName}
             </Text>
             {emails.map((email, idx) => (

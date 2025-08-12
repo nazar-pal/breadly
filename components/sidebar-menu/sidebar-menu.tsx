@@ -34,7 +34,7 @@ export function SidebarMenu() {
         <UserInfo />
       </SignedIn>
 
-      <PowerSyncStatus />
+      <PowerSyncStatus className="mt-4" />
 
       <Preferences />
     </SidebarModal>

@@ -175,7 +175,7 @@ export function Modal({
   }))
 
   const animatedBackdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(opacity.value, [0, 1], [0, backdropOpacity])
+    opacity: interpolate(opacity.value, [0, 1], [0, 0.1])
   }))
 
   // Reset animation values when modal opens

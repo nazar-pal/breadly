@@ -156,6 +156,7 @@ export function CategoryDetailsModal() {
       <CenteredModal
         visible={isBudgetModalOpen}
         onRequestClose={closeBudgetModal}
+        className="bg-card text-card-foreground"
       >
         <CategoryBudgetForm
           categoryId={categoryDetailsSelectedCategory ?? ''}

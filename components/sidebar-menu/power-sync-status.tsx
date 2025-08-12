@@ -29,15 +29,21 @@ function PowerSyncStatusCard({
   children
 }: PowerSyncStatusCardProps) {
   const bgColor = {
-    red: 'bg-red-50',
-    blue: 'bg-blue-50',
-    green: 'bg-green-50',
-    yellow: 'bg-yellow-50',
-    gray: 'bg-gray-50'
+    red: 'bg-red-500/10',
+    blue: 'bg-blue-500/10',
+    green: 'bg-green-500/10',
+    yellow: 'bg-yellow-500/10',
+    gray: 'bg-muted'
   }[color]
 
   return (
-    <View className={cn('my-2 rounded-lg px-3 py-2', bgColor, className)}>
+    <View
+      className={cn(
+        'my-2 rounded-xl border border-border/10 px-3 py-2',
+        bgColor,
+        className
+      )}
+    >
       <View className="flex-row items-center">
         {iconType === 'dot' ? (
           <View

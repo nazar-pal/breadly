@@ -29,13 +29,13 @@ export function CenteredModal({
       <View className="flex-1 items-center justify-center">
         {/* Semi-transparent backdrop */}
         <Pressable
-          className="absolute inset-0 bg-black/80"
+          className="absolute inset-0 bg-black/10"
           onPress={onRequestClose}
         />
 
         <View
           className={cn(
-            'z-10 w-[92%] max-w-md rounded-2xl border border-border bg-background p-6 shadow-lg',
+            'z-10 w-[92%] max-w-md rounded-2xl border border-border bg-popover p-6 text-popover-foreground shadow-lg',
             className
           )}
         >

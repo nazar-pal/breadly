@@ -8,11 +8,11 @@ import { ThemePreferences } from './preference-theme'
 export function Preferences() {
   return (
     <View className="mt-6">
-      <Text className="mb-4 text-lg font-semibold text-foreground">
+      <Text className="mb-4 text-lg font-semibold text-popover-foreground">
         Preferences
       </Text>
 
-      <Card>
+      <Card className="bg-popover">
         <CardContent className="px-4 py-2">
           <CurrencyPreference />
           <ThemePreferences />

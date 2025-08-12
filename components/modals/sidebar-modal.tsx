@@ -103,7 +103,7 @@ export function SidebarModal({
 
   // Backdrop animation
   const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(progress.value, [0, 1], [0, 0.5])
+    opacity: interpolate(progress.value, [0, 1], [0, 0.1])
   }))
 
   // Sidebar animation
@@ -134,7 +134,7 @@ export function SidebarModal({
       {/* Sidebar */}
       <GestureDetector gesture={panGesture}>
         <Animated.View
-          className="absolute bottom-0 left-0 top-0 overflow-hidden rounded-r-2xl bg-background shadow-2xl"
+          className="absolute bottom-0 left-0 top-0 overflow-hidden rounded-r-2xl bg-popover text-popover-foreground shadow-2xl"
           style={[{ width: sidebarWidth }, sidebarStyle]}
         >
           {/* Drag indicator */}
@@ -142,7 +142,7 @@ export function SidebarModal({
 
           {/* Content */}
           <ScrollView
-            className="flex-1 bg-background px-6 py-4"
+            className="flex-1 bg-popover px-6 py-4"
             showsVerticalScrollIndicator={false}
             style={{ paddingTop: insets.top + 16 }}
             removeClippedSubviews={true}
@@ -153,7 +153,7 @@ export function SidebarModal({
 
           {/* Footer */}
           <View
-            className="border-t border-border/10 bg-background px-6"
+            className="border-t border-border/10 bg-popover px-6"
             style={{ paddingBottom: insets.bottom + 16 }}
           >
             {footer}
