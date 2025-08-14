@@ -11,6 +11,10 @@ type PowerSyncState = {
   hasSynced: boolean
   lastSyncedAt: Date | null
   error: Error | null
+  downloadProgress: {
+    downloadedOperations: number
+    totalOperations: number
+  } | null
 }
 
 type PowerSyncActions = {
@@ -36,6 +40,7 @@ export const powerSyncStore = create<PowerSyncStore>((set, get) => ({
   hasSynced: false,
   lastSyncedAt: null,
   error: null,
+  downloadProgress: null,
 
   // Actions
   actions: {
@@ -63,7 +68,8 @@ export const usePowerSyncState = () => {
       isSyncing: state.isSyncing,
       hasSynced: state.hasSynced,
       lastSyncedAt: state.lastSyncedAt,
-      error: state.error
+      error: state.error,
+      downloadProgress: state.downloadProgress
     }))
   )
 }

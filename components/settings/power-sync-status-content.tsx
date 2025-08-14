@@ -1,4 +1,5 @@
 import { usePowerSyncState } from '@/lib/storage/powersync-store'
+import { SignedIn, SignedOut } from '@clerk/clerk-expo'
 import React from 'react'
 import { PowerSyncStatusCard } from './power-sync-status-card'
 
@@ -7,7 +8,10 @@ function getRelativeTime(date: Date | null) {
   const minutes = Math.floor((Date.now() - date.getTime()) / 60000)
   if (minutes < 1) return 'just now'
   if (minutes < 60) return `${minutes}m ago`
-  return `${Math.floor(minutes / 60)}h ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
 }
 
 export function PowerSyncStatusContent({ className }: { className?: string }) {
@@ -17,7 +21,8 @@ export function PowerSyncStatusContent({ className }: { className?: string }) {
     isSyncing,
     hasSynced,
     lastSyncedAt,
-    error
+    error,
+    downloadProgress
   } = usePowerSyncState()
 
   const lastSyncText = getRelativeTime(lastSyncedAt)
@@ -44,7 +49,7 @@ export function PowerSyncStatusContent({ className }: { className?: string }) {
         color="blue"
         iconType="spinner"
         iconColor="#3B82F6"
-        title="Connecting..."
+        title={hasSynced ? 'Reconnecting…' : 'Connecting…'}
         titleColor="text-blue-700"
         message={
           hasSynced && lastSyncText
@@ -60,15 +65,25 @@ export function PowerSyncStatusContent({ className }: { className?: string }) {
   }
 
   if (isSyncing) {
+    const percent =
+      downloadProgress && downloadProgress.totalOperations > 0
+        ? Math.round(
+            (downloadProgress.downloadedOperations /
+              downloadProgress.totalOperations) *
+              100
+          )
+        : undefined
     return (
       <PowerSyncStatusCard
         color="blue"
         iconType="spinner"
         iconColor="#3B82F6"
-        title="Syncing..."
+        title={percent != null ? `Syncing… ${percent}%` : 'Syncing…'}
         titleColor="text-blue-700"
         className={className}
-        message={`Connected • ${lastSyncText ? `Last synced ${lastSyncText}` : 'First sync'}`}
+        message={`Connected • ${
+          lastSyncText ? `Last synced ${lastSyncText}` : 'First sync'
+        }`}
         messageColor="text-blue-600"
       />
     )
@@ -104,20 +119,35 @@ export function PowerSyncStatusContent({ className }: { className?: string }) {
 
   // Offline
   return (
-    <PowerSyncStatusCard
-      color="gray"
-      iconType="dot"
-      title="Offline"
-      titleColor="text-gray-700"
-      message={
-        hasSynced && lastSyncText
-          ? `Last synced ${lastSyncText}`
-          : !hasSynced
-            ? 'No previous sync'
-            : undefined
-      }
-      messageColor="text-gray-600"
-      className={className}
-    />
+    <>
+      <SignedOut>
+        <PowerSyncStatusCard
+          color="gray"
+          iconType="dot"
+          title="Not signed in"
+          titleColor="text-gray-700"
+          message="Sign in to enable cloud sync"
+          messageColor="text-gray-600"
+          className={className}
+        />
+      </SignedOut>
+      <SignedIn>
+        <PowerSyncStatusCard
+          color="gray"
+          iconType="dot"
+          title="Offline"
+          titleColor="text-gray-700"
+          message={
+            hasSynced && lastSyncText
+              ? `Last synced ${lastSyncText}`
+              : !hasSynced
+                ? 'No previous sync'
+                : undefined
+          }
+          messageColor="text-gray-600"
+          className={className}
+        />
+      </SignedIn>
+    </>
   )
 }

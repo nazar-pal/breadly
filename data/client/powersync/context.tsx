@@ -50,6 +50,10 @@ export function PowerSyncContextProvider({
         if (isActive) {
           actions.setError(null)
           actions.setIsConnecting(false)
+          powerSyncStore.setState({
+            isConnected: false,
+            isSyncing: false
+          })
         }
       }
     }
@@ -66,15 +70,25 @@ export function PowerSyncContextProvider({
     const handleStatusChange = (status: any) => {
       if (!isMountedRef.current) return
 
-      powerSyncStore.setState({
+      powerSyncStore.setState(prev => ({
         isConnected: status.connected,
         hasSynced: status.hasSynced || false,
-        lastSyncedAt: status.lastSyncedAt || null,
+        lastSyncedAt: status.lastSyncedAt
+          ? new Date(status.lastSyncedAt)
+          : null,
         isSyncing:
           !!status.downloadProgress &&
           status.downloadProgress.downloadedOperations <
-            status.downloadProgress.totalOperations
-      })
+            status.downloadProgress.totalOperations,
+        downloadProgress: status.downloadProgress
+          ? {
+              downloadedOperations:
+                status.downloadProgress.downloadedOperations || 0,
+              totalOperations: status.downloadProgress.totalOperations || 0
+            }
+          : null,
+        error: status.connected ? null : prev.error
+      }))
     }
 
     const unsubscribe = powerSyncDb.registerListener({
