@@ -1,5 +1,4 @@
-import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/modules/statistics/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { CategoryCardIcon } from './category-card-icon'

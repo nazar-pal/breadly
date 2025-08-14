@@ -1,7 +1,7 @@
 import { useSumTransactions } from '@/data/client/queries'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
+import { formatCurrencyWithSign } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'
-import { formatCurrencyWithSign } from '@/modules/statistics/utils'
 import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import { Text, View } from 'react-native'

@@ -39,7 +39,7 @@ export function UserInfo() {
       className="native:max-w-md w-full max-w-sm"
     >
       <AccordionItem value="user-info">
-        <AccordionTrigger className="rounded-xl border border-border/10 bg-popover px-4 py-4">
+        <AccordionTrigger className="rounded-xl border border-border/10 px-4 py-4">
           <Avatar alt={displayName}>
             <AvatarImage source={{ uri: imageUrl }} />
             <AvatarFallback>
