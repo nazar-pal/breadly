@@ -90,16 +90,6 @@ export class Connector implements PowerSyncBackendConnector {
         `Connector.uploadData error on op ${lastOp?.op} for table ${lastOp?.table}:`,
         error
       )
-      // Attempt to complete (discard) this transaction to avoid blocking the queue.
-      try {
-        await transaction.complete()
-      } catch (completeError) {
-        console.error(
-          'Failed to complete PowerSync transaction after error:',
-          completeError
-        )
-      }
-      // Rethrow to allow PowerSync to potentially retry later.
       throw error
     }
   }
