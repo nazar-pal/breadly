@@ -60,15 +60,6 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="statistics"
-          options={{
-            title: 'Statistics',
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon icon="TrendingUp" focused={focused} />
-            )
-          }}
-        />
-        <Tabs.Screen
           name="accounts"
           options={{
             title: 'Accounts',
