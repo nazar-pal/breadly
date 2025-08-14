@@ -12,10 +12,8 @@ interface CategoryDetailsHeaderProps {
   userId: string
   canDelete: boolean
   hasTransactions: boolean
-  hasBudgets: boolean
   hasSubcategories: boolean
   transactionCount: number
-  budgetCount: number
   subcategoryCount: number
   isDependencyCheckLoading: boolean
   onClose: () => void
@@ -26,10 +24,8 @@ export function CategoryDetailsHeader({
   userId,
   canDelete,
   hasTransactions,
-  hasBudgets,
   hasSubcategories,
   transactionCount,
-  budgetCount,
   subcategoryCount,
   isDependencyCheckLoading,
   onClose
@@ -74,7 +70,7 @@ export function CategoryDetailsHeader({
               } else {
                 onClose()
               }
-            } catch (err) {
+            } catch {
               Alert.alert(
                 'Error',
                 'Failed to delete category. Please try again.'
@@ -95,10 +91,6 @@ export function CategoryDetailsHeader({
     if (hasTransactions)
       dependencyMessage.push(
         `${transactionCount} transaction${transactionCount !== 1 ? 's' : ''}`
-      )
-    if (hasBudgets)
-      dependencyMessage.push(
-        `${budgetCount} budget${budgetCount !== 1 ? 's' : ''}`
       )
     if (hasSubcategories)
       dependencyMessage.push(
@@ -135,7 +127,7 @@ export function CategoryDetailsHeader({
             } else {
               onClose()
             }
-          } catch (err) {
+          } catch {
             Alert.alert(
               'Error',
               'Failed to archive category. Please try again.'
@@ -179,7 +171,7 @@ export function CategoryDetailsHeader({
               } else {
                 onClose()
               }
-            } catch (err) {
+            } catch {
               Alert.alert(
                 'Error',
                 'Failed to unarchive category. Please try again.'

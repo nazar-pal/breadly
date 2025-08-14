@@ -53,8 +53,8 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
     onDragEnd,
     isActive
   }: SubcategoryRenderItemProps) => {
-    // Extract the category data, excluding budgets and transactions
-    const { budgets, transactions, ...categoryData } = item
+    // Extract the category data, excluding transactions
+    const { transactions, ...categoryData } = item
 
     return (
       <CategoryCard

@@ -55,7 +55,6 @@ export function useGetCategories({
         : eq(categories.isArchived, isArchived)
     ),
     with: {
-      budgets: true,
       transactions: {
         where: and(
           eq(transactions.userId, userId),

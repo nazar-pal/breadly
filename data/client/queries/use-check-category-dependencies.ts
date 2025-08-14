@@ -1,7 +1,7 @@
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, count, eq } from 'drizzle-orm'
-import { budgets, categories, transactions } from '../db-schema'
+import { categories, transactions } from '../db-schema'
 import { db } from '../powersync/system'
 
 export function useCheckCategoryDependencies({
@@ -24,14 +24,6 @@ export function useCheckCategoryDependencies({
       )
     )
 
-  // Check for budgets using this category
-  const budgetsQuery = db
-    .select({
-      count: count()
-    })
-    .from(budgets)
-    .where(and(eq(budgets.userId, userId), eq(budgets.categoryId, categoryId)))
-
   // Check for subcategories (children) of this category
   const subcategoriesQuery = db
     .select({
@@ -43,35 +35,27 @@ export function useCheckCategoryDependencies({
     )
 
   const transactionsResult = useQuery(toCompilableQuery(transactionsQuery))
-  const budgetsResult = useQuery(toCompilableQuery(budgetsQuery))
   const subcategoriesResult = useQuery(toCompilableQuery(subcategoriesQuery))
 
   const isLoading =
-    transactionsResult.isLoading ||
-    budgetsResult.isLoading ||
-    subcategoriesResult.isLoading
+    transactionsResult.isLoading || subcategoriesResult.isLoading
 
   const hasTransactions =
     !transactionsResult.isLoading && transactionsResult.data?.[0]?.count > 0
 
-  const hasBudgets =
-    !budgetsResult.isLoading && budgetsResult.data?.[0]?.count > 0
-
   const hasSubcategories =
     !subcategoriesResult.isLoading && subcategoriesResult.data?.[0]?.count > 0
 
-  const hasDependencies = hasTransactions || hasBudgets || hasSubcategories
+  const hasDependencies = hasTransactions || hasSubcategories
   const canDelete = !hasDependencies
 
   return {
     isLoading,
     hasTransactions,
-    hasBudgets,
     hasSubcategories,
     hasDependencies,
     canDelete,
     transactionCount: transactionsResult.data?.[0]?.count || 0,
-    budgetCount: budgetsResult.data?.[0]?.count || 0,
     subcategoryCount: subcategoriesResult.data?.[0]?.count || 0
   }
 }

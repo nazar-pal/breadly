@@ -13,9 +13,6 @@ export function useGetCategory({
 }) {
   const query = db.query.categories.findMany({
     where: and(eq(categories.userId, userId), eq(categories.id, categoryId)),
-    with: {
-      budgets: true
-    },
     limit: 1
   })
 
