@@ -1,6 +1,11 @@
-import { wrapPowerSyncWithDrizzle } from '@powersync/drizzle-driver'
+import {
+  DrizzleAppSchema,
+  wrapPowerSyncWithDrizzle
+} from '@powersync/drizzle-driver'
 import { PowerSyncDatabase } from '@powersync/react-native'
-import { AppSchema, sqliteSchema } from '../db-schema'
+import { sqliteSchema } from '../db-schema'
+
+const AppSchema = new DrizzleAppSchema(sqliteSchema)
 
 export const powerSyncDb = new PowerSyncDatabase({
   // The schema you defined in the previous step
@@ -11,7 +16,7 @@ export const powerSyncDb = new PowerSyncDatabase({
     // Filename for the SQLite database — it's important to only instantiate one instance per file.
     // For other database options see,
     // https://powersync-ja.github.io/powersync-js/web-sdk/globals#sqlopenoptions
-    dbFilename: 'powersync_v15.db'
+    dbFilename: 'powersync_v1.db'
   }
 })
 

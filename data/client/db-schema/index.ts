@@ -2,18 +2,16 @@
 ================================================================================
 POWERSYNC SCHEMA - SQLite Database Schema for Local Sync
 ================================================================================
-Purpose: Defines the PowerSync SQLite schema for local data synchronization.
+Purpose: Defines the SQLite schema for local data synchronization.
          Uses the converted SQLite table definitions to create PowerSync-compatible
          tables for offline-first data access.
 
 Key Features:
 - SQLite-compatible table definitions
-- PowerSync table conversions for sync compatibility
-- Full schema export for PowerSync integration
+- Full schema export
+- Type definitions for all tables
 ================================================================================
 */
-
-import { DrizzleAppSchema, toPowerSyncTable } from '@powersync/drizzle-driver'
 
 // Import all SQLite table definitions
 import { currencies } from './table_1_currencies'
@@ -56,7 +54,7 @@ export {
 }
 
 // Create the complete SQLite schema object
-const sqliteSchema = {
+export const sqliteSchema = {
   currencies,
   exchangeRates,
   userPreferences,
@@ -75,33 +73,6 @@ const sqliteSchema = {
   transactionsRelations,
   attachmentsRelations,
   transactionAttachmentsRelations
-}
-
-// Convert the Drizzle SQLite tables to PowerSync tables
-const psCurrencies = toPowerSyncTable(currencies)
-const psExchangeRates = toPowerSyncTable(exchangeRates)
-const psUserPreferences = toPowerSyncTable(userPreferences)
-const psCategories = toPowerSyncTable(categories)
-const psBudgets = toPowerSyncTable(budgets)
-const psAccounts = toPowerSyncTable(accounts)
-const psTransactions = toPowerSyncTable(transactions)
-const psAttachments = toPowerSyncTable(attachments)
-const psTransactionAttachments = toPowerSyncTable(transactionAttachments)
-
-const AppSchema = new DrizzleAppSchema(sqliteSchema)
-
-export {
-  AppSchema,
-  psAccounts,
-  psAttachments,
-  psBudgets,
-  psCategories,
-  psCurrencies,
-  psExchangeRates,
-  psTransactionAttachments,
-  psTransactions,
-  psUserPreferences,
-  sqliteSchema
 }
 
 // table_1_currencies
