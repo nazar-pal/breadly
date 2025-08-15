@@ -51,6 +51,8 @@ interface AccountHeaderProps {
   icon: IconName
   colorClass: string
   bgColorClass: string
+  currency: string
+  isArchived?: number | boolean
   onEdit: () => void
   onDelete: () => void
 }
@@ -61,6 +63,8 @@ function AccountHeader({
   icon,
   colorClass,
   bgColorClass,
+  currency,
+  isArchived,
   onEdit,
   onDelete
 }: AccountHeaderProps) {
@@ -77,7 +81,25 @@ function AccountHeader({
         </View>
         <View>
           <Text className="text-2xl font-bold text-foreground">{name}</Text>
-          <Text className="text-base text-muted-foreground">{type}</Text>
+          <View className="mt-1 flex-row items-center gap-2">
+            <View className="rounded-full bg-secondary px-2 py-0.5">
+              <Text className="text-[11px] font-medium text-muted-foreground">
+                {type}
+              </Text>
+            </View>
+            <View className="rounded-full bg-secondary px-2 py-0.5">
+              <Text className="text-[11px] font-medium text-muted-foreground">
+                {currency}
+              </Text>
+            </View>
+            {isArchived ? (
+              <View className="rounded-full bg-border px-2 py-0.5">
+                <Text className="text-[11px] font-medium text-muted-foreground">
+                  Archived
+                </Text>
+              </View>
+            ) : null}
+          </View>
         </View>
       </View>
       <View className="flex-row gap-2">
@@ -278,7 +300,18 @@ export default function AccountDetailsScreen() {
   // Balance is already a number now
   const balanceAmount = account.balance || 0
 
-  let progress = null
+  // Compute progress for savings/debt accounts
+  let progress: number | null = null
+  if (account.type === 'saving' && account.savingsTargetAmount) {
+    const target = account.savingsTargetAmount
+    if (target > 0) progress = Math.min((balanceAmount / target) * 100, 100)
+  } else if (account.type === 'debt' && account.debtInitialAmount) {
+    const initial = account.debtInitialAmount
+    if (initial > 0) {
+      const paid = initial - balanceAmount
+      progress = Math.min(Math.max((paid / initial) * 100, 0), 100)
+    }
+  }
 
   const handleDeleteAccount = async () => {
     try {
@@ -308,6 +341,8 @@ export default function AccountDetailsScreen() {
           icon={Icon}
           colorClass={colorClass}
           bgColorClass={bgColorClass}
+          currency={account.currencyId || 'USD'}
+          isArchived={account.isArchived}
           onEdit={() => console.log('edit')}
           onDelete={() => {
             Alert.alert(
@@ -335,6 +370,95 @@ export default function AccountDetailsScreen() {
           description={account.description || undefined}
           currency={account.currencyId || 'USD'}
         />
+
+        {/* Meta information grid */}
+        <Card className="mb-4 border-0 bg-card/50 shadow-none">
+          <CardContent className="py-4">
+            <View className="gap-3">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-sm text-muted-foreground">Currency</Text>
+                <Text className="text-sm font-medium text-foreground">
+                  {account.currencyId || 'USD'}
+                </Text>
+              </View>
+              {account.createdAt ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">Created</Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {(() => {
+                      const v: any = account.createdAt as any
+                      const d = v instanceof Date ? v : new Date(v)
+                      return d.toLocaleDateString()
+                    })()}
+                  </Text>
+                </View>
+              ) : null}
+              {account.type === 'saving' && account.savingsTargetAmount ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">Target</Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: account.currencyId || 'USD'
+                    }).format(account.savingsTargetAmount)}
+                  </Text>
+                </View>
+              ) : null}
+              {account.type === 'saving' && account.savingsTargetDate ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">
+                    Target date
+                  </Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {(() => {
+                      const v: any = account.savingsTargetDate as any
+                      const d = v instanceof Date ? v : new Date(v)
+                      return d.toLocaleDateString()
+                    })()}
+                  </Text>
+                </View>
+              ) : null}
+              {account.type === 'debt' && account.debtInitialAmount ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">
+                    Initial amount
+                  </Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: account.currencyId || 'USD'
+                    }).format(account.debtInitialAmount)}
+                  </Text>
+                </View>
+              ) : null}
+              {account.type === 'debt' && account.debtDueDate ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">
+                    Due date
+                  </Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {(() => {
+                      const v: any = account.debtDueDate as any
+                      const d = v instanceof Date ? v : new Date(v)
+                      return d.toLocaleDateString()
+                    })()}
+                  </Text>
+                </View>
+              ) : null}
+              {account.type === 'debt' &&
+              typeof account.debtIsOwedToMe !== 'undefined' ? (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-muted-foreground">
+                    Owed to me
+                  </Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {account.debtIsOwedToMe ? 'Yes' : 'No'}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+          </CardContent>
+        </Card>
 
         {progress !== null && (
           <ProgressCard

@@ -139,8 +139,9 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
   return (
     <Pressable
       className={cn(
-        'mb-2 w-full rounded-xl bg-card p-3 shadow-sm shadow-slate-500/50',
-        'border-l-[3px]',
+        'mb-3 w-full rounded-xl bg-card p-3 shadow-sm shadow-slate-500/40',
+        'active:bg-muted/30',
+        'border-l-[4px]',
         config.borderColorClass
       )}
       onPress={handlePress}
@@ -162,9 +163,23 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
           >
             {account.name}
           </Text>
-          <Text className="text-xs capitalize text-muted-foreground">
-            {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
-          </Text>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xs capitalize text-muted-foreground">
+              {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
+            </Text>
+            <View className="rounded-full bg-secondary px-2 py-0.5">
+              <Text className="text-[10px] font-medium text-muted-foreground">
+                {account.currencyId || 'USD'}
+              </Text>
+            </View>
+            {account.isArchived ? (
+              <View className="rounded-full bg-border px-2 py-0.5">
+                <Text className="text-[10px] font-medium text-muted-foreground">
+                  Archived
+                </Text>
+              </View>
+            ) : null}
+          </View>
         </View>
         <View className="flex-row items-center">
           {isNegativePayment && (
@@ -176,7 +191,7 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
           )}
           {isPositiveSaving && (
             <Icon
-              name="TrendingDown"
+              name="TrendingUp"
               size={12}
               className="mr-0.5 text-account-savings"
             />
@@ -220,7 +235,7 @@ export function AccountCard({ account, onPress }: AccountCardProps) {
           )}
           <Progress
             value={progress}
-            className="h-1.5 w-full"
+            className="h-2 w-full"
             indicatorClassName={config.progressClass}
           />
         </View>

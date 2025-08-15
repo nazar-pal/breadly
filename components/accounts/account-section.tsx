@@ -28,7 +28,7 @@ export function AccountSection({
 }: AccountSectionProps) {
   return (
     <View className="mb-8">
-      <Text className="mb-4 text-xl font-bold tracking-tight text-foreground">
+      <Text className="mb-3 text-xl font-bold tracking-tight text-foreground">
         {title}
       </Text>
       <View className="flex-col">
@@ -39,10 +39,12 @@ export function AccountSection({
             onPress={() => onEditAccount(account)}
           />
         ))}
-        <AddAccountButton
-          onPress={() => onAddAccount(accountType)}
-          label={ADD_BUTTON_LABELS[accountType] || 'Add Account'}
-        />
+        <View className="mt-4">
+          <AddAccountButton
+            onPress={() => onAddAccount(accountType)}
+            label={ADD_BUTTON_LABELS[accountType] || 'Add Account'}
+          />
+        </View>
       </View>
     </View>
   )
