@@ -1,4 +1,4 @@
-import { OperationListItem } from '@/components/accounts/operation-list-item'
+import { OperationListItem } from '@/components/operation-list-item'
 import { useGetTransactions } from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import { LegendList } from '@legendapp/list'
