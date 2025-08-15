@@ -17,7 +17,11 @@ export function useGetTransaction({
       eq(transactions.id, transactionId)
     ),
     with: {
-      category: true,
+      category: {
+        with: {
+          parent: true
+        }
+      },
       account: true,
       counterAccount: true,
       currency: true,

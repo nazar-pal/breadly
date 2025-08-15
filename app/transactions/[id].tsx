@@ -2,6 +2,7 @@ import { Icon } from '@/components/icon'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { useGetTransaction } from '@/data/client/queries'
+import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
 import { useUserSession } from '@/modules/session-and-migration'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
@@ -49,7 +50,7 @@ export default function TransactionDetailsScreen() {
 
   const transaction = transactions.data?.[0]
 
-  // Placeholder for receipt image
+  // Placeholder for receipt image (first attachment if available, fall back image)
   const receiptImageUrl =
     'https://images.pexels.com/photos/3943723/pexels-photo-3943723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 
@@ -63,6 +64,22 @@ export default function TransactionDetailsScreen() {
     )
   }
 
+  // Derive category path (Parent > Child) where available
+  const categoryPath = (() => {
+    const cat = transaction.category
+    if (!cat) return 'No category'
+    if (cat.parent) return `${cat.parent.name} · ${cat.name}`
+    return cat.name
+  })()
+
+  // Currency-aware amount
+  const currencyCode =
+    transaction.currencyId || transaction.account?.currencyId || 'USD'
+  const amountDisplay = formatCurrencyWithSign(
+    transaction.type === 'expense' ? -transaction.amount : transaction.amount,
+    currencyCode
+  )
+
   return (
     <ScrollView
       className="flex-1 bg-background"
@@ -71,14 +88,19 @@ export default function TransactionDetailsScreen() {
         paddingBottom: insets.bottom + 16
       }}
     >
-      {/* Amount Card */}
+      {/* Amount Summary */}
       <Card className="mb-4 overflow-hidden">
         <CardContent className="items-center py-8">
-          <Text className="mb-2 text-base text-muted-foreground">
-            Total Amount
+          <View className="mb-3 rounded-full bg-primary/10 px-3 py-1">
+            <Text className="text-xs font-medium text-primary">
+              {transaction.type.toUpperCase()}
+            </Text>
+          </View>
+          <Text className="mb-1 text-[44px] font-extrabold tracking-tight text-foreground">
+            {amountDisplay}
           </Text>
-          <Text className="mb-1 text-[48px] font-extrabold tracking-tight text-primary">
-            ${transaction.amount.toFixed(2)}
+          <Text className="text-sm text-muted-foreground">
+            {transaction.txDate.toLocaleDateString()}
           </Text>
         </CardContent>
       </Card>
@@ -90,21 +112,33 @@ export default function TransactionDetailsScreen() {
         </CardHeader>
         <CardContent>
           <DetailItem
+            icon={<Icon name="Wallet" size={20} className="text-primary" />}
+            label="Account"
+            value={transaction.account?.name ?? '—'}
+          />
+
+          <DetailItem
+            icon={<Icon name="Repeat" size={20} className="text-primary" />}
+            label="Counter Account"
+            value={transaction.counterAccount?.name ?? '—'}
+          />
+
+          <DetailItem
+            icon={<Icon name="Tag" size={20} className="text-primary" />}
+            label="Category"
+            value={categoryPath}
+          />
+
+          <DetailItem
             icon={<Icon name="Calendar" size={20} className="text-primary" />}
             label="Date"
             value={transaction.txDate.toLocaleDateString()}
           />
 
           <DetailItem
-            icon={<Icon name="Tag" size={20} className="text-primary" />}
-            label="Category"
-            value={transaction.category?.name ?? 'No category'}
-          />
-
-          <DetailItem
-            icon={<Icon name="Tag" size={20} className="text-primary" />}
-            label="Description"
-            value={transaction.notes ?? 'No description provided'}
+            icon={<Icon name="AlignLeft" size={20} className="text-primary" />}
+            label="Notes"
+            value={transaction.notes ?? 'No notes'}
             showBorder={false}
           />
         </CardContent>
