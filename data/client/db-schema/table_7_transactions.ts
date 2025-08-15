@@ -47,7 +47,8 @@ import {
  * - income: Money received into an account (salary, freelance, gifts)
  * - transfer: Money moved between user's accounts (internal transfers)
  */
-export const TX_TYPE = ['expense', 'income', 'transfer'] as const
+export const TRANSACTION_TYPE = ['expense', 'income', 'transfer'] as const
+export type TransactionType = (typeof TRANSACTION_TYPE)[number]
 
 // ============================================================================
 // TRANSACTIONS TABLE
@@ -72,7 +73,7 @@ export const transactions = sqliteTable(
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: text({ enum: TX_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
+    type: text({ enum: TRANSACTION_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
 
     // Account references
     accountId: text('account_id')

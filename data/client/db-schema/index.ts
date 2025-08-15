@@ -17,11 +17,19 @@ Key Features:
 import { currencies } from './table_1_currencies'
 import { exchangeRates } from './table_2_exchange-rates'
 import { userPreferences } from './table_3_user-preferences'
-import { categories, CATEGORY_TYPE } from './table_4_categories'
+import { categories, CATEGORY_TYPE, CategoryType } from './table_4_categories'
 import { budgets } from './table_5_budgets'
-import { ACCOUNT_TYPE, accounts } from './table_6_accounts'
-import { transactions, TX_TYPE } from './table_7_transactions'
-import { ATTACHMENT_TYPE, attachments } from './table_8_attachments'
+import { ACCOUNT_TYPE, accounts, AccountType } from './table_6_accounts'
+import {
+  TRANSACTION_TYPE,
+  transactions,
+  TransactionType
+} from './table_7_transactions'
+import {
+  ATTACHMENT_TYPE,
+  attachments,
+  AttachmentType
+} from './table_8_attachments'
 import { transactionAttachments } from './table_9_transaction-attachments'
 
 // Import all relations
@@ -47,10 +55,14 @@ export {
   CATEGORY_TYPE,
   currencies,
   exchangeRates,
+  TRANSACTION_TYPE,
   transactionAttachments,
   transactions,
-  TX_TYPE,
-  userPreferences
+  userPreferences,
+  type AccountType,
+  type AttachmentType,
+  type CategoryType,
+  type TransactionType
 }
 
 // Create the complete SQLite schema object

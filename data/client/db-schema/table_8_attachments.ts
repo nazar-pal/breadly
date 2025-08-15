@@ -39,6 +39,7 @@ import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
  * - voice: Voice message recordings (audio files, voice notes)
  */
 export const ATTACHMENT_TYPE = ['receipt', 'voice'] as const
+export type AttachmentType = (typeof ATTACHMENT_TYPE)[number]
 
 // ============================================================================
 // ATTACHMENTS TABLE

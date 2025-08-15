@@ -47,6 +47,7 @@ import {
  * - debt: Loans, mortgages, credit card debt, borrowed money
  */
 export const ACCOUNT_TYPE = ['saving', 'payment', 'debt'] as const
+export type AccountType = (typeof ACCOUNT_TYPE)[number]
 
 // ============================================================================
 // ACCOUNTS TABLE

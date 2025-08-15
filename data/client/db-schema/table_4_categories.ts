@@ -45,6 +45,7 @@ import {
  * - income: Money coming in (salary, freelance, investments, gifts)
  */
 export const CATEGORY_TYPE = ['expense', 'income'] as const
+export type CategoryType = (typeof CATEGORY_TYPE)[number]
 
 /**
  * Hierarchical transaction categories (income/expense classification)
