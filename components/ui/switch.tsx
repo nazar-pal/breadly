@@ -1,4 +1,4 @@
-import { useColorScheme } from '@/lib/hooks/useColorScheme'
+import { useColorScheme } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import * as SwitchPrimitives from '@rn-primitives/switch'
 import * as React from 'react'
