@@ -1,3 +1,5 @@
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+
 /*
 ================================================================================
 POWERSYNC SCHEMA - SQLite Database Schema for Local Sync
@@ -97,28 +99,53 @@ export type ExchangeRateSelectSQLite = typeof exchangeRates.$inferSelect
 export type UserPreferenceSelectSQLite = typeof userPreferences.$inferSelect
 export type UserPreferenceInsertSQLite = typeof userPreferences.$inferInsert
 
+export const userPreferenceInsertSchema = createInsertSchema(userPreferences)
+export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences)
+
 // table_4_categories
 export type CategorySelectSQLite = typeof categories.$inferSelect
 export type CategoryInsertSQLite = typeof categories.$inferInsert
+
+export const categoryInsertSchema = createInsertSchema(categories)
+export const categoryUpdateSchema = createUpdateSchema(categories)
 
 // table_5_budgets
 export type BudgetSelectSQLite = typeof budgets.$inferSelect
 export type BudgetInsertSQLite = typeof budgets.$inferInsert
 
+export const budgetInsertSchema = createInsertSchema(budgets)
+export const budgetUpdateSchema = createUpdateSchema(budgets)
+
 // table_6_accounts
 export type AccountSelectSQLite = typeof accounts.$inferSelect
 export type AccountInsertSQLite = typeof accounts.$inferInsert
+
+export const accountInsertSchema = createInsertSchema(accounts)
+export const accountUpdateSchema = createUpdateSchema(accounts)
 
 // table_7_transactions
 export type TransactionSelectSQLite = typeof transactions.$inferSelect
 export type TransactionInsertSQLite = typeof transactions.$inferInsert
 
+export const transactionInsertSchema = createInsertSchema(transactions)
+export const transactionUpdateSchema = createUpdateSchema(transactions)
+
 // table_8_attachments
 export type AttachmentSelectSQLite = typeof attachments.$inferSelect
 export type AttachmentInsertSQLite = typeof attachments.$inferInsert
+
+export const attachmentInsertSchema = createInsertSchema(attachments)
+export const attachmentUpdateSchema = createUpdateSchema(attachments)
 
 // table_9_transaction-attachments
 export type TransactionAttachmentSelectSQLite =
   typeof transactionAttachments.$inferSelect
 export type TransactionAttachmentInsertSQLite =
   typeof transactionAttachments.$inferInsert
+
+export const transactionAttachmentInsertSchema = createInsertSchema(
+  transactionAttachments
+)
+export const transactionAttachmentUpdateSchema = createUpdateSchema(
+  transactionAttachments
+)
