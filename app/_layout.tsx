@@ -6,7 +6,8 @@ import { PowerSyncContextProvider } from '@/data/client/powersync/context'
 import { queryClient } from '@/data/trpc/query-client'
 import { env } from '@/env'
 import { NAV_THEME } from '@/lib/constants'
-import { useColorScheme } from '@/lib/hooks/useColorScheme'
+import { useColorScheme } from '@/lib/hooks'
+import { ModalAccountForm } from '@/modules/account/'
 import { UserSessionInitializer } from '@/modules/session-and-migration'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
@@ -78,6 +79,7 @@ export default function RootLayout() {
                     </Stack>
                     <CategoryDetailsFormModal />
                     <IconSelectionModal />
+                    <ModalAccountForm />
                   </ThemeProvider>
                 </PowerSyncContextProvider>
               </QueryClientProvider>

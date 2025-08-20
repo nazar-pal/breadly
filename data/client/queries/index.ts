@@ -1,5 +1,4 @@
 export { useCheckCategoryDependencies } from './use-check-category-dependencies'
-export { useGetAccount } from './use-get-account'
 export { useGetAccounts } from './use-get-accounts'
 export { useGetCategories } from './use-get-categories'
 export { useGetCategoriesForEdit } from './use-get-categories-for-edit'
