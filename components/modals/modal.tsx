@@ -284,6 +284,3 @@ export function Modal({
     </RNModal>
   )
 }
-
-// Export default for convenient importing
-export default Modal
