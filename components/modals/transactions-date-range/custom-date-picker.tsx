@@ -1,5 +1,5 @@
 import { Icon } from '@/components/icon'
-import { useColorScheme } from '@/lib/hooks/useColorScheme'
+import { Calendar } from '@/components/ui/calendar'
 import {
   DateRange,
   useCategoriesDateRangeActions
@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { validateCustomDateRange } from '@/screens/tabs-categories/lib/date-range-validation'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-import { Calendar, DateData } from 'react-native-calendars'
+import { DateData } from 'react-native-calendars'
 
 interface CustomDatePickerProps {
   /**
@@ -42,54 +42,6 @@ type MarkedDate = {
 
 export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
   const { setDateRange } = useCategoriesDateRangeActions()
-  const { colorScheme } = useColorScheme()
-  const isDark = colorScheme === 'dark'
-  const calendarTheme = {
-    backgroundColor: 'transparent',
-    calendarBackground: 'transparent',
-    textSectionTitleColor: isDark ? '#A1A1AA' : '#6B7280',
-    selectedDayBackgroundColor: PRIMARY_COLOR,
-    selectedDayTextColor: '#FFFFFF',
-    todayTextColor: PRIMARY_COLOR,
-    dayTextColor: isDark ? '#E5E7EB' : '#111827',
-    textDisabledColor: isDark ? '#6B7280' : '#9CA3AF',
-    arrowColor: PRIMARY_COLOR,
-    monthTextColor: isDark ? '#E5E7EB' : '#111827',
-    indicatorColor: PRIMARY_COLOR,
-    textDayFontSize: 16,
-    textDayHeaderFontSize: 12,
-    textMonthFontSize: 16,
-    arrowStyle: { padding: 8 },
-    stylesheet: {
-      calendar: {
-        main: {
-          container: {
-            backgroundColor: 'transparent'
-          },
-          week: {
-            backgroundColor: 'transparent'
-          }
-        },
-        header: {
-          week: {
-            backgroundColor: 'transparent'
-          }
-        }
-      },
-      day: {
-        basic: {
-          base: {
-            backgroundColor: 'transparent'
-          }
-        },
-        period: {
-          base: {
-            backgroundColor: 'transparent'
-          }
-        }
-      }
-    } as any
-  }
 
   // Utility helpers -----------------------------------------------------------
   const pad = (value: number) => `${value}`.padStart(2, '0')
@@ -229,6 +181,7 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
           enableSwipeMonths={false}
           hideExtraDays
           maxDate={todayString}
+          selectionColor={PRIMARY_COLOR}
           renderArrow={direction => (
             <Icon
               name={direction === 'left' ? 'ChevronLeft' : 'ChevronRight'}
@@ -249,7 +202,6 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
           }}
           disableArrowRight={isAtCurrentMonth}
           style={{ padding: 8, backgroundColor: 'transparent' }}
-          theme={calendarTheme}
         />
       </View>
 
