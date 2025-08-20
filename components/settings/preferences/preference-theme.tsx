@@ -1,6 +1,6 @@
 import { Icon } from '@/components/icon'
 import { Switch } from '@/components/ui/switch'
-import { useColorScheme } from '@/lib/hooks/useColorScheme'
+import { useColorScheme } from '@/lib/hooks'
 import React from 'react'
 import { PreferenceItem } from './preference-item'
 
