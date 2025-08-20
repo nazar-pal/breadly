@@ -1,4 +1,3 @@
-import { Slot } from '@radix-ui/react-slot'
 import * as React from 'react'
 import {
   Controller,
@@ -9,7 +8,7 @@ import {
   type FieldPath,
   type FieldValues
 } from 'react-hook-form'
-import { Text, View } from 'react-native'
+import { Text, View, type AccessibilityState } from 'react-native'
 
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
@@ -40,6 +39,14 @@ const FormField = <
   )
 }
 
+type FormItemContextValue = {
+  id: string
+}
+
+const FormItemContext = React.createContext<FormItemContextValue>(
+  {} as FormItemContextValue
+)
+
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
@@ -63,20 +70,11 @@ const useFormField = () => {
   }
 }
 
-type FormItemContextValue = {
-  id: string
-}
-
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
-)
-
 function FormItem({
   className,
   ...props
 }: React.ComponentProps<typeof View> & { className?: string }) {
   const id = React.useId()
-
   return (
     <FormItemContext.Provider value={{ id }}>
       <View className={cn('gap-2', className)} {...props} />
@@ -98,16 +96,31 @@ function FormLabel({
   )
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  return <Slot {...props} />
+function FormControl<
+  TProps extends { nativeID?: string; accessibilityState?: AccessibilityState }
+>({ children }: { children: React.ReactElement<TProps> }) {
+  const { formItemId, error } = useFormField()
+
+  // If the child is a React Fragment, return it as-is without trying to inject props
+  if (children.type === React.Fragment) {
+    return children
+  }
+
+  const injected = {
+    nativeID: formItemId,
+    accessibilityState: { invalid: Boolean(error) }
+  } as unknown as Partial<TProps>
+  return React.cloneElement(children, injected)
 }
 
 function FormDescription({
   className,
   ...props
 }: React.ComponentProps<typeof Text> & { className?: string }) {
+  const { formDescriptionId } = useFormField()
   return (
     <Text
+      nativeID={formDescriptionId}
       className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />
@@ -118,7 +131,7 @@ function FormMessage({
   className,
   ...props
 }: React.ComponentProps<typeof Text> & { className?: string }) {
-  const { error } = useFormField()
+  const { error, formMessageId } = useFormField()
   const body = error
     ? String(error?.message ?? '')
     : (props.children as React.ReactNode)
@@ -128,7 +141,11 @@ function FormMessage({
   }
 
   return (
-    <Text className={cn('text-sm text-destructive', className)} {...props}>
+    <Text
+      nativeID={formMessageId}
+      className={cn('text-sm text-destructive', className)}
+      {...props}
+    >
       {body}
     </Text>
   )
