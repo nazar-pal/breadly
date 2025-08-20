@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import {
   Modal as RNModal,
   ModalProps as RNModalProps,
+  Text,
   TouchableWithoutFeedback,
   View
 } from 'react-native'
@@ -45,6 +46,12 @@ interface CustomModalProps {
   backdropClassName?: string
   /** Custom className for the drag indicator */
   dragIndicatorClassName?: string
+  /** Optional modal title rendered above the content */
+  title?: React.ReactNode
+  /** Custom className for the title text when title is a string */
+  titleClassName?: string
+  /** Custom className for the header container that wraps the title */
+  headerClassName?: string
   /** Modal height as percentage (0-1), fixed value, or 'auto' to fit content */
   height?: number | `${number}%` | 'auto'
   /** Whether to show the drag indicator */
@@ -77,6 +84,9 @@ export function Modal({
   className,
   backdropClassName,
   dragIndicatorClassName,
+  title,
+  titleClassName,
+  headerClassName,
   height = '80%',
   showDragIndicator = true,
   enableSwipeToClose = true,
@@ -245,6 +255,24 @@ export function Modal({
                     accessibilityLabel="Drag to dismiss"
                     accessibilityHint="Swipe down to close this modal"
                   />
+                </View>
+              )}
+
+              {/* Optional Title */}
+              {title !== undefined && title !== null && title !== '' && (
+                <View className={cn('px-6 pb-2', headerClassName)}>
+                  {typeof title === 'string' ? (
+                    <Text
+                      className={cn(
+                        'text-center text-base font-semibold text-popover-foreground',
+                        titleClassName
+                      )}
+                    >
+                      {title}
+                    </Text>
+                  ) : (
+                    title
+                  )}
                 </View>
               )}
 
