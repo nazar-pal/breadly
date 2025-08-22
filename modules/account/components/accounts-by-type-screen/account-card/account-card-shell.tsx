@@ -39,7 +39,8 @@ export function AccountCardShell({
     <Pressable
       className={cn(
         'mb-3 w-full rounded-xl border-l-[4px] bg-card p-3 shadow-sm shadow-slate-500/40 active:bg-muted/30',
-        theme.container
+        theme.container,
+        account.isArchived ? 'border-border bg-muted/20' : ''
       )}
       {...rest}
     >
@@ -47,14 +48,25 @@ export function AccountCardShell({
         <View
           className={cn(
             'mr-3 h-7 w-7 items-center justify-center rounded-md',
-            theme.iconWrapper
+            theme.iconWrapper,
+            account.isArchived ? 'bg-border/50' : ''
           )}
         >
-          <Icon name={iconName} size={16} className={cn(theme.icon)} />
+          <Icon
+            name={iconName}
+            size={16}
+            className={cn(
+              theme.icon,
+              account.isArchived ? 'text-muted-foreground' : ''
+            )}
+          />
         </View>
         <View className="min-w-0 flex-1">
           <Text
-            className="mb-px text-base font-semibold text-foreground"
+            className={cn(
+              'mb-px text-base font-semibold text-foreground',
+              account.isArchived ? 'text-muted-foreground' : ''
+            )}
             numberOfLines={1}
           >
             {account.name}
@@ -79,7 +91,13 @@ export function AccountCardShell({
         </View>
         <View className="flex-row items-center">
           {rightAccessory}
-          <Text className={cn('text-base font-bold', theme.balanceText)}>
+          <Text
+            className={cn(
+              'text-base font-bold',
+              theme.balanceText,
+              account.isArchived ? 'text-muted-foreground' : ''
+            )}
+          >
             {formatBalance(balanceAmount)}
           </Text>
         </View>

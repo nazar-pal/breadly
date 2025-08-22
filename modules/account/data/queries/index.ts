@@ -15,3 +15,5 @@ export {
   type AccountTransactionsItem,
   type UseGetAccountTransactionsResult
 } from './use-get-account-transactions'
+
+export { useCheckAccountDependencies } from './use-check-account-dependencies'
