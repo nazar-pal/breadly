@@ -22,7 +22,7 @@ export function useGetAccounts({
     with: {
       currency: true
     },
-    orderBy: [asc(accounts.createdAt)]
+    orderBy: [asc(accounts.isArchived), asc(accounts.createdAt)]
   })
 
   const result = useQuery(toCompilableQuery(query))

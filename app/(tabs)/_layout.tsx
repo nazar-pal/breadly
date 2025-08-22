@@ -1,6 +1,7 @@
 import { Icon, type IconName } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { useTabsCategoriesSettingsModalActions } from '@/lib/storage/tabs-categories-settings-modal-store'
+import { AccountsSettingsButton } from '@/modules/account'
 import { Tabs } from 'expo-router'
 import React from 'react'
 
@@ -58,6 +59,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="accounts"
         options={{
+          headerRight: () => <AccountsSettingsButton />,
           title: 'Accounts',
           tabBarIcon: ({ focused }) => (
             <TabBarIcon icon="Wallet" focused={focused} />

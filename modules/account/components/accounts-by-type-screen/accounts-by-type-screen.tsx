@@ -5,7 +5,7 @@ import React from 'react'
 import { ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useGetAccounts } from '../../data'
-import { useAccountModalActions } from '../../store'
+import { useAccountModalActions, useAccountSettingsState } from '../../store'
 import { AccountCard } from './account-card'
 import { AddAccountButton } from './add-account-button'
 
@@ -20,9 +20,12 @@ export function AccountsByTypeScreen({ accountType }: Props) {
   const { openAccountModalForCreate, openAccountModalForEdit } =
     useAccountModalActions()
 
+  const { showArchived } = useAccountSettingsState()
+
   const { data: accounts } = useGetAccounts({
     userId,
-    accountType
+    accountType,
+    isArchived: showArchived ? undefined : false
   })
 
   return (

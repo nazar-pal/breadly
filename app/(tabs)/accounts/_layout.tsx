@@ -1,4 +1,4 @@
-import { AccountTypesTabBar } from '@/modules/account/'
+import { AccountTypesTabBar, AccountsSettingsModal } from '@/modules/account/'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { withLayoutContext } from 'expo-router'
 import React from 'react'
@@ -21,6 +21,7 @@ export default function AccountsLayout() {
         <TopTabs.Screen name="savings" options={{ title: 'Savings' }} />
         <TopTabs.Screen name="debt" options={{ title: 'Debt' }} />
       </TopTabs>
+      <AccountsSettingsModal />
     </>
   )
 }
