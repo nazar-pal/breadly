@@ -17,11 +17,11 @@ interface Transaction {
   amount: number
   txDate: Date
   notes: string | null
-  account: {
+  account?: {
     id: string
     name: string
     type: string
-  }
+  } | null
   counterAccount?: {
     id: string
     name: string

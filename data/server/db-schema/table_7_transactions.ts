@@ -82,9 +82,7 @@ export const transactions = pgTable(
     type: txType().notNull(), // Transaction type (expense/income/transfer)
 
     // Account references
-    accountId: uuid()
-      .references(() => accounts.id, { onDelete: 'cascade' })
-      .notNull(), // Primary account (source for expense/transfer, destination for income)
+    accountId: uuid().references(() => accounts.id, { onDelete: 'cascade' }), // Primary account (source for expense/transfer, destination for income)
     counterAccountId: uuid().references(() => accounts.id), // Transfer destination account (transfers only)
 
     // Classification and details

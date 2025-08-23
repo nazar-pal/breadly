@@ -24,5 +24,13 @@ export interface AccountModalProps {
   }[]
   selectedAccountId: string
   onSelectAccount: (accountId: string) => void
+  currencies: {
+    id: string
+    code: string
+    symbol: string
+    name: string
+  }[]
+  selectedCurrencyCode: string
+  onSelectCurrency: (currencyCode: string) => void
   onClose: () => void
 }

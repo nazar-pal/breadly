@@ -76,9 +76,9 @@ export const transactions = sqliteTable(
     type: text({ enum: TRANSACTION_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
 
     // Account references
-    accountId: text('account_id')
-      .references(() => accounts.id, { onDelete: 'cascade' })
-      .notNull(), // Primary account (source for expense/transfer, destination for income)
+    accountId: text('account_id').references(() => accounts.id, {
+      onDelete: 'cascade'
+    }), // Primary account (source for expense/transfer, destination for income)
     counterAccountId: text('counter_account_id').references(() => accounts.id), // Transfer destination account (transfers only)
 
     // Classification and details

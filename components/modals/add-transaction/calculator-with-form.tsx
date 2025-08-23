@@ -2,7 +2,11 @@ import { Calculator } from '@/components/calculator'
 import { Icon } from '@/components/icon'
 import { Text } from '@/components/ui/text'
 import { createTransaction } from '@/data/client/mutations'
-import { useGetAccounts, useGetCategories } from '@/data/client/queries'
+import {
+  useGetAccounts,
+  useGetCategories,
+  useGetCurrencies
+} from '@/data/client/queries'
 import { useUserSession } from '@/modules/session-and-migration'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
@@ -28,6 +32,7 @@ export function CalculatorWithForm({
   const [selectedParentCategoryId, setSelectedParentCategoryId] =
     useState<string>(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
+  const [selectedCurrencyCode, setSelectedCurrencyCode] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { userId } = useUserSession()
 
@@ -43,17 +48,13 @@ export function CalculatorWithForm({
     accountType: 'payment'
   })
 
+  const { data: currencies = [] } = useGetCurrencies()
+
   const selectedParentCategory = parentCategories.find(
     cat => cat.id === selectedParentCategoryId
   )
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
-
-  // Auto-select first payment account if none selected
-  React.useEffect(() => {
-    if (!selectedAccountId && accounts.length > 0) {
-      setSelectedAccountId(accounts[0].id)
-    }
-  }, [selectedAccountId, accounts])
+  const selectedCurrency = currencies.find(c => c.code === selectedCurrencyCode)
 
   const handleParentCategorySelect = (categoryId: string) => {
     setSelectedParentCategoryId(categoryId)
@@ -63,17 +64,20 @@ export function CalculatorWithForm({
   }
 
   const handleSubmit = async (amount: number, comment: string) => {
-    if (amount > 0 && selectedAccount && selectedCategoryId && userId) {
+    const hasMoneySource = Boolean(selectedAccount) || Boolean(selectedCurrency)
+    if (amount > 0 && hasMoneySource && selectedCategoryId && userId) {
       setIsSubmitting(true)
       try {
         const [error] = await createTransaction({
           userId,
           data: {
             type,
-            accountId: selectedAccount.id,
+            ...(selectedAccount ? { accountId: selectedAccount.id } : {}),
             categoryId: selectedCategoryId,
             amount: amount,
-            currencyId: selectedAccount.currencyId,
+            currencyId: selectedAccount
+              ? selectedAccount.currencyId
+              : selectedCurrencyCode,
             txDate: new Date(),
             notes: comment || null,
             createdAt: new Date()
@@ -128,24 +132,35 @@ export function CalculatorWithForm({
             />
           </Pressable>
 
-          {/* Account Selector */}
+          {/* Account/Currency Selector */}
           <Pressable
             className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-3 shadow-sm active:bg-muted/50"
             onPress={() => setShowAccountModal(true)}
           >
             <View className="flex-1 flex-row items-center">
               <View className="mr-2 rounded-lg bg-primary/10 p-1.5">
-                <Icon name="CreditCard" size={16} className="text-primary" />
+                <Icon
+                  name={selectedAccount ? 'CreditCard' : 'DollarSign'}
+                  size={16}
+                  className="text-primary"
+                />
               </View>
               <View className="flex-1">
                 <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Account
+                  {selectedAccount
+                    ? 'Account'
+                    : selectedCurrency
+                      ? 'Currency'
+                      : 'Account / Currency'}
                 </Text>
                 <Text
                   className="text-sm font-semibold text-foreground"
                   numberOfLines={1}
                 >
-                  {selectedAccount?.name || 'Select Account'}
+                  {selectedAccount?.name ||
+                    (selectedCurrency
+                      ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
+                      : 'Select Account or Currency')}
                 </Text>
               </View>
             </View>
@@ -168,7 +183,11 @@ export function CalculatorWithForm({
 
       <Calculator
         type={type}
-        isDisabled={isSubmitting || !selectedAccount || !selectedCategoryId}
+        isDisabled={
+          isSubmitting ||
+          !selectedCategoryId ||
+          (!selectedAccount && !selectedCurrency)
+        }
         handleSubmit={handleSubmit}
       />
 
@@ -186,7 +205,16 @@ export function CalculatorWithForm({
         visible={showAccountModal}
         accounts={accounts}
         selectedAccountId={selectedAccountId}
-        onSelectAccount={setSelectedAccountId}
+        currencies={currencies}
+        selectedCurrencyCode={selectedCurrencyCode}
+        onSelectCurrency={code => {
+          setSelectedCurrencyCode(code)
+          setSelectedAccountId('')
+        }}
+        onSelectAccount={id => {
+          setSelectedAccountId(id)
+          setSelectedCurrencyCode('')
+        }}
         onClose={() => setShowAccountModal(false)}
       />
     </View>
