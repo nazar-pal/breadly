@@ -124,7 +124,7 @@ CREATE TABLE transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id VARCHAR(50) DEFAULT auth.user_id() NOT NULL,
   type transaction_type NOT NULL,       -- 'expense', 'income', 'transfer'
-  account_id UUID REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
+  account_id UUID REFERENCES accounts(id) ON DELETE CASCADE, -- Optional for non-transfer; required for transfer
   counter_account_id UUID REFERENCES accounts(id),  -- For transfers
   category_id UUID REFERENCES categories(id),
   amount NUMERIC(14,2) NOT NULL CHECK (amount > 0),
@@ -135,7 +135,7 @@ CREATE TABLE transactions (
 );
 ```
 
-**Purpose**: Central table tracking all money movements with automatic balance updates.
+**Purpose**: Central table tracking all money movements with automatic balance updates. For non-transfer transactions, `account_id` is optional; for transfers, both `account_id` and `counter_account_id` are required.
 
 ### **6. attachments**
 

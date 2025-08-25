@@ -120,6 +120,20 @@
       "when": 1755978873412,
       "tag": "0016_cool_bloodscream",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1756132277151,
+      "tag": "0017_security_validations_v2",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1756132292262,
+      "tag": "0018_currency_validation_v2",
+      "breakpoints": true
     }
   ]
 }
