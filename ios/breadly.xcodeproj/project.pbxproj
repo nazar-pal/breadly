@@ -8,25 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		2BADBD00BEAE1F1ACC417251 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BF1C3666EEEE7AE5642F56 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		3EB93F53F66C6E9CD6BABAE4 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C73D2AE6AC8D89F12ED2A43 /* ExpoModulesProvider.swift */; };
+		82D75A55AAB1BE09238723EB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1E8D8C46F6E24EB92CD1DCF6 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		EBDB01AF660D03AAC4C6372E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4741206AA4516A01F0B4648A /* PrivacyInfo.xcprivacy */; };
+		CF518B311403B0358073658A /* libPods-breadly.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6F7B210B59933FC0C8AE6AD /* libPods-breadly.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		FF5FBAD3004F41B13EE7B1EB /* libPods-breadly.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C2F0BBE9148D2BA3572BC98 /* libPods-breadly.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		08364AD7AB01CBE3FD581FFB /* Pods-breadly.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breadly.debug.xcconfig"; path = "Target Support Files/Pods-breadly/Pods-breadly.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* breadly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breadly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = breadly/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = breadly/Info.plist; sourceTree = "<group>"; };
-		4741206AA4516A01F0B4648A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = breadly/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		8C2F0BBE9148D2BA3572BC98 /* libPods-breadly.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breadly.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8C73D2AE6AC8D89F12ED2A43 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-breadly/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		8D4A3C71A28CB7C78228EA4E /* Pods-breadly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breadly.release.xcconfig"; path = "Target Support Files/Pods-breadly/Pods-breadly.release.xcconfig"; sourceTree = "<group>"; };
+		1E8D8C46F6E24EB92CD1DCF6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = breadly/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		78FD552F0D4C0FD87A98BE19 /* Pods-breadly.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breadly.release.xcconfig"; path = "Target Support Files/Pods-breadly/Pods-breadly.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = breadly/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		C3BF1C3666EEEE7AE5642F56 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-breadly/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		D5FE477754AA45CF4C0C74AE /* Pods-breadly.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breadly.debug.xcconfig"; path = "Target Support Files/Pods-breadly/Pods-breadly.debug.xcconfig"; sourceTree = "<group>"; };
+		D6F7B210B59933FC0C8AE6AD /* libPods-breadly.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breadly.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = breadly/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* breadly-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "breadly-Bridging-Header.h"; path = "breadly/breadly-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF5FBAD3004F41B13EE7B1EB /* libPods-breadly.a in Frameworks */,
+				CF518B311403B0358073658A /* libPods-breadly.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				4741206AA4516A01F0B4648A /* PrivacyInfo.xcprivacy */,
+				1E8D8C46F6E24EB92CD1DCF6 /* PrivacyInfo.xcprivacy */,
 			);
 			name = breadly;
 			sourceTree = "<group>";
@@ -62,9 +62,27 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				8C2F0BBE9148D2BA3572BC98 /* libPods-breadly.a */,
+				D6F7B210B59933FC0C8AE6AD /* libPods-breadly.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3CEDDC2B4BF0AC25619837F6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D5FE477754AA45CF4C0C74AE /* Pods-breadly.debug.xcconfig */,
+				78FD552F0D4C0FD87A98BE19 /* Pods-breadly.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		7F551608C2328FCF3056FDD6 /* breadly */ = {
+			isa = PBXGroup;
+			children = (
+				C3BF1C3666EEEE7AE5642F56 /* ExpoModulesProvider.swift */,
+			);
+			name = breadly;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -81,8 +99,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				A78B2BDF1C255940FBCF2210 /* Pods */,
-				C8D03598CFF7615D8DBF1536 /* ExpoModulesProviders */,
+				3CEDDC2B4BF0AC25619837F6 /* Pods */,
+				C0613D35263188011FB839E9 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -97,16 +115,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A78B2BDF1C255940FBCF2210 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				08364AD7AB01CBE3FD581FFB /* Pods-breadly.debug.xcconfig */,
-				8D4A3C71A28CB7C78228EA4E /* Pods-breadly.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -116,18 +124,10 @@
 			path = breadly/Supporting;
 			sourceTree = "<group>";
 		};
-		BB60D8AB02EB3A0E703B240C /* breadly */ = {
+		C0613D35263188011FB839E9 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				8C73D2AE6AC8D89F12ED2A43 /* ExpoModulesProvider.swift */,
-			);
-			name = breadly;
-			sourceTree = "<group>";
-		};
-		C8D03598CFF7615D8DBF1536 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				BB60D8AB02EB3A0E703B240C /* breadly */,
+				7F551608C2328FCF3056FDD6 /* breadly */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "breadly" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				A70EF4660BBFFF7139B3B8A8 /* [Expo] Configure project */,
+				62DE4CC58ABAA4598CDD85E5 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				1E19CC0AF5F1686BAAA032EC /* [CP] Embed Pods Frameworks */,
+				B6B855CD33AFA71775FEA5D5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				EBDB01AF660D03AAC4C6372E /* PrivacyInfo.xcprivacy in Resources */,
+				82D75A55AAB1BE09238723EB /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,25 +240,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1E19CC0AF5F1686BAAA032EC /* [CP] Embed Pods Frameworks */ = {
+		62DE4CC58ABAA4598CDD85E5 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-breadly/Pods-breadly-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/powersync-sqlite-core/powersync-sqlite-core.framework/powersync-sqlite-core",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/powersync-sqlite-core.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-breadly/Pods-breadly-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-breadly/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -302,24 +301,25 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-breadly/Pods-breadly-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A70EF4660BBFFF7139B3B8A8 /* [Expo] Configure project */ = {
+		B6B855CD33AFA71775FEA5D5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-breadly/Pods-breadly-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/powersync-sqlite-core/powersync-sqlite-core.framework/powersync-sqlite-core",
 			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/powersync-sqlite-core.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-breadly/expo-configure-project.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-breadly/Pods-breadly-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -329,7 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				3EB93F53F66C6E9CD6BABAE4 /* ExpoModulesProvider.swift in Sources */,
+				2BADBD00BEAE1F1ACC417251 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,7 +338,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08364AD7AB01CBE3FD581FFB /* Pods-breadly.debug.xcconfig */;
+			baseConfigurationReference = D5FE477754AA45CF4C0C74AE /* Pods-breadly.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -374,7 +374,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D4A3C71A28CB7C78228EA4E /* Pods-breadly.release.xcconfig */;
+			baseConfigurationReference = 78FD552F0D4C0FD87A98BE19 /* Pods-breadly.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
