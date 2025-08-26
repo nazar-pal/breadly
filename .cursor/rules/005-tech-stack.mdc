@@ -28,5 +28,5 @@ version: 1.0.0
 - **Images**: `expo-image`.  
 - **Lists**: `@shopify/flash-list`.  
 - **Animations**: `react-native-reanimated`.  
-- **Local Storage**: `@react-native-async-storage/async-storage`.  
+- **Local Storage**: `react-native-mmkv`.  
 - **Avoid**: React Server Components, Server Actions, and `React.Suspense` for data fetching in this MVP.

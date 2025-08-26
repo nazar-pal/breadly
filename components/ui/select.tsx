@@ -1,4 +1,4 @@
-import { Check, ChevronDown, ChevronUp } from '@/lib/icons'
+import { Icon } from '@/components/icon'
 import { cn } from '@/lib/utils'
 import * as SelectPrimitive from '@rn-primitives/select'
 import * as React from 'react'
@@ -33,7 +33,8 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <ChevronDown
+      <Icon
+        name="ChevronDown"
         size={16}
         aria-hidden={true}
         className="text-foreground opacity-50"
@@ -60,7 +61,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <ChevronUp size={14} className="text-foreground" />
+      <Icon name="ChevronUp" size={14} className="text-foreground" />
     </SelectPrimitive.ScrollUpButton>
   )
 }
@@ -83,7 +84,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <ChevronDown size={14} className="text-foreground" />
+      <Icon name="ChevronDown" size={14} className="text-foreground" />
     </SelectPrimitive.ScrollDownButton>
   )
 }
@@ -173,7 +174,8 @@ function SelectItem({
     >
       <View className="native:left-3.5 native:pt-px absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Check
+          <Icon
+            name="Check"
             size={16}
             strokeWidth={3}
             className="text-popover-foreground"

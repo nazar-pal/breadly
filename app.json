@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "breadly-expense-tracker",
+    "name": "breadly",
     "slug": "breadly-expense-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.devnazar.breadly",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.nazar_dev.breadlyexpensetracker"
+      "package": "com.devnazar.breadly"
     },
     "web": {
       "bundler": "metro",
@@ -48,6 +52,6 @@
         "projectId": "36c0d713-fd76-42c0-99ba-9cbef6a99863"
       }
     },
-    "owner": "nazar_dev"
+    "owner": "devnazar"
   }
 }
