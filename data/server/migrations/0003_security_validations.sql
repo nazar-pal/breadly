@@ -36,24 +36,30 @@ Security Rules:
 CREATE OR REPLACE FUNCTION validate_account_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  -- ========================================================================
-  -- Check primary account ownership
-  -- ========================================================================
-  
-  -- Verify that account_id belongs to the user creating the transaction
-  IF NOT EXISTS (
-    SELECT 1 FROM accounts 
-    WHERE id = NEW.account_id AND user_id = NEW.user_id
-  ) THEN
-    RAISE EXCEPTION 'Account does not belong to user';
-  END IF;
+  -- Non-transfer: only validate ownership if an account is provided
+  IF NEW.type <> 'transfer' THEN
+    IF NEW.account_id IS NOT NULL THEN
+      IF NOT EXISTS (
+        SELECT 1 FROM accounts 
+        WHERE id = NEW.account_id AND user_id = NEW.user_id
+      ) THEN
+        RAISE EXCEPTION 'Account does not belong to user';
+      END IF;
+    END IF;
 
-  -- ========================================================================
-  -- Check counter account ownership (for transfers)
-  -- ========================================================================
-  
-  -- For transfer transactions, also validate counter_account_id ownership
-  IF NEW.type = 'transfer' AND NEW.counter_account_id IS NOT NULL THEN
+  -- Transfer: require both accounts and validate ownership for both
+  ELSE
+    IF NEW.account_id IS NULL OR NEW.counter_account_id IS NULL THEN
+      RAISE EXCEPTION 'Transfer requires both account_id and counter_account_id';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1 FROM accounts 
+      WHERE id = NEW.account_id AND user_id = NEW.user_id
+    ) THEN
+      RAISE EXCEPTION 'Account does not belong to user';
+    END IF;
+
     IF NOT EXISTS (
       SELECT 1 FROM accounts 
       WHERE id = NEW.counter_account_id AND user_id = NEW.user_id

@@ -26,18 +26,34 @@ Note: These triggers complement the existing CHECK constraints and ensure
 CREATE OR REPLACE FUNCTION validate_transaction_currency()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Validate that transaction currency matches account currency
-  IF NOT EXISTS (
-    SELECT 1 FROM accounts 
-    WHERE id = NEW.account_id 
-    AND currency_id = NEW.currency_id
-  ) THEN
-    RAISE EXCEPTION 'Transaction currency (%) does not match account currency. Account ID: %', 
-      NEW.currency_id, NEW.account_id;
-  END IF;
+  -- Non-transfer: allow accountless transactions; validate only if account_id is provided
+  IF NEW.type <> 'transfer' THEN
+    IF NEW.account_id IS NOT NULL THEN
+      IF NOT EXISTS (
+        SELECT 1 FROM accounts 
+        WHERE id = NEW.account_id 
+        AND currency_id = NEW.currency_id
+      ) THEN
+        RAISE EXCEPTION 'Transaction currency (%) does not match account currency. Account ID: %', 
+          NEW.currency_id, NEW.account_id;
+      END IF;
+    END IF;
 
-  -- For transfers, validate that counter-account currency also matches
-  IF NEW.type = 'transfer' AND NEW.counter_account_id IS NOT NULL THEN
+  -- Transfer: require both accounts and validate both currencies
+  ELSE
+    IF NEW.account_id IS NULL OR NEW.counter_account_id IS NULL THEN
+      RAISE EXCEPTION 'Transfer requires both account_id and counter_account_id';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1 FROM accounts 
+      WHERE id = NEW.account_id 
+      AND currency_id = NEW.currency_id
+    ) THEN
+      RAISE EXCEPTION 'Transaction currency (%) does not match account currency. Account ID: %', 
+        NEW.currency_id, NEW.account_id;
+    END IF;
+
     IF NOT EXISTS (
       SELECT 1 FROM accounts 
       WHERE id = NEW.counter_account_id 

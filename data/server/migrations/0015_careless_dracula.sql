@@ -1,1 +1,0 @@
-ALTER TABLE "categories" ADD COLUMN "sort_order" integer DEFAULT 1000 NOT NULL;

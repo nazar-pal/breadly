@@ -1,6 +1,6 @@
 {
-  "id": "6c7d458f-1437-4437-b94d-0af13d04d347",
-  "prevId": "59788bff-4907-48fa-965c-142f815a791a",
+  "id": "ef1fb171-f7c2-4212-aef3-b37a567dd16a",
+  "prevId": "68e39c78-1712-4086-8137-a9a990542f46",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -45,14 +45,45 @@
           "name": "currency_id",
           "type": "varchar(3)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'USD'"
         },
         "balance": {
           "name": "balance",
           "type": "numeric(14, 2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'0'"
+        },
+        "savings_target_amount": {
+          "name": "savings_target_amount",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "savings_target_date": {
+          "name": "savings_target_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "debt_initial_amount": {
+          "name": "debt_initial_amount",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "debt_is_owed_to_me": {
+          "name": "debt_is_owed_to_me",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "debt_due_date": {
+          "name": "debt_due_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
         },
         "is_archived": {
           "name": "is_archived",
@@ -188,6 +219,26 @@
         "accounts_name_not_empty": {
           "name": "accounts_name_not_empty",
           "value": "length(trim(\"accounts\".\"name\")) > 0"
+        },
+        "accounts_positive_target_amount": {
+          "name": "accounts_positive_target_amount",
+          "value": "\"accounts\".\"savings_target_amount\" IS NULL OR \"accounts\".\"savings_target_amount\" > 0"
+        },
+        "accounts_positive_debt_initial_amount": {
+          "name": "accounts_positive_debt_initial_amount",
+          "value": "\"accounts\".\"debt_initial_amount\" IS NULL OR \"accounts\".\"debt_initial_amount\" > 0"
+        },
+        "accounts_savings_fields_only_for_saving": {
+          "name": "accounts_savings_fields_only_for_saving",
+          "value": "(\"accounts\".\"type\" = 'saving') OR (\"accounts\".\"savings_target_amount\" IS NULL AND \"accounts\".\"savings_target_date\" IS NULL)"
+        },
+        "accounts_debt_fields_only_for_debt": {
+          "name": "accounts_debt_fields_only_for_debt",
+          "value": "(\"accounts\".\"type\" = 'debt') OR (\"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_is_owed_to_me\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
+        },
+        "accounts_payment_no_type_specific_fields": {
+          "name": "accounts_payment_no_type_specific_fields",
+          "value": "(\"accounts\".\"type\" != 'payment') OR (\"accounts\".\"savings_target_amount\" IS NULL AND \"accounts\".\"savings_target_date\" IS NULL AND \"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_is_owed_to_me\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
         }
       },
       "isRLSEnabled": false
@@ -202,6 +253,13 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(auth.user_id())"
         },
         "type": {
           "name": "type",
@@ -230,13 +288,13 @@
         },
         "file_size": {
           "name": "file_size",
-          "type": "numeric",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "duration": {
           "name": "duration",
-          "type": "numeric",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -249,9 +307,45 @@
         }
       },
       "indexes": {
+        "attachments_user_idx": {
+          "name": "attachments_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
         "attachments_type_idx": {
           "name": "attachments_type_idx",
           "columns": [
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "attachments_user_type_idx": {
+          "name": "attachments_user_type_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
             {
               "expression": "type",
               "isExpression": false,
@@ -283,7 +377,45 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "crud-authenticated-policy-select": {
+          "name": "crud-authenticated-policy-select",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"attachments\".\"user_id\")"
+        },
+        "crud-authenticated-policy-insert": {
+          "name": "crud-authenticated-policy-insert",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "authenticated"
+          ],
+          "withCheck": "(select auth.user_id() = \"attachments\".\"user_id\")"
+        },
+        "crud-authenticated-policy-update": {
+          "name": "crud-authenticated-policy-update",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"attachments\".\"user_id\")",
+          "withCheck": "(select auth.user_id() = \"attachments\".\"user_id\")"
+        },
+        "crud-authenticated-policy-delete": {
+          "name": "crud-authenticated-policy-delete",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"attachments\".\"user_id\")"
+        }
+      },
       "checkConstraints": {
         "attachments_bucket_path_not_empty": {
           "name": "attachments_bucket_path_not_empty",
@@ -334,16 +466,20 @@
           "primaryKey": false,
           "notNull": true
         },
-        "period": {
-          "name": "period",
-          "type": "budget_period",
-          "typeSchema": "public",
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'monthly'"
+          "notNull": true
         },
         "start_date": {
           "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
           "type": "date",
           "primaryKey": false,
           "notNull": true
@@ -380,29 +516,8 @@
           "method": "btree",
           "concurrently": false
         },
-        "budgets_user_period_idx": {
-          "name": "budgets_user_period_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "period",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "budgets_category_period_start_unq": {
-          "name": "budgets_category_period_start_unq",
+        "budgets_category_start_end_unq": {
+          "name": "budgets_category_start_end_unq",
           "columns": [
             {
               "expression": "category_id",
@@ -411,13 +526,19 @@
               "nulls": "last"
             },
             {
-              "expression": "period",
+              "expression": "currency",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             },
             {
               "expression": "start_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "end_date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -442,6 +563,19 @@
           ],
           "onUpdate": "no action",
           "onDelete": "cascade"
+        },
+        "budgets_currency_currencies_code_fk": {
+          "name": "budgets_currency_currencies_code_fk",
+          "tableFrom": "budgets",
+          "columnsFrom": [
+            "currency"
+          ],
+          "tableTo": "currencies",
+          "columnsTo": [
+            "code"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -542,6 +676,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'circle'"
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1000
         },
         "is_archived": {
           "name": "is_archived",
@@ -900,6 +1041,20 @@
       "name": "transaction_attachments",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(auth.user_id())"
+        },
         "transaction_id": {
           "name": "transaction_id",
           "type": "uuid",
@@ -921,6 +1076,42 @@
         }
       },
       "indexes": {
+        "transaction_attachments_unique": {
+          "name": "transaction_attachments_unique",
+          "columns": [
+            {
+              "expression": "transaction_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "attachment_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "transaction_attachments_user_idx": {
+          "name": "transaction_attachments_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
         "transaction_attachments_transaction_idx": {
           "name": "transaction_attachments_transaction_idx",
           "columns": [
@@ -980,15 +1171,7 @@
           "onDelete": "cascade"
         }
       },
-      "compositePrimaryKeys": {
-        "transaction_attachments_transaction_id_attachment_id_pk": {
-          "name": "transaction_attachments_transaction_id_attachment_id_pk",
-          "columns": [
-            "transaction_id",
-            "attachment_id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {
         "crud-authenticated-policy-select": {
@@ -998,7 +1181,7 @@
           "to": [
             "authenticated"
           ],
-          "using": "EXISTS (\n        SELECT 1 FROM transactions t \n        WHERE t.id = \"transaction_attachments\".\"transaction_id\" \n        AND t.user_id = auth.user_id()\n      )"
+          "using": "(select auth.user_id() = \"transaction_attachments\".\"user_id\")"
         },
         "crud-authenticated-policy-insert": {
           "name": "crud-authenticated-policy-insert",
@@ -1007,7 +1190,7 @@
           "to": [
             "authenticated"
           ],
-          "withCheck": "EXISTS (\n        SELECT 1 FROM transactions t \n        WHERE t.id = \"transaction_attachments\".\"transaction_id\" \n        AND t.user_id = auth.user_id()\n      )"
+          "withCheck": "(select auth.user_id() = \"transaction_attachments\".\"user_id\")"
         },
         "crud-authenticated-policy-update": {
           "name": "crud-authenticated-policy-update",
@@ -1016,8 +1199,8 @@
           "to": [
             "authenticated"
           ],
-          "using": "EXISTS (\n        SELECT 1 FROM transactions t \n        WHERE t.id = \"transaction_attachments\".\"transaction_id\" \n        AND t.user_id = auth.user_id()\n      )",
-          "withCheck": "EXISTS (\n        SELECT 1 FROM transactions t \n        WHERE t.id = \"transaction_attachments\".\"transaction_id\" \n        AND t.user_id = auth.user_id()\n      )"
+          "using": "(select auth.user_id() = \"transaction_attachments\".\"user_id\")",
+          "withCheck": "(select auth.user_id() = \"transaction_attachments\".\"user_id\")"
         },
         "crud-authenticated-policy-delete": {
           "name": "crud-authenticated-policy-delete",
@@ -1026,7 +1209,7 @@
           "to": [
             "authenticated"
           ],
-          "using": "EXISTS (\n        SELECT 1 FROM transactions t \n        WHERE t.id = \"transaction_attachments\".\"transaction_id\" \n        AND t.user_id = auth.user_id()\n      )"
+          "using": "(select auth.user_id() = \"transaction_attachments\".\"user_id\")"
         }
       },
       "checkConstraints": {},
@@ -1061,7 +1244,7 @@
           "name": "account_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "counter_account_id": {
           "name": "counter_account_id",
@@ -1360,14 +1543,14 @@
           "name": "default_currency",
           "type": "varchar(3)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "first_weekday": {
           "name": "first_weekday",
-          "type": "numeric",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": false,
-          "default": "'1'"
+          "default": 1
         },
         "locale": {
           "name": "locale",
@@ -1444,6 +1627,14 @@
     }
   },
   "enums": {
+    "public.category_type": {
+      "name": "category_type",
+      "schema": "public",
+      "values": [
+        "expense",
+        "income"
+      ]
+    },
     "public.account_type": {
       "name": "account_type",
       "schema": "public",
@@ -1453,33 +1644,6 @@
         "debt"
       ]
     },
-    "public.attachment_type": {
-      "name": "attachment_type",
-      "schema": "public",
-      "values": [
-        "receipt",
-        "voice"
-      ]
-    },
-    "public.budget_period": {
-      "name": "budget_period",
-      "schema": "public",
-      "values": [
-        "daily",
-        "weekly",
-        "monthly",
-        "quarterly",
-        "yearly"
-      ]
-    },
-    "public.category_type": {
-      "name": "category_type",
-      "schema": "public",
-      "values": [
-        "expense",
-        "income"
-      ]
-    },
     "public.transaction_type": {
       "name": "transaction_type",
       "schema": "public",
@@ -1487,6 +1651,14 @@
         "expense",
         "income",
         "transfer"
+      ]
+    },
+    "public.attachment_type": {
+      "name": "attachment_type",
+      "schema": "public",
+      "values": [
+        "receipt",
+        "voice"
       ]
     }
   },
