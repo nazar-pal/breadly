@@ -1,0 +1,125 @@
+# PowerSync Sync Rules
+# This file defines which data is synced to which users
+# ---------------------------------------------------------------------------------
+# Conventions used below:
+# 1) Date/timestamp columns → `CAST(unixepoch(col) * 1000 AS integer)`
+#    PowerSync helper returns seconds; multiplying by 1000 converts to milliseconds,
+#    and casting to integer ensures 64-bit integer ms for `{ mode: 'timestamp_ms' }` columns.
+# 2) Monetary `numeric` columns → `CAST(... AS real)`
+#    Postgres `numeric` maps to TEXT by default; we cast to REAL so amounts arrive
+#    as 8-byte floats, aligning with SQLite `REAL` columns defined in the client.
+# Keep comments minimal; adjust only when new date or numeric fields are added.
+# ---------------------------------------------------------------------------------
+
+bucket_definitions:
+  # Global data accessible to all authenticated users
+  global:
+    data:
+      - SELECT code as id, code, symbol, name FROM currencies
+      - |
+        SELECT
+          id,
+          base_currency,
+          quote_currency,
+          CAST(rate AS real) AS rate,
+          CAST(unixepoch(rate_date) * 1000 AS integer) AS rate_date
+        FROM exchange_rates
+
+  # User-specific data
+  user_data:
+    parameters: SELECT request.user_id() as user_id
+    data:
+      # User preferences
+      - SELECT user_id as id, user_id, default_currency, first_weekday, locale FROM user_preferences WHERE user_id = bucket.user_id
+
+      # User's categories (convert created_at)
+      - |
+        SELECT
+          id,
+          user_id,
+          type,
+          parent_id,
+          name,
+          description,
+          icon,
+          sort_order,
+          is_archived,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM categories
+        WHERE user_id = bucket.user_id
+
+      # User's budgets (convert start_date and end_date)
+      - |
+        SELECT
+          id,
+          user_id,
+          category_id,
+          CAST(amount AS real) AS amount,
+          currency,
+          CAST(unixepoch(start_date) * 1000 AS integer) AS start_date,
+          CAST(unixepoch(end_date) * 1000 AS integer) AS end_date
+        FROM budgets
+        WHERE user_id = bucket.user_id
+
+      # User's accounts (convert savings_target_date, debt_due_date, created_at)
+      - |
+        SELECT
+          id,
+          user_id,
+          type,
+          name,
+          description,
+          currency_id,
+          CAST(balance AS real) AS balance,
+          CAST(savings_target_amount AS real) AS savings_target_amount,
+          CAST(unixepoch(savings_target_date) * 1000 AS integer) AS savings_target_date,
+          CAST(debt_initial_amount AS real) AS debt_initial_amount,
+          debt_is_owed_to_me,
+          CAST(unixepoch(debt_due_date) * 1000 AS integer) AS debt_due_date,
+          is_archived,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM accounts
+        WHERE user_id = bucket.user_id
+
+      # User's transactions (convert tx_date, created_at)
+      - |
+        SELECT
+          id,
+          user_id,
+          type,
+          account_id,
+          counter_account_id,
+          category_id,
+          CAST(amount AS real) AS amount,
+          currency_id,
+          CAST(unixepoch(tx_date) * 1000 AS integer) AS tx_date,
+          notes,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM transactions
+        WHERE user_id = bucket.user_id
+
+      # User's attachments (convert created_at)
+      - |
+        SELECT
+          id,
+          user_id,
+          type,
+          bucket_path,
+          mime,
+          file_name,
+          CAST(file_size AS integer) AS file_size,
+          duration,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM attachments
+        WHERE user_id = bucket.user_id
+
+      # Transaction attachments (convert created_at)
+      - |
+        SELECT
+          id,
+          user_id,
+          transaction_id,
+          attachment_id,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM transaction_attachments
+        WHERE user_id = bucket.user_id

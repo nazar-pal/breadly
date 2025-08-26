@@ -20,7 +20,17 @@ export const env = createEnv({
     EXPO_PUBLIC_API_URL: z.string().optional(),
 
     // Clerk
-    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1)
+    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+
+    // PowerSync WebSocket Secure URL
+    EXPO_PUBLIC_POWERSYNC_WSS: z.string().min(1),
+
+    // Ordering
+    EXPO_PUBLIC_SORT_ORDER_INCREMENT: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(1000)
   },
 
   runtimeEnv: {
@@ -36,7 +46,14 @@ export const env = createEnv({
     // Neon DB owner connection string
     DATABASE_URL: process.env.DATABASE_URL,
     // Neon DB "authenticated" role connection string
-    DATABASE_AUTHENTICATED_URL: process.env.DATABASE_AUTHENTICATED_URL
+    DATABASE_AUTHENTICATED_URL: process.env.DATABASE_AUTHENTICATED_URL,
+
+    // PowerSync WebSocket Secure URL
+    EXPO_PUBLIC_POWERSYNC_WSS: process.env.EXPO_PUBLIC_POWERSYNC_WSS,
+
+    // Ordering
+    EXPO_PUBLIC_SORT_ORDER_INCREMENT:
+      process.env.EXPO_PUBLIC_SORT_ORDER_INCREMENT
   },
 
   emptyStringAsUndefined: true
