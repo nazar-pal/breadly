@@ -26,22 +26,60 @@ export function TabsCategoriesNetBalance() {
     transactionsTo: dateRange.end ?? undefined
   })
 
-  const totalExpenses = Number(totalExpensesResult.data?.[0]?.totalAmount || 0)
-  const totalIncome = Number(totalIncomeResult.data?.[0]?.totalAmount || 0)
+  const expenses = (totalExpensesResult.data ?? [])
+    .map(row => ({
+      currencyId: String(row.currencyId ?? ''),
+      totalAmount: Number(row.totalAmount ?? 0)
+    }))
+    .filter(r => r.totalAmount > 0)
 
-  const netBalance = totalIncome - totalExpenses
+  const incomes = (totalIncomeResult.data ?? [])
+    .map(row => ({
+      currencyId: String(row.currencyId ?? ''),
+      totalAmount: Number(row.totalAmount ?? 0)
+    }))
+    .filter(r => r.totalAmount > 0)
+
+  const netMap = new Map<string, number>()
+  for (const e of expenses) {
+    netMap.set(e.currencyId, (netMap.get(e.currencyId) ?? 0) - e.totalAmount)
+  }
+  for (const i of incomes) {
+    netMap.set(i.currencyId, (netMap.get(i.currencyId) ?? 0) + i.totalAmount)
+  }
+
+  const netByCurrency = Array.from(netMap.entries())
+    .map(([currencyId, amount]) => ({ currencyId, amount }))
+    .filter(item => item.amount !== 0)
+    .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount))
+
+  const renderNetPieces = () => {
+    if (netByCurrency.length === 0) return [<Text key="zero">0</Text>]
+    return netByCurrency.flatMap((n, idx) => {
+      const piece = (
+        <Text
+          key={`${n.currencyId}-${idx}`}
+          style={{ color: n.amount < 0 ? colors.notification : colors.primary }}
+        >
+          {formatCurrencyWithSign(n.amount, n.currencyId)}
+        </Text>
+      )
+      return idx === 0
+        ? [piece]
+        : [
+            <Text key={`sep-${idx}`} style={{ color: colors.text }}>
+              {', '}
+            </Text>,
+            piece
+          ]
+    })
+  }
 
   return (
     <View className="flex-1">
       <Text className="mb-0.5 text-xs text-muted-foreground">Net Balance</Text>
-      <Text
-        style={{
-          fontSize: 26,
-          fontWeight: 'bold',
-          color: netBalance >= 0 ? colors.primary : colors.notification
-        }}
-      >
-        {formatCurrencyWithSign(netBalance)}
+      <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: 'bold' }}>
+        {renderNetPieces()}
       </Text>
     </View>
   )

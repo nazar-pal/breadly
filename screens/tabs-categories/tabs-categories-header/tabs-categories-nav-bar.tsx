@@ -28,8 +28,28 @@ export function TabsCategoriesNavBar() {
     transactionsTo: dateRange.end ?? undefined
   })
 
-  const totalExpenses = Number(totalExpensesResult.data?.[0]?.totalAmount || 0)
-  const totalIncome = Number(totalIncomeResult.data?.[0]?.totalAmount || 0)
+  const totalExpenses = (totalExpensesResult.data ?? [])
+    .map(row => ({
+      totalAmount: Number(row.totalAmount ?? 0),
+      currencyId: String(row.currencyId ?? '')
+    }))
+    .filter(row => row.totalAmount > 0)
+    .sort((a, b) => b.totalAmount - a.totalAmount)
+
+  const totalIncome = (totalIncomeResult.data ?? [])
+    .map(row => ({
+      totalAmount: Number(row.totalAmount ?? 0),
+      currencyId: String(row.currencyId ?? '')
+    }))
+    .filter(row => row.totalAmount > 0)
+    .sort((a, b) => b.totalAmount - a.totalAmount)
+
+  const renderTotals = (rows: typeof totalExpenses | typeof totalIncome) => {
+    if (rows.length === 0) return '0'
+    return rows
+      .map(r => formatCurrency(r.totalAmount, r.currencyId))
+      .join(' + ')
+  }
 
   return (
     <View className="mt-2 flex-row gap-2">
@@ -51,6 +71,7 @@ export function TabsCategoriesNavBar() {
             Expenses
           </Text>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 12,
               fontWeight: '500',
@@ -60,7 +81,7 @@ export function TabsCategoriesNavBar() {
                   : colors.text
             }}
           >
-            {formatCurrency(totalExpenses)}
+            {renderTotals(totalExpenses)}
           </Text>
         </Pressable>
       </Link>
@@ -83,6 +104,7 @@ export function TabsCategoriesNavBar() {
             Income
           </Text>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 12,
               fontWeight: '500',
@@ -90,7 +112,7 @@ export function TabsCategoriesNavBar() {
                 activeCategoryType === 'income' ? colors.primary : colors.text
             }}
           >
-            {formatCurrency(totalIncome)}
+            {renderTotals(totalIncome)}
           </Text>
         </Pressable>
       </Link>

@@ -1,18 +1,24 @@
-import { Icon } from '@/components/icon'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/utils'
 import { CategoryCardIcon } from '@/screens/tabs-categories/category-card-icon'
 import { Text, View } from 'react-native'
 
 interface CategoryInfoCardProps {
   categoryData: any
-  totalAmount: number
+  totalsByCurrency: { currencyId: string; totalAmount: number }[]
 }
 
 export function CategoryInfoCard({
   categoryData,
-  totalAmount
+  totalsByCurrency
 }: CategoryInfoCardProps) {
+  const renderTotals = () => {
+    if (!totalsByCurrency || totalsByCurrency.length === 0) return '0'
+    return totalsByCurrency
+      .map(t => formatCurrency(Number(t.totalAmount), String(t.currencyId)))
+      .join(' + ')
+  }
   return (
     <Card className="mb-6 p-4">
       <View className="flex-row items-center">
@@ -40,22 +46,15 @@ export function CategoryInfoCard({
               </Badge>
             )}
           </View>
-          <View className="flex-row items-center gap-1">
-            <Icon
-              name="DollarSign"
-              size={16}
-              className={
-                categoryData.type === 'income' ? 'text-income' : 'text-expense'
-              }
-            />
-            <Text
-              className={`text-lg font-bold ${
-                categoryData.type === 'income' ? 'text-income' : 'text-expense'
-              }`}
-            >
-              ${totalAmount.toFixed(2)}
-            </Text>
-          </View>
+
+          <Text
+            numberOfLines={1}
+            className={`text-lg font-bold ${
+              categoryData.type === 'income' ? 'text-income' : 'text-expense'
+            }`}
+          >
+            {renderTotals()}
+          </Text>
         </View>
       </View>
     </Card>

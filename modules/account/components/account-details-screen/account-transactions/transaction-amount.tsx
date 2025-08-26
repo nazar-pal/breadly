@@ -5,9 +5,11 @@ import { View } from 'react-native'
 
 export function TransactionAmount({
   amount,
+  currencyId,
   date
 }: {
   amount: number
+  currencyId?: string
   date?: Date
 }) {
   const isPositive = amount > 0
@@ -23,7 +25,7 @@ export function TransactionAmount({
         )}
       >
         {isPositive ? '+' : ''}
-        {formatCurrency(amount)}
+        {formatCurrency(amount, currencyId || 'USD')}
       </Text>
       {txDateLabel ? (
         <Text className="mt-0.5 text-[11px] text-muted-foreground">

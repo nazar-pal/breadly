@@ -19,6 +19,10 @@ export function CategoryCardExtended({
 }: Props) {
   const [isPressed, setIsPressed] = useState(false)
 
+  const totals = category.totalsByCurrency
+    .filter(t => t.amount > 0)
+    .sort((a, b) => b.amount - a.amount)
+
   const handlePressIn = () => {
     setIsPressed(true)
   }
@@ -55,20 +59,33 @@ export function CategoryCardExtended({
         <CategoryCardIcon name={category.icon} type={category.type} />
 
         <View className="ml-3 flex-1 items-end">
-          <Text
-            numberOfLines={1}
-            className={`text-sm font-bold ${
-              category.type === 'income'
-                ? category.amount > 0
-                  ? 'text-income'
-                  : 'text-muted-foreground'
-                : category.amount > 0
-                  ? 'text-foreground'
-                  : 'text-muted-foreground'
-            }`}
-          >
-            {formatCurrency(category.amount)}
-          </Text>
+          <View className="flex-row flex-wrap justify-end gap-1">
+            {totals.length > 0 &&
+              totals.map(t => (
+                <View
+                  key={t.currencyId}
+                  className="rounded-full bg-secondary px-2 py-0.5"
+                >
+                  <Text
+                    className={`text-xs font-semibold ${
+                      category.type === 'income'
+                        ? 'text-income'
+                        : 'text-foreground'
+                    }`}
+                  >
+                    {formatCurrency(t.amount, t.currencyId)}
+                  </Text>
+                </View>
+              ))}
+
+            {totals.length === 0 && (
+              <View className="rounded-full bg-secondary px-2 py-0.5">
+                <Text className="text-xs font-semibold text-muted-foreground">
+                  0
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </Pressable>

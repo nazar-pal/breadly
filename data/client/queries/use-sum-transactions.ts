@@ -19,7 +19,8 @@ export function useSumTransactions({
 }) {
   const query = db
     .select({
-      totalAmount: sum(transactions.amount)
+      totalAmount: sum(transactions.amount),
+      currencyId: transactions.currencyId
     })
     .from(transactions)
     .where(
@@ -33,6 +34,7 @@ export function useSumTransactions({
         transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
       )
     )
+    .groupBy(transactions.currencyId)
 
   const result = useQuery(toCompilableQuery(query))
 

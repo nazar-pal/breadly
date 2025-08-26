@@ -16,6 +16,7 @@ export function TransactionItem({
       <TransactionMeta transaction={transaction} />
       <TransactionAmount
         amount={transaction.amount}
+        currencyId={transaction.currencyId}
         date={transaction.txDate}
       />
     </View>

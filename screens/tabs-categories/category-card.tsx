@@ -19,6 +19,14 @@ export function CategoryCard({
 }: Props) {
   const [isPressed, setIsPressed] = useState(false)
 
+  const renderTotals = () => {
+    const totals = category.totalsByCurrency.filter(t => t.amount > 0)
+    if (totals.length === 0) return '0'
+    if (totals.length === 1)
+      return formatCurrency(totals[0].amount, totals[0].currencyId)
+    return totals.map(t => formatCurrency(t.amount, t.currencyId)).join(' + ')
+  }
+
   const handlePressIn = () => {
     setIsPressed(true)
   }
@@ -53,15 +61,15 @@ export function CategoryCard({
           numberOfLines={1}
           className={`text-[13px] ${
             category.type === 'income'
-              ? category.amount > 0
+              ? category.totalsByCurrency.some(t => t.amount > 0)
                 ? 'text-income'
                 : 'text-muted-foreground'
-              : category.amount > 0
+              : category.totalsByCurrency.some(t => t.amount > 0)
                 ? 'text-foreground'
                 : 'text-muted-foreground'
           }`}
         >
-          {formatCurrency(category.amount)}
+          {renderTotals()}
         </Text>
       </View>
     </Pressable>

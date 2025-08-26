@@ -4,9 +4,14 @@ import { useCategoryType } from '@/lib/hooks'
 import { useUserSession } from '@/modules/session-and-migration'
 import { InferSelectModel } from 'drizzle-orm'
 
+export interface CategoryCurrencyTotal {
+  currencyId: string
+  amount: number
+}
+
 export interface CategoryWithAmounts
   extends InferSelectModel<typeof categories> {
-  amount: number
+  totalsByCurrency: CategoryCurrencyTotal[]
 }
 
 export function useGetCategoriesWithAmounts({
@@ -30,10 +35,23 @@ export function useGetCategoriesWithAmounts({
     isArchived
   })
 
-  const categoriesWithAmounts = categories.map(category => ({
-    ...category,
-    amount: category.transactions.reduce((acc, tx) => acc + tx.amount, 0)
-  }))
+  const categoriesWithAmounts = categories.map(category => {
+    const totalsMap = new Map<string, number>()
+
+    for (const tx of category.transactions) {
+      const current = totalsMap.get(tx.currencyId) ?? 0
+      totalsMap.set(tx.currencyId, current + tx.amount)
+    }
+
+    const totalsByCurrency = Array.from(totalsMap.entries())
+      .map(([currencyId, amount]) => ({ currencyId, amount }))
+      .sort((a, b) => b.amount - a.amount)
+
+    return {
+      ...category,
+      totalsByCurrency
+    }
+  })
 
   return categoriesWithAmounts
 }

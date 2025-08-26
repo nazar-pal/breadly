@@ -10,12 +10,11 @@ import {
 } from '@/lib/storage/category-details-store'
 import { useUserSession } from '@/modules/session-and-migration'
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import { Modal } from '../modal'
 import { CategoryDetailsHeader } from './category-details-header'
 import { CategoryInfoCard } from './category-info-card'
 import { DetailsInfoSection } from './details-info-section'
-import { StatisticsCard } from './statistics-card'
 import { SubcategoriesSection } from './subcategories-section'
 
 export function CategoryDetailsModal() {
@@ -30,7 +29,7 @@ export function CategoryDetailsModal() {
     categoryId: categoryDetailsSelectedCategory ?? ''
   })
 
-  const { data: totalSpent } = useSumTransactions({
+  const { data: totals } = useSumTransactions({
     userId,
     categoryId: categoryDetailsSelectedCategory ?? '',
     type: category?.[0]?.type || 'expense'
@@ -56,7 +55,13 @@ export function CategoryDetailsModal() {
   })
 
   const categoryData = category?.[0]
-  const totalAmount = Number(totalSpent?.[0]?.totalAmount || 0)
+  const totalsByCurrency = (totals ?? [])
+    .map(row => ({
+      currencyId: row.currencyId as string,
+      totalAmount: Number(row.totalAmount || 0)
+    }))
+    .filter(row => row.totalAmount > 0)
+    .sort((a, b) => b.totalAmount - a.totalAmount)
 
   if (!categoryData) {
     return null
@@ -66,43 +71,35 @@ export function CategoryDetailsModal() {
     <Modal
       isVisible={isCategoryDetailsModalOpen}
       onClose={closeCategoryDetailsModal}
-      className="flex-1"
       height="auto"
     >
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-6 pb-6">
-          <CategoryDetailsHeader
-            categoryData={categoryData}
-            userId={userId}
-            canDelete={canDelete}
-            hasTransactions={hasTransactions}
-            hasSubcategories={hasSubcategories}
-            transactionCount={transactionCount}
-            subcategoryCount={subcategoryCount}
-            isDependencyCheckLoading={isDependencyCheckLoading}
-            onClose={closeCategoryDetailsModal}
-          />
+      <ScrollView showsVerticalScrollIndicator={false} className="px-6">
+        <CategoryDetailsHeader
+          categoryData={categoryData}
+          userId={userId}
+          canDelete={canDelete}
+          hasTransactions={hasTransactions}
+          hasSubcategories={hasSubcategories}
+          transactionCount={transactionCount}
+          subcategoryCount={subcategoryCount}
+          isDependencyCheckLoading={isDependencyCheckLoading}
+          onClose={closeCategoryDetailsModal}
+        />
 
-          <CategoryInfoCard
-            categoryData={categoryData}
-            totalAmount={totalAmount}
-          />
+        <CategoryInfoCard
+          categoryData={categoryData}
+          totalsByCurrency={totalsByCurrency}
+        />
 
-          <SubcategoriesSection
-            subcategories={subcategories}
-            categoryType={categoryData.type}
-          />
+        <SubcategoriesSection
+          subcategories={subcategories}
+          categoryType={categoryData.type}
+        />
 
-          <DetailsInfoSection
-            categoryData={categoryData}
-            totalAmount={totalAmount}
-          />
-
-          <StatisticsCard
-            categoryData={categoryData}
-            totalAmount={totalAmount}
-          />
-        </View>
+        <DetailsInfoSection
+          categoryData={categoryData}
+          totalsByCurrency={totalsByCurrency}
+        />
       </ScrollView>
     </Modal>
   )
