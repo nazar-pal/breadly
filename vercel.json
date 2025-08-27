@@ -9,6 +9,10 @@
   },
   "rewrites": [
     {
+      "source": "/api/trpc/:path*",
+      "destination": "/api/trpc/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/api/index"
     }
