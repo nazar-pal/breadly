@@ -1,5 +1,3 @@
-import { Categories } from '@/screens/categories'
-
-export default function EditExpenseCategoriesScreen() {
-  return <Categories />
+export default function Page() {
+  return null
 }
