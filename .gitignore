@@ -37,3 +37,7 @@ yarn-error.*
 
 # clerk configuration (can include secrets)
 /.clerk/
+.vercel
+
+ios/
+android/
