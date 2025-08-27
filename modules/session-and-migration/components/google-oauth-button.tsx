@@ -34,7 +34,7 @@ export function GoogleOAuthButton() {
           // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
           redirectUrl: AuthSession.makeRedirectUri({
             scheme: 'myapp',
-            path: '/'
+            path: 'sso-callback'
           })
         })
 
