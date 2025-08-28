@@ -22,6 +22,10 @@ export const OPTIONS = () => {
 }
 
 const handler = async (req: Request) => {
+  // Enforce a per-request timeout shorter than Vercel's hard limit to avoid 504s
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 25_000) // 25s
+
   const response = await fetchRequestHandler({
     endpoint: '/api/trpc',
     router: appRouter,
@@ -33,6 +37,7 @@ const handler = async (req: Request) => {
   })
 
   setCorsHeaders(response)
+  clearTimeout(timeout)
   return response
 }
 
