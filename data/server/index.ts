@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { neon, neonConfig } from '@neondatabase/serverless'
+import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
 import { schema } from './db-schema'
 
@@ -11,11 +11,6 @@ import { schema } from './db-schema'
 // })
 // export { db }
 // end TODO
-
-// Improve stability on serverless runtimes (Vercel):
-// - Reuse fetch connections within the same lambda invocation
-// - Fail fast instead of hanging until the Vercel max runtime
-neonConfig.fetchConnectionCache = true
 
 export const db = drizzle(neon(env.DATABASE_AUTHENTICATED_URL), {
   schema,
