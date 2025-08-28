@@ -1,15 +1,10 @@
-import { useAddTransactionActions } from '@/lib/storage/add-transaction-store'
-import { useCategoryDetailsActions } from '@/lib/storage/category-details-store'
-import { CategoryCardsGrid } from '@/screens/tabs-categories/category-cards-grid'
+import { Text } from '@/components/ui/text'
+import { View } from 'react-native'
 
-export default function CategoriesExpenseScreen() {
-  const { openAddTransactionModal } = useAddTransactionActions()
-  const { openCategoryDetailsModal } = useCategoryDetailsActions()
-
+export default function Screen() {
   return (
-    <CategoryCardsGrid
-      onPress={openAddTransactionModal}
-      onLongPress={openCategoryDetailsModal}
-    />
+    <View className="flex-1 items-center justify-center">
+      <Text>Hello World</Text>
+    </View>
   )
 }
