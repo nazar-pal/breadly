@@ -15,7 +15,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
     }),
     httpBatchLink({
       transformer: SuperJSON,
-      url: `${getBaseUrl()}/api/trpc`,
+      url: new URL('api/trpc', getBaseUrl()).toString(),
       async headers() {
         const headers = new Headers()
         headers.set('x-trpc-source', 'expo-react')
