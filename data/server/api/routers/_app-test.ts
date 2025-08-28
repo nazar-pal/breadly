@@ -15,8 +15,10 @@ export const appTestRouter = createTRPCRouter({
     }),
   testAuth: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.userId
+    const maskedUserId =
+      userId.slice(0, 8) + '*'.repeat(Math.max(0, userId.length - 8))
     return {
-      userId
+      userId: maskedUserId
     }
   })
 })

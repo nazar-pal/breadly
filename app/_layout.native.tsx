@@ -1,7 +1,9 @@
+import { Icon } from '@/components/icon'
 import './global.css'
 
 import { CategoryDetailsFormModal } from '@/components/modals/category-details-form/modal-category-details-form'
 import { IconSelectionModal } from '@/components/modals/icon-selection'
+import { Button } from '@/components/ui/button'
 import { PowerSyncContextProvider } from '@/data/client/powersync/context'
 import { queryClient } from '@/data/trpc/query-client'
 import { env } from '@/env'
@@ -19,7 +21,7 @@ import {
   ThemeProvider
 } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import * as React from 'react'
 import { Platform } from 'react-native'
@@ -75,6 +77,26 @@ export default function RootLayout() {
                       <Stack.Screen name="transactions" />
                       <Stack.Screen name="accounts" />
                       <Stack.Screen name="categories" />
+                      <Stack.Screen
+                        name="test"
+                        options={{
+                          title: 'tRPC Connectivity Tester',
+                          headerShown: true,
+                          headerLeft: () => (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onPress={() => router.back()}
+                            >
+                              <Icon
+                                name="ArrowLeft"
+                                size={24}
+                                className="text-foreground"
+                              />
+                            </Button>
+                          )
+                        }}
+                      />
                       <Stack.Screen name="+not-found" />
                     </Stack>
                     <CategoryDetailsFormModal />
