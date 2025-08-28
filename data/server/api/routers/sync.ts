@@ -153,18 +153,22 @@ export const syncRouter = createTRPCRouter({
   insertRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
+      // Execute quickly; the client processes many small ops sequentially
       await insertHelper(ctx, input.table, input.opData)
+      return { ok: true }
     }),
 
   updateRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
       await updateHelper(ctx, input.table, input.opData)
+      return { ok: true }
     }),
 
   deleteRecord: protectedProcedure
     .input(operationSchema)
     .mutation(async ({ ctx, input }) => {
       await deleteHelper(ctx, input.table, input.opData)
+      return { ok: true }
     })
 })
