@@ -32,7 +32,8 @@ export function CalculatorWithForm({
   const [selectedParentCategoryId, setSelectedParentCategoryId] =
     useState<string>(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
-  const [selectedCurrencyCode, setSelectedCurrencyCode] = useState<string>('')
+  const [selectedCurrencyCode, setSelectedCurrencyCode] =
+    useState<string>('USD')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { userId } = useUserSession()
 
@@ -54,7 +55,11 @@ export function CalculatorWithForm({
     cat => cat.id === selectedParentCategoryId
   )
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
-  const selectedCurrency = currencies.find(c => c.code === selectedCurrencyCode)
+  const selectedCurrency = (
+    currencies.length > 0
+      ? currencies
+      : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
+  ).find(c => c.code === selectedCurrencyCode)
 
   const handleParentCategorySelect = (categoryId: string) => {
     setSelectedParentCategoryId(categoryId)
