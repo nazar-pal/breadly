@@ -28,7 +28,8 @@ export function useGetCategories({
   parentId,
   transactionsFrom,
   transactionsTo,
-  isArchived
+  isArchived,
+  includeSubcategoriesWithTransactions
 }: {
   userId: string
   type: (typeof CATEGORY_TYPE)[number]
@@ -36,6 +37,11 @@ export function useGetCategories({
   transactionsFrom?: Date
   transactionsTo?: Date
   isArchived?: boolean
+  /**
+   * When true and fetching parent categories (parentId === null), also load their immediate subcategories
+   * with transactions filtered by the same user/type/date range. Archived children are included.
+   */
+  includeSubcategoriesWithTransactions?: boolean
 }) {
   // Build the where conditions based on parentId parameter
   const parentCondition =
@@ -44,6 +50,14 @@ export function useGetCategories({
       : parentId === null
         ? isNull(categories.parentId) // Get only parent categories
         : eq(categories.parentId, parentId) // Get subcategories of specific parent
+
+  // Always include transactions filtered by user/type/date range
+  const baseTransactionsWhere = and(
+    eq(transactions.userId, userId),
+    eq(transactions.type, type),
+    transactionsFrom ? gte(transactions.txDate, transactionsFrom) : undefined,
+    transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
+  )
 
   const query = db.query.categories.findMany({
     where: and(
@@ -56,15 +70,15 @@ export function useGetCategories({
     ),
     with: {
       transactions: {
-        where: and(
-          eq(transactions.userId, userId),
-          eq(transactions.type, type),
-          transactionsFrom
-            ? gte(transactions.txDate, transactionsFrom)
-            : undefined,
-          transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
-        )
-      }
+        where: baseTransactionsWhere
+      },
+      ...(includeSubcategoriesWithTransactions
+        ? {
+            subcategories: {
+              with: { transactions: { where: baseTransactionsWhere } }
+            }
+          }
+        : {})
     },
     orderBy: [asc(categories.sortOrder), asc(categories.name)]
   })
