@@ -18,11 +18,13 @@ export async function insertDefaultDataIntoDatabase(
   }
 
   await db.transaction(async tx => {
-    // Insert categories
+    // Insert categories in parent-first order (preserves self-referential FK integrity)
     const categoriesToInsert: CategoryInsertSQLite[] = DEFAULT_CATEGORIES.map(
       category => ({ ...category, userId })
     )
-    await tx.insert(categories).values(categoriesToInsert)
+    for (const category of categoriesToInsert) {
+      await tx.insert(categories).values(category)
+    }
 
     // Insert accounts
     const accountsToInsert: AccountInsertSQLite[] = DEFAULT_ACCOUNTS.map(
