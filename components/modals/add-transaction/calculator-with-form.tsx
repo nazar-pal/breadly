@@ -104,7 +104,7 @@ export function CalculatorWithForm({
   }
 
   return (
-    <View className="bg-secondary p-4">
+    <View className="p-4 pb-0">
       {/* Header */}
       <View className="mb-2">
         {/* Category and Account Selection */}

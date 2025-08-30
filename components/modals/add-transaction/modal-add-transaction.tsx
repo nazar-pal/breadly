@@ -18,6 +18,7 @@ export function ModalAddTransaction() {
     <Modal
       isVisible={isAddTransactionModalOpen}
       onClose={closeAddTransactionModal}
+      height="auto"
     >
       {addTransactionSelectedCategory && (
         <CalculatorWithForm
