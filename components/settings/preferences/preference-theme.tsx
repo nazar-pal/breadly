@@ -1,5 +1,5 @@
 import { Icon } from '@/components/icon'
-import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useColorScheme } from '@/lib/hooks'
 import React from 'react'
 import { PreferenceItem } from './preference-item'
@@ -7,44 +7,43 @@ import { PreferenceItem } from './preference-item'
 function useThemePreferences() {
   const { colorScheme, setColorScheme } = useColorScheme()
 
-  const toggleTheme = (targetTheme: 'light' | 'dark') => {
+  const setTheme = (targetTheme: 'light' | 'dark') => {
     setColorScheme(targetTheme)
   }
 
   return {
-    currentTheme: colorScheme,
-    isLightMode: colorScheme === 'light',
-    isDarkMode: colorScheme === 'dark',
-    toggleToLight: () => toggleTheme('light'),
-    toggleToDark: () => toggleTheme('dark')
+    currentTheme: colorScheme === 'light' ? 'light' : 'dark',
+    setTheme
   }
 }
 
 export function ThemePreferences() {
-  const { isLightMode, isDarkMode, toggleToLight, toggleToDark } =
-    useThemePreferences()
+  const { currentTheme, setTheme } = useThemePreferences()
 
   return (
     <>
       <PreferenceItem
         icon={<Icon name="Sun" size={20} className="text-primary" />}
-        title="Light Mode"
-        rightElement={
-          <Switch
-            checked={isLightMode}
-            onCheckedChange={checked => checked && toggleToLight()}
-          />
-        }
-      />
-      <PreferenceItem
-        icon={<Icon name="Moon" size={20} className="text-primary" />}
-        title="Dark Mode"
+        title="Theme"
+        subtitle={currentTheme === 'light' ? 'Light' : 'Dark'}
         className="pb-0"
         rightElement={
-          <Switch
-            checked={isDarkMode}
-            onCheckedChange={checked => checked && toggleToDark()}
-          />
+          <Tabs
+            value={currentTheme}
+            onValueChange={value =>
+              (value === 'light' || value === 'dark') && setTheme(value)
+            }
+            className="gap-0"
+          >
+            <TabsList className="mr-0">
+              <TabsTrigger value="light" className="px-2 py-1.5">
+                <Icon name="Sun" size={16} />
+              </TabsTrigger>
+              <TabsTrigger value="dark" className="px-2 py-1.5">
+                <Icon name="Moon" size={16} />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         }
         showBorder={false}
       />
