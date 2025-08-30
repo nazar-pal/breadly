@@ -84,18 +84,19 @@ export function AccountModal({
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
                         <View className="mr-3 rounded-lg bg-primary/10 p-2">
-                          <Icon
-                            name="Wallet"
-                            size={16}
-                            className="text-primary"
-                          />
+                          <Text className="text-sm font-semibold text-primary">
+                            {account.currency?.symbol || '$'}
+                          </Text>
                         </View>
                         <Text className="text-base font-medium text-foreground">
                           {account.name}
                         </Text>
                       </View>
                       <Text className="text-sm text-muted-foreground">
-                        {formatCurrencyWithSign(account.balance ?? 0, 'USD')}
+                        {formatCurrencyWithSign(
+                          account.balance ?? 0,
+                          account.currency?.code || 'USD'
+                        )}
                       </Text>
                     </View>
                   </Pressable>
@@ -131,11 +132,9 @@ export function AccountModal({
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
                         <View className="mr-3 rounded-lg bg-primary/10 p-2">
-                          <Icon
-                            name="DollarSign"
-                            size={16}
-                            className="text-primary"
-                          />
+                          <Text className="text-sm font-semibold text-primary">
+                            {currency.symbol}
+                          </Text>
                         </View>
                         <Text className="text-base font-medium text-foreground">
                           {currency.name}

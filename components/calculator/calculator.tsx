@@ -11,9 +11,15 @@ interface Props {
   type: 'expense' | 'income'
   isDisabled: boolean
   handleSubmit: (amount: number, comment: string) => void
+  currencySymbol?: string
 }
 
-export function Calculator({ type, isDisabled, handleSubmit }: Props) {
+export function Calculator({
+  type,
+  isDisabled,
+  handleSubmit,
+  currencySymbol
+}: Props) {
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
 
@@ -26,6 +32,7 @@ export function Calculator({ type, isDisabled, handleSubmit }: Props) {
         comment={comment}
         expression={expression}
         currentInput={currentInput}
+        currencySymbol={currencySymbol}
       />
 
       <CalculatorKeypad

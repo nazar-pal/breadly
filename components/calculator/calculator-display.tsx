@@ -5,12 +5,14 @@ interface Props {
   comment: string
   expression: string[]
   currentInput: string
+  currencySymbol?: string
 }
 
 export function CalculatorDisplay({
   comment,
   expression,
-  currentInput
+  currentInput,
+  currencySymbol = '$'
 }: Props) {
   const getDisplayExpression = (
     expression: string[],
@@ -25,7 +27,8 @@ export function CalculatorDisplay({
   return (
     <View className="mb-6 rounded-2xl bg-card p-4 shadow-sm">
       <Text className="text-right text-4xl font-bold text-foreground">
-        ${getDisplayExpression(expression, currentInput)}
+        {currencySymbol}
+        {getDisplayExpression(expression, currentInput)}
       </Text>
       {comment && (
         <Text

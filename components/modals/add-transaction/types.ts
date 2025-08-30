@@ -21,6 +21,8 @@ export interface AccountModalProps {
     id: string
     name: string
     balance?: number
+    currencyId?: string
+    currency?: { code: string; symbol: string }
   }[]
   selectedAccountId: string
   onSelectAccount: (accountId: string) => void
