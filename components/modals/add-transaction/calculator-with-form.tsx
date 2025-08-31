@@ -72,7 +72,11 @@ export function CalculatorWithForm({
     setSelectedCategoryId(categoryId)
   }
 
-  const handleSubmit = async (amount: number, comment: string) => {
+  const handleSubmit = async (
+    amount: number,
+    comment: string,
+    txDate?: Date
+  ) => {
     const hasMoneySource = Boolean(selectedAccount) || Boolean(selectedCurrency)
     if (amount > 0 && hasMoneySource && selectedCategoryId && userId) {
       setIsSubmitting(true)
@@ -87,7 +91,7 @@ export function CalculatorWithForm({
             currencyId: selectedAccount
               ? selectedAccount.currencyId
               : selectedCurrencyCode,
-            txDate: new Date(),
+            txDate: txDate ?? new Date(),
             notes: comment || null,
             createdAt: new Date()
           }

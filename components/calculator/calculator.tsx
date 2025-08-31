@@ -6,11 +6,12 @@ import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './comment-modal'
+import { DateModal } from './date-modal'
 
 interface Props {
   type: 'expense' | 'income'
   isDisabled: boolean
-  handleSubmit: (amount: number, comment: string) => void
+  handleSubmit: (amount: number, comment: string, txDate?: Date) => void
   currencySymbol?: string
 }
 
@@ -22,6 +23,8 @@ export function Calculator({
 }: Props) {
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
+  const [showDateModal, setShowDateModal] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   const [currentInput, setCurrentInput] = useState('0')
   const [expression, setExpression] = useState<string[]>([])
@@ -33,6 +36,7 @@ export function Calculator({
         expression={expression}
         currentInput={currentInput}
         currencySymbol={currencySymbol}
+        selectedDate={selectedDate}
       />
 
       <CalculatorKeypad
@@ -55,9 +59,20 @@ export function Calculator({
           )}
         </Button>
 
+        <Button
+          onPress={() => setShowDateModal(true)}
+          size="lg"
+          className="relative flex-row items-center justify-center rounded-xl bg-card active:scale-95"
+          variant="outline"
+        >
+          <Icon name="Calendar" size={24} className="text-foreground" />
+        </Button>
+
         {/* Submit Button */}
         <Button
-          onPress={() => handleSubmit(parseFloat(currentInput), comment)}
+          onPress={() =>
+            handleSubmit(parseFloat(currentInput), comment, selectedDate)
+          }
           size="lg"
           className="flex-1 flex-row items-center justify-center rounded-xl"
           disabled={isDisabled}
@@ -76,6 +91,13 @@ export function Calculator({
         comment={comment}
         onChangeComment={setComment}
         onClose={() => setShowCommentModal(false)}
+      />
+
+      <DateModal
+        visible={showDateModal}
+        selectedDate={selectedDate}
+        onSelectDate={d => setSelectedDate(d)}
+        onClose={() => setShowDateModal(false)}
       />
     </>
   )

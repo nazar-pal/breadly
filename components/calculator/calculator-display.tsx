@@ -1,4 +1,5 @@
 import { Text } from '@/components/ui/text'
+import { format, isToday } from 'date-fns'
 import { View } from 'react-native'
 
 interface Props {
@@ -6,13 +7,15 @@ interface Props {
   expression: string[]
   currentInput: string
   currencySymbol?: string
+  selectedDate?: Date
 }
 
 export function CalculatorDisplay({
   comment,
   expression,
   currentInput,
-  currencySymbol = '$'
+  currencySymbol = '$',
+  selectedDate
 }: Props) {
   const getDisplayExpression = (
     expression: string[],
@@ -30,15 +33,25 @@ export function CalculatorDisplay({
         {currencySymbol}
         {getDisplayExpression(expression, currentInput)}
       </Text>
-      {comment && (
-        <Text
-          className="mt-2 text-right text-xs text-muted-foreground"
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {comment}
-        </Text>
-      )}
+      {(() => {
+        const showDate = selectedDate ? !isToday(selectedDate) : false
+        const dateLabel = showDate ? format(selectedDate!, 'MMM d, yyyy') : ''
+        const bottomLine = showDate
+          ? comment
+            ? `${dateLabel} • ${comment}`
+            : dateLabel
+          : comment
+
+        return bottomLine ? (
+          <Text
+            className="mt-2 text-right text-xs text-muted-foreground"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {bottomLine}
+          </Text>
+        ) : null
+      })()}
     </View>
   )
 }
