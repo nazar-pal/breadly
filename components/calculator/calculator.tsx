@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
-import { CommentModal } from './comment-modal'
-import { DateModal } from './date-modal'
+import { CommentModal } from './modal-comment'
+import { DateModal } from './modal-date'
 
 interface Props {
   type: 'expense' | 'income'
