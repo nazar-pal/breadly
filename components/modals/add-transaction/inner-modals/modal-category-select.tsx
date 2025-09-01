@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/icon'
+import { CenteredModal } from '@/components/modals'
 import { Text } from '@/components/ui/text'
 import React from 'react'
-import { Modal, Pressable, ScrollView, View } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 import { CategoryModalProps } from '../types'
 
 export function CategoryModal({
@@ -14,45 +15,53 @@ export function CategoryModal({
 }: CategoryModalProps) {
   const availableCategories = categories.filter(cat => cat.type === type)
 
+  // Group categories into pairs for two-column layout
+  const categoryPairs = []
+  for (let i = 0; i < availableCategories.length; i += 2) {
+    const pair = availableCategories.slice(i, i + 2)
+    categoryPairs.push(pair)
+  }
+
   return (
-    <Modal
+    <CenteredModal
       visible={visible}
-      animationType="slide"
-      transparent={true}
       onRequestClose={onClose}
+      className="max-h-[60%]"
     >
-      <View className="flex-1 justify-center bg-black/10 p-4">
-        <View className="max-h-[80%] rounded-2xl bg-card p-4">
-          <Text className="mb-4 text-xl font-semibold text-foreground">
-            Select {type === 'expense' ? 'Expense' : 'Income'} Category
-          </Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {availableCategories.map(cat => (
+      <View className="relative">
+        <Text className="mb-4 text-xl font-semibold text-foreground">
+          Select {type === 'expense' ? 'Expense' : 'Income'} Category
+        </Text>
+        <Pressable className="absolute -right-2 -top-2 p-2" onPress={onClose}>
+          <Icon name="X" className="h-5 w-5 text-muted-foreground" />
+        </Pressable>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {categoryPairs.map((pair, index) => (
+          <View key={index} className="mb-2 flex-row gap-2">
+            {pair.map(cat => (
               <Pressable
                 key={cat.id}
-                className={`my-1 rounded-lg p-4 ${
+                className={`flex-1 rounded-lg border p-4 ${
                   cat.id === selectedCategoryId
-                    ? 'bg-primary/10'
-                    : 'bg-transparent active:bg-muted'
+                    ? 'border-primary bg-primary/20'
+                    : 'border-border bg-transparent active:bg-muted'
                 }`}
                 onPress={() => {
                   onSelectCategory(cat.id)
                   onClose()
                 }}
               >
-                <Text className="text-base font-medium text-foreground">
+                <Text className="text-center text-base font-medium text-foreground">
                   {cat.name}
                 </Text>
               </Pressable>
             ))}
-          </ScrollView>
-          <View className="mt-4">
-            <Button onPress={onClose} variant="outline" className="w-full">
-              <Text>Close</Text>
-            </Button>
+            {/* Add spacer if odd number of items */}
+            {pair.length === 1 && <View className="flex-1" />}
           </View>
-        </View>
-      </View>
-    </Modal>
+        ))}
+      </ScrollView>
+    </CenteredModal>
   )
 }

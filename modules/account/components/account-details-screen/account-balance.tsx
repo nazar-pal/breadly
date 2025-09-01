@@ -21,7 +21,10 @@ export function AccountBalance({ account }: { account: AccountDetails }) {
             )}
           >
             {balance < 0 && type === 'payment' ? '-' : ''}
-            {formatCurrency(balance, currency.code)}
+            {formatCurrency(
+              balance,
+              currency?.code ?? account.currencyId ?? 'USD'
+            )}
           </Text>
           {balance > 0 && type === 'saving' && (
             <Icon name="TrendingUp" size={24} className="text-success" />

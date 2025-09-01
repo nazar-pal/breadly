@@ -10,8 +10,10 @@ import Constants from 'expo-constants'
  * 3. Throws error if no API URL is configured and not in development mode
  */
 export const getBaseUrl = () => {
+  const normalizeBaseUrl = (url: string) => url.replace(/\/+$/, '')
+
   const apiUrl = env.EXPO_PUBLIC_API_URL
-  if (apiUrl) return apiUrl
+  if (apiUrl) return normalizeBaseUrl(apiUrl)
 
   if (!__DEV__) throw new Error('API URL is not set')
 
@@ -26,7 +28,7 @@ export const getBaseUrl = () => {
     // Web can use localhost for better performance and fewer firewall issues
     const url = 'http://localhost:8081'
     console.log('[getBaseUrl] Development mode (web):', url)
-    return url
+    return normalizeBaseUrl(url)
   } else {
     // Mobile devices need the actual IP address of the development machine
     const debuggerHost = Constants.expoConfig?.hostUri
@@ -40,6 +42,6 @@ export const getBaseUrl = () => {
 
     const url = `http://${hostIP}:8081`
     console.log('[getBaseUrl] Development mode (mobile):', url)
-    return url
+    return normalizeBaseUrl(url)
   }
 }

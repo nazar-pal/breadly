@@ -32,7 +32,8 @@ export function CalculatorWithForm({
   const [selectedParentCategoryId, setSelectedParentCategoryId] =
     useState<string>(initialCategoryId)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
-  const [selectedCurrencyCode, setSelectedCurrencyCode] = useState<string>('')
+  const [selectedCurrencyCode, setSelectedCurrencyCode] =
+    useState<string>('USD')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { userId } = useUserSession()
 
@@ -54,7 +55,15 @@ export function CalculatorWithForm({
     cat => cat.id === selectedParentCategoryId
   )
   const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
-  const selectedCurrency = currencies.find(c => c.code === selectedCurrencyCode)
+  const selectedCurrency = (
+    currencies.length > 0
+      ? currencies
+      : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
+  ).find(c => c.code === selectedCurrencyCode)
+
+  const displayCurrencySymbol = selectedAccount
+    ? (selectedAccount.currency?.symbol ?? '$')
+    : (selectedCurrency?.symbol ?? '$')
 
   const handleParentCategorySelect = (categoryId: string) => {
     setSelectedParentCategoryId(categoryId)
@@ -63,7 +72,11 @@ export function CalculatorWithForm({
     setSelectedCategoryId(categoryId)
   }
 
-  const handleSubmit = async (amount: number, comment: string) => {
+  const handleSubmit = async (
+    amount: number,
+    comment: string,
+    txDate?: Date
+  ) => {
     const hasMoneySource = Boolean(selectedAccount) || Boolean(selectedCurrency)
     if (amount > 0 && hasMoneySource && selectedCategoryId && userId) {
       setIsSubmitting(true)
@@ -78,7 +91,7 @@ export function CalculatorWithForm({
             currencyId: selectedAccount
               ? selectedAccount.currencyId
               : selectedCurrencyCode,
-            txDate: new Date(),
+            txDate: txDate ?? new Date(),
             notes: comment || null,
             createdAt: new Date()
           }
@@ -99,7 +112,7 @@ export function CalculatorWithForm({
   }
 
   return (
-    <View className="bg-secondary p-4">
+    <View className="p-4 pb-0">
       {/* Header */}
       <View className="mb-2">
         {/* Category and Account Selection */}
@@ -189,6 +202,7 @@ export function CalculatorWithForm({
           (!selectedAccount && !selectedCurrency)
         }
         handleSubmit={handleSubmit}
+        currencySymbol={displayCurrencySymbol}
       />
 
       {/* Modals */}

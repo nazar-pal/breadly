@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
+    "dev": "APP_VARIANT=development npx expo start",
     "build:web": "npx expo export --platform web",
     "start": "expo start",
     "android": "expo run:android",
@@ -47,7 +47,7 @@
     "@rn-primitives/switch": "^1.2.0",
     "@rn-primitives/tabs": "^1.2.0",
     "@t3-oss/env-core": "^0.13.8",
-    "@tanstack/react-query": "^5.81.5",
+    "@tanstack/react-query": "^5.85.5",
     "@trpc/client": "^11.4.3",
     "@trpc/server": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
