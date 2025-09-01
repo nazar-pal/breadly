@@ -1,8 +1,23 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
+const IS_DEV = process.env.APP_VARIANT === 'development'
+const IS_PREVIEW = process.env.APP_VARIANT === 'preview'
+
+const getUniqueIdentifier = () => {
+  if (IS_DEV) return 'com.devnazar.breadly.dev'
+  if (IS_PREVIEW) return 'com.devnazar.breadly.preview'
+  return 'com.devnazar.breadly'
+}
+
+const getAppName = () => {
+  if (IS_DEV) return 'Breadly (Dev)'
+  if (IS_PREVIEW) return 'Breadly (Preview)'
+  return 'Breadly: Expense Tracker'
+}
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'breadly',
+  name: getAppName(),
   slug: 'breadly-expense-tracker',
   version: '1.0.0',
   orientation: 'portrait',
@@ -12,7 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.devnazar.breadly',
+    bundleIdentifier: getUniqueIdentifier(),
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false
     },
@@ -29,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff'
     },
     edgeToEdgeEnabled: true,
-    package: 'com.devnazar.breadly'
+    package: getUniqueIdentifier()
   },
   web: {
     bundler: 'metro',
