@@ -29,7 +29,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     bundleIdentifier: getUniqueIdentifier(),
     infoPlist: {
-      ITSAppUsesNonExemptEncryption: false
+      ITSAppUsesNonExemptEncryption: false,
+      NSCameraUsageDescription:
+        'Breadly uses the camera to scan receipts so expenses can be captured quickly and accurately.',
+      NSMicrophoneUsageDescription:
+        'Breadly uses the microphone to capture your voice inputs for adding transactions.'
     },
     icon: {
       dark: './assets/icons/ios-dark.png',
