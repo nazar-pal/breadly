@@ -1,6 +1,4 @@
 import { Icon } from '@/components/icon'
-import './global.css'
-
 import { CategoryDetailsFormModal } from '@/components/modals/category-details-form/modal-category-details-form'
 import { IconSelectionModal } from '@/components/modals/icon-selection'
 import { Button } from '@/components/ui/button'
@@ -20,6 +18,7 @@ import {
   Theme,
   ThemeProvider
 } from '@react-navigation/native'
+import { PortalHost } from '@rn-primitives/portal'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { router, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -27,6 +26,7 @@ import * as React from 'react'
 import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import './global.css'
 
 const LIGHT_THEME: Theme = { ...DefaultTheme, colors: NAV_THEME.light }
 const DARK_THEME: Theme = { ...DarkTheme, colors: NAV_THEME.dark }
@@ -103,6 +103,7 @@ export default function RootLayout() {
                     <IconSelectionModal />
                     <ModalAccountForm />
                   </ThemeProvider>
+                  <PortalHost />
                 </PowerSyncContextProvider>
               </QueryClientProvider>
             </GestureHandlerRootView>
