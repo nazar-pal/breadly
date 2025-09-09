@@ -56,19 +56,17 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ClerkProvider
-        publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-        tokenCache={tokenCache}
-        __experimental_resourceCache={resourceCache}
-      >
-        <ClerkLoaded>
-          <UserSessionInitializer>
-            <GestureHandlerRootView className="flex-1">
-              <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+          <ClerkProvider
+            publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+            tokenCache={tokenCache}
+            __experimental_resourceCache={resourceCache}
+          >
+            <ClerkLoaded>
+              <UserSessionInitializer>
                 <PowerSyncContextProvider>
-                  <ThemeProvider
-                    value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}
-                  >
+                  <GestureHandlerRootView className="flex-1">
                     <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
                     <Stack
                       screenOptions={{ headerShown: false, animation: 'none' }}
@@ -102,14 +100,14 @@ export default function RootLayout() {
                     <CategoryDetailsFormModal />
                     <IconSelectionModal />
                     <ModalAccountForm />
-                  </ThemeProvider>
-                  <PortalHost />
+                    <PortalHost />
+                  </GestureHandlerRootView>
                 </PowerSyncContextProvider>
-              </QueryClientProvider>
-            </GestureHandlerRootView>
-          </UserSessionInitializer>
-        </ClerkLoaded>
-      </ClerkProvider>
+              </UserSessionInitializer>
+            </ClerkLoaded>
+          </ClerkProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   )
 }
