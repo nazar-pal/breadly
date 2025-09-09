@@ -40,9 +40,7 @@ export function PowerSyncContextProvider({
             )
           }
         } finally {
-          if (isActive) {
-            actions.setIsConnecting(false)
-          }
+          if (isActive) actions.setIsConnecting(false)
         }
       } else {
         await powerSyncDb.disconnect().catch(() => {})
@@ -50,10 +48,7 @@ export function PowerSyncContextProvider({
         if (isActive) {
           actions.setError(null)
           actions.setIsConnecting(false)
-          powerSyncStore.setState({
-            isConnected: false,
-            isSyncing: false
-          })
+          powerSyncStore.setState({ isConnected: false, isSyncing: false })
         }
       }
     }
