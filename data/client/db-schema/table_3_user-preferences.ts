@@ -23,6 +23,7 @@ PowerSync Client Adaptations:
 */
 
 import { sql } from 'drizzle-orm'
+import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { check, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
@@ -49,22 +50,30 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
  * - Both 'id' and 'userId' exist client-side for standard PowerSync operations
  * - Allows proper upsert patterns and relationship queries in SQLite
  */
+
+const columns = {
+  id: text().primaryKey(), // PowerSync-required primary key (aliased from 'user_id')
+  userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
+  defaultCurrency: isoCurrencyCodeColumn('default_currency').references(
+    () => currencies.code
+  ), // Default currency for new accounts/transactions
+  firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
+  locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
+}
+
+const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
+  // Business rule constraints
+  check(
+    'user_preferences_valid_weekday',
+    sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
+  ) // Valid weekday range
+]
+
 export const userPreferences = sqliteTable(
   'user_preferences',
-  {
-    id: text().primaryKey(), // PowerSync-required primary key (aliased from 'user_id')
-    userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
-    defaultCurrency: isoCurrencyCodeColumn('default_currency').references(
-      () => currencies.code
-    ), // Default currency for new accounts/transactions
-    firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
-    locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
-  },
-  table => [
-    // Business rule constraints
-    check(
-      'user_preferences_valid_weekday',
-      sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
-    ) // Valid weekday range
-  ]
+  columns,
+  extraConfig
 )
+
+export const getUserPreferencesSqliteTable = (name: string) =>
+  sqliteTable(name, columns, extraConfig)

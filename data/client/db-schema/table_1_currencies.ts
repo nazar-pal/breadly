@@ -39,9 +39,15 @@ import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
  * - SQLite: PowerSync adds 'id' field (aliased from 'code' in sync rules)
  * - Both 'id' and 'code' exist client-side for proper table relationships
  */
-export const currencies = sqliteTable('currencies', {
+
+const columns = {
   id: text().primaryKey(), // PowerSync-required primary key (aliased from 'code')
   code: text({ length: 3 }).notNull(), // Original ISO currency code (USD, EUR)
   symbol: text({ length: 10 }).notNull(), // Display symbol ($, €)
   name: text({ length: 100 }).notNull() // Full name (US Dollar)
-})
+}
+
+export const currencies = sqliteTable('currencies', columns)
+
+export const getCurrenciesSqliteTable = (name: string) =>
+  sqliteTable(name, columns)

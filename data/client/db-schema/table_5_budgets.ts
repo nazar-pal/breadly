@@ -17,6 +17,7 @@ Key Features:
 */
 
 import { sql } from 'drizzle-orm'
+import type { BuildColumns } from 'drizzle-orm/column-builder'
 import {
   check,
   index,
@@ -51,35 +52,38 @@ import {
  * - Budget tracking compares actual spending against these limits
  * - Budget periods: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly'
  */
-export const budgets = sqliteTable(
-  'budgets',
-  {
-    id: uuidPrimaryKey(),
-    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    categoryId: text('category_id')
-      .references(() => categories.id, { onDelete: 'cascade' })
-      .notNull(), // Category this budget applies to
-    amount: monetaryAmountColumn(), // Budget limit amount
-    currency: isoCurrencyCodeColumn('currency')
-      .references(() => currencies.code)
-      .notNull(), // Budget currency (e.g., USD in USD/EUR)
-    startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull(), // When this budget period starts
-    endDate: integer('end_date', { mode: 'timestamp_ms' }).notNull() // When this budget period ends
-  },
-  table => [
-    // Performance indexes for common query patterns
-    index('budgets_user_idx').on(table.userId), // User's budgets lookup
-    index('budgets_category_idx').on(table.categoryId), // Category budgets lookup
+const columns = {
+  id: uuidPrimaryKey(),
+  userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
+  categoryId: text('category_id')
+    .references(() => categories.id, { onDelete: 'cascade' })
+    .notNull(), // Category this budget applies to
+  amount: monetaryAmountColumn(), // Budget limit amount
+  currency: isoCurrencyCodeColumn('currency')
+    .references(() => currencies.code)
+    .notNull(), // Budget currency (e.g., USD in USD/EUR)
+  startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull(), // When this budget period starts
+  endDate: integer('end_date', { mode: 'timestamp_ms' }).notNull() // When this budget period ends
+}
 
-    // Prevent duplicate budgets for same category+start date+end date
-    uniqueIndex('budgets_category_start_end_unq').on(
-      table.categoryId,
-      table.currency,
-      table.startDate,
-      table.endDate
-    ),
+const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
+  // Performance indexes for common query patterns
+  index('budgets_user_idx').on(table.userId), // User's budgets lookup
+  index('budgets_category_idx').on(table.categoryId), // Category budgets lookup
 
-    // Business rule constraints
-    check('budgets_positive_amount', sql`${table.amount} > 0`) // Budget amounts must be positive
-  ]
-)
+  // Prevent duplicate budgets for same category+start date+end date
+  uniqueIndex('budgets_category_start_end_unq').on(
+    table.categoryId,
+    table.currency,
+    table.startDate,
+    table.endDate
+  ),
+
+  // Business rule constraints
+  check('budgets_positive_amount', sql`${table.amount} > 0`) // Budget amounts must be positive
+]
+
+export const budgets = sqliteTable('budgets', columns, extraConfig)
+
+export const getBudgetsSqliteTable = (name: string) =>
+  sqliteTable(name, columns, extraConfig)

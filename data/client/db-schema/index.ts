@@ -16,13 +16,30 @@ Key Features:
 */
 
 // Import all SQLite table definitions
-import { currencies } from './table_1_currencies'
-import { exchangeRates } from './table_2_exchange-rates'
-import { userPreferences } from './table_3_user-preferences'
-import { categories, CATEGORY_TYPE, CategoryType } from './table_4_categories'
-import { budgets } from './table_5_budgets'
-import { ACCOUNT_TYPE, accounts, AccountType } from './table_6_accounts'
+import { currencies, getCurrenciesSqliteTable } from './table_1_currencies'
 import {
+  exchangeRates,
+  getExchangeRatesSqliteTable
+} from './table_2_exchange-rates'
+import {
+  getUserPreferencesSqliteTable,
+  userPreferences
+} from './table_3_user-preferences'
+import {
+  categories,
+  CATEGORY_TYPE,
+  CategoryType,
+  getCategoriesSqliteTable
+} from './table_4_categories'
+import { budgets, getBudgetsSqliteTable } from './table_5_budgets'
+import {
+  ACCOUNT_TYPE,
+  accounts,
+  AccountType,
+  getAccountsSqliteTable
+} from './table_6_accounts'
+import {
+  getTransactionsSqliteTable,
   TRANSACTION_TYPE,
   transactions,
   TransactionType
@@ -30,9 +47,13 @@ import {
 import {
   ATTACHMENT_TYPE,
   attachments,
-  AttachmentType
+  AttachmentType,
+  getAttachmentsSqliteTable
 } from './table_8_attachments'
-import { transactionAttachments } from './table_9_transaction-attachments'
+import {
+  getTransactionAttachmentsSqliteTable,
+  transactionAttachments
+} from './table_9_transaction-attachments'
 
 // Import all relations
 import {
@@ -57,6 +78,15 @@ export {
   CATEGORY_TYPE,
   currencies,
   exchangeRates,
+  getAccountsSqliteTable,
+  getAttachmentsSqliteTable,
+  getBudgetsSqliteTable,
+  getCategoriesSqliteTable,
+  getCurrenciesSqliteTable,
+  getExchangeRatesSqliteTable,
+  getTransactionAttachmentsSqliteTable,
+  getTransactionsSqliteTable,
+  getUserPreferencesSqliteTable,
   TRANSACTION_TYPE,
   transactionAttachments,
   transactions,

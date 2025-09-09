@@ -18,6 +18,7 @@ Key Features:
 */
 
 import { sql } from 'drizzle-orm'
+import type { BuildColumns } from 'drizzle-orm/column-builder'
 import {
   check,
   index,
@@ -68,53 +69,56 @@ export type TransactionType = (typeof TRANSACTION_TYPE)[number]
  * - Transaction dates cannot be in the future
  * - Account balances are automatically updated by database triggers
  */
-export const transactions = sqliteTable(
-  'transactions',
-  {
-    id: uuidPrimaryKey(),
-    userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: text({ enum: TRANSACTION_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
+const columns = {
+  id: uuidPrimaryKey(),
+  userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
+  type: text({ enum: TRANSACTION_TYPE }).notNull(), // Transaction type ('expense' | 'income' | 'transfer')
 
-    // Account references
-    accountId: text('account_id').references(() => accounts.id, {
-      onDelete: 'cascade'
-    }), // Primary account (source for expense/transfer, destination for income)
-    counterAccountId: text('counter_account_id').references(() => accounts.id), // Transfer destination account (transfers only)
+  // Account references
+  accountId: text('account_id').references(() => accounts.id, {
+    onDelete: 'cascade'
+  }), // Primary account (source for expense/transfer, destination for income)
+  counterAccountId: text('counter_account_id').references(() => accounts.id), // Transfer destination account (transfers only)
 
-    // Classification and details
-    categoryId: text('category_id').references(() => categories.id), // Optional transaction category
-    amount: monetaryAmountColumn(), // Transaction amount (always positive)
-    currencyId: isoCurrencyCodeColumn('currency_id')
-      .references(() => currencies.code)
-      .notNull(), // Transaction currency (must match account currency)
-    txDate: integer('tx_date', { mode: 'timestamp_ms' }).notNull(), // Transaction date (when the transaction occurred)
-    notes: text({ length: 1000 }), // Optional user notes/description
-    createdAt: createdAtColumn() // Record creation timestamp
-  },
-  table => [
-    // Performance indexes for common query patterns
-    index('transactions_user_idx').on(table.userId), // User's transactions lookup
-    index('transactions_account_idx').on(table.accountId), // Account transactions lookup
-    index('transactions_category_idx').on(table.categoryId), // Category transactions lookup
-    index('transactions_user_date_idx').on(table.userId, table.txDate), // Date-based queries
-    index('transactions_user_type_idx').on(table.userId, table.type), // Type-based filtering
-    index('transactions_date_idx').on(table.txDate), // Date range queries
-    index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
+  // Classification and details
+  categoryId: text('category_id').references(() => categories.id), // Optional transaction category
+  amount: monetaryAmountColumn(), // Transaction amount (always positive)
+  currencyId: isoCurrencyCodeColumn('currency_id')
+    .references(() => currencies.code)
+    .notNull(), // Transaction currency (must match account currency)
+  txDate: integer('tx_date', { mode: 'timestamp_ms' }).notNull(), // Transaction date (when the transaction occurred)
+  notes: text({ length: 1000 }), // Optional user notes/description
+  createdAt: createdAtColumn() // Record creation timestamp
+}
 
-    // Business rule constraints
-    check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive
-    check(
-      'transactions_transfer_different_accounts',
-      sql`${table.type} != 'transfer' OR ${table.accountId} != ${table.counterAccountId}`
-    ), // Transfer accounts must be different
-    check(
-      'transactions_transfer_has_counter_account',
-      sql`${table.type} != 'transfer' OR ${table.counterAccountId} IS NOT NULL`
-    ), // Transfers must have counter account
-    check(
-      'transactions_non_transfer_no_counter_account',
-      sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`
-    ), // Non-transfers cannot have counter account
-    check('transactions_date_not_future', sql`${table.txDate} <= CURRENT_DATE`) // No future dates
-  ]
-)
+const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
+  // Performance indexes for common query patterns
+  index('transactions_user_idx').on(table.userId), // User's transactions lookup
+  index('transactions_account_idx').on(table.accountId), // Account transactions lookup
+  index('transactions_category_idx').on(table.categoryId), // Category transactions lookup
+  index('transactions_user_date_idx').on(table.userId, table.txDate), // Date-based queries
+  index('transactions_user_type_idx').on(table.userId, table.type), // Type-based filtering
+  index('transactions_date_idx').on(table.txDate), // Date range queries
+  index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
+
+  // Business rule constraints
+  check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive
+  check(
+    'transactions_transfer_different_accounts',
+    sql`${table.type} != 'transfer' OR ${table.accountId} != ${table.counterAccountId}`
+  ), // Transfer accounts must be different
+  check(
+    'transactions_transfer_has_counter_account',
+    sql`${table.type} != 'transfer' OR ${table.counterAccountId} IS NOT NULL`
+  ), // Transfers must have counter account
+  check(
+    'transactions_non_transfer_no_counter_account',
+    sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`
+  ), // Non-transfers cannot have counter account
+  check('transactions_date_not_future', sql`${table.txDate} <= CURRENT_DATE`) // No future dates
+]
+
+export const transactions = sqliteTable('transactions', columns, extraConfig)
+
+export const getTransactionsSqliteTable = (name: string) =>
+  sqliteTable(name, columns, extraConfig)
