@@ -10,16 +10,13 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
   const { setSession, setIsInitializing, setIsMigrating } = actions
 
   const existingGuestId = Storage.getItem(GUEST_KEY)
-
-  if (existingGuestId) {
-    // Check if migration is already in progress
+  const shouldAutoMigrate = Storage.getItem(AUTO_MIGRATE_KEY) === 'true'
     const { isMigrating } = userSessionStore.getState()
 
-    if (!isMigrating) {
+  if (existingGuestId && !isMigrating) {
+    if (shouldAutoMigrate) {
       // Only auto-migrate for new accounts that just signed up
-      const shouldAutoMigrate = Storage.getItem(AUTO_MIGRATE_KEY) === 'true'
 
-      if (shouldAutoMigrate) {
         // New account that was just created – migrate automatically.
         setIsMigrating(true)
 
@@ -66,7 +63,6 @@ export async function handleAuthenticatedSession(clerkUserId: string) {
 
         // Remove any stored guest identifier so future guest sessions start fresh
         Storage.removeItem(GUEST_KEY)
-      }
     }
   }
 
