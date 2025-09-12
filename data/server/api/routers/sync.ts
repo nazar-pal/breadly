@@ -105,7 +105,13 @@ const insertHelper = async (
   validateRecordUserId(transformed, session, 'insert')
 
   const validated = cfg.insertSchema.parse(transformed)
-  await db.insert(cfg.table).values(validated)
+  await db
+    .insert(cfg.table)
+    .values(validated)
+    .onConflictDoUpdate({
+      target: cfg.idColumn ?? cfg.table.userId,
+      set: validated
+    })
 }
 
 const updateHelper = async (
