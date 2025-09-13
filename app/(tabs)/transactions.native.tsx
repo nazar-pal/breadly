@@ -33,7 +33,7 @@ export default function OperationsScreen() {
   const { data: earlierTransactions, isLoading: isLoadingPrevious } =
     useGetTransactions({
       userId,
-      dateTo: yesterday
+      dateTo: today
     })
 
   const isLoading = isLoadingToday || isLoadingPrevious
