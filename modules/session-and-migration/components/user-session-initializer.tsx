@@ -1,5 +1,3 @@
-import { Storage } from '@/lib/storage/mmkv'
-import { GUEST_KEY } from '@/lib/storage/mmkv/keys'
 import { useAuth } from '@clerk/clerk-expo'
 import React, { useEffect } from 'react'
 import {
@@ -17,8 +15,8 @@ export function UserSessionInitializer({
   children: React.ReactNode
 }) {
   const { isSignedIn, userId: clerkId } = useAuth()
-  const { session, isMigrating, isInitializing } =
-    useUserSessionInitializingState()
+
+  const { session, isInitializing } = useUserSessionInitializingState()
   const { setIsInitializing } = useUserSessionActions()
 
   useEffect(() => {
@@ -30,18 +28,27 @@ export function UserSessionInitializer({
         if (__DEV__) console.log(`✅ Authenticated session ready: ${clerkId}`)
       } else {
         if (__DEV__) console.log('🔍 Guest session detected')
-        await handleGuestSession()
-        const guestId = Storage.getItem(GUEST_KEY)
+        const guestId = await handleGuestSession()
         if (__DEV__) console.log(`✅ Guest session ready: ${guestId}`)
       }
     }
-    setIsInitializing(true)
-    initializeSession()
+    let mounted = true
+    ;(async () => {
+      setIsInitializing(true)
+      try {
+        await initializeSession()
+      } finally {
+        if (mounted) setIsInitializing(false)
+      }
+    })()
+    return () => {
+      mounted = false
+    }
   }, [isSignedIn, clerkId, setIsInitializing])
 
   // Show loading state during initialization or migration
-  if (isInitializing || isMigrating || !session) {
-    return <UserSessionLoading />
+  if (isInitializing || !session) {
+    return <UserSessionLoading message="Initializing your session..." />
   }
 
   return children

@@ -1,46 +1,58 @@
 import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { asyncTryCatch } from '@/lib/utils'
+import { switchToLocalSchema } from '@/data/client/powersync/utils'
+import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { useClerk } from '@clerk/clerk-expo'
+import { usePowerSync } from '@powersync/react-native'
+import { randomUUID } from 'expo-crypto'
 import * as Linking from 'expo-linking'
 import { View } from 'react-native'
+import { insertDefaultDataIntoDatabase } from '../data/mutations'
 import { userSessionStore } from '../store'
-import { resetDatabaseAndCreateNewGuestSession } from '../utils'
 
 export function SignOutButton() {
   // Use `useClerk()` to access the `signOut()` function
   const { signOut } = useClerk()
+  const {
+    reset: resetSessionPersistentStore,
+    guestId: existingGuestId,
+    setGuestId
+  } = useSessionPersistentStore()
+  const powerSyncDb = usePowerSync()
+
   const handleSignOut = async () => {
     try {
       // Step 1: Sign out from Clerk
       await signOut()
+      await powerSyncDb.disconnectAndClear({
+        clearLocal: existingGuestId === null
+      })
+      resetSessionPersistentStore()
+      await switchToLocalSchema(powerSyncDb)
 
       // Step 2: Reset PowerSync database and create new guest session
       if (__DEV__) console.log('🔄 Starting database reset after sign out')
-      const [error, newGuestUserId] = await asyncTryCatch(
-        resetDatabaseAndCreateNewGuestSession()
-      )
+      const newGuestUserId = existingGuestId ?? randomUUID()
+      setGuestId(newGuestUserId)
 
-      if (!error) {
-        if (__DEV__)
-          console.log(
-            `✅ Database reset successful. New guest ID: ${newGuestUserId}`
-          )
-
-        // Step 3: Update user session store to guest state with new ID
-        userSessionStore.setState({
-          session: {
-            userId: newGuestUserId,
-            isGuest: true
-          },
-          isInitializing: false
-        })
-      } else {
-        console.error('❌ Database reset failed:', error)
-        // Fallback: just reset to null session state
-        userSessionStore.setState({ session: null, isInitializing: true })
+      if (!existingGuestId) {
+        await insertDefaultDataIntoDatabase(newGuestUserId)
       }
+
+      if (__DEV__)
+        console.log(
+          `✅ Database reset successful. New guest ID: ${newGuestUserId}`
+        )
+
+      // Step 3: Update user session store to guest state with new ID
+      userSessionStore.setState({
+        session: {
+          userId: newGuestUserId,
+          isGuest: true
+        },
+        isInitializing: false
+      })
 
       // Step 4: Redirect to home page
       Linking.openURL(Linking.createURL('/'))

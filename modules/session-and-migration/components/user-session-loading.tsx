@@ -1,15 +1,9 @@
 import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
-import { useUserSessionInitializingState } from '../store'
 
-export function UserSessionLoading() {
+export function UserSessionLoading({ message }: { message: string }) {
   const { colors } = useTheme()
-  const { isMigrating, isInitializing } = useUserSessionInitializingState()
-
-  let message = 'Loading user session...'
-  if (isMigrating) message = 'Transferring your data to your account...'
-  else if (isInitializing) message = 'Initializing your session...'
 
   return (
     <View className="flex-1 items-center justify-center bg-background px-8">

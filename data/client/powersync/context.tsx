@@ -1,46 +1,127 @@
-import { useAuth } from '@clerk/clerk-expo'
+import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
+import { useUserSession } from '@/modules/session-and-migration'
+import { UserSessionLoading } from '@/modules/session-and-migration/components/user-session-loading'
+import { migrateGuestDataToAuthenticatedUser } from '@/modules/session-and-migration/data/mutations'
+import {
+  useUserSessionActions,
+  useUserSessionInitializingState
+} from '@/modules/session-and-migration/store'
+import { seedDefaultDataForGuestUser } from '@/modules/session-and-migration/utils/seed-default-data-for-guest-user'
 import { PowerSyncContext } from '@powersync/react'
+import { createBaseLogger, LogLevel } from '@powersync/react-native'
 import React from 'react'
 import { Connector } from './connector'
-import { powerSyncDb } from './system'
+import { powerSyncDb as db } from './system'
+import { switchToLocalSchema, switchToSyncedSchema } from './utils'
 
 export function PowerSyncContextProvider({
   children
 }: {
   children: React.ReactNode
 }) {
-  const { isSignedIn } = useAuth()
-  const connectorRef = React.useRef<Connector | null>(null)
-  const isMountedRef = React.useRef(true)
+  const [powerSyncDb] = React.useState(db)
+  const [connector] = React.useState(new Connector())
+
+  const { userId, isGuest } = useUserSession()
+  const {
+    syncEnabled,
+    needToReplaceGuestWithAuthUserId,
+    needToSeedDefaultDataForGuestUser,
+    guestId,
+    removeGuestId,
+    setNeedToReplaceGuestWithAuthUserId,
+    setNeedToSeedDefaultDataForGuestUser
+  } = useSessionPersistentStore()
+
+  const { isMigrating } = useUserSessionInitializingState()
+  const { setIsMigrating } = useUserSessionActions()
 
   React.useEffect(() => {
-    isMountedRef.current = true
-    let isActive = true
+    const logger = createBaseLogger()
+    logger.useDefaults()
+    logger.setLevel(LogLevel.DEBUG)
 
-    async function handleConnection() {
-      if (!isActive) return
+    async function handleGuest() {
+      if (!guestId) {
+        return // this should not be possible
+      }
 
-      if (isSignedIn) {
-        if (!connectorRef.current) {
-          connectorRef.current = new Connector()
+      await switchToLocalSchema(
+        powerSyncDb,
+        syncEnabled ? { userId } : undefined
+      )
+
+      if (needToSeedDefaultDataForGuestUser) {
+        const { success } = await seedDefaultDataForGuestUser(userId)
+        if (success) setNeedToSeedDefaultDataForGuestUser(false)
+      }
+    }
+
+    async function handleAuthed() {
+      if (needToReplaceGuestWithAuthUserId) {
+        if (guestId) {
+          await migrateGuestDataToAuthenticatedUser(guestId, userId)
         }
-
-        await powerSyncDb.connect(connectorRef.current)
+        setNeedToReplaceGuestWithAuthUserId(false)
+        removeGuestId()
       } else {
-        await powerSyncDb.disconnect().catch(() => {})
-        connectorRef.current = null
-        if (isActive) {
+        if (syncEnabled) {
+          await switchToSyncedSchema(powerSyncDb, userId)
+        } else {
+          await switchToLocalSchema(powerSyncDb, { userId })
         }
       }
     }
 
-    handleConnection()
+    const initialize = async () => {
+      try {
+        await powerSyncDb.init()
 
-    return () => {
-      isActive = false
-      isMountedRef.current = false
+        setIsMigrating(true)
+
+        if (isGuest) {
+          await handleGuest()
+        } else {
+          await handleAuthed()
+        }
+
+        // Connect only when authenticated and sync is enabled
+        if (!isGuest && syncEnabled) {
+          powerSyncDb.connect(connector)
+        }
+      } catch (error) {
+        console.error(
+          '[PowerSyncContextProvider] Error during initialization:',
+          error
+        )
+        throw error
+      } finally {
+        setIsMigrating(false)
+      }
     }
-  }, [isSignedIn])
+    initialize()
+  }, [
+    connector,
+    powerSyncDb,
+    syncEnabled,
+    userId,
+    isGuest,
+    guestId,
+    needToReplaceGuestWithAuthUserId,
+    needToSeedDefaultDataForGuestUser,
+    removeGuestId,
+    setNeedToReplaceGuestWithAuthUserId,
+    setNeedToSeedDefaultDataForGuestUser,
+    setIsMigrating
+  ])
+
+  if (
+    needToReplaceGuestWithAuthUserId ||
+    needToSeedDefaultDataForGuestUser ||
+    isMigrating
+  ) {
+    return <UserSessionLoading message="Applying database changes..." />
+  }
 
   return (
     <PowerSyncContext.Provider value={powerSyncDb}>

@@ -7,6 +7,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { useQuery } from '@powersync/react-native'
 import { router } from 'expo-router'
 import { Activity, RefreshCcw } from 'lucide-react-native'
@@ -125,6 +126,47 @@ function DbDev() {
           </Button>
         </View>
       </View>
+
+      {/* Show the content of user-session-persistent-store below. */}
+      <View className="mb-6 rounded-lg border border-border bg-card p-4">
+        <Text className="mb-3 text-lg font-semibold text-foreground">
+          User Session Store
+        </Text>
+        <View className="space-y-2">
+          {[
+            ['Guest ID:', sessionPersistentStore.getState().guestId || 'null'],
+            [
+              'Replace Guest Data:',
+              sessionPersistentStore
+                .getState()
+                .needToReplaceGuestWithAuthUserId.toString()
+            ],
+            [
+              'Seed Default Data:',
+              sessionPersistentStore
+                .getState()
+                .needToSeedDefaultDataForGuestUser.toString()
+            ],
+            [
+              'Sync Enabled:',
+              sessionPersistentStore.getState().syncEnabled.toString()
+            ]
+          ].map(([label, value], index) => (
+            <View key={index} className="flex-row justify-between">
+              <Text
+                className="flex-1 text-sm font-medium text-foreground"
+                numberOfLines={1}
+              >
+                {label}
+              </Text>
+              <Text className="text-sm text-muted-foreground" numberOfLines={1}>
+                {value}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+      {/* Show the content of the user session by system store below. */}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>

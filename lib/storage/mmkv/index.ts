@@ -1,10 +1,8 @@
 import { MMKV } from 'react-native-mmkv'
 
-// Global MMKV instance
-export const storage = new MMKV()
+const storage = new MMKV({ id: 'app-storage-v1' })
 
-// Synchronous convenience API (similar surface to AsyncStorage but sync)
-export const Storage = {
+export const LocalStore = {
   getItem(key: string): string | null {
     return storage.getString(key) ?? null
   },

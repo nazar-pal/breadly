@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Storage } from '@/lib/storage/mmkv'
-import { AUTO_MIGRATE_KEY } from '@/lib/storage/mmkv/keys'
+import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'
@@ -16,6 +15,8 @@ export function GoogleOAuthButton() {
 
   const { startSSOFlow } = useSSO()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const { setNeedToReplaceGuestWithAuthUserId } = useSessionPersistentStore()
 
   const handleGoogleAuthError = (error: string) => {
     setErrorMessage(error)
@@ -49,7 +50,7 @@ export function GoogleOAuthButton() {
       // If this is a new sign-up, set the migration flag
       if (isNewSignUp) {
         console.log('🆕 New Google sign-up detected, enabling data migration')
-        Storage.setItem(AUTO_MIGRATE_KEY, 'true')
+        setNeedToReplaceGuestWithAuthUserId(true)
       } else {
         console.log('🔑 Existing Google account sign-in')
       }
