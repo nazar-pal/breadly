@@ -4,7 +4,7 @@ import { PowerSyncDatabase } from '@powersync/react-native'
 import { sqliteSchema } from '../db-schema'
 import { makeSchema } from './utils'
 
-export const dbName = 'powersync_v99.db'
+export const dbName = 'powersync_v101.db'
 const { syncEnabled } = sessionPersistentStore.getState()
 
 export const powerSyncDb = new PowerSyncDatabase({

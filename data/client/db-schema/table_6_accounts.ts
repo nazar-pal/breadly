@@ -29,6 +29,7 @@ import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  dateOnlyText,
   descriptionColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
@@ -79,12 +80,12 @@ const columns = {
 
   // Type-specific fields for savings accounts
   savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
-  savingsTargetDate: integer('savings_target_date', { mode: 'timestamp_ms' }), // Target date to reach savings goal (savings only)
+  savingsTargetDate: dateOnlyText('savings_target_date'), // Target date to reach savings goal (YYYY-MM-DD TEXT)
 
   // Type-specific fields for debt accounts
   debtInitialAmount: real('debt_initial_amount'), // Original debt amount (debt only)
   debtIsOwedToMe: integer('debt_is_owed_to_me', { mode: 'boolean' }), // True if someone owes you, false if you owe someone (debt only)
-  debtDueDate: integer('debt_due_date', { mode: 'timestamp_ms' }), // Due date for debt payment (debt only)
+  debtDueDate: dateOnlyText('debt_due_date'), // Due date for debt payment (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
   createdAt: createdAtColumn()

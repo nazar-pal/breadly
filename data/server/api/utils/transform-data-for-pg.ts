@@ -30,7 +30,7 @@ export function transformDataForPostgres(data: any, table: string): any {
     user_preferences: []
   }
 
-  // Date fields (date only - need YYYY-MM-DD string format)
+  // Date fields (date only - expect 'YYYY-MM-DD' string or unix ms)
   const dateFields: Record<string, string[]> = {
     budgets: ['start_date', 'end_date'],
     accounts: ['savings_target_date', 'debt_due_date'],
@@ -84,13 +84,18 @@ export function transformDataForPostgres(data: any, table: string): any {
       continue
     }
 
-    // Date conversion: Unix millis → YYYY-MM-DD string
+    // Date conversion: Accept Unix millis and convert to YYYY-MM-DD string; if already string keep as is
     if (
       dateFieldsForTable.includes(key) &&
-      typeof value === 'number' &&
-      !Number.isNaN(value)
+      ((typeof value === 'number' && !Number.isNaN(value)) ||
+        typeof value === 'string')
     ) {
-      transformed[camelKey] = new Date(value).toISOString().split('T')[0]
+      if (typeof value === 'number') {
+        transformed[camelKey] = new Date(value).toISOString().split('T')[0]
+      } else {
+        // Assume already 'YYYY-MM-DD'
+        transformed[camelKey] = value
+      }
       continue
     }
 

@@ -1,4 +1,4 @@
-import { integer, real, text } from 'drizzle-orm/sqlite-core'
+import { customType, integer, real, text } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'expo-crypto'
 
 // user ID column for PowerSync (no auth.user_id() function in SQLite)
@@ -29,3 +29,26 @@ export const isArchivedColumn = () =>
 // required name and optional description columns (categories and accounts)
 export const nameColumn = () => text({ length: 100 }).notNull()
 export const descriptionColumn = () => text({ length: 1000 })
+
+// Date-only TEXT column that maps to a Date in app code while storing 'YYYY-MM-DD'
+export const dateOnlyText = customType<{
+  data: Date
+  driverData: string
+}>({
+  dataType() {
+    return 'text'
+  },
+  toDriver(value) {
+    if (!value) return value as unknown as string
+    const year = value.getFullYear()
+    const month = String(value.getMonth() + 1).padStart(2, '0')
+    const day = String(value.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  },
+  fromDriver(value) {
+    if (!value) return value as unknown as Date
+    // Expect 'YYYY-MM-DD'. Build Date in local time to avoid timezone shifts
+    const [y, m, d] = String(value).split('-').map(Number)
+    return new Date(y, (m || 1) - 1, d || 1)
+  }
+})

@@ -21,7 +21,6 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import {
   check,
   index,
-  integer,
   sqliteTable,
   text,
   uniqueIndex
@@ -30,6 +29,7 @@ import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
+  dateOnlyText,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   uuidPrimaryKey
@@ -62,8 +62,8 @@ const columns = {
   currency: isoCurrencyCodeColumn('currency')
     .references(() => currencies.code)
     .notNull(), // Budget currency (e.g., USD in USD/EUR)
-  startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull(), // When this budget period starts
-  endDate: integer('end_date', { mode: 'timestamp_ms' }).notNull() // When this budget period ends
+  startDate: dateOnlyText('start_date').notNull(), // When this budget period starts (stored as YYYY-MM-DD TEXT)
+  endDate: dateOnlyText('end_date').notNull() // When this budget period ends (stored as YYYY-MM-DD TEXT)
 }
 
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [

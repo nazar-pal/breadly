@@ -119,7 +119,7 @@ export const transactions = pgTable(
       'transactions_non_transfer_no_counter_account',
       sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`
     ), // Non-transfers cannot have counter account
-    check('transactions_date_not_future', sql`${table.txDate} <= CURRENT_DATE`), // No future dates
+    // NOTE: Removed future-date check to avoid timezone-related false positives
 
     // RLS: Users can only access their own transactions
     crudPolicy({

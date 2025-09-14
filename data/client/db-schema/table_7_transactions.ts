@@ -19,13 +19,7 @@ Key Features:
 
 import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import {
-  check,
-  index,
-  integer,
-  sqliteTable,
-  text
-} from 'drizzle-orm/sqlite-core'
+import { check, index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
@@ -33,6 +27,7 @@ import { accounts } from './table_6_accounts'
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  dateOnlyText,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   uuidPrimaryKey
@@ -86,7 +81,7 @@ const columns = {
   currencyId: isoCurrencyCodeColumn('currency_id')
     .references(() => currencies.code)
     .notNull(), // Transaction currency (must match account currency)
-  txDate: integer('tx_date', { mode: 'timestamp_ms' }).notNull(), // Transaction date (when the transaction occurred)
+  txDate: dateOnlyText('tx_date').notNull(), // Transaction date (YYYY-MM-DD TEXT)
   notes: text({ length: 1000 }), // Optional user notes/description
   createdAt: createdAtColumn() // Record creation timestamp
 }
