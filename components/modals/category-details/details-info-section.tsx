@@ -33,7 +33,7 @@ export function DetailsInfoSection({
         <>
           <View className="mb-4 flex-row items-start gap-3">
             <Icon
-              name="AlignLeft"
+              name="TextAlignStart"
               size={18}
               className="mt-0.5 text-muted-foreground"
             />

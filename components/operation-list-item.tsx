@@ -53,19 +53,19 @@ const OPERATION_CONFIGS: Record<string, OperationConfig> = {
   income: {
     icon: TrendingUp,
     colorClass: 'text-success',
-    bgColorClass: 'bg-success/10',
+    bgColorClass: 'bg-success/20',
     prefix: '+'
   },
   expense: {
     icon: TrendingDown,
     colorClass: 'text-destructive',
-    bgColorClass: 'bg-destructive/10',
+    bgColorClass: 'bg-destructive/20',
     prefix: '-'
   },
   transfer: {
     icon: RefreshCw,
     colorClass: 'text-primary',
-    bgColorClass: 'bg-primary/10',
+    bgColorClass: 'bg-primary/20',
     prefix: '-',
     subtext: tx =>
       tx.counterAccount ? `Transfer to ${tx.counterAccount.name}` : 'Transfer'
@@ -103,16 +103,16 @@ export function OperationListItem({ operation }: OperationCardProps) {
   return (
     <Link href={`/transactions/${operation.id}`} asChild>
       <Pressable>
-        <Card className="mb-2 border-0 bg-card/50">
-          <CardContent className="p-3">
+        <Card className="border-0 bg-card/50 py-1">
+          <CardContent className="px-3 py-2">
             <View className="flex-row items-center">
               <View
                 className={cn(
-                  'mr-3 h-8 w-8 items-center justify-center rounded-lg',
+                  'mr-3 h-6 w-6 items-center justify-center rounded-lg ring-1 ring-border/20',
                   config.bgColorClass
                 )}
               >
-                <IconComponent size={16} className={config.colorClass} />
+                <IconComponent size={14} className={config.colorClass} />
               </View>
 
               <View className="flex-1 gap-1">
@@ -124,10 +124,7 @@ export function OperationListItem({ operation }: OperationCardProps) {
                     {description}
                   </Text>
                   <Text
-                    className={cn(
-                      'text-[15px] font-semibold',
-                      config.colorClass
-                    )}
+                    className={cn('text-sm font-semibold', config.colorClass)}
                   >
                     {config.prefix}${operation.amount.toFixed(2)}
                   </Text>
@@ -154,8 +151,8 @@ export function OperationListItem({ operation }: OperationCardProps) {
                   <View className="flex-row items-center">
                     {/* TODO: Add attachment support */}
                     <ArrowRight
-                      size={14}
-                      className="ml-1 text-muted-foreground"
+                      size={12}
+                      className="ml-1 text-muted-foreground/60"
                     />
                   </View>
                 </View>

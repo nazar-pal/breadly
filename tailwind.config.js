@@ -68,6 +68,11 @@ module.exports = {
           debt: 'hsl(var(--account-debt))'
         }
       },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
+      },
       borderWidth: {
         hairline: hairlineWidth()
       },
@@ -87,5 +92,6 @@ module.exports = {
       }
     }
   },
+  future: { hoverOnlyWhenSupported: true },
   plugins: [require('tailwindcss-animate')]
 }

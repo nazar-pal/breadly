@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { useQuery } from '@powersync/react-native'
 import { router } from 'expo-router'
-import { Activity, RefreshCcw } from 'lucide-react-native'
+import { RefreshCcw } from 'lucide-react-native'
 import { useEffect, useState, type ReactNode } from 'react'
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 
@@ -319,26 +319,6 @@ function getInactiveAwareSortKey(name: string) {
   return { base, isInactive, fullLower: lower }
 }
 
-function shouldShowTableIndicator(
-  tableName: string,
-  views: { name: string }[]
-) {
-  const group = getTableGroupNumber(tableName)
-  if (group == null) return false
-  const lower = String(tableName).toLowerCase()
-  const isLocal = lower.startsWith('ps_data_local__local_')
-  if (isLocal) return true
-  const patterns =
-    TABLE_SORT_GROUPS[String(group)]?.map(p => p.toLowerCase()) ?? []
-  const hasInactiveView = views.some(v => {
-    const vLower = String(v.name).toLowerCase()
-    if (!vLower.startsWith(INACTIVE_PREFIX)) return false
-    const after = vLower.slice(INACTIVE_PREFIX.length)
-    return patterns.some(p => after.startsWith(p))
-  })
-  return !hasInactiveView
-}
-
 // Generic empty state card
 function EmptyStateCard({
   label,
@@ -449,8 +429,6 @@ function EntityItem({
   const name = item.name
   const safeIdent = `"${String(name).replace(/"/g, '""')}"`
   const groupNumber = getTableGroupNumber(name)
-  const showIndicator =
-    entityType === 'table' && shouldShowTableIndicator(name, views)
 
   const { data: columnsData, isLoading: columnsLoading } = useQuery(
     `PRAGMA table_info(${safeIdent})`
@@ -469,11 +447,6 @@ function EntityItem({
   return (
     <AccordionItem value={name}>
       <View className={entityType === 'table' ? 'relative' : undefined}>
-        {showIndicator ? (
-          <View className="absolute left-1 top-1">
-            <Icon as={Activity} size={12} className="text-primary" />
-          </View>
-        ) : null}
         <View className="flex-row items-center">
           <Button
             variant="ghost"

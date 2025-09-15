@@ -1,6 +1,6 @@
-import * as LabelPrimitive from '@rn-primitives/label'
-import * as React from 'react'
 import { cn } from '@/lib/utils'
+import * as LabelPrimitive from '@rn-primitives/label'
+import { Platform } from 'react-native'
 
 function Label({
   className,
@@ -8,21 +8,28 @@ function Label({
   onLongPress,
   onPressIn,
   onPressOut,
+  disabled,
   ...props
-}: LabelPrimitive.TextProps & {
-  ref?: React.RefObject<LabelPrimitive.TextRef>
-}) {
+}: LabelPrimitive.TextProps & React.RefAttributes<LabelPrimitive.TextRef>) {
   return (
     <LabelPrimitive.Root
-      className="web:cursor-default"
+      className={cn(
+        'flex select-none flex-row items-center gap-2',
+        Platform.select({
+          web: 'cursor-default leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50'
+        }),
+        disabled && 'opacity-50'
+      )}
       onPress={onPress}
       onLongPress={onLongPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
+      disabled={disabled}
     >
       <LabelPrimitive.Text
         className={cn(
-          'native:text-base text-sm font-medium leading-none text-foreground web:peer-disabled:cursor-not-allowed web:peer-disabled:opacity-70',
+          'text-sm font-medium text-foreground',
+          Platform.select({ web: 'leading-none' }),
           className
         )}
         {...props}

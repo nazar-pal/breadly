@@ -1,6 +1,6 @@
 import { Icon } from '@/components/icon'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useColorScheme } from '@/lib/hooks'
+import { useColorScheme } from 'nativewind'
 import React from 'react'
 import { PreferenceItem } from './preference-item'
 

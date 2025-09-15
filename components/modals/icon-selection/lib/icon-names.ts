@@ -69,6 +69,6 @@ export const expenseIcons: IconName[] = [
   'ChevronUp',
   'ChevronLeft',
   'ChevronRight',
-  'AlignLeft',
+  'TextAlignStart',
   'Shield'
 ] as const

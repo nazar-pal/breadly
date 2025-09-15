@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Muted } from '@/components/ui/typography'
+import { Text } from '../ui/text'
 import { PowerSyncStatusContent } from './power-sync-status-content'
 
 export function PowerSyncStatus() {
@@ -7,7 +7,7 @@ export function PowerSyncStatus() {
     <Card className="mt-4">
       <CardHeader className="pb-2">
         <CardTitle>Synchronization</CardTitle>
-        <Muted>Connection status and last sync</Muted>
+        <Text variant="muted">Connection status and last sync</Text>
       </CardHeader>
       <CardContent className="pt-2">
         <PowerSyncStatusContent />

@@ -100,9 +100,9 @@ export default function OperationsScreen() {
       case 'header':
         return (
           <View
-            className={`mb-3 ${item.id === 'today-header' ? 'mt-0' : 'mt-6'}`}
+            className={`mb-2 ${item.id === 'today-header' ? 'mt-0' : 'mt-4'}`}
           >
-            <Text className="text-lg font-semibold text-foreground">
+            <Text className="text-base font-semibold text-foreground">
               {item.title}
             </Text>
           </View>
@@ -163,9 +163,9 @@ export default function OperationsScreen() {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
-        style={{ paddingHorizontal: 16, paddingTop: 16 }}
+        style={{ paddingHorizontal: 12, paddingTop: 12 }}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 32
+          paddingBottom: insets.bottom + 20
         }}
         recycleItems={false} // Keep false since we have different item types
       />

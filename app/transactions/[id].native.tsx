@@ -136,7 +136,9 @@ export default function TransactionDetailsScreen() {
           />
 
           <DetailItem
-            icon={<Icon name="AlignLeft" size={20} className="text-primary" />}
+            icon={
+              <Icon name="TextAlignStart" size={20} className="text-primary" />
+            }
             label="Notes"
             value={transaction.notes ?? 'No notes'}
             showBorder={false}

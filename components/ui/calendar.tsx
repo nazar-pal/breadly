@@ -1,5 +1,5 @@
 import { Icon } from '@/components/icon'
-import { useColorScheme } from '@/lib/hooks'
+import { useColorScheme } from 'nativewind'
 import React, { useMemo } from 'react'
 import {
   Calendar as RNCalendar,
