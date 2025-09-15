@@ -28,7 +28,7 @@ export function IconSelectionModal() {
     await updateCategory({
       id: categoryData.id,
       userId,
-      data: { icon: iconName as string }
+      data: { icon: iconName }
     })
     closeCategoryFormModal()
   }
@@ -79,7 +79,7 @@ export function IconSelectionModal() {
       >
         <IconsGrid
           categoryType={categoryData.type}
-          selectedIcon={categoryData.icon as IconName}
+          selectedIcon={categoryData.icon}
           onIconSelect={handleIconSelect}
         />
       </ScrollView>

@@ -18,7 +18,6 @@ export function AccountTypesTabBar({
     <View className="flex-row">
       {state.routes.map((route, i) => {
         const focused = state.index === i
-        const iconName = ICONS[route.name as keyof typeof ICONS]
 
         const onPress = () => {
           if (!focused) navigation.navigate(route.name)
@@ -36,7 +35,7 @@ export function AccountTypesTabBar({
             onPress={onPress}
           >
             <Icon
-              name={iconName}
+              name={ICONS[route.name]}
               size={20}
               className={cn(
                 'mr-1.5',

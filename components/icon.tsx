@@ -1,23 +1,20 @@
+import { Icon as UiIcon } from '@/components/ui/icon'
+import { StringWithAutocompleteOptions } from '@/lib/types'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
-import { cssInterop } from 'nativewind'
-import React from 'react'
 
-function iconWithClassName(icon: LucideIcon) {
-  cssInterop(icon, {
-    className: {
-      target: 'style',
-      nativeStyleToProp: {
-        color: true,
-        opacity: true
-      }
-    }
-  })
-}
+export type IconNameStrict = keyof typeof icons
+export type IconName = StringWithAutocompleteOptions<IconNameStrict>
 
-export type IconName = keyof typeof icons
-
-interface Props extends LucideProps {
+interface IconProps extends LucideProps {
+  /**
+   * The icon name to render. Accepts Lucide keys (e.g. "Circle")
+   * and arbitrary strings which will be normalized, such as
+   * "circle", "trending-up", "dollar_sign", or "user plus".
+   *
+   * Use `IconNameStrict` for autocompletion in TS, while still allowing
+   * arbitrary strings at runtime.
+   */
   name: IconName
 }
 
@@ -58,9 +55,15 @@ function resolveLucideIcon(name: string): LucideIcon {
   return (icons as any)[key] as LucideIcon
 }
 
-export function Icon({ name, ...rest }: Props) {
-  const rawName = name as unknown as string
-  const ResolvedIcon = resolveLucideIcon(rawName)
-  iconWithClassName(ResolvedIcon)
-  return <ResolvedIcon {...rest} />
+/**
+ * Render a Lucide icon by name with Nativewind `className` support.
+ *
+ * This wrapper:
+ * - Accepts a loose string for icon names with normalization
+ * - Applies a default size of 14 (matching the `ui/icon` component)
+ * - Reuses the `ui/icon` wrapper for consistent cssInterop
+ */
+export function Icon({ name, ...rest }: IconProps) {
+  const ResolvedIcon = resolveLucideIcon(String(name))
+  return <UiIcon as={ResolvedIcon} {...rest} />
 }

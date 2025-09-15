@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/icon'
+import { Icon } from '@/components/icon'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import React from 'react'
@@ -61,7 +61,7 @@ export function RootCategory({ category }: CategoryFormProps) {
           icon={(() => {
             return category.icon ? (
               <Icon
-                name={category.icon as IconName}
+                name={category.icon}
                 size={18}
                 className="text-foreground"
               />
