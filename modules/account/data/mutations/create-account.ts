@@ -2,7 +2,7 @@ import { accounts } from '@/data/client/db-schema'
 import { db } from '@/data/client/powersync/system'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { createInsertSchema } from 'drizzle-zod'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 const accountInsertSchema = createInsertSchema(accounts)
 

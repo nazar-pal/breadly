@@ -2,7 +2,7 @@ import {
   accountInsertSchema,
   accountUpdateSchema
 } from '@/data/client/db-schema'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 // ============================================================================
 // BASE SCHEMA DEFINITIONS

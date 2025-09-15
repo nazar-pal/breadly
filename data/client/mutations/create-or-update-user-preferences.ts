@@ -1,7 +1,7 @@
 import { asyncTryCatch } from '@/lib/utils/index'
 import { eq } from 'drizzle-orm'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { userPreferences } from '../db-schema'
 import { db } from '../powersync/system'
 

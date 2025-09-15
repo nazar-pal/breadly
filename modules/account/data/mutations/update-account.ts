@@ -3,7 +3,7 @@ import { db } from '@/data/client/powersync/system'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { and, eq } from 'drizzle-orm'
 import { createUpdateSchema } from 'drizzle-zod'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 const accountUpdateSchema = createUpdateSchema(accounts).pick({
   name: true,

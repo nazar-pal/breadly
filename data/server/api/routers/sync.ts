@@ -1,6 +1,6 @@
 import { TABLES_TO_SYNC } from '@/data/const'
 import { and, eq } from 'drizzle-orm'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import {
   accounts,
   accountsInsertSchemaPg,

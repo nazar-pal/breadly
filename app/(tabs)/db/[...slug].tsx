@@ -21,7 +21,7 @@ import {
 } from 'lucide-react-native'
 import { useState } from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 const ParamsSchema = z.object({
   slug: z.tuple([

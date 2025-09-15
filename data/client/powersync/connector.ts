@@ -7,7 +7,7 @@ import {
   PowerSyncBackendConnector,
   UpdateType
 } from '@powersync/react-native'
-import z from 'zod/v4'
+import z from 'zod'
 
 export class Connector implements PowerSyncBackendConnector {
   async fetchCredentials() {

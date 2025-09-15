@@ -1,6 +1,6 @@
 import { asyncTryCatch } from '@/lib/utils/index'
 import { createInsertSchema } from 'drizzle-zod'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { transactions } from '../db-schema'
 import { db } from '../powersync/system'
 
