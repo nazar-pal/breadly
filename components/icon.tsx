@@ -3,8 +3,8 @@ import { StringWithAutocompleteOptions } from '@/lib/types'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
 
-export type IconNameStrict = keyof typeof icons
-export type IconName = StringWithAutocompleteOptions<IconNameStrict>
+export type LucideIconName = keyof typeof icons
+export type IconName = StringWithAutocompleteOptions<LucideIconName>
 
 interface IconProps extends LucideProps {
   /**
@@ -12,7 +12,7 @@ interface IconProps extends LucideProps {
    * and arbitrary strings which will be normalized, such as
    * "circle", "trending-up", "dollar_sign", or "user plus".
    *
-   * Use `IconNameStrict` for autocompletion in TS, while still allowing
+   * Use `LucideIconName` for autocompletion in TS, while still allowing
    * arbitrary strings at runtime.
    */
   name: IconName
