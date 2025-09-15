@@ -3,8 +3,8 @@ import { StringWithAutocompleteOptions } from '@/lib/types'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
 
-export type LucideIconName = keyof typeof icons
-export type IconName = StringWithAutocompleteOptions<LucideIconName>
+type LucideIconName = keyof typeof icons
+type IconName = StringWithAutocompleteOptions<LucideIconName>
 
 interface IconProps extends LucideProps {
   /**
@@ -63,7 +63,10 @@ function resolveLucideIcon(name: string): LucideIcon {
  * - Applies a default size of 14 (matching the `ui/icon` component)
  * - Reuses the `ui/icon` wrapper for consistent cssInterop
  */
-export function Icon({ name, ...rest }: IconProps) {
-  const ResolvedIcon = resolveLucideIcon(String(name))
+function Icon({ name, ...rest }: IconProps) {
+  const ResolvedIcon = resolveLucideIcon(name)
   return <UiIcon as={ResolvedIcon} {...rest} />
 }
+
+export { Icon }
+export type { IconName, LucideIconName }
