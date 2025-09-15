@@ -47,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: './assets/icons/adaptive-icon.png',
       backgroundColor: '#ffffff'
     },
-    edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: true,
     package: getUniqueIdentifier()
   },
   web: {
