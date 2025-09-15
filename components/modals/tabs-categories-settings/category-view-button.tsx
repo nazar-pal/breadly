@@ -1,4 +1,4 @@
-import { Icon, IconName } from '@/components/icon'
+import { Icon, IconName } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { CategoryViewType } from '@/lib/storage/category-view-store'
 import { cn } from '@/lib/utils'

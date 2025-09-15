@@ -3,8 +3,8 @@ import { Calendar } from '@/components/ui/calendar'
 import { Text } from '@/components/ui/text'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
-import { Icon } from '../icon'
 import { Button } from '../ui/button'
+import { Icon } from '../ui/icon-by-name'
 
 export function DateModal({
   visible,

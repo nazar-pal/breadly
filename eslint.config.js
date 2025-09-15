@@ -28,14 +28,14 @@ module.exports = defineConfig([
               name: 'lucide-react-native',
               importNames: ['*'],
               message:
-                "Direct imports from lucide-react-native are not allowed. Icons must be wrapped with iconWithClassName to work correctly.\n\n⚠️ CAUTION: Neglecting to wrap icons with iconWithClassName will prevent you from being able to update the color or opacity props via the className prop.\n\nTo add a new icon, follow these steps:\n\n1. Ensure you have the required packages installed:\n   npx expo install react-native-svg lucide-react-native\n\n2. Create a new file in ~/lib/icons/{IconName}.tsx with this structure:\n   ```\n   import { IconName } from 'lucide-react-native';\n   import { iconWithClassName } from './iconWithClassName';\n   iconWithClassName(IconName);\n   export { IconName };\n   ```\n\n3. Import and use your icon from @/lib/icons/IconName\n\nThis ensures consistent styling and proper functionality of color and opacity props across the app."
+                "Direct imports from lucide-react-native are not allowed. Use the Icon component from components/ui/icon-by-name.tsx instead.\n\n⚠️ CAUTION: Direct lucide imports will not work correctly with our styling system and may cause inconsistent theming.\n\nInstead of:\n  import { Heart } from 'lucide-react-native'\n\nUse:\n  import { Icon } from '@/components/ui/icon-by-name'\n  <Icon name=\"Heart\" size={24} className=\"text-red-500\" />\n\nThe Icon component provides:\n• Automatic icon resolution with fallback handling\n• Consistent styling via className prop\n• Proper integration with the app's theming system\n• TypeScript autocomplete for all available icon names"
             }
           ],
           patterns: [
             {
               group: ['lucide-react-native/*'],
               message:
-                'Direct imports from lucide-react-native/* are not allowed. Icons must be wrapped with iconWithClassName to work correctly.'
+                'Direct imports from lucide-react-native/* are not allowed. Use the Icon component from components/ui/icon-by-name.tsx instead.'
             }
           ]
         }

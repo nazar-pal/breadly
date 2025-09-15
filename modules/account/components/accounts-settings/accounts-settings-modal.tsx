@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { Modal } from '@/components/modals'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import React from 'react'
 import { Pressable, View } from 'react-native'

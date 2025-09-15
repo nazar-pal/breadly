@@ -1,6 +1,6 @@
-import { Icon } from '@/components/icon'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon-by-name'
 import {
   NativeSelectScrollView,
   Select,

@@ -1,5 +1,5 @@
-import { Icon, type IconName } from '@/components/icon'
 import { Button } from '@/components/ui/button'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { useTabsCategoriesSettingsModalActions } from '@/lib/storage/tabs-categories-settings-modal-store'
 import { AccountsSettingsButton } from '@/modules/account'
 import { router, Tabs, usePathname } from 'expo-router'

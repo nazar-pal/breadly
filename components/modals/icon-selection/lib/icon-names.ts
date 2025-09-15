@@ -1,6 +1,6 @@
-import { IconName } from '@/components/icon'
+import { LucideIconName } from '@/components/ui/icon-by-name'
 
-export const incomeIcons: IconName[] = [
+export const incomeIcons: LucideIconName[] = [
   'DollarSign',
   'PiggyBank',
   'Briefcase',
@@ -24,7 +24,7 @@ export const incomeIcons: IconName[] = [
   'Banknote'
 ] as const
 
-export const expenseIcons: IconName[] = [
+export const expenseIcons: LucideIconName[] = [
   // Food & Dining
   'Coffee',
   'UtensilsCrossed',

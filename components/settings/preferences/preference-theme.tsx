@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useColorScheme } from 'nativewind'
 import React from 'react'

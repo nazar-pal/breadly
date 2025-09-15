@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Progress } from '@/components/ui/progress'
 import {
   calculateAccountProgress,

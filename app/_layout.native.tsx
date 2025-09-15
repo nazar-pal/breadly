@@ -1,7 +1,7 @@
-import { Icon } from '@/components/icon'
 import { CategoryDetailsFormModal } from '@/components/modals/category-details-form/modal-category-details-form'
 import { IconSelectionModal } from '@/components/modals/icon-selection'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon-by-name'
 import { PowerSyncContextProvider } from '@/data/client/powersync/context'
 import { queryClient } from '@/data/trpc/query-client'
 import { env } from '@/env'

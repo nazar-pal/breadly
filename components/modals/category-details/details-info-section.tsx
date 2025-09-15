@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { formatCurrency } from '@/lib/utils'
 import { Text, View } from 'react-native'
 import { Card } from '../../ui/card'

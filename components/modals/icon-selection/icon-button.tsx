@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/icon'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { Dimensions, Pressable } from 'react-native'

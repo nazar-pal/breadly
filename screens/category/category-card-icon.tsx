@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { View } from 'react-native'
 
 export function CategoryCardIcon({

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { useCategoryType } from '@/lib/hooks'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import { cn } from '@/lib/utils'

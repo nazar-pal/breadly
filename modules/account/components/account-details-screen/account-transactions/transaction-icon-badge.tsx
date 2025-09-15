@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/icon'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { TransactionType } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
 import React from 'react'

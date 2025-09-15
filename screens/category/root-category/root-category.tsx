@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import React from 'react'

@@ -1,5 +1,5 @@
-import { Icon, type IconName } from '@/components/icon'
 import { Modal } from '@/components/modals/modal'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { updateCategory } from '@/data/client/mutations'
 import { useGetCategory } from '@/data/client/queries'
 import {

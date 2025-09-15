@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { CenteredModal } from '@/components/modals'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'

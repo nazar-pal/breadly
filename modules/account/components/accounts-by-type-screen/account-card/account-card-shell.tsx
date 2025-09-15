@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/icon'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { cn, formatCurrency } from '@/lib/utils'
 import React from 'react'

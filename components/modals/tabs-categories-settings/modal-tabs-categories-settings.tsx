@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useCategoryType } from '@/lib/hooks'
 import { useCategoryViewStore } from '@/lib/storage/category-view-store'

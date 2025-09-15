@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import React, { useState } from 'react'
 import { View } from 'react-native'

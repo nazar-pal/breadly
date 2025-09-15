@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { updateCategory } from '@/data/client/mutations'
 import { createCategory } from '@/data/client/mutations/create-category'

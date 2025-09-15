@@ -1,4 +1,4 @@
-import { type IconName } from '@/components/icon'
+import { type IconName } from '@/components/ui/icon-by-name'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { IconButton } from './icon-button'

@@ -1,4 +1,3 @@
-import { Icon } from '@/components/icon'
 import {
   Accordion,
   AccordionContent,
@@ -6,6 +5,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { useQuery } from '@powersync/react-native'

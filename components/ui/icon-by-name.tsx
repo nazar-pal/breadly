@@ -1,7 +1,7 @@
-import { Icon as UiIcon } from '@/components/ui/icon'
 import { StringWithAutocompleteOptions } from '@/lib/types'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
+import { Icon as UiIcon } from './icon'
 
 type LucideIconName = keyof typeof icons
 type IconName = StringWithAutocompleteOptions<LucideIconName>

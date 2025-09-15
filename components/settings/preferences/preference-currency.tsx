@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { useGetUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useUserSession } from '@/modules/session-and-migration'

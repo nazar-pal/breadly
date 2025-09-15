@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
 import { createOrUpdateUserPreferences } from '@/data/client/mutations'

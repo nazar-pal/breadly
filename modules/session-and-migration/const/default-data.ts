@@ -1,5 +1,5 @@
 // Note: Default seed icons are stored as strings; runtime resolves icons safely
-import { type IconName } from '@/components/icon'
+import { type IconName } from '@/components/ui/icon-by-name'
 import {
   type AccountInsertSQLite,
   type CategoryInsertSQLite

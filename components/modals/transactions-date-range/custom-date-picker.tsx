@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { Calendar } from '@/components/ui/calendar'
+import { Icon } from '@/components/ui/icon-by-name'
 import {
   DateRange,
   useCategoriesDateRangeActions

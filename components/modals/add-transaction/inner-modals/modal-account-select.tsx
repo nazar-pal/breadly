@@ -1,5 +1,5 @@
-import { Icon } from '@/components/icon'
 import { CenteredModal } from '@/components/modals'
+import { Icon } from '@/components/ui/icon-by-name'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Text } from '@/components/ui/text'
 import { formatCurrencyWithSign } from '@/lib/utils/format-currency'

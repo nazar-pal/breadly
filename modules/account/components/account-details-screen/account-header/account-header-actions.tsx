@@ -1,4 +1,4 @@
-import { Icon } from '@/components/icon'
+import { Icon } from '@/components/ui/icon-by-name'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/modules/session-and-migration'
 import { useRouter } from 'expo-router'

@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/icon'
+import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { cn } from '@/lib/utils'
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs'
 import React from 'react'
