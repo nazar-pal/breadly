@@ -1,3 +1,4 @@
+import { Icon } from '@/components/icon'
 import {
   Accordion,
   AccordionContent,
@@ -5,12 +6,10 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { useQuery } from '@powersync/react-native'
 import { router } from 'expo-router'
-import { RefreshCcw } from 'lucide-react-native'
 import { useEffect, useState, type ReactNode } from 'react'
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 
@@ -120,7 +119,7 @@ function DbDev() {
             {tablesLoading || viewsLoading || isRefreshing ? (
               <ActivityIndicator size="small" />
             ) : (
-              <Icon as={RefreshCcw} size={16} />
+              <Icon name="RefreshCcw" size={16} />
             )}
             <Text>{isRefreshing ? 'Refreshing…' : 'Refresh'}</Text>
           </Button>

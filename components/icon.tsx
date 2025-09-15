@@ -1,7 +1,19 @@
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
+import { cssInterop } from 'nativewind'
 import React from 'react'
-import { iconWithClassName } from './iconWithClassName'
+
+function iconWithClassName(icon: LucideIcon) {
+  cssInterop(icon, {
+    className: {
+      target: 'style',
+      nativeStyleToProp: {
+        color: true,
+        opacity: true
+      }
+    }
+  })
+}
 
 export type IconName = keyof typeof icons
 

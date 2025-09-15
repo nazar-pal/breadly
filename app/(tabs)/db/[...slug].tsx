@@ -1,6 +1,6 @@
+import { Icon } from '@/components/icon'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon'
 import {
   NativeSelectScrollView,
   Select,
@@ -12,13 +12,7 @@ import {
 import { Text } from '@/components/ui/text'
 import { useQuery } from '@powersync/react-native'
 import { useLocalSearchParams } from 'expo-router'
-import {
-  AlertCircle,
-  ArrowDownAZ,
-  ArrowUpAZ,
-  CheckCircle2,
-  RefreshCcw
-} from 'lucide-react-native'
+import { AlertCircle, CheckCircle2 } from 'lucide-react-native'
 import { useState } from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { z } from 'zod'
@@ -135,7 +129,7 @@ function CatchAll() {
           {isLoading || isRefreshing ? (
             <ActivityIndicator size="small" />
           ) : (
-            <Icon as={RefreshCcw} size={14} />
+            <Icon name="RefreshCcw" size={14} />
           )}
           <Text>{isRefreshing ? 'Refreshing…' : 'Refresh'}</Text>
         </Button>
@@ -174,9 +168,9 @@ function CatchAll() {
         >
           <View className="flex-row items-center gap-1">
             {sortOrder === 'asc' ? (
-              <Icon as={ArrowDownAZ} size={14} />
+              <Icon name="ArrowDownAZ" size={14} />
             ) : (
-              <Icon as={ArrowUpAZ} size={14} />
+              <Icon name="ArrowUpAZ" size={14} />
             )}
             <Text>{sortOrder === 'asc' ? 'A → Z' : 'Z → A'}</Text>
           </View>
