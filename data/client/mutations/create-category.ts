@@ -1,8 +1,8 @@
 import { asyncTryCatch } from '@/lib/utils/index'
+import { db } from '@/system/powersync/system'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { categories } from '../db-schema'
-import { db } from '../powersync/system'
 
 const categoryInsertSchema = createInsertSchema(categories)
 

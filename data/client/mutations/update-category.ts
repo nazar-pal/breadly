@@ -1,9 +1,9 @@
 import { asyncTryCatch } from '@/lib/utils/index'
+import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
 import { createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { categories } from '../db-schema'
-import { db } from '../powersync/system'
 
 const categoryUpdateSchema = createUpdateSchema(categories).pick({
   parentId: true,

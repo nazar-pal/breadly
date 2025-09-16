@@ -1,8 +1,8 @@
+import { db } from '@/system/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
 import { transactions } from '../db-schema'
-import { db } from '../powersync/system'
 
 interface UseGetTransactionsParams {
   userId: string

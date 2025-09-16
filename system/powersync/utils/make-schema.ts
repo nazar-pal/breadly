@@ -1,8 +1,8 @@
+import { sqliteSchema as dzSch } from '@/data/client/db-schema'
 import { toPowerSyncTable } from '@powersync/drizzle-driver'
 import { Schema } from '@powersync/react-native'
 import { getTableName } from 'drizzle-orm'
 import { AnySQLiteTable } from 'drizzle-orm/sqlite-core'
-import { sqliteSchema as dzSch } from '../../db-schema/index'
 
 export function makeSchema(synced: boolean) {
   const syncedName = (table: AnySQLiteTable): string => {

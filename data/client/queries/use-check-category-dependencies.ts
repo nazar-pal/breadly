@@ -1,8 +1,8 @@
+import { db } from '@/system/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, count, eq } from 'drizzle-orm'
 import { categories, transactions } from '../db-schema'
-import { db } from '../powersync/system'
 
 export function useCheckCategoryDependencies({
   userId,

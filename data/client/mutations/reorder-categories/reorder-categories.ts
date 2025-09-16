@@ -1,8 +1,8 @@
 import { asyncTryCatch } from '@/lib/utils'
 import { needsRebalancing } from '@/lib/utils/fractional-ordering'
+import { db } from '@/system/powersync/system'
 import { and, asc, eq, isNull } from 'drizzle-orm'
 import { categories } from '../../db-schema'
-import { db } from '../../powersync/system'
 import { handleFractionalReorder } from './utils/handle-fractional-reorder'
 import { handleRebalancingReorder } from './utils/handle-rebalancing-reorder'
 

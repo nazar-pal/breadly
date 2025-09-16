@@ -1,6 +1,6 @@
 import { accounts } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
 import { asyncTryCatch } from '@/lib/utils/index'
+import { db } from '@/system/powersync/system'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 

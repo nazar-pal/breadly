@@ -1,7 +1,7 @@
 import { asyncTryCatch } from '@/lib/utils/index'
+import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
 import { transactions } from '../db-schema'
-import { db } from '../powersync/system'
 
 export async function deleteTransaction({
   userId,

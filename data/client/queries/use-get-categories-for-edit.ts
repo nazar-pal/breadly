@@ -1,8 +1,8 @@
+import { db } from '@/system/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, asc, eq, isNull } from 'drizzle-orm'
 import { categories, CATEGORY_TYPE } from '../db-schema'
-import { db } from '../powersync/system'
 
 export function useGetCategoriesForEdit({
   userId,

@@ -4,7 +4,7 @@ import {
   type AccountInsertSQLite,
   type CategoryInsertSQLite
 } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
+import { db } from '@/system/powersync/system'
 import { DEFAULT_ACCOUNTS, DEFAULT_CATEGORIES } from '../../const/default-data'
 
 /**

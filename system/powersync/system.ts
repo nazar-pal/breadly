@@ -1,7 +1,7 @@
+import { sqliteSchema } from '@/data/client/db-schema'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { wrapPowerSyncWithDrizzle } from '@powersync/drizzle-driver'
 import { PowerSyncDatabase } from '@powersync/react-native'
-import { sqliteSchema } from '../db-schema'
 import { makeSchema } from './utils'
 
 export const dbName = 'powersync_v102.db'

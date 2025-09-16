@@ -7,7 +7,7 @@ import {
   transactions,
   userPreferences
 } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
+import { db } from '@/system/powersync/system'
 import { eq } from 'drizzle-orm'
 
 /**

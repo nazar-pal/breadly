@@ -1,8 +1,8 @@
+import { db } from '@/system/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, asc, eq } from 'drizzle-orm'
 import { accounts, AccountType } from '../db-schema'
-import { db } from '../powersync/system'
 
 export function useGetAccounts({
   userId,

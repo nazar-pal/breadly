@@ -1,6 +1,6 @@
 import { categories } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
 import { calculateMoveOrder } from '@/lib/utils/fractional-ordering'
+import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
 
 /**

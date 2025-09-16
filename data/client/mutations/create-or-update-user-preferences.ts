@@ -1,9 +1,9 @@
 import { asyncTryCatch } from '@/lib/utils/index'
+import { db } from '@/system/powersync/system'
 import { eq } from 'drizzle-orm'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { userPreferences } from '../db-schema'
-import { db } from '../powersync/system'
 
 const userPreferencesInsertSchema = createInsertSchema(userPreferences)
 

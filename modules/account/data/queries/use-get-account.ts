@@ -1,5 +1,5 @@
 import { accounts } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
+import { db } from '@/system/powersync/system'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import { useQuery } from '@powersync/react-native'
 import { and, eq } from 'drizzle-orm'

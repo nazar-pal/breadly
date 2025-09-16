@@ -1,5 +1,5 @@
 import { categories } from '@/data/client/db-schema'
-import { db } from '@/data/client/powersync/system'
+import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
 import { calculateRebalancedOrder } from './calculate-rebalanced-order'
 
