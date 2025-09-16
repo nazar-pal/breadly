@@ -1,7 +1,7 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { useGetUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { ModalCurrencies } from './modal-currencies'
 import { PreferenceItem } from './preference-item'

@@ -7,7 +7,7 @@ import {
   useGetCategories,
   useGetCurrencies
 } from '@/data/client/queries'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { AccountModal } from './inner-modals/modal-account-select'

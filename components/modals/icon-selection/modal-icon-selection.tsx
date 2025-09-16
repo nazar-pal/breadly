@@ -6,7 +6,7 @@ import {
   useCategoryFormModalActions,
   useCategoryFormModalState
 } from '@/lib/storage/category-form-modal-store'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

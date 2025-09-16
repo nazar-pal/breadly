@@ -1,6 +1,6 @@
 import { Text } from '@/components/ui/text'
 import { AccountDetailsScreen, useGetAccount } from '@/modules/account/'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import { useLocalSearchParams } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'

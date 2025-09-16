@@ -1,6 +1,6 @@
 import { OperationListItem } from '@/components/operation-list-item'
 import { useGetTransactions } from '@/data/client/queries'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import { LegendList } from '@legendapp/list'
 import { Link } from 'expo-router'
 import React from 'react'

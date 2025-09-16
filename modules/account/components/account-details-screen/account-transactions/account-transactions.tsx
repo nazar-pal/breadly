@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/text'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
 import { useGetAccountTransactions } from '../../../data'

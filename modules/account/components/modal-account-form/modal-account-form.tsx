@@ -1,5 +1,5 @@
 import { Modal } from '@/components/modals'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { createAccount, updateAccount } from '../../data'
 import { useAccountModalActions, useAccountModalState } from '../../store'

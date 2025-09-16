@@ -1,7 +1,7 @@
 import { categories as categoriesTable } from '@/data/client/db-schema'
 import { useGetCategories } from '@/data/client/queries'
 import { useCategoryType } from '@/lib/hooks'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import { InferSelectModel } from 'drizzle-orm'
 
 export interface CategoryCurrencyTotal {

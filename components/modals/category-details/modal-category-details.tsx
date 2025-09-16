@@ -8,7 +8,7 @@ import {
   useCategoryDetailsActions,
   useCategoryDetailsState
 } from '@/lib/storage/category-details-store'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { ScrollView } from 'react-native'
 import { Modal } from '../modal'

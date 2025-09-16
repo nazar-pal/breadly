@@ -1,5 +1,5 @@
 import { AccountType } from '@/data/client/db-schema'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'

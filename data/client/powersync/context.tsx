@@ -1,12 +1,12 @@
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
-import { useUserSession } from '@/modules/session-and-migration'
-import { UserSessionLoading } from '@/modules/session-and-migration/components/user-session-loading'
-import { migrateGuestDataToAuthenticatedUser } from '@/modules/session-and-migration/data/mutations'
+import { useUserSession } from '@/system/session-and-migration'
+import { UserSessionLoading } from '@/system/session-and-migration/components/user-session-loading'
+import { migrateGuestDataToAuthenticatedUser } from '@/system/session-and-migration/data/mutations'
 import {
   useUserSessionActions,
   useUserSessionInitializingState
-} from '@/modules/session-and-migration/store'
-import { seedDefaultDataForGuestUser } from '@/modules/session-and-migration/utils/seed-default-data-for-guest-user'
+} from '@/system/session-and-migration/store'
+import { seedDefaultDataForGuestUser } from '@/system/session-and-migration/utils/seed-default-data-for-guest-user'
 import { PowerSyncContext } from '@powersync/react'
 import { createBaseLogger, LogLevel } from '@powersync/react-native'
 import React from 'react'

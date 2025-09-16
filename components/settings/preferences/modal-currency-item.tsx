@@ -3,7 +3,7 @@ import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
 import { createOrUpdateUserPreferences } from '@/data/client/mutations'
 import { cn } from '@/lib/utils'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { Pressable, View } from 'react-native'
 

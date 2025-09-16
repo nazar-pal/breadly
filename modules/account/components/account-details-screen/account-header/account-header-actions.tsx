@@ -1,6 +1,6 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { cn } from '@/lib/utils'
-import { useUserSession } from '@/modules/session-and-migration'
+import { useUserSession } from '@/system/session-and-migration'
 import { useRouter } from 'expo-router'
 import React from 'react'
 import { Alert, Pressable, View } from 'react-native'
