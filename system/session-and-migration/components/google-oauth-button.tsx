@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { isClerkAPIResponseError, useSSO } from '@clerk/clerk-expo'
 import * as AuthSession from 'expo-auth-session'
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState } from 'react'
-import { Image, Text, View } from 'react-native'
+import { Image, View } from 'react-native'
 import { useWarmUpBrowser } from '../hooks'
 
 // Handle any pending authentication sessions
@@ -107,21 +108,21 @@ export function GoogleOAuthButton() {
 
   return (
     <>
-      <Text className="mb-4 text-lg font-semibold text-foreground">
+      <Text variant="large" className="mb-4">
         Sign in to save your data
       </Text>
 
       <Button
         variant="outline"
         onPress={handleSignInWithGoogle}
-        className="mb-4 flex-row items-center gap-3 rounded-lg border-border/60 bg-card py-4 shadow-sm active:scale-[0.98] active:bg-accent"
+        className="mb-4 h-11 flex-row items-center justify-center gap-3 rounded-lg border-border/60 bg-card shadow-sm active:scale-[0.98] active:bg-accent"
       >
         <Image
           source={require('@/assets/images/google-icon.png')}
           className="h-5 w-5"
           resizeMode="contain"
         />
-        <Text className="text-base text-foreground">Continue with Google</Text>
+        <Text>Continue with Google</Text>
       </Button>
 
       {/* Error Message */}
