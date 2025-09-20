@@ -7,7 +7,7 @@ import { Slot } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS } from 'react-native-reanimated'
+import { scheduleOnRN } from 'react-native-worklets'
 
 function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
   const { navigatePrevious, navigateNext } = useCategoriesDateRangeActions()
@@ -24,10 +24,10 @@ function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
       if (Math.abs(velocityX) > 200) {
         if (translationX > 30) {
           // Swipe right - go to previous period
-          runOnJS(navigatePrevious)()
+          scheduleOnRN(navigatePrevious)
         } else if (translationX < -30) {
           // Swipe left - go to next period
-          runOnJS(navigateNext)()
+          scheduleOnRN(navigateNext)
         }
       }
     })
