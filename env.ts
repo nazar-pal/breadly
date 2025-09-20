@@ -25,6 +25,10 @@ export const env = createEnv({
     // PowerSync WebSocket Secure URL
     EXPO_PUBLIC_POWERSYNC_WSS: z.string().min(1),
 
+    // RevenueCat
+    EXPO_PUBLIC_REVENUECAT_IOS_API_KEY: z.string().min(1),
+    EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY: z.string().min(1),
+
     // Ordering
     EXPO_PUBLIC_SORT_ORDER_INCREMENT: z.coerce
       .number()
@@ -50,6 +54,12 @@ export const env = createEnv({
 
     // PowerSync WebSocket Secure URL
     EXPO_PUBLIC_POWERSYNC_WSS: process.env.EXPO_PUBLIC_POWERSYNC_WSS,
+
+    // RevenueCat
+    EXPO_PUBLIC_REVENUECAT_IOS_API_KEY:
+      process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+    EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY:
+      process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
 
     // Ordering
     EXPO_PUBLIC_SORT_ORDER_INCREMENT:

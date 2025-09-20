@@ -7,6 +7,7 @@ import { env } from '@/env'
 import { NAV_THEME } from '@/lib/theme'
 import { ModalAccountForm } from '@/modules/account/'
 import { PowerSyncContextProvider } from '@/system/powersync/context'
+import { PurchasesInitializer } from '@/system/purchases/purchases-initializer'
 import { UserSessionInitializer } from '@/system/session-and-migration'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
@@ -57,18 +58,29 @@ export default function RootLayout() {
           >
             <ClerkLoaded>
               <UserSessionInitializer>
+                <PurchasesInitializer />
                 <PowerSyncContextProvider>
                   <GestureHandlerRootView className="flex-1">
                     <StatusBar
                       style={colorScheme === 'dark' ? 'light' : 'dark'}
                     />
                     <Stack
-                      screenOptions={{ headerShown: false, animation: 'none' }}
+                      screenOptions={{
+                        headerShown: false,
+                        animation: 'none'
+                      }}
                     >
                       <Stack.Screen name="(tabs)" />
                       <Stack.Screen name="transactions" />
                       <Stack.Screen name="accounts" />
                       <Stack.Screen name="categories" />
+                      <Stack.Screen
+                        name="paywall"
+                        options={{
+                          presentation: 'modal',
+                          animation: 'slide_from_bottom'
+                        }}
+                      />
                       <Stack.Screen
                         name="test"
                         options={{

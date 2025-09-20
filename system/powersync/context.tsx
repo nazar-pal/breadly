@@ -1,4 +1,5 @@
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
+import { usePurchasesStore } from '@/system/purchases'
 import { useUserSession } from '@/system/session-and-migration'
 import { UserSessionLoading } from '@/system/session-and-migration/components/user-session-loading'
 import { migrateGuestDataToAuthenticatedUser } from '@/system/session-and-migration/data/mutations'
@@ -23,11 +24,13 @@ export function PowerSyncContextProvider({
   const [connector] = React.useState(new Connector())
 
   const { userId, isGuest } = useUserSession()
+  const { isPremium, isCustomerInfoFresh } = usePurchasesStore()
   const {
     syncEnabled,
     needToReplaceGuestWithAuthUserId,
     needToSeedDefaultDataForGuestUser,
     guestId,
+    setSyncEnabled,
     removeGuestId,
     setNeedToReplaceGuestWithAuthUserId,
     setNeedToSeedDefaultDataForGuestUser
@@ -58,6 +61,12 @@ export function PowerSyncContextProvider({
     }
 
     async function handleAuthed() {
+      // Only toggle syncEnabled when we have fresh network-verified purchases info
+      if (isCustomerInfoFresh) {
+        if (isPremium && !syncEnabled) setSyncEnabled(true)
+        else if (!isPremium && syncEnabled) setSyncEnabled(false)
+      }
+
       if (needToReplaceGuestWithAuthUserId) {
         if (guestId) {
           await migrateGuestDataToAuthenticatedUser(guestId, userId)
@@ -112,7 +121,10 @@ export function PowerSyncContextProvider({
     removeGuestId,
     setNeedToReplaceGuestWithAuthUserId,
     setNeedToSeedDefaultDataForGuestUser,
-    setIsMigrating
+    setIsMigrating,
+    setSyncEnabled,
+    isPremium,
+    isCustomerInfoFresh
   ])
 
   if (
