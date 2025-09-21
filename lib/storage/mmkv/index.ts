@@ -1,6 +1,6 @@
 import { MMKV } from 'react-native-mmkv'
 
-const storage = new MMKV({ id: 'app-storage-v1' })
+export const storage = new MMKV({ id: 'app-storage-v1' })
 
 export const LocalStore = {
   getItem(key: string): string | null {

@@ -451,7 +451,9 @@ function EntityItem({
             variant="ghost"
             className="flex-1 flex-row items-center justify-start p-2"
             onPress={() =>
-              router.push(`/db/${entityType}/${encodeURIComponent(name)}`)
+              router.push(
+                `/dev-only/db/${entityType}/${encodeURIComponent(name)}`
+              )
             }
           >
             {groupNumber != null ? (
