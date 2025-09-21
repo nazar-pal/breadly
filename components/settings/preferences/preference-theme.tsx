@@ -35,12 +35,20 @@ export function ThemePreferences() {
             }
             className="gap-0"
           >
-            <TabsList className="mr-0">
-              <TabsTrigger value="light" className="px-2 py-1.5">
-                <Icon name="Sun" size={16} />
+            <TabsList className="mr-0 h-10 border border-border/20 bg-muted/60">
+              <TabsTrigger value="light" className="px-3 py-1.5">
+                <Icon
+                  name="Sun"
+                  size={18}
+                  className="text-amber-500 dark:text-amber-400"
+                />
               </TabsTrigger>
-              <TabsTrigger value="dark" className="px-2 py-1.5">
-                <Icon name="Moon" size={16} />
+              <TabsTrigger value="dark" className="px-3 py-1.5">
+                <Icon
+                  name="Moon"
+                  size={18}
+                  className="text-slate-600 dark:text-slate-300"
+                />
               </TabsTrigger>
             </TabsList>
           </Tabs>
