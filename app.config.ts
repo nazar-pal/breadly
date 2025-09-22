@@ -84,5 +84,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       projectId: '36c0d713-fd76-42c0-99ba-9cbef6a99863'
     }
   },
+  updates: {
+    url: 'https://u.expo.dev/36c0d713-fd76-42c0-99ba-9cbef6a99863'
+  },
+  runtimeVersion: {
+    policy: 'appVersion'
+  },
   owner: 'devnazar'
 })
