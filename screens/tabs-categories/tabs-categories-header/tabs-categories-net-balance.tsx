@@ -1,14 +1,12 @@
+import { Text } from '@/components/ui/text'
 import { useSumTransactions } from '@/data/client/queries'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { formatCurrencyWithSign } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
-import { useTheme } from '@react-navigation/native'
-import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 export function TabsCategoriesNetBalance() {
   const { userId } = useUserSession()
-  const { colors } = useTheme()
 
   // Use enhanced date range state from categories store
   const { dateRange } = useCategoriesDateRangeState()
@@ -59,7 +57,7 @@ export function TabsCategoriesNetBalance() {
       const piece = (
         <Text
           key={`${n.currencyId}-${idx}`}
-          style={{ color: n.amount < 0 ? colors.notification : colors.primary }}
+          className={n.amount < 0 ? 'text-destructive' : 'text-primary'}
         >
           {formatCurrencyWithSign(n.amount, n.currencyId)}
         </Text>
@@ -67,7 +65,7 @@ export function TabsCategoriesNetBalance() {
       return idx === 0
         ? [piece]
         : [
-            <Text key={`sep-${idx}`} style={{ color: colors.text }}>
+            <Text key={`sep-${idx}`} className="text-foreground">
               {', '}
             </Text>,
             piece
@@ -78,7 +76,7 @@ export function TabsCategoriesNetBalance() {
   return (
     <View className="flex-1">
       <Text className="mb-0.5 text-xs text-muted-foreground">Net Balance</Text>
-      <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: 'bold' }}>
+      <Text numberOfLines={1} className="text-2xl font-bold">
         {renderNetPieces()}
       </Text>
     </View>
