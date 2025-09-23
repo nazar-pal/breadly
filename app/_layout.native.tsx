@@ -68,6 +68,10 @@ Sentry.init({
   sendDefaultPii: true
 })
 
+export const unstable_settings = {
+  anchor: '(tabs)'
+}
+
 export default Sentry.wrap(function RootLayoutNative() {
   const hasMounted = React.useRef(false)
   const { colorScheme } = useColorScheme()
