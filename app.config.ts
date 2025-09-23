@@ -72,7 +72,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     'expo-font',
     'expo-web-browser',
-    'expo-secure-store'
+    'expo-secure-store',
+    [
+      '@sentry/react-native/expo',
+      {
+        url: 'https://sentry.io/',
+        note: 'Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.',
+        project: 'breadly',
+        organization: 'no-e10'
+      }
+    ]
   ],
   experiments: {
     typedRoutes: true,

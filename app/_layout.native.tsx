@@ -14,22 +14,61 @@ import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ThemeProvider } from '@react-navigation/native'
 import { PortalHost } from '@rn-primitives/portal'
+import * as Sentry from '@sentry/react-native'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { router, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme } from 'nativewind'
 import * as React from 'react'
-import { Platform } from 'react-native'
+import { Platform, Pressable, Text, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import './global.css'
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary
-} from 'expo-router'
+import type { ErrorBoundaryProps } from 'expo-router'
 
-export default function RootLayout() {
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  React.useEffect(() => {
+    Sentry.captureException(error)
+  }, [error])
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <Text style={{ fontSize: 18, fontWeight: '600' }}>
+        Something went wrong
+      </Text>
+      <Text style={{ marginTop: 8, opacity: 0.8 }}>
+        {String(error?.message ?? error)}
+      </Text>
+      <Pressable
+        onPress={retry}
+        style={{
+          marginTop: 16,
+          paddingHorizontal: 16,
+          paddingVertical: 10,
+          backgroundColor: '#000',
+          borderRadius: 8
+        }}
+      >
+        <Text style={{ color: '#fff' }}>Try again</Text>
+      </Pressable>
+    </View>
+  )
+}
+
+Sentry.init({
+  dsn: env.EXPO_PUBLIC_SENTRY_DSN,
+  sendDefaultPii: true
+})
+
+export default Sentry.wrap(function RootLayoutNative() {
   const hasMounted = React.useRef(false)
   const { colorScheme } = useColorScheme()
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
@@ -116,7 +155,7 @@ export default function RootLayout() {
       </QueryClientProvider>
     </SafeAreaProvider>
   )
-}
+})
 
 /* React-Native work-around for layout effect on web build */
 const useIsomorphicLayoutEffect =

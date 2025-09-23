@@ -34,7 +34,10 @@ export const env = createEnv({
       .number()
       .int()
       .positive()
-      .default(1000)
+      .default(1000),
+
+    // Sentry
+    EXPO_PUBLIC_SENTRY_DSN: z.string().min(1)
   },
 
   runtimeEnv: {
@@ -63,7 +66,10 @@ export const env = createEnv({
 
     // Ordering
     EXPO_PUBLIC_SORT_ORDER_INCREMENT:
-      process.env.EXPO_PUBLIC_SORT_ORDER_INCREMENT
+      process.env.EXPO_PUBLIC_SORT_ORDER_INCREMENT,
+
+    // Sentry
+    EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN
   },
 
   emptyStringAsUndefined: true
