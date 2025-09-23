@@ -16,6 +16,7 @@ import { ThemeProvider } from '@react-navigation/native'
 import { PortalHost } from '@rn-primitives/portal'
 import * as Sentry from '@sentry/react-native'
 import { QueryClientProvider } from '@tanstack/react-query'
+import type { ErrorBoundaryProps } from 'expo-router'
 import { router, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme } from 'nativewind'
@@ -25,8 +26,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import 'react-native-reanimated'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import './global.css'
-
-import type { ErrorBoundaryProps } from 'expo-router'
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   React.useEffect(() => {
