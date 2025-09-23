@@ -12,7 +12,9 @@ export const env = createEnv({
     // Neon DB owner connection string
     DATABASE_URL: z.string().min(1),
     // Neon DB "authenticated" role connection string
-    DATABASE_AUTHENTICATED_URL: z.string().min(1)
+    DATABASE_AUTHENTICATED_URL: z.string().min(1),
+
+    SENTRY_AUTH_TOKEN: z.string().min(1)
   },
 
   client: {
