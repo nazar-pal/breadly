@@ -71,7 +71,8 @@ export const env = createEnv({
       process.env.EXPO_PUBLIC_SORT_ORDER_INCREMENT,
 
     // Sentry
-    EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN
+    EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN
   },
 
   emptyStringAsUndefined: true
