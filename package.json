@@ -9,6 +9,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "oau": "eas update --channel production --environment production && npx sentry-expo-upload-sourcemaps dist",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md}\"",

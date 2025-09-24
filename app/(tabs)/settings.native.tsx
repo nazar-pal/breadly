@@ -10,7 +10,11 @@ import { usePurchasesStore } from '@/system/purchases'
 import { GoogleOAuthButton, UserInfo } from '@/system/session-and-migration'
 import { DataLossWarning } from '@/system/session-and-migration/components/data-loss-warning'
 import { SignedIn, SignedOut, useAuth } from '@clerk/clerk-expo'
+import * as Sentry from '@sentry/react-native'
 import { Link, router, type Href } from 'expo-router'
+import * as Updates from 'expo-updates'
+import { useEffect, useState } from 'react'
+
 import { ScrollView, Switch, View } from 'react-native'
 
 export default function SettingsScreen() {
@@ -35,16 +39,19 @@ export default function SettingsScreen() {
 
           <PowerSyncStatus />
           <Preferences />
+          <UpdatesStatusCard />
 
-          <Card className="mt-6">
-            <CardContent className="items-center justify-center py-4">
-              <Link href="/test" asChild>
-                <Text className="text-center text-muted-foreground">
-                  🧪 Test Connectivity
-                </Text>
-              </Link>
-            </CardContent>
-          </Card>
+          {__DEV__ && (
+            <Card className="mt-6">
+              <CardContent className="items-center justify-center py-4">
+                <Link href="/test" asChild>
+                  <Text className="text-center text-muted-foreground">
+                    🧪 Test Connectivity
+                  </Text>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -189,5 +196,156 @@ function AccountStatusCard() {
         </CardContent>
       </Card>
     </>
+  )
+}
+
+function UpdatesStatusCard() {
+  const updates = Updates.useUpdates()
+  const { isUpdateAvailable, isUpdatePending } = updates
+
+  const isDisabled = __DEV__ || !Updates.isEnabled
+
+  const [isChecking, setIsChecking] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
+  const [isReloading, setIsReloading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [lastCheckedAt, setLastCheckedAt] = useState<Date | null>(null)
+
+  const handleCheck = async () => {
+    if (isDisabled || isChecking) return
+    setErrorMessage(null)
+    setIsChecking(true)
+    try {
+      await Updates.checkForUpdateAsync()
+      setLastCheckedAt(new Date())
+    } catch (err) {
+      Sentry.captureException(err)
+      const message = (err as any)?.message ?? 'Failed to check for updates'
+      setErrorMessage(message)
+    } finally {
+      setIsChecking(false)
+    }
+  }
+
+  const handleFetch = async () => {
+    if (isDisabled || isFetching) return
+    setErrorMessage(null)
+    setIsFetching(true)
+    try {
+      await Updates.fetchUpdateAsync()
+    } catch (err) {
+      Sentry.captureException(err)
+      const message = (err as any)?.message ?? 'Failed to download update'
+      setErrorMessage(message)
+    } finally {
+      setIsFetching(false)
+    }
+  }
+
+  const handleReload = async () => {
+    if (isDisabled || isReloading) return
+    setErrorMessage(null)
+    setIsReloading(true)
+    try {
+      await Updates.reloadAsync()
+    } catch (err) {
+      Sentry.captureException(err)
+      const message = (err as any)?.message ?? 'Failed to restart'
+      setErrorMessage(message)
+      setIsReloading(false)
+    }
+  }
+
+  useEffect(() => {
+    let isCancelled = false
+    const run = async () => {
+      if (isDisabled) return
+      setErrorMessage(null)
+      setIsChecking(true)
+      try {
+        await Updates.checkForUpdateAsync()
+        if (!isCancelled) setLastCheckedAt(new Date())
+      } catch (err) {
+        Sentry.captureException(err)
+        const message = (err as any)?.message ?? 'Failed to check for updates'
+        if (!isCancelled) setErrorMessage(message)
+      } finally {
+        if (!isCancelled) setIsChecking(false)
+      }
+    }
+    run()
+    return () => {
+      isCancelled = true
+    }
+  }, [isDisabled])
+
+  if (isDisabled) return null
+
+  const isBusy = isChecking || isFetching || isReloading
+
+  return (
+    <Card className="mt-4">
+      <CardHeader className="pb-2">
+        <CardTitle>App Updates</CardTitle>
+        {!isUpdateAvailable && !isUpdatePending ? (
+          <Text variant="muted">{"You're up to date"}</Text>
+        ) : null}
+      </CardHeader>
+      <CardContent className="pt-2">
+        {isUpdatePending ? (
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-4">
+              <Text className="text-base font-medium">
+                Update ready to install
+              </Text>
+              <Text className="mt-1 text-sm text-muted-foreground">
+                Restart the app to apply the latest version.
+              </Text>
+            </View>
+            <Button className="h-10" disabled={isBusy} onPress={handleReload}>
+              <Text>Restart now</Text>
+            </Button>
+          </View>
+        ) : isUpdateAvailable ? (
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-4">
+              <Text className="text-base font-medium">Update available</Text>
+              <Text className="mt-1 text-sm text-muted-foreground">
+                Download the latest version in the background.
+              </Text>
+            </View>
+            <Button className="h-10" disabled={isBusy} onPress={handleFetch}>
+              <Text>Download</Text>
+            </Button>
+          </View>
+        ) : (
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-4">
+              <Text className="text-base font-medium">
+                {"You're up to date"}
+              </Text>
+              {lastCheckedAt ? (
+                <Text className="mt-1 text-sm text-muted-foreground">
+                  Checked {lastCheckedAt.toLocaleString()}
+                </Text>
+              ) : null}
+            </View>
+            <Button
+              className="h-9"
+              variant="outline"
+              disabled={isBusy}
+              onPress={handleCheck}
+            >
+              <Text>Check again</Text>
+            </Button>
+          </View>
+        )}
+        {errorMessage ? (
+          <Text className="mt-3 text-xs text-red-600 dark:text-red-400">
+            {errorMessage}
+          </Text>
+        ) : null}
+      </CardContent>
+    </Card>
   )
 }
