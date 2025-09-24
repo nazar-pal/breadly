@@ -94,7 +94,7 @@ export function Modal({
   backdropOpacity = 0.1,
   animationDuration = ANIMATION_CONFIG.CLOSE_DURATION,
   closeThreshold = ANIMATION_CONFIG.DISMISS_THRESHOLD,
-  additionalSafeAreaPadding = 16,
+  additionalSafeAreaPadding = 0,
   backdropAccessibilityLabel = 'Close modal',
   // Spread all other native Modal props
   ...nativeModalProps
