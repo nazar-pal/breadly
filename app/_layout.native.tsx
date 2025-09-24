@@ -16,11 +16,13 @@ import { ThemeProvider } from '@react-navigation/native'
 import { PortalHost } from '@rn-primitives/portal'
 import * as Sentry from '@sentry/react-native'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { isRunningInExpoGo } from 'expo'
 import type { ErrorBoundaryProps } from 'expo-router'
-import { router, Stack } from 'expo-router'
+import { router, Stack, useNavigationContainerRef } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme } from 'nativewind'
 import * as React from 'react'
+import { useEffect } from 'react'
 import { Platform, Pressable, Text, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import 'react-native-reanimated'
@@ -63,6 +65,10 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   )
 }
 
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: !isRunningInExpoGo()
+})
+
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
   sendDefaultPii: true
@@ -72,7 +78,7 @@ export const unstable_settings = {
   anchor: '(tabs)'
 }
 
-export default Sentry.wrap(function RootLayoutNative() {
+function RootLayoutNative() {
   const hasMounted = React.useRef(false)
   const { colorScheme } = useColorScheme()
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
@@ -87,6 +93,13 @@ export default Sentry.wrap(function RootLayoutNative() {
     setIsColorSchemeLoaded(true)
     hasMounted.current = true
   }, [])
+
+  const ref = useNavigationContainerRef()
+  useEffect(() => {
+    if (ref?.current) {
+      navigationIntegration.registerNavigationContainer(ref)
+    }
+  }, [ref])
 
   if (!isColorSchemeLoaded) return null
 
@@ -159,7 +172,9 @@ export default Sentry.wrap(function RootLayoutNative() {
       </QueryClientProvider>
     </SafeAreaProvider>
   )
-})
+}
+
+export default Sentry.wrap(RootLayoutNative)
 
 /* React-Native work-around for layout effect on web build */
 const useIsomorphicLayoutEffect =
