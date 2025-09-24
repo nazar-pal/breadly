@@ -35,11 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       NSMicrophoneUsageDescription:
         'Breadly uses the microphone to capture your voice inputs for adding transactions.'
     },
-    icon: {
-      dark: './assets/icons/ios-dark.png',
-      light: './assets/icons/ios-light.png',
-      tinted: './assets/icons/ios-tinted.png'
-    }
+    icon: './assets/icons/ios.icon'
   },
   android: {
     adaptiveIcon: {
