@@ -112,19 +112,19 @@ export function CalculatorWithForm({
   }
 
   return (
-    <View className="p-4 pb-0">
+    <View className="px-4">
       {/* Header */}
       <View className="mb-2">
         {/* Category and Account Selection */}
         <View className="mb-4 flex-row gap-2">
           {/* Category Selector */}
           <Pressable
-            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-3 shadow-sm active:bg-muted/50"
+            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
             onPress={() => setShowCategoryModal(true)}
           >
             <View className="flex-1 flex-row items-center">
-              <View className="mr-2 rounded-lg bg-primary/10 p-1.5">
-                <Icon name="Tag" size={16} className="text-primary" />
+              <View className="mr-2 rounded-lg bg-primary/10 p-1">
+                <Icon name="Tag" size={14} className="text-primary" />
               </View>
               <View className="flex-1">
                 <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -140,21 +140,21 @@ export function CalculatorWithForm({
             </View>
             <Icon
               name="ChevronDown"
-              size={16}
+              size={14}
               className="ml-1 text-muted-foreground"
             />
           </Pressable>
 
           {/* Account/Currency Selector */}
           <Pressable
-            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-3 shadow-sm active:bg-muted/50"
+            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
             onPress={() => setShowAccountModal(true)}
           >
             <View className="flex-1 flex-row items-center">
-              <View className="mr-2 rounded-lg bg-primary/10 p-1.5">
+              <View className="mr-2 rounded-lg bg-primary/10 p-1">
                 <Icon
                   name={selectedAccount ? 'CreditCard' : 'DollarSign'}
-                  size={16}
+                  size={14}
                   className="text-primary"
                 />
               </View>
@@ -179,7 +179,7 @@ export function CalculatorWithForm({
             </View>
             <Icon
               name="ChevronDown"
-              size={16}
+              size={14}
               className="ml-1 text-muted-foreground"
             />
           </Pressable>

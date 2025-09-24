@@ -6,20 +6,19 @@ interface Props {
   label: string | React.ReactNode
   onPress: () => void
   variant?: 'default' | 'operation' | 'equal' | 'special'
-  isWide?: boolean
+  accessibilityLabel?: string
 }
 
 export function CalculatorButton({
   label,
   onPress,
   variant = 'default',
-  isWide = false
+  accessibilityLabel
 }: Props) {
-  const getButtonClasses = () => {
-    const baseClasses =
-      'h-[60px] items-center justify-center rounded-2xl shadow-sm'
-    const widthClass = isWide ? 'flex-[2]' : 'flex-1'
+  const baseClasses =
+    'h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-xl shadow-sm'
 
+  const getButtonClasses = () => {
     let variantClasses = ''
     switch (variant) {
       case 'operation':
@@ -32,14 +31,14 @@ export function CalculatorButton({
         variantClasses = 'bg-orange-500/80 active:bg-orange-500/20'
         break
       default:
-        variantClasses = 'bg-card active:bg-muted'
+        variantClasses = 'bg-secondary/70 active:bg-muted'
     }
 
-    return `${baseClasses} ${widthClass} ${variantClasses}`
+    return `${baseClasses} ${variantClasses}`
   }
 
   const getTextClasses = () => {
-    const baseClasses = 'text-xl font-semibold'
+    const baseClasses = 'text-lg font-semibold'
 
     let colorClass = ''
     switch (variant) {
@@ -60,8 +59,16 @@ export function CalculatorButton({
   }
 
   return (
-    <Pressable className={getButtonClasses()} onPress={onPress}>
-      <Text className={getTextClasses()}>{label}</Text>
+    <Pressable
+      accessibilityLabel={accessibilityLabel}
+      className={getButtonClasses()}
+      onPress={onPress}
+    >
+      {typeof label === 'string' ? (
+        <Text className={getTextClasses()}>{label}</Text>
+      ) : (
+        label
+      )}
     </Pressable>
   )
 }
