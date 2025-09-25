@@ -21,6 +21,8 @@ export const env = createEnv({
     // API
     EXPO_PUBLIC_API_URL: z.string().optional(),
 
+    EXPO_PUBLIC_APP_VARIANT: z.enum(['development', 'preview', 'production']),
+
     // Clerk
     EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 
@@ -45,6 +47,8 @@ export const env = createEnv({
   runtimeEnv: {
     // API
     EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+
+    EXPO_PUBLIC_APP_VARIANT: process.env.EXPO_PUBLIC_APP_VARIANT,
 
     // Clerk
     EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:

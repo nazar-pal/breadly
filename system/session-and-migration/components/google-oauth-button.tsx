@@ -118,7 +118,7 @@ export function GoogleOAuthButton() {
         className="mb-4 h-11 flex-row items-center justify-center gap-3 rounded-lg border-border/60 bg-card shadow-sm active:scale-[0.98] active:bg-accent"
       >
         <Image
-          source={require('@/assets/images/google-icon.png')}
+          source={require('@/assets/icons/google-icon.png')}
           className="h-5 w-5"
           resizeMode="contain"
         />

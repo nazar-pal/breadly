@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
-const IS_DEV = process.env.APP_VARIANT === 'development'
-const IS_PREVIEW = process.env.APP_VARIANT === 'preview'
+const IS_DEV = process.env.EXPO_PUBLIC_APP_VARIANT === 'development'
+const IS_PREVIEW = process.env.EXPO_PUBLIC_APP_VARIANT === 'preview'
 
 const getUniqueIdentifier = () => {
   if (IS_DEV) return 'com.devnazar.breadly.dev'
@@ -19,9 +19,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: getAppName(),
   slug: 'breadly-expense-tracker',
-  version: '1.0.0',
+  version: '1.0.1',
   orientation: 'portrait',
-  icon: './assets/images/icon.png',
+  icon: './assets/icons/adaptive-icon.png',
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -50,19 +50,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: 'metro',
     output: 'server',
-    favicon: './assets/images/favicon.png'
+    favicon: './assets/icons/favicon.ico'
   },
   plugins: [
     'expo-router',
     [
       'expo-splash-screen',
       {
-        image: './assets/icons/splash-icon-dark.png',
+        image: './assets/icons/splash-icon.png',
         imageWidth: 200,
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
         dark: {
-          image: './assets/icons/splash-icon-light.png',
+          image: './assets/icons/splash-icon.png',
           backgroundColor: '#000000'
         }
       }

@@ -20,7 +20,9 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
-  sendDefaultPii: true
+  sendDefaultPii: true,
+  enabled: env.EXPO_PUBLIC_APP_VARIANT !== 'development',
+  environment: env.EXPO_PUBLIC_APP_VARIANT
 })
 
 export default Sentry.wrap(function RootLayoutWeb() {
