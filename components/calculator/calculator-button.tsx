@@ -25,28 +25,31 @@ export function CalculatorButton({
   disabled = false
 }: Props) {
   const baseClasses =
-    'h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-xl shadow-sm'
+    'h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-xl shadow-sm active:scale-95 transition-all duration-150'
 
   const getButtonClasses = () => {
     let variantClasses = ''
     switch (variant) {
       case 'operation':
-        variantClasses = 'bg-primary/80 active:bg-primary/20'
+        variantClasses = 'bg-primary active:bg-primary/90'
         break
       case 'equal':
         variantClasses = 'bg-primary active:bg-primary/90'
         break
       case 'special':
-        variantClasses = 'bg-orange-500/80 active:bg-orange-500/20'
+        variantClasses = 'bg-orange-500 active:bg-orange-600'
         break
       case 'success':
         variantClasses = 'bg-emerald-500 active:bg-emerald-600'
         break
       case 'success-disabled':
-        variantClasses = 'bg-emerald-500/40'
+        variantClasses = 'bg-emerald-500/30'
+        break
+      case 'control':
+        variantClasses = 'bg-secondary/70 dark:bg-muted/60 active:bg-muted'
         break
       default:
-        variantClasses = 'bg-secondary/70 active:bg-muted'
+        variantClasses = 'bg-secondary/70 dark:bg-muted/60 active:bg-muted'
     }
 
     const disabledClasses =
