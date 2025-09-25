@@ -71,7 +71,9 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 
 Sentry.init({
   dsn: env.EXPO_PUBLIC_SENTRY_DSN,
-  sendDefaultPii: true
+  sendDefaultPii: true,
+  enabled: !__DEV__
+  // environment: __DEV__ ? 'development' : 'production/preview'
 })
 
 export const unstable_settings = {

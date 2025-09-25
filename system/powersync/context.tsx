@@ -8,8 +8,11 @@ import {
   useUserSessionInitializingState
 } from '@/system/session-and-migration/store'
 import { seedDefaultDataForGuestUser } from '@/system/session-and-migration/utils/seed-default-data-for-guest-user'
-import { PowerSyncContext } from '@powersync/react'
-import { createBaseLogger, LogLevel } from '@powersync/react-native'
+import {
+  createBaseLogger,
+  LogLevel,
+  PowerSyncContext
+} from '@powersync/react-native'
 import React from 'react'
 import { Connector } from './connector'
 import { powerSyncDb as db } from './system'

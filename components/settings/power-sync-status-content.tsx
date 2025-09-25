@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut } from '@clerk/clerk-expo'
-import type { SyncStatus } from '@powersync/common'
+import type { SyncStatus } from '@powersync/react-native'
 import { useStatus } from '@powersync/react-native'
 import { format, formatDistanceToNow } from 'date-fns'
 import React from 'react'
