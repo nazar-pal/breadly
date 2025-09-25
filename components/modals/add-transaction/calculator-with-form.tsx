@@ -61,10 +61,6 @@ export function CalculatorWithForm({
       : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
   ).find(c => c.code === selectedCurrencyCode)
 
-  const displayCurrencySymbol = selectedAccount
-    ? (selectedAccount.currency?.symbol ?? '$')
-    : (selectedCurrency?.symbol ?? '$')
-
   const handleParentCategorySelect = (categoryId: string) => {
     setSelectedParentCategoryId(categoryId)
     // Set the parent category as selected by default
@@ -202,7 +198,6 @@ export function CalculatorWithForm({
           (!selectedAccount && !selectedCurrency)
         }
         handleSubmit={handleSubmit}
-        currencySymbol={displayCurrencySymbol}
       />
 
       {/* Modals */}

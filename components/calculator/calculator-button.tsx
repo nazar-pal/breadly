@@ -5,15 +5,24 @@ import { Pressable } from 'react-native'
 interface Props {
   label: string | React.ReactNode
   onPress: () => void
-  variant?: 'default' | 'operation' | 'equal' | 'special'
+  variant?:
+    | 'default'
+    | 'operation'
+    | 'equal'
+    | 'special'
+    | 'success'
+    | 'success-disabled'
+    | 'control'
   accessibilityLabel?: string
+  disabled?: boolean
 }
 
 export function CalculatorButton({
   label,
   onPress,
   variant = 'default',
-  accessibilityLabel
+  accessibilityLabel,
+  disabled = false
 }: Props) {
   const baseClasses =
     'h-[48px] min-w-[48px] flex-1 items-center justify-center rounded-xl shadow-sm'
@@ -30,11 +39,20 @@ export function CalculatorButton({
       case 'special':
         variantClasses = 'bg-orange-500/80 active:bg-orange-500/20'
         break
+      case 'success':
+        variantClasses = 'bg-emerald-500 active:bg-emerald-600'
+        break
+      case 'success-disabled':
+        variantClasses = 'bg-emerald-500/40'
+        break
       default:
         variantClasses = 'bg-secondary/70 active:bg-muted'
     }
 
-    return `${baseClasses} ${variantClasses}`
+    const disabledClasses =
+      disabled && variant !== 'success-disabled' ? ' opacity-50' : ''
+
+    return `${baseClasses} ${variantClasses}${disabledClasses}`
   }
 
   const getTextClasses = () => {
@@ -51,6 +69,12 @@ export function CalculatorButton({
       case 'special':
         colorClass = 'text-primary-foreground'
         break
+      case 'success':
+        colorClass = 'text-primary-foreground'
+        break
+      case 'success-disabled':
+        colorClass = 'text-primary-foreground/60'
+        break
       default:
         colorClass = 'text-foreground'
     }
@@ -63,6 +87,7 @@ export function CalculatorButton({
       accessibilityLabel={accessibilityLabel}
       className={getButtonClasses()}
       onPress={onPress}
+      disabled={disabled}
     >
       {typeof label === 'string' ? (
         <Text className={getTextClasses()}>{label}</Text>

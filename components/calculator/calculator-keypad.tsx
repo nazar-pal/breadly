@@ -8,13 +8,25 @@ interface Props {
   setCurrentInput: React.Dispatch<React.SetStateAction<string>>
   expression: string[]
   setExpression: React.Dispatch<React.SetStateAction<string[]>>
+  onSubmit: () => void
+  showSubmit: boolean
+  submitDisabled?: boolean
+  onPressComment: () => void
+  onPressDate: () => void
+  hasComment: boolean
 }
 
 export function CalculatorKeypad({
   currentInput,
   setCurrentInput,
   expression,
-  setExpression
+  setExpression,
+  onSubmit,
+  showSubmit,
+  submitDisabled = false,
+  onPressComment,
+  onPressDate,
+  hasComment
 }: Props) {
   const [isNewNumber, setIsNewNumber] = useState(true)
 
@@ -52,26 +64,6 @@ export function CalculatorKeypad({
     setIsNewNumber(true)
   }
 
-  const handleParentheses = (paren: '(' | ')') => {
-    if (paren === '(') {
-      if (currentInput === '0' || isNewNumber) {
-        setExpression([...expression, '('])
-      } else {
-        setExpression([...expression, currentInput, '*', '('])
-        setCurrentInput('0')
-        setIsNewNumber(true)
-      }
-    } else {
-      if (currentInput !== '0') {
-        setExpression([...expression, currentInput, ')'])
-        setCurrentInput('0')
-        setIsNewNumber(true)
-      } else {
-        setExpression([...expression, ')'])
-      }
-    }
-  }
-
   const handleEquals = () => {
     if (expression.length > 0) {
       const fullExpression = [...expression, currentInput]
@@ -81,12 +73,6 @@ export function CalculatorKeypad({
       setIsNewNumber(true)
     }
   }
-
-  // const handleClear = () => {
-  //   setCurrentInput('0')
-  //   setExpression([])
-  //   setIsNewNumber(true)
-  // }
 
   const handleBackspace = () => {
     if (isNewNumber || currentInput.length === 0) {
@@ -154,9 +140,16 @@ export function CalculatorKeypad({
         <CalculatorButton label="5" onPress={() => handleNumberPress('5')} />
         <CalculatorButton label="6" onPress={() => handleNumberPress('6')} />
         <CalculatorButton
-          label="("
-          onPress={() => handleParentheses('(')}
-          variant="operation"
+          label={
+            <View className="relative">
+              <Icon name="MessageSquare" size={20} className="text-primary" />
+              {hasComment && (
+                <View className="absolute right-0 top-0 h-1.5 w-1.5 rounded-full bg-primary" />
+              )}
+            </View>
+          }
+          onPress={onPressComment}
+          accessibilityLabel="Add comment"
         />
       </View>
 
@@ -170,9 +163,9 @@ export function CalculatorKeypad({
         <CalculatorButton label="2" onPress={() => handleNumberPress('2')} />
         <CalculatorButton label="3" onPress={() => handleNumberPress('3')} />
         <CalculatorButton
-          label=")"
-          onPress={() => handleParentheses(')')}
-          variant="operation"
+          label={<Icon name="Calendar" size={20} className="text-primary" />}
+          onPress={onPressDate}
+          accessibilityLabel="Change date"
         />
       </View>
 
@@ -185,7 +178,23 @@ export function CalculatorKeypad({
         <CalculatorButton label="00" onPress={handleDoubleZero} />
         <CalculatorButton label="0" onPress={() => handleNumberPress('0')} />
         <CalculatorButton label="." onPress={handleDecimal} />
-        <CalculatorButton label="=" onPress={handleEquals} variant="special" />
+        {showSubmit ? (
+          <CalculatorButton
+            label="="
+            onPress={handleEquals}
+            variant="operation"
+          />
+        ) : (
+          <CalculatorButton
+            label={
+              <Icon name="Save" size={20} className="text-primary-foreground" />
+            }
+            onPress={onSubmit}
+            variant={submitDisabled ? 'success-disabled' : 'success'}
+            disabled={submitDisabled}
+            accessibilityLabel="Save"
+          />
+        )}
       </View>
     </View>
   )

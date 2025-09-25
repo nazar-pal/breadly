@@ -6,7 +6,6 @@ interface Props {
   comment: string
   expression: string[]
   currentInput: string
-  currencySymbol?: string
   selectedDate?: Date
 }
 
@@ -14,7 +13,6 @@ export function CalculatorDisplay({
   comment,
   expression,
   currentInput,
-  currencySymbol = '$',
   selectedDate
 }: Props) {
   const getDisplayExpression = (
@@ -30,7 +28,6 @@ export function CalculatorDisplay({
   return (
     <View className="mb-6 rounded-2xl bg-card p-4 shadow-sm">
       <Text className="text-right text-4xl font-bold text-foreground">
-        {currencySymbol}
         {getDisplayExpression(expression, currentInput)}
       </Text>
       {(() => {

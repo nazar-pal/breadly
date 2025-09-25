@@ -1,8 +1,4 @@
-import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
-import { Text } from '@/components/ui/text'
 import React, { useState } from 'react'
-import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './modal-comment'
@@ -12,15 +8,9 @@ interface Props {
   type: 'expense' | 'income'
   isDisabled: boolean
   handleSubmit: (amount: number, comment: string, txDate?: Date) => void
-  currencySymbol?: string
 }
 
-export function Calculator({
-  type,
-  isDisabled,
-  handleSubmit,
-  currencySymbol
-}: Props) {
+export function Calculator({ type, isDisabled, handleSubmit }: Props) {
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
@@ -29,13 +19,41 @@ export function Calculator({
   const [currentInput, setCurrentInput] = useState('0')
   const [expression, setExpression] = useState<string[]>([])
 
+  const numericCurrentValue = parseFloat(currentInput)
+
+  const shouldShowEquals = (() => {
+    if (expression.length === 0) {
+      return false
+    }
+
+    const lastToken = expression[expression.length - 1]
+    const hasOperator = /[+\-*/]/.test(lastToken)
+
+    return hasOperator || expression.length >= 2
+  })()
+
+  const isSaveDisabled = (() => {
+    if (shouldShowEquals) {
+      return true
+    }
+
+    if (isDisabled) {
+      return true
+    }
+
+    if (Number.isNaN(numericCurrentValue)) {
+      return true
+    }
+
+    return numericCurrentValue <= 0
+  })()
+
   return (
     <>
       <CalculatorDisplay
         comment={comment}
         expression={expression}
         currentInput={currentInput}
-        currencySymbol={currencySymbol}
         selectedDate={selectedDate}
       />
 
@@ -44,47 +62,17 @@ export function Calculator({
         setCurrentInput={setCurrentInput}
         expression={expression}
         setExpression={setExpression}
-      />
-
-      <View className="mt-4 flex-row items-center gap-4">
-        <Button
-          onPress={() => setShowCommentModal(true)}
-          size="lg"
-          className="relative flex-row items-center justify-center rounded-xl bg-card active:scale-95"
-          variant="outline"
-        >
-          <Icon name="MessageSquare" size={24} className="text-foreground" />
-          {comment && (
-            <View className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
-          )}
-        </Button>
-
-        <Button
-          onPress={() => setShowDateModal(true)}
-          size="lg"
-          className="relative flex-row items-center justify-center rounded-xl bg-card active:scale-95"
-          variant="outline"
-        >
-          <Icon name="Calendar" size={24} className="text-foreground" />
-        </Button>
-
-        {/* Submit Button */}
-        <Button
-          onPress={() =>
+        onSubmit={() => {
+          if (!isSaveDisabled) {
             handleSubmit(parseFloat(currentInput), comment, selectedDate)
           }
-          size="lg"
-          className="flex-1 flex-row items-center justify-center rounded-xl"
-          disabled={isDisabled}
-        >
-          <Icon
-            name="Save"
-            size={20}
-            className="mr-2 text-primary-foreground"
-          />
-          <Text>{`Save ${type === 'expense' ? 'Expense' : 'Income'}`}</Text>
-        </Button>
-      </View>
+        }}
+        showSubmit={shouldShowEquals}
+        submitDisabled={isSaveDisabled}
+        onPressComment={() => setShowCommentModal(true)}
+        onPressDate={() => setShowDateModal(true)}
+        hasComment={Boolean(comment)}
+      />
 
       <CommentModal
         visible={showCommentModal}
