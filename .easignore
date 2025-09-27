@@ -43,6 +43,3 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-
-# Google service account key for EAS submissions
-google-service-account-key.json
