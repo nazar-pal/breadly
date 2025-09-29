@@ -58,8 +58,8 @@ interface OperationConfig {
 const OPERATION_CONFIGS: Record<string, OperationConfig> = {
   income: {
     icon: TrendingUp,
-    colorClass: 'text-success',
-    bgColorClass: 'bg-success/20',
+    colorClass: 'text-income',
+    bgColorClass: 'bg-income/20',
     prefix: '+'
   },
   expense: {
@@ -70,7 +70,7 @@ const OPERATION_CONFIGS: Record<string, OperationConfig> = {
   },
   transfer: {
     icon: RefreshCw,
-    colorClass: 'text-primary',
+    colorClass: 'text-foreground',
     bgColorClass: 'bg-primary/20',
     prefix: '-',
     subtext: tx =>
