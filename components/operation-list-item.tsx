@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { Icon } from '@/components/ui/icon'
 import { cn } from '@/lib/utils'
 import { Link } from 'expo-router'
 import {
@@ -32,6 +33,11 @@ interface Transaction {
     name: string
     type: string
     icon: string
+    parent?: {
+      id: string
+      name: string
+      icon: string
+    } | null
   } | null
 }
 
@@ -88,7 +94,8 @@ const getOperationConfig = (transaction: Transaction): OperationConfig => {
 export function OperationListItem({ operation }: OperationCardProps) {
   const config = getOperationConfig(operation)
   const IconComponent = config.icon
-  const subtext = config.subtext?.(operation)
+  const subtext =
+    operation.type === 'transfer' ? null : config.subtext?.(operation)
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -97,8 +104,21 @@ export function OperationListItem({ operation }: OperationCardProps) {
     })
   }
 
-  const description = operation.notes || `${operation.type} transaction`
+  const parentCategoryName = operation.category?.parent?.name || null
   const categoryName = operation.category?.name || 'Uncategorized'
+  const categoryDisplay = parentCategoryName
+    ? `${parentCategoryName} · ${categoryName}`
+    : categoryName
+  const title =
+    operation.notes && operation.notes.trim().length > 0
+      ? operation.notes.trim()
+      : operation.type === 'transfer'
+        ? operation.counterAccount
+          ? `Transfer to ${operation.counterAccount.name}`
+          : 'Transfer'
+        : categoryDisplay
+  const showCategoryPill =
+    Boolean(operation.category?.name) && title !== categoryDisplay
 
   return (
     <Link href={`/transactions/${operation.id}`} asChild>
@@ -108,11 +128,15 @@ export function OperationListItem({ operation }: OperationCardProps) {
             <View className="flex-row items-center">
               <View
                 className={cn(
-                  'mr-3 h-6 w-6 items-center justify-center rounded-lg ring-1 ring-border/20',
-                  config.bgColorClass
+                  'mr-3 h-6 w-6 items-center justify-center rounded-lg ring-1 ring-border/40 dark:ring-border/60',
+                  'bg-muted/60 dark:bg-muted/40'
                 )}
               >
-                <IconComponent size={14} className={config.colorClass} />
+                <Icon
+                  as={IconComponent}
+                  size={14}
+                  className={config.colorClass}
+                />
               </View>
 
               <View className="flex-1 gap-1">
@@ -121,7 +145,7 @@ export function OperationListItem({ operation }: OperationCardProps) {
                     className="mr-2 flex-1 text-sm font-medium text-foreground"
                     numberOfLines={1}
                   >
-                    {description}
+                    {title}
                   </Text>
                   <Text
                     className={cn('text-sm font-semibold', config.colorClass)}
@@ -132,16 +156,22 @@ export function OperationListItem({ operation }: OperationCardProps) {
 
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1 flex-row items-center gap-2">
-                    <View className="rounded bg-muted/50 px-1.5 py-0.5">
-                      <Text
-                        className="text-[11px] font-medium text-muted-foreground"
-                        numberOfLines={1}
-                      >
-                        {categoryName}
-                      </Text>
-                    </View>
+                    {showCategoryPill && (
+                      <View className="rounded bg-muted/50 px-1.5 py-0.5">
+                        <Text
+                          className="text-[11px] font-medium text-muted-foreground"
+                          numberOfLines={1}
+                        >
+                          {categoryName}
+                        </Text>
+                      </View>
+                    )}
                     <View className="flex-row items-center gap-1">
-                      <Calendar size={12} className="text-muted-foreground" />
+                      <Icon
+                        as={Calendar}
+                        size={12}
+                        className="text-muted-foreground"
+                      />
                       <Text className="text-[11px] text-muted-foreground">
                         {formatDate(operation.txDate)}
                       </Text>
@@ -150,7 +180,8 @@ export function OperationListItem({ operation }: OperationCardProps) {
 
                   <View className="flex-row items-center">
                     {/* TODO: Add attachment support */}
-                    <ArrowRight
+                    <Icon
+                      as={ArrowRight}
                       size={12}
                       className="ml-1 text-muted-foreground/60"
                     />

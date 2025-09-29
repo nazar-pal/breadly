@@ -54,7 +54,7 @@ export default function OperationsScreen() {
     data.push({
       type: 'header',
       id: 'today-header',
-      title: "Today's Transactions"
+      title: 'Today'
     })
 
     if (hasToday) {
@@ -77,7 +77,7 @@ export default function OperationsScreen() {
       data.push({
         type: 'header',
         id: 'earlier-header',
-        title: 'Earlier Transactions'
+        title: 'Earlier'
       })
 
       earlierTransactions.forEach(tx => {

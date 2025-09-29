@@ -31,7 +31,11 @@ export function useGetTransactions({
   const query = db.query.transactions.findMany({
     where: and(...whereConditions),
     with: {
-      category: true,
+      category: {
+        with: {
+          parent: true
+        }
+      },
       account: true,
       counterAccount: true,
       currency: true,
