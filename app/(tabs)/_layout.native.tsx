@@ -1,8 +1,15 @@
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { Icon, type IconName } from '@/components/ui/icon-by-name'
-import { useTabsCategoriesSettingsModalActions } from '@/lib/storage/tabs-categories-settings-modal-store'
+import { Text } from '@/components/ui/text'
+import { useCategoryType } from '@/lib/hooks/use-category-type'
 import { AccountsSettingsButton } from '@/modules/account'
-import { Tabs } from 'expo-router'
+import { Link, Tabs } from 'expo-router'
 import React from 'react'
 
 function TabBarIcon({ icon, focused }: { icon: IconName; focused: boolean }) {
@@ -17,11 +24,23 @@ function TabBarIcon({ icon, focused }: { icon: IconName; focused: boolean }) {
 }
 
 function SettingsDropdown() {
-  const { open } = useTabsCategoriesSettingsModalActions()
+  const categoryType = useCategoryType()
+
   return (
-    <Button variant="ghost" size="icon" className="mr-4" onPress={open}>
-      <Icon name="Settings" size={24} className="text-foreground" />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="mr-4">
+          <Icon name="Settings" size={24} className="text-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem closeOnPress={true} asChild>
+          <Link href={`/categories/${categoryType}`}>
+            <Text>Edit Categories</Text>
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

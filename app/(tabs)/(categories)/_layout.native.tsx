@@ -1,6 +1,5 @@
 import { ModalAddTransaction } from '@/components/modals/add-transaction'
 import { CategoryDetailsModal } from '@/components/modals/category-details'
-import { TabsCategoriesSettings } from '@/components/modals/tabs-categories-settings'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
 import { TabsCategoriesHeader } from '@/screens/tabs-categories'
 import { Slot } from 'expo-router'
@@ -43,7 +42,6 @@ export default function CategoriesLayout() {
         <Slot />
         <ModalAddTransaction />
         <CategoryDetailsModal />
-        <TabsCategoriesSettings />
       </View>
     </GestureDetectorContainer>
   )
