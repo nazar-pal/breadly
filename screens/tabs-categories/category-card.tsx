@@ -1,4 +1,3 @@
-import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import { cn, formatCurrency } from '@/lib/utils'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -19,7 +18,6 @@ export function CategoryCard({
   onLongPress
 }: Props) {
   const [isPressed, setIsPressed] = useState(false)
-  const { viewType } = useCategoryViewStore()
 
   const renderTotals = () => {
     const totals = category.totalsByCurrency.filter(t => t.amount > 0)
@@ -58,9 +56,7 @@ export function CategoryCard({
           ellipsizeMode="tail"
           className={cn(
             'font-semibold text-foreground',
-            viewType === 'compact'
-              ? 'text-[13px] leading-4'
-              : 'text-sm leading-5'
+            'text-[13px] leading-4'
           )}
         >
           {category.name}

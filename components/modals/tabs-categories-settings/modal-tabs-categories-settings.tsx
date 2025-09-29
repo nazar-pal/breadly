@@ -1,8 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useCategoryType } from '@/lib/hooks'
-import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import {
   useTabsCategoriesSettingsModalActions,
   useTabsCategoriesSettingsModalState
@@ -11,12 +9,10 @@ import { router } from 'expo-router'
 import React from 'react'
 import { Pressable, View } from 'react-native'
 import { Modal } from '../modal'
-import { CategoryViewButton } from './category-view-button'
 
 export function TabsCategoriesSettings() {
   const { visible } = useTabsCategoriesSettingsModalState()
   const { close } = useTabsCategoriesSettingsModalActions()
-  const { viewType, toggleViewType } = useCategoryViewStore()
   const categoryType = useCategoryType()
 
   const handleEditPress = () => {
@@ -36,30 +32,6 @@ export function TabsCategoriesSettings() {
           </View>
           <Icon name="Target" size={16} className="text-muted-foreground" />
         </View>
-
-        <Card className="mb-4">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Category View
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-row gap-3 pt-0">
-            <CategoryViewButton
-              viewType="compact"
-              currentViewType={viewType}
-              onPress={toggleViewType}
-              icon="SquarePen"
-              label="Compact"
-            />
-            <CategoryViewButton
-              viewType="extended"
-              currentViewType={viewType}
-              onPress={toggleViewType}
-              icon="List"
-              label="Extended"
-            />
-          </CardContent>
-        </Card>
 
         <Pressable
           onPress={handleEditPress}
