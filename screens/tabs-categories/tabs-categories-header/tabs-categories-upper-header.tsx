@@ -5,7 +5,7 @@ import { TabsCategoriesNetBalance } from './tabs-categories-net-balance'
 
 export function TabsCategoriesUpperHeader() {
   return (
-    <View className="mb-3 flex-row items-center justify-between">
+    <View className="mb-1.5 flex-row items-center justify-between">
       <TabsCategoriesNetBalance />
       <TabsCategoriesDateRangeSelector />
     </View>

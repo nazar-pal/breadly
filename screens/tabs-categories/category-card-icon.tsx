@@ -3,16 +3,18 @@ import { View } from 'react-native'
 
 export function CategoryCardIcon({
   name,
-  type
+  type,
+  size = 22
 }: {
   name: string
   type: 'expense' | 'income'
+  size?: number
 }) {
   return (
-    <View className="h-9 w-9 items-center justify-center rounded-lg bg-muted/70">
+    <View className="items-center justify-center rounded-lg bg-muted/70 dark:bg-muted/50">
       <Icon
         name={name || 'House'}
-        size={20}
+        size={size}
         className={type === 'expense' ? 'text-expense' : 'text-income'}
       />
     </View>

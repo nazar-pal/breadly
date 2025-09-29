@@ -22,6 +22,7 @@ export function CategoryCardExtended({
   const totals = category.totalsByCurrency
     .filter(t => t.amount > 0)
     .sort((a, b) => b.amount - a.amount)
+  const displayTotals = totals.slice(0, 1)
 
   const handlePressIn = () => {
     setIsPressed(true)
@@ -45,9 +46,10 @@ export function CategoryCardExtended({
       delayLongPress={500}
     >
       {/* Category Name - Top Section */}
-      <View className="mb-3">
+      <View className="mb-1.5 ">
         <Text
           numberOfLines={2}
+          ellipsizeMode="tail"
           className="text-base font-semibold leading-5 text-foreground"
         >
           {category.name}
@@ -58,10 +60,10 @@ export function CategoryCardExtended({
       <View className="flex-row items-center justify-between">
         <CategoryCardIcon name={category.icon} type={category.type} />
 
-        <View className="ml-3 flex-1 items-end">
-          <View className="flex-row flex-wrap justify-end gap-1">
-            {totals.length > 0 &&
-              totals.map(t => (
+        <View className="ml-2 flex-1 items-end">
+          <View className="flex-row justify-end gap-1">
+            {displayTotals.length > 0 &&
+              displayTotals.map(t => (
                 <View
                   key={t.currencyId}
                   className="rounded-full bg-secondary px-2 py-0.5"
@@ -78,7 +80,7 @@ export function CategoryCardExtended({
                 </View>
               ))}
 
-            {totals.length === 0 && (
+            {displayTotals.length === 0 && (
               <View className="rounded-full bg-secondary px-2 py-0.5">
                 <Text className="text-xs font-semibold text-muted-foreground">
                   0

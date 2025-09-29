@@ -11,7 +11,7 @@ import {
   type CategoryViewType
 } from '@/lib/storage/category-view-store'
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, useWindowDimensions, View } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 import { CategoryCardExtended } from './category-card-extended'
@@ -29,10 +29,11 @@ interface Props {
 // Helpers
 // -----------------------------------------------------------------------------
 
-const CHUNK_SIZE = 2
+const COMPACT_MIN_CARD_WIDTH = 152 // px including paddings
+const EXTENDED_MIN_CARD_WIDTH = 180
 const ADD_BUTTON_SENTINEL = Symbol('ADD_BUTTON_SENTINEL')
 
-function chunkArray<T>(array: T[], size = CHUNK_SIZE): T[][] {
+function chunkArray<T>(array: T[], size: number): T[][] {
   const result: T[][] = []
   for (let i = 0; i < array.length; i += size) {
     result.push(array.slice(i, i + size))
@@ -49,6 +50,7 @@ interface CategoryGridSectionProps {
   includeAddButton?: boolean
   isArchived?: boolean
   viewType: CategoryViewType
+  numColumns: number
   onPress: (id: string) => void
   onLongPress: (id: string) => void
 }
@@ -58,32 +60,41 @@ function CategoryGridSection({
   includeAddButton = false,
   isArchived = false,
   viewType,
+  numColumns,
   onPress,
   onLongPress
 }: CategoryGridSectionProps) {
   // Split items into pairs for a 2-column grid. We build the list inside
-  const pairs = () => {
+  const rows = () => {
     const list: (CategoryWithAmounts | typeof ADD_BUTTON_SENTINEL)[] =
       includeAddButton ? [...data, ADD_BUTTON_SENTINEL] : data
 
-    return chunkArray(list)
+    return chunkArray(list, numColumns)
   }
 
   const CardComponent =
     viewType === 'extended' ? CategoryCardExtended : CategoryCard
+  const cardHeightPx = viewType === 'extended' ? 112 : 56
+  const cardHeightClass = 'h-full'
   const cardClassName = isArchived
-    ? 'rounded-2xl border border-dashed border-border bg-muted/50 p-4 shadow-sm'
-    : 'rounded-2xl border border-border bg-card p-4 shadow-sm'
+    ? `rounded-xl border border-dashed border-border bg-muted/50 p-3 shadow-sm ${cardHeightClass}`
+    : `rounded-xl border border-border bg-card p-3 shadow-sm ${cardHeightClass}`
 
   return (
     <>
-      {pairs().map((pair, pairIndex) => (
-        <View key={pairIndex} className="mb-4 flex-row gap-4">
-          {pair.map(item => {
+      {rows().map((row, rowIndex) => (
+        <View key={rowIndex} className="mb-3 flex-row items-stretch gap-3">
+          {row.map(item => {
             if (item === ADD_BUTTON_SENTINEL) {
               return (
-                <View key="add-button" className="flex-1">
-                  <ButtonAddCategory className="rounded-2xl border border-dashed border-border bg-muted/50 p-4 shadow-sm" />
+                <View
+                  key="add-button"
+                  className="flex-1"
+                  style={{ height: cardHeightPx }}
+                >
+                  <ButtonAddCategory
+                    className={`rounded-xl border border-dashed border-border bg-muted/50 p-3 shadow-sm ${cardHeightClass}`}
+                  />
                 </View>
               )
             }
@@ -91,7 +102,11 @@ function CategoryGridSection({
             const category = item as CategoryWithAmounts
 
             return (
-              <View key={category.id} className="flex-1">
+              <View
+                key={category.id}
+                className="flex-1"
+                style={{ height: cardHeightPx }}
+              >
                 <CardComponent
                   category={category}
                   onPress={() => onPress(category.id)}
@@ -103,7 +118,9 @@ function CategoryGridSection({
           })}
 
           {/* Spacer for uneven rows */}
-          {pair.length === 1 && <View className="flex-1" />}
+          {row.length < numColumns && (
+            <View style={{ flex: numColumns - row.length }} />
+          )}
         </View>
       ))}
     </>
@@ -117,6 +134,7 @@ function CategoryGridSection({
 export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
   const { dateRange } = useCategoriesDateRangeState()
   const { viewType } = useCategoryViewStore()
+  const { width } = useWindowDimensions()
 
   const categories = useGetCategoriesWithAmounts({
     transactionsFrom: dateRange.start,
@@ -130,6 +148,13 @@ export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
     isArchived: true
   })
 
+  // Compute how many columns we can fit per view type
+  const horizontalPadding = 16 * 2 // from contentContainerStyle
+  const availableWidth = Math.max(0, width - horizontalPadding)
+  const minCardWidth =
+    viewType === 'compact' ? COMPACT_MIN_CARD_WIDTH : EXTENDED_MIN_CARD_WIDTH
+  const numColumns = Math.max(2, Math.floor(availableWidth / minCardWidth))
+
   return (
     <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
       {/* Active categories */}
@@ -137,6 +162,7 @@ export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
         data={categories}
         includeAddButton
         viewType={viewType}
+        numColumns={numColumns}
         onPress={onPress}
         onLongPress={onLongPress}
       />
@@ -157,6 +183,7 @@ export function CategoryCardsGrid({ onPress, onLongPress }: Props) {
                     data={categoriesArchived}
                     isArchived
                     viewType={viewType}
+                    numColumns={numColumns}
                     onPress={onPress}
                     onLongPress={onLongPress}
                   />

@@ -1,3 +1,4 @@
+import { useCategoryViewStore } from '@/lib/storage/category-view-store'
 import { cn, formatCurrency } from '@/lib/utils'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -18,6 +19,7 @@ export function CategoryCard({
   onLongPress
 }: Props) {
   const [isPressed, setIsPressed] = useState(false)
+  const { viewType } = useCategoryViewStore()
 
   const renderTotals = () => {
     const totals = category.totalsByCurrency.filter(t => t.amount > 0)
@@ -38,7 +40,7 @@ export function CategoryCard({
   return (
     <Pressable
       className={cn(
-        'relative flex-row items-center',
+        'relative h-full flex-row items-center',
         isPressed && 'opacity-70',
         className
       )}
@@ -48,18 +50,24 @@ export function CategoryCard({
       onPressOut={handlePressOut}
       delayLongPress={500}
     >
-      <CategoryCardIcon name={category.icon} type={category.type} />
+      <CategoryCardIcon name={category.icon} type={category.type} size={20} />
 
-      <View className="ml-3 flex-1">
+      <View className="ml-2 flex-1">
         <Text
           numberOfLines={1}
-          className="mb-0.5 text-sm font-semibold text-foreground"
+          ellipsizeMode="tail"
+          className={cn(
+            'font-semibold text-foreground',
+            viewType === 'compact'
+              ? 'text-[13px] leading-4'
+              : 'text-sm leading-5'
+          )}
         >
           {category.name}
         </Text>
         <Text
           numberOfLines={1}
-          className={`text-[13px] ${
+          className={`text-[12px] ${
             category.type === 'income'
               ? category.totalsByCurrency.some(t => t.amount > 0)
                 ? 'text-income'
