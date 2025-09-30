@@ -17,3 +17,8 @@ export {
 } from './use-get-account-transactions'
 
 export { useCheckAccountDependencies } from './use-check-account-dependencies'
+
+export {
+  useGetAccountsByCurrency,
+  type UseGetAccountsByCurrencyResult
+} from './use-get-accounts-by-currency'

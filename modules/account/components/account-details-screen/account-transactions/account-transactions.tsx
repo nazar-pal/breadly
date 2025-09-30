@@ -10,16 +10,17 @@ export function AccountTransactions({ accountId }: { accountId: string }) {
 
   const { data: transactions, isLoading } = useGetAccountTransactions({
     userId,
-    accountId
+    accountId,
+    limit: 15
   })
 
   return (
     <View className="mt-8">
-      <Text className="mb-2 text-xl font-semibold text-foreground">
+      <Text className="text-xl font-semibold text-foreground">
         Recent Transactions
       </Text>
 
-      <View className="rounded-xl bg-card/50 p-2">
+      <View className="p-1">
         {transactions.map(tx => (
           <TransactionItem key={tx.id} transaction={tx} />
         ))}
