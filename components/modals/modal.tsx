@@ -14,13 +14,13 @@ import {
 } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { scheduleOnRN } from 'react-native-worklets'
 
 // Animation constants for better maintainability
 const ANIMATION_CONFIG = {
@@ -123,7 +123,7 @@ export function Modal({
   // Optimized close handler
   const handleClose = () => {
     'worklet'
-    runOnJS(onClose)()
+    scheduleOnRN(onClose)
   }
 
   // Gesture handler with improved performance
