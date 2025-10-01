@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils/cn'
 import React, { useEffect } from 'react'
 import {
+  Pressable,
   Modal as RNModal,
   ModalProps as RNModalProps,
   Text,
-  TouchableWithoutFeedback,
   View
 } from 'react-native'
 import {
@@ -13,13 +13,12 @@ import {
   GestureHandlerRootView
 } from 'react-native-gesture-handler'
 import Animated, {
-  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming
 } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { scheduleOnRN } from 'react-native-worklets'
 
 // Animation constants for better maintainability
@@ -99,8 +98,6 @@ export function Modal({
   // Spread all other native Modal props
   ...nativeModalProps
 }: ModalProps) {
-  const insets = useSafeAreaInsets()
-
   // Animation values for swipe to dismiss
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
@@ -185,7 +182,7 @@ export function Modal({
   }))
 
   const animatedBackdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(opacity.value, [0, 1], [0, 0.1])
+    opacity: opacity.value * backdropOpacity
   }))
 
   // Reset animation values when modal opens
@@ -215,18 +212,20 @@ export function Modal({
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View className="flex-1 justify-end">
           {/* Backdrop */}
-          <TouchableWithoutFeedback
-            onPress={handleBackdropPress}
-            accessibilityRole="button"
+          <Animated.View
+            className={cn('absolute inset-0 bg-black', backdropClassName)}
+            style={animatedBackdropStyle}
             accessibilityLabel={backdropAccessibilityLabel}
-            disabled={!enableBackdropClose}
           >
-            <Animated.View
-              className={cn('absolute inset-0 bg-black', backdropClassName)}
-              pointerEvents={enableBackdropClose ? 'auto' : 'none'}
-              style={animatedBackdropStyle}
-            />
-          </TouchableWithoutFeedback>
+            {enableBackdropClose ? (
+              <Pressable
+                className="flex-1"
+                onPress={handleBackdropPress}
+                accessibilityRole="button"
+                accessibilityLabel={backdropAccessibilityLabel}
+              />
+            ) : null}
+          </Animated.View>
 
           {/* Modal Content */}
           <GestureDetector gesture={panGesture()}>
@@ -238,8 +237,7 @@ export function Modal({
                     const h = modalHeight()
                     return h !== undefined ? { height: h as any } : {}
                   })(),
-                  ...(height === 'auto' && { maxHeight: '80%' }), // Prevent auto-sizing from taking full screen
-                  paddingBottom: insets.bottom + additionalSafeAreaPadding
+                  ...(height === 'auto' && { maxHeight: '80%' })
                 },
                 animatedModalStyle
               ]}
@@ -277,6 +275,11 @@ export function Modal({
               )}
 
               {children}
+
+              <SafeAreaView
+                edges={['bottom']}
+                style={{ paddingBottom: additionalSafeAreaPadding }}
+              />
             </Animated.View>
           </GestureDetector>
         </View>
