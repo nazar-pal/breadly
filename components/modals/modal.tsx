@@ -98,22 +98,16 @@ export function Modal({
   // Spread all other native Modal props
   ...nativeModalProps
 }: ModalProps) {
-  // Animation values for swipe to dismiss
+  // Local animation values shared with backdrop
   const translateY = useSharedValue(0)
   const opacity = useSharedValue(1)
 
-  // Memoized height calculation
+  // Height calculation
   const modalHeight = () => {
-    if (height === 'auto') {
-      return undefined // Let content determine height
-    }
-    if (typeof height === 'string' && height.endsWith('%')) {
-      const percentage = parseFloat(height.replace('%', '')) / 100
-      return `${percentage * 100}%`
-    }
-    if (typeof height === 'number') {
+    if (height === 'auto') return undefined
+    if (typeof height === 'string' && height.endsWith('%')) return height
+    if (typeof height === 'number')
       return height <= 1 ? `${height * 100}%` : height
-    }
     return '80%'
   }
 
@@ -195,9 +189,7 @@ export function Modal({
 
   // Handle backdrop press
   const handleBackdropPress = () => {
-    if (enableBackdropClose) {
-      onClose()
-    }
+    if (enableBackdropClose) onClose()
   }
 
   return (
