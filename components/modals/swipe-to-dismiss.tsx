@@ -153,6 +153,3 @@ export function SwipeToDismiss({
     </GestureDetector>
   )
 }
-
-// Props for the BottomSheet component
-// BottomSheet wrapper removed to keep only the SwipeToDismiss core reusable
