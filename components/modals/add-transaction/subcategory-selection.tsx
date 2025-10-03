@@ -39,7 +39,7 @@ export function SubcategorySelection({
 
   return (
     <ScrollView
-      className="w-full"
+      className="mb-2 w-full"
       horizontal
       showsHorizontalScrollIndicator={false}
       nestedScrollEnabled={true}

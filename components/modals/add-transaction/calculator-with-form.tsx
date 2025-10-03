@@ -109,86 +109,83 @@ export function CalculatorWithForm({
 
   return (
     <View className="px-4">
-      {/* Header */}
-      <View className="mb-2">
-        {/* Category and Account Selection */}
-        <View className="mb-4 flex-row gap-2">
-          {/* Category Selector */}
-          <Pressable
-            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
-            onPress={() => setShowCategoryModal(true)}
-          >
-            <View className="flex-1 flex-row items-center">
-              <View className="mr-2 rounded-lg bg-primary/10 p-1">
-                <Icon name="Tag" size={14} className="text-primary" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Category
-                </Text>
-                <Text
-                  className="text-sm font-semibold text-foreground"
-                  numberOfLines={1}
-                >
-                  {selectedParentCategory?.name || 'Select Category'}
-                </Text>
-              </View>
+      {/* Category and Account Selection */}
+      <View className="mb-4 flex-row gap-2">
+        {/* Category Selector */}
+        <Pressable
+          className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
+          onPress={() => setShowCategoryModal(true)}
+        >
+          <View className="flex-1 flex-row items-center">
+            <View className="mr-2 rounded-lg bg-primary/10 p-1">
+              <Icon name="Tag" size={14} className="text-primary" />
             </View>
-            <Icon
-              name="ChevronDown"
-              size={14}
-              className="ml-1 text-muted-foreground"
-            />
-          </Pressable>
-
-          {/* Account/Currency Selector */}
-          <Pressable
-            className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
-            onPress={() => setShowAccountModal(true)}
-          >
-            <View className="flex-1 flex-row items-center">
-              <View className="mr-2 rounded-lg bg-primary/10 p-1">
-                <Icon
-                  name={selectedAccount ? 'CreditCard' : 'DollarSign'}
-                  size={14}
-                  className="text-primary"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {selectedAccount
-                    ? 'Account'
-                    : selectedCurrency
-                      ? 'Currency'
-                      : 'Account / Currency'}
-                </Text>
-                <Text
-                  className="text-sm font-semibold text-foreground"
-                  numberOfLines={1}
-                >
-                  {selectedAccount?.name ||
-                    (selectedCurrency
-                      ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
-                      : 'Select Account or Currency')}
-                </Text>
-              </View>
+            <View className="flex-1">
+              <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Category
+              </Text>
+              <Text
+                className="text-sm font-semibold text-foreground"
+                numberOfLines={1}
+              >
+                {selectedParentCategory?.name || 'Select Category'}
+              </Text>
             </View>
-            <Icon
-              name="ChevronDown"
-              size={14}
-              className="ml-1 text-muted-foreground"
-            />
-          </Pressable>
-        </View>
+          </View>
+          <Icon
+            name="ChevronDown"
+            size={14}
+            className="ml-1 text-muted-foreground"
+          />
+        </Pressable>
 
-        {/* Subcategories  */}
-        <SubcategorySelection
-          selectedParentCategoryId={selectedParentCategoryId}
-          selectedCategoryId={selectedCategoryId}
-          setSelectedCategoryId={setSelectedCategoryId}
-          type={type}
-        />
+        {/* Account/Currency Selector */}
+        <Pressable
+          className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
+          onPress={() => setShowAccountModal(true)}
+        >
+          <View className="flex-1 flex-row items-center">
+            <View className="mr-2 rounded-lg bg-primary/10 p-1">
+              <Icon
+                name={selectedAccount ? 'CreditCard' : 'DollarSign'}
+                size={14}
+                className="text-primary"
+              />
+            </View>
+            <View className="flex-1">
+              <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {selectedAccount
+                  ? 'Account'
+                  : selectedCurrency
+                    ? 'Currency'
+                    : 'Account / Currency'}
+              </Text>
+              <Text
+                className="text-sm font-semibold text-foreground"
+                numberOfLines={1}
+              >
+                {selectedAccount?.name ||
+                  (selectedCurrency
+                    ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
+                    : 'Select Account or Currency')}
+              </Text>
+            </View>
+          </View>
+          <Icon
+            name="ChevronDown"
+            size={14}
+            className="ml-1 text-muted-foreground"
+          />
+        </Pressable>
       </View>
+
+      {/* Subcategories  */}
+      <SubcategorySelection
+        selectedParentCategoryId={selectedParentCategoryId}
+        selectedCategoryId={selectedCategoryId}
+        setSelectedCategoryId={setSelectedCategoryId}
+        type={type}
+      />
 
       <Calculator
         type={type}
