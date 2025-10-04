@@ -35,11 +35,9 @@ export function SubcategorySelection({
     }
   }
 
-  if (subcategories.length === 0) return null
-
   return (
     <ScrollView
-      className="mb-2 w-full"
+      className="mb-2"
       horizontal
       showsHorizontalScrollIndicator={false}
       nestedScrollEnabled={true}
@@ -47,9 +45,7 @@ export function SubcategorySelection({
       scrollEventThrottle={16}
       bounces={false}
       contentContainerStyle={{
-        flexDirection: 'row',
-        gap: 8,
-        paddingRight: 16
+        gap: 8
       }}
     >
       {subcategories.map(subcategory => {
@@ -74,6 +70,17 @@ export function SubcategorySelection({
           </Badge>
         )
       })}
+
+      <Badge
+        asChild
+        className={`${'border-dashed border-muted-foreground/50 bg-background'}`}
+      >
+        <Pressable>
+          <Text className="text-sm text-muted-foreground">
+            + Add Subcategory
+          </Text>
+        </Pressable>
+      </Badge>
     </ScrollView>
   )
 }
