@@ -1,4 +1,3 @@
-import { ModalAddTransaction } from '@/components/modals/add-transaction'
 import { CategoryDetailsModal } from '@/components/modals/category-details'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
 import { TabsCategoriesHeader } from '@/screens/tabs-categories'
@@ -40,7 +39,6 @@ export default function CategoriesLayout() {
       <View className="flex-1 bg-background" collapsable={false}>
         <TabsCategoriesHeader />
         <Slot />
-        <ModalAddTransaction />
         <CategoryDetailsModal />
       </View>
     </GestureDetectorContainer>

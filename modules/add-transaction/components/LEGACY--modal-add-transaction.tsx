@@ -3,9 +3,9 @@ import { useCategoryType } from '@/lib/hooks'
 import {
   useAddTransactionActions,
   useAddTransactionState
-} from '@/lib/storage/add-transaction-store'
+} from '@/modules/add-transaction/lib/LEGACY--add-transaction-store'
 import React from 'react'
-import { CalculatorWithForm } from './calculator-with-form'
+import { AddTransaction } from './add-transaction'
 
 export function ModalAddTransaction() {
   const { isAddTransactionModalOpen, addTransactionSelectedCategory } =
@@ -21,7 +21,7 @@ export function ModalAddTransaction() {
       height="auto"
     >
       {addTransactionSelectedCategory && (
-        <CalculatorWithForm
+        <AddTransaction
           type={activeCategoryType}
           categoryId={addTransactionSelectedCategory}
           onClose={closeAddTransactionModal}

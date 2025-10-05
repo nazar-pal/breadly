@@ -20,7 +20,7 @@ interface Props {
   onClose: () => void
 }
 
-export function CalculatorWithForm({
+export function AddTransaction({
   type,
   categoryId: initialCategoryId,
   onClose
@@ -108,7 +108,7 @@ export function CalculatorWithForm({
   }
 
   return (
-    <View className="px-4">
+    <>
       {/* Category and Account Selection */}
       <View className="mb-4 flex-row gap-2">
         {/* Category Selector */}
@@ -223,6 +223,6 @@ export function CalculatorWithForm({
         }}
         onClose={() => setShowAccountModal(false)}
       />
-    </View>
+    </>
   )
 }

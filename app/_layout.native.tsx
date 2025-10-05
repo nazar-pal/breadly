@@ -140,6 +140,16 @@ function RootLayoutNative() {
                         }}
                       />
                       <Stack.Screen
+                        name="transaction-modal"
+                        options={{
+                          presentation: 'formSheet',
+                          sheetAllowedDetents: 'fitToContents',
+                          animation: 'slide_from_bottom',
+                          animationDuration: 300,
+                          sheetCornerRadius: 16
+                        }}
+                      />
+                      <Stack.Screen
                         name="test"
                         options={{
                           title: 'tRPC Connectivity Tester',
