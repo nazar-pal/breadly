@@ -2,14 +2,13 @@ import { Calculator } from '@/components/calculator'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { createTransaction } from '@/data/client/mutations'
-import {
-  useGetAccounts,
-  useGetCategories,
-  useGetCurrencies
-} from '@/data/client/queries'
+import { useGetCurrencies } from '@/data/client/queries'
 import { useUserSession } from '@/system/session-and-migration'
+import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Pressable, View } from 'react-native'
+import { useGetAccount } from '../lib/use-get-account'
+import { useGetCategory } from '../lib/use-get-category'
 import { AccountModal } from './inner-modals/modal-account-select'
 import { CategoryModal } from './inner-modals/modal-category-select'
 import { SubcategorySelection } from './subcategory-selection'
@@ -17,93 +16,68 @@ import { SubcategorySelection } from './subcategory-selection'
 interface Props {
   type: 'expense' | 'income'
   categoryId: string
+  accountId?: string
   onClose: () => void
 }
 
 export function AddTransaction({
   type,
-  categoryId: initialCategoryId,
+  categoryId,
+  accountId,
   onClose
 }: Props) {
-  const [showCategoryModal, setShowCategoryModal] = useState(false)
-  const [showAccountModal, setShowAccountModal] = useState(false)
-  const [selectedCategoryId, setSelectedCategoryId] =
-    useState(initialCategoryId)
-  const [selectedParentCategoryId, setSelectedParentCategoryId] =
-    useState<string>(initialCategoryId)
-  const [selectedAccountId, setSelectedAccountId] = useState<string>('')
-  const [selectedCurrencyCode, setSelectedCurrencyCode] =
-    useState<string>('USD')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { userId } = useUserSession()
 
-  // Get parent categories for modal selection
-  const { data: parentCategories = [] } = useGetCategories({
-    userId,
-    type,
-    parentId: null // Only parent categories
-  })
+  const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [showAccountModal, setShowAccountModal] = useState(false)
 
-  const { data: accounts = [] } = useGetAccounts({
+  const { data } = useGetCategory({ userId, categoryId })
+
+  const category = data.length > 0 ? data[0] : null
+  const parentCategory = category?.parent ?? category ?? null
+
+  const { data: accountData = [] } = useGetAccount({
     userId,
-    accountType: 'payment'
+    accountId: accountId ?? ''
   })
+  const account = accountData.length > 0 ? accountData[0] : null
+
+  const [selectedCurrencyCode, setSelectedCurrencyCode] =
+    useState<string>('USD')
 
   const { data: currencies = [] } = useGetCurrencies()
 
-  const selectedParentCategory = parentCategories.find(
-    cat => cat.id === selectedParentCategoryId
-  )
-  const selectedAccount = accounts.find(acc => acc.id === selectedAccountId)
   const selectedCurrency = (
     currencies.length > 0
       ? currencies
       : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
   ).find(c => c.code === selectedCurrencyCode)
 
-  const handleParentCategorySelect = (categoryId: string) => {
-    setSelectedParentCategoryId(categoryId)
-    // Set the parent category as selected by default
-    // If subcategories exist, the user can select one to override this
-    setSelectedCategoryId(categoryId)
-  }
+  const handleParentCategorySelect = (categoryId: string) =>
+    router.setParams({ categoryId: categoryId })
 
   const handleSubmit = async (
     amount: number,
     comment: string,
     txDate?: Date
   ) => {
-    const hasMoneySource = Boolean(selectedAccount) || Boolean(selectedCurrency)
-    if (amount > 0 && hasMoneySource && selectedCategoryId && userId) {
-      setIsSubmitting(true)
-      try {
-        const [error] = await createTransaction({
-          userId,
-          data: {
-            type,
-            ...(selectedAccount ? { accountId: selectedAccount.id } : {}),
-            categoryId: selectedCategoryId,
-            amount: amount,
-            currencyId: selectedAccount
-              ? selectedAccount.currencyId
-              : selectedCurrencyCode,
-            txDate: txDate ?? new Date(),
-            notes: comment || null,
-            createdAt: new Date()
-          }
-        })
-
-        if (error) {
-          console.error('Failed to create transaction:', error)
-          throw error
+    const hasMoneySource = Boolean(account) || Boolean(selectedCurrency)
+    if (amount > 0 && hasMoneySource && parentCategory?.id && userId) {
+      await createTransaction({
+        userId,
+        data: {
+          type,
+          ...(account ? { accountId: account.id } : {}),
+          categoryId: parentCategory.id,
+          amount: amount,
+          currencyId: account ? account.currencyId : selectedCurrencyCode,
+          txDate: txDate ?? new Date(),
+          notes: comment || null,
+          createdAt: new Date()
         }
+      })
 
-        onClose()
-      } catch (error) {
-        console.error('Failed to create transaction:', error)
-      } finally {
-        setIsSubmitting(false)
-      }
+      onClose()
     }
   }
 
@@ -128,7 +102,7 @@ export function AddTransaction({
                 className="text-sm font-semibold text-foreground"
                 numberOfLines={1}
               >
-                {selectedParentCategory?.name || 'Select Category'}
+                {parentCategory?.name || 'Select Category'}
               </Text>
             </View>
           </View>
@@ -147,14 +121,14 @@ export function AddTransaction({
           <View className="flex-1 flex-row items-center">
             <View className="mr-2 rounded-lg bg-primary/10 p-1">
               <Icon
-                name={selectedAccount ? 'CreditCard' : 'DollarSign'}
+                name={account ? 'CreditCard' : 'DollarSign'}
                 size={14}
                 className="text-primary"
               />
             </View>
             <View className="flex-1">
               <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {selectedAccount
+                {account
                   ? 'Account'
                   : selectedCurrency
                     ? 'Currency'
@@ -164,7 +138,7 @@ export function AddTransaction({
                 className="text-sm font-semibold text-foreground"
                 numberOfLines={1}
               >
-                {selectedAccount?.name ||
+                {account?.name ||
                   (selectedCurrency
                     ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
                     : 'Select Account or Currency')}
@@ -181,19 +155,17 @@ export function AddTransaction({
 
       {/* Subcategories  */}
       <SubcategorySelection
-        selectedParentCategoryId={selectedParentCategoryId}
-        selectedCategoryId={selectedCategoryId}
-        setSelectedCategoryId={setSelectedCategoryId}
+        selectedParentCategoryId={parentCategory?.id ?? ''}
+        selectedCategoryId={categoryId}
+        setSelectedCategoryId={categoryId =>
+          router.setParams({ categoryId: categoryId })
+        }
         type={type}
       />
 
       <Calculator
         type={type}
-        isDisabled={
-          isSubmitting ||
-          !selectedCategoryId ||
-          (!selectedAccount && !selectedCurrency)
-        }
+        isDisabled={!categoryId || (!account && !selectedCurrency)}
         handleSubmit={handleSubmit}
       />
 
@@ -201,24 +173,22 @@ export function AddTransaction({
       <CategoryModal
         visible={showCategoryModal}
         type={type}
-        categories={parentCategories}
-        selectedCategoryId={selectedParentCategoryId}
+        selectedCategoryId={parentCategory?.id ?? ''}
         onSelectCategory={handleParentCategorySelect}
         onClose={() => setShowCategoryModal(false)}
       />
 
       <AccountModal
         visible={showAccountModal}
-        accounts={accounts}
-        selectedAccountId={selectedAccountId}
+        selectedAccountId={accountId ?? ''}
         currencies={currencies}
         selectedCurrencyCode={selectedCurrencyCode}
         onSelectCurrency={code => {
           setSelectedCurrencyCode(code)
-          setSelectedAccountId('')
+          router.setParams({ accountId: '' })
         }}
         onSelectAccount={id => {
-          setSelectedAccountId(id)
+          router.setParams({ accountId: id })
           setSelectedCurrencyCode('')
         }}
         onClose={() => setShowAccountModal(false)}

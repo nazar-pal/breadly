@@ -13,7 +13,7 @@ export function SubcategorySelection({
 }: {
   selectedParentCategoryId: string
   selectedCategoryId: string
-  setSelectedCategoryId: (value: React.SetStateAction<string>) => void
+  setSelectedCategoryId: (value: string) => void
   type: 'expense' | 'income'
 }) {
   const { userId } = useUserSession()

@@ -2,21 +2,28 @@ import { CenteredModal } from '@/components/modals'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Text } from '@/components/ui/text'
+import { useGetAccounts } from '@/data/client/queries'
 import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
+import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { AccountModalProps } from '../types'
 
 export function AccountModal({
   visible,
-  accounts,
   selectedAccountId,
   currencies,
   selectedCurrencyCode,
   onSelectCurrency,
   onSelectAccount,
   onClose
-}: AccountModalProps) {
+}: Omit<AccountModalProps, 'accounts'>) {
+  const { userId } = useUserSession()
+  const { data: accounts = [] } = useGetAccounts({
+    userId,
+    accountType: 'payment'
+  })
+
   const [tab, setTab] = React.useState<'account' | 'currency'>('account')
   return (
     <CenteredModal

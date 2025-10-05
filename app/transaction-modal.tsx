@@ -6,9 +6,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function TransactionModalScreen() {
   const activeCategoryType = useCategoryType()
-  const params = useLocalSearchParams<{ categoryId?: string }>()
+  const params = useLocalSearchParams<{
+    categoryId?: string
+    accountId?: string
+  }>()
 
   const categoryId = params.categoryId || ''
+  const accountId = params.accountId || ''
 
   const handleClose = () => router.back()
 
@@ -17,13 +21,12 @@ export default function TransactionModalScreen() {
       edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
       className="bg-popover p-4"
     >
-      {categoryId && (
-        <AddTransaction
-          type={activeCategoryType}
-          categoryId={categoryId}
-          onClose={handleClose}
-        />
-      )}
+      <AddTransaction
+        type={activeCategoryType}
+        categoryId={categoryId}
+        accountId={accountId}
+        onClose={handleClose}
+      />
     </SafeAreaView>
   )
 }

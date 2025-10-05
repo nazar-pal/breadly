@@ -1,6 +1,8 @@
 import { CenteredModal } from '@/components/modals'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { useGetCategories } from '@/data/client/queries'
+import { useUserSession } from '@/system/session-and-migration/hooks'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { CategoryModalProps } from '../types'
@@ -8,17 +10,22 @@ import { CategoryModalProps } from '../types'
 export function CategoryModal({
   visible,
   type,
-  categories,
   selectedCategoryId,
   onSelectCategory,
   onClose
-}: CategoryModalProps) {
-  const availableCategories = categories.filter(cat => cat.type === type)
+}: Omit<CategoryModalProps, 'categories'>) {
+  const { userId } = useUserSession()
+  // Get parent categories for modal selection
+  const { data: categories = [] } = useGetCategories({
+    userId,
+    type,
+    parentId: null // Only parent categories
+  })
 
   // Group categories into pairs for two-column layout
   const categoryPairs = []
-  for (let i = 0; i < availableCategories.length; i += 2) {
-    const pair = availableCategories.slice(i, i + 2)
+  for (let i = 0; i < categories.length; i += 2) {
+    const pair = categories.slice(i, i + 2)
     categoryPairs.push(pair)
   }
 
