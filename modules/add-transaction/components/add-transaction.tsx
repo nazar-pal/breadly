@@ -1,16 +1,15 @@
 import { Calculator } from '@/components/calculator'
-import { Icon } from '@/components/ui/icon-by-name'
-import { Text } from '@/components/ui/text'
 import { createTransaction } from '@/data/client/mutations'
 import { useGetCurrencies } from '@/data/client/queries'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
-import { Pressable, View } from 'react-native'
+import { View } from 'react-native'
 import { useGetAccount } from '../lib/use-get-account'
 import { useGetCategory } from '../lib/use-get-category'
 import { AccountModal } from './inner-modals/modal-account-select'
 import { CategoryModal } from './inner-modals/modal-category-select'
+import { SelectionTrigger } from './selection-trigger'
 import { SubcategorySelection } from './subcategory-selection'
 
 interface Props {
@@ -85,72 +84,30 @@ export function AddTransaction({
     <>
       {/* Category and Account Selection */}
       <View className="mb-4 flex-row gap-2">
-        {/* Category Selector */}
-        <Pressable
-          className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
+        <SelectionTrigger
+          label="Category"
+          value={parentCategory?.name || 'Select Category'}
+          iconName="Tag"
           onPress={() => setShowCategoryModal(true)}
-        >
-          <View className="flex-1 flex-row items-center">
-            <View className="mr-2 rounded-lg bg-primary/10 p-1">
-              <Icon name="Tag" size={14} className="text-primary" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Category
-              </Text>
-              <Text
-                className="text-sm font-semibold text-foreground"
-                numberOfLines={1}
-              >
-                {parentCategory?.name || 'Select Category'}
-              </Text>
-            </View>
-          </View>
-          <Icon
-            name="ChevronDown"
-            size={14}
-            className="ml-1 text-muted-foreground"
-          />
-        </Pressable>
+        />
 
-        {/* Account/Currency Selector */}
-        <Pressable
-          className="flex-1 flex-row items-center justify-between rounded-xl bg-card p-2.5 shadow-sm active:bg-muted/50"
+        <SelectionTrigger
+          label={
+            account
+              ? 'Account'
+              : selectedCurrency
+                ? 'Currency'
+                : 'Account / Currency'
+          }
+          value={
+            account?.name ||
+            (selectedCurrency
+              ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
+              : 'Select Account or Currency')
+          }
+          iconName={account ? 'CreditCard' : 'DollarSign'}
           onPress={() => setShowAccountModal(true)}
-        >
-          <View className="flex-1 flex-row items-center">
-            <View className="mr-2 rounded-lg bg-primary/10 p-1">
-              <Icon
-                name={account ? 'CreditCard' : 'DollarSign'}
-                size={14}
-                className="text-primary"
-              />
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {account
-                  ? 'Account'
-                  : selectedCurrency
-                    ? 'Currency'
-                    : 'Account / Currency'}
-              </Text>
-              <Text
-                className="text-sm font-semibold text-foreground"
-                numberOfLines={1}
-              >
-                {account?.name ||
-                  (selectedCurrency
-                    ? `${selectedCurrency.symbol} ${selectedCurrency.code}`
-                    : 'Select Account or Currency')}
-              </Text>
-            </View>
-          </View>
-          <Icon
-            name="ChevronDown"
-            size={14}
-            className="ml-1 text-muted-foreground"
-          />
-        </Pressable>
+        />
       </View>
 
       {/* Subcategories  */}
