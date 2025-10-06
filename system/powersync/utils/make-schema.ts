@@ -20,7 +20,18 @@ export function makeSchema(synced: boolean) {
 
   return new Schema({
     // Table 1: Currencies
-    currencies: toPowerSyncTable(dzSch.currencies),
+    // Use dual mapping so locally-seeded currencies never attempt to sync up.
+    // In local-only mode, active view is `currencies` (localOnly), and the synced
+    // view is parked under `inactive_synced_currencies`. In sync-enabled mode,
+    // the active synced view is `currencies`, while the local-only view moves to
+    // `inactive_local_currencies`.
+    currencies: toPowerSyncTable(dzSch.currencies, {
+      viewName: syncedName(dzSch.currencies)
+    }),
+    local_currencies: toPowerSyncTable(dzSch.currencies, {
+      localOnly: true,
+      viewName: localName(dzSch.currencies)
+    }),
     // Table 2: Exchange Rates
     exchangeRates: toPowerSyncTable(dzSch.exchangeRates),
 

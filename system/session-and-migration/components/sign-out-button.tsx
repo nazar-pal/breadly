@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { sqliteSchema } from '@/data/client/db-schema'
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { switchToLocalSchema } from '@/system/powersync/utils'
 import { useClerk } from '@clerk/clerk-expo'
+import { wrapPowerSyncWithDrizzle } from '@powersync/drizzle-driver'
 import { usePowerSync } from '@powersync/react-native'
 import { randomUUID } from 'expo-crypto'
 import * as Linking from 'expo-linking'
@@ -23,6 +25,18 @@ export function SignOutButton() {
 
   const handleSignOut = async () => {
     try {
+      // Snapshot latest currencies while still in synced mode (if available)
+      let currenciesSnapshot: (typeof sqliteSchema.currencies.$inferSelect)[] =
+        []
+      try {
+        const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+          schema: sqliteSchema
+        })
+        currenciesSnapshot = await db.select().from(sqliteSchema.currencies)
+      } catch (err) {
+        if (__DEV__) console.warn('Currencies snapshot skipped:', err)
+      }
+
       // Step 1: Sign out from Clerk
       await signOut()
       await powerSyncDb.disconnectAndClear({
@@ -30,6 +44,22 @@ export function SignOutButton() {
       })
       resetSessionPersistentStore()
       await switchToLocalSchema(powerSyncDb)
+
+      // Restore latest currencies into local-only table if we had a snapshot
+      if (currenciesSnapshot.length > 0) {
+        try {
+          const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+            schema: sqliteSchema
+          })
+          await db.transaction(async tx => {
+            await tx.delete(sqliteSchema.currencies)
+            await tx.insert(sqliteSchema.currencies).values(currenciesSnapshot)
+          })
+        } catch (err) {
+          if (__DEV__)
+            console.warn('Restore currencies after sign out skipped:', err)
+        }
+      }
 
       // Step 2: Reset PowerSync database and create new guest session
       if (__DEV__) console.log('🔄 Starting database reset after sign out')
