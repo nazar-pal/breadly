@@ -16,6 +16,7 @@ interface Props {
   type: 'expense' | 'income'
   categoryId: string
   accountId?: string
+  currencyCode: string
   onClose: () => void
 }
 
@@ -23,6 +24,7 @@ export function AddTransaction({
   type,
   categoryId,
   accountId,
+  currencyCode,
   onClose
 }: Props) {
   const { userId } = useUserSession()
@@ -41,16 +43,13 @@ export function AddTransaction({
   })
   const account = accountData.length > 0 ? accountData[0] : null
 
-  const [selectedCurrencyCode, setSelectedCurrencyCode] =
-    useState<string>('USD')
-
   const { data: currencies = [] } = useGetCurrencies()
 
   const selectedCurrency = (
     currencies.length > 0
       ? currencies
       : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
-  ).find(c => c.code === selectedCurrencyCode)
+  ).find(c => c.code === currencyCode)
 
   const handleParentCategorySelect = (categoryId: string) =>
     router.setParams({ categoryId: categoryId })
@@ -69,7 +68,7 @@ export function AddTransaction({
           ...(account ? { accountId: account.id } : {}),
           categoryId: parentCategory.id,
           amount: amount,
-          currencyId: account ? account.currencyId : selectedCurrencyCode,
+          currencyId: account ? account.currencyId : currencyCode,
           txDate: txDate ?? new Date(),
           notes: comment || null,
           createdAt: new Date()
@@ -139,14 +138,12 @@ export function AddTransaction({
         visible={showAccountModal}
         selectedAccountId={accountId ?? ''}
         currencies={currencies}
-        selectedCurrencyCode={selectedCurrencyCode}
+        selectedCurrencyCode={currencyCode}
         onSelectCurrency={code => {
-          setSelectedCurrencyCode(code)
-          router.setParams({ accountId: '' })
+          router.setParams({ currencyCode: code, accountId: '' })
         }}
         onSelectAccount={id => {
-          router.setParams({ accountId: id })
-          setSelectedCurrencyCode('')
+          router.setParams({ accountId: id, currencyCode: 'USD' })
         }}
         onClose={() => setShowAccountModal(false)}
       />

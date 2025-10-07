@@ -9,10 +9,12 @@ export default function TransactionModalScreen() {
   const params = useLocalSearchParams<{
     categoryId?: string
     accountId?: string
+    currencyCode?: string
   }>()
 
   const categoryId = params.categoryId || ''
   const accountId = params.accountId || ''
+  const currencyCode = params.currencyCode || 'USD'
 
   const handleClose = () => router.back()
 
@@ -25,6 +27,7 @@ export default function TransactionModalScreen() {
         type={activeCategoryType}
         categoryId={categoryId}
         accountId={accountId}
+        currencyCode={currencyCode}
         onClose={handleClose}
       />
     </SafeAreaView>
