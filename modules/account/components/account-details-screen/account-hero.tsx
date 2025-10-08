@@ -12,11 +12,9 @@ import { AccountHeaderBadge } from './account-header/account-header-badge'
 
 export function AccountHero({
   account,
-  onAddMoney,
   onTransfer
 }: {
   account: AccountDetails
-  onAddMoney?: () => void
   onTransfer?: () => void
 }) {
   const isDebt = account.type === 'debt'
@@ -94,10 +92,6 @@ export function AccountHero({
             </View>
 
             <View className="flex-row gap-2">
-              <Button size="sm" variant="secondary" onPress={onAddMoney}>
-                <Icon name="Plus" size={16} className="text-foreground/80" />
-                <Text className="ml-1 text-sm">Add</Text>
-              </Button>
               <Button size="sm" variant="secondary" onPress={onTransfer}>
                 <Icon
                   name="ArrowLeftRight"

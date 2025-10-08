@@ -1,6 +1,5 @@
 import React from 'react'
 import { AccountDetails } from '../../data'
-import { AccountAddMoneyModal } from './account-add-money-modal'
 import { AccountHero } from './account-hero'
 import { AccountInsights } from './account-insights'
 import { AccountProgress } from './account-progress'
@@ -15,7 +14,6 @@ export function AccountDetailsScreen({ account }: { account: AccountDetails }) {
     <>
       <AccountHero
         account={account}
-        onAddMoney={() => setAddVisible(true)}
         onTransfer={() => setTransferVisible(true)}
       />
 
@@ -25,11 +23,6 @@ export function AccountDetailsScreen({ account }: { account: AccountDetails }) {
 
       <AccountTransactions accountId={account.id} />
 
-      <AccountAddMoneyModal
-        account={account}
-        visible={addVisible}
-        onClose={() => setAddVisible(false)}
-      />
       <AccountTransferModal
         account={account}
         visible={transferVisible}
