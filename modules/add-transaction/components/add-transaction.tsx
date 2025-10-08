@@ -1,3 +1,4 @@
+import { TransactionParams } from '@/app/transaction-modal'
 import { Calculator } from '@/components/calculator'
 import { createTransaction } from '@/data/client/mutations'
 import { useGetCurrencies } from '@/data/client/queries'
@@ -13,21 +14,14 @@ import { SelectionTrigger } from './selection-trigger'
 import { SubcategorySelection } from './subcategory-selection'
 
 interface Props {
-  type: 'expense' | 'income'
-  categoryId: string
-  accountId?: string
-  currencyCode: string
+  params: Extract<TransactionParams, { type: 'expense' | 'income' }>
   onClose: () => void
 }
 
-export function AddTransaction({
-  type,
-  categoryId,
-  accountId,
-  currencyCode,
-  onClose
-}: Props) {
+export function AddTransaction({ params, onClose }: Props) {
   const { userId } = useUserSession()
+
+  const { type, categoryId, accountId, currencyCode } = params
 
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [showAccountModal, setShowAccountModal] = useState(false)
@@ -45,11 +39,12 @@ export function AddTransaction({
 
   const { data: currencies = [] } = useGetCurrencies()
 
-  const selectedCurrency = (
-    currencies.length > 0
-      ? currencies
-      : [{ code: 'USD', symbol: '$', id: 'USD', name: 'United States Dollar' }]
-  ).find(c => c.code === currencyCode)
+  const selectedCurrency = currencies.find(c => c.code === currencyCode) ?? {
+    code: 'USD',
+    symbol: '$',
+    id: 'USD',
+    name: 'United States Dollar'
+  }
 
   const handleParentCategorySelect = (categoryId: string) =>
     router.setParams({ categoryId: categoryId })
@@ -68,7 +63,7 @@ export function AddTransaction({
           ...(account ? { accountId: account.id } : {}),
           categoryId: parentCategory.id,
           amount: amount,
-          currencyId: account ? account.currencyId : currencyCode,
+          currencyId: account ? account.currencyId : (currencyCode ?? 'USD'),
           txDate: txDate ?? new Date(),
           notes: comment || null,
           createdAt: new Date()
@@ -138,12 +133,12 @@ export function AddTransaction({
         visible={showAccountModal}
         selectedAccountId={accountId ?? ''}
         currencies={currencies}
-        selectedCurrencyCode={currencyCode}
+        selectedCurrencyCode={currencyCode ?? 'USD'}
         onSelectCurrency={code => {
           router.setParams({ currencyCode: code, accountId: '' })
         }}
         onSelectAccount={id => {
-          router.setParams({ accountId: id, currencyCode: 'USD' })
+          router.setParams({ accountId: id, currencyCode: '' })
         }}
         onClose={() => setShowAccountModal(false)}
       />
