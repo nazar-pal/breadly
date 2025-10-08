@@ -1,3 +1,4 @@
+import { CenteredModal } from '@/components/modals'
 import { Text } from '@/components/ui/text'
 import { useGetAccounts } from '@/data/client/queries'
 import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
@@ -5,7 +6,6 @@ import { useGetAccountsByCurrency } from '@/modules/account/data/queries'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
-import { ParamsModalShell } from './params-modal-shell'
 
 export function AccountTransferModal({
   visible,
@@ -39,9 +39,9 @@ export function AccountTransferModal({
   const accounts = currencyId ? sameCurrencyAccounts : allAccounts
 
   return (
-    <ParamsModalShell
+    <CenteredModal
       visible={visible}
-      onClose={onClose}
+      onRequestClose={onClose}
       title={`Select ${direction} Account`}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -87,6 +87,6 @@ export function AccountTransferModal({
           ))
         )}
       </ScrollView>
-    </ParamsModalShell>
+    </CenteredModal>
   )
 }

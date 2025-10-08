@@ -2,7 +2,7 @@ import { CenteredModal } from '@/components/modals'
 import { Calendar } from '@/components/ui/calendar'
 import { Text } from '@/components/ui/text'
 import React, { useState } from 'react'
-import { Pressable, View } from 'react-native'
+import { View } from 'react-native'
 import { Button } from '../ui/button'
 import { Icon } from '../ui/icon-by-name'
 
@@ -47,16 +47,11 @@ export function DateModal({
   }
 
   return (
-    <CenteredModal visible={visible} onRequestClose={onClose}>
-      <View className="relative">
-        <Text className="mb-4 text-xl font-semibold text-foreground">
-          Select date
-        </Text>
-        <Pressable className="absolute -right-2 -top-2 p-2" onPress={onClose}>
-          <Icon name="X" className="h-5 w-5 text-muted-foreground" />
-        </Pressable>
-      </View>
-
+    <CenteredModal
+      visible={visible}
+      onRequestClose={onClose}
+      title="Select date"
+    >
       <Calendar
         markedDates={marked}
         maxDate={todayKey}

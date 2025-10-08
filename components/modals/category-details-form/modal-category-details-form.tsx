@@ -13,6 +13,7 @@ export function CategoryDetailsFormModal() {
   return (
     <CenteredModal
       visible={isModalOpen}
+      showCloseButton={false}
       onRequestClose={closeCategoryFormModal}
     >
       <CategoryDetailsForm

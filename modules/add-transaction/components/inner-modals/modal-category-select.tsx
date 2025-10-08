@@ -1,10 +1,10 @@
+import { CenteredModal } from '@/components/modals'
 import { Text } from '@/components/ui/text'
 import { useGetCategories } from '@/data/client/queries'
 import { useUserSession } from '@/system/session-and-migration/hooks'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { CategoryModalProps } from '../types'
-import { ParamsModalShell } from './params-modal-shell'
 
 export function CategoryModal({
   visible,
@@ -29,9 +29,9 @@ export function CategoryModal({
   }
 
   return (
-    <ParamsModalShell
+    <CenteredModal
       visible={visible}
-      onClose={onClose}
+      onRequestClose={onClose}
       title={`Select ${type === 'expense' ? 'Expense' : 'Income'} Category`}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -60,6 +60,6 @@ export function CategoryModal({
           </View>
         ))}
       </ScrollView>
-    </ParamsModalShell>
+    </CenteredModal>
   )
 }

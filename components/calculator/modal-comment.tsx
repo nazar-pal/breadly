@@ -20,10 +20,11 @@ export function CommentModal({
   onClose
 }: Props) {
   return (
-    <CenteredModal visible={visible} onRequestClose={onClose}>
-      <Text className="mb-3 text-center text-lg font-bold text-foreground">
-        Add Comment
-      </Text>
+    <CenteredModal
+      visible={visible}
+      onRequestClose={onClose}
+      title="Add Comment"
+    >
       <Input
         className="native:h-[80px] mb-5 rounded-xl border-none bg-muted/60 px-4 py-3 text-base"
         value={comment}
