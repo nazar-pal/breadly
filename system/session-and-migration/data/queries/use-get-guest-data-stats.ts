@@ -5,9 +5,8 @@ import {
   categories,
   transactions
 } from '@/data/client/db-schema'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { count, eq } from 'drizzle-orm'
 
 export type GuestDataStats = {
@@ -68,11 +67,11 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
     .from(attachments)
     .where(eq(attachments.userId, userId))
 
-  const categoriesResult = useQuery(toCompilableQuery(categoriesQuery))
-  const accountsResult = useQuery(toCompilableQuery(accountsQuery))
-  const transactionsResult = useQuery(toCompilableQuery(transactionsQuery))
-  const budgetsResult = useQuery(toCompilableQuery(budgetsQuery))
-  const attachmentsResult = useQuery(toCompilableQuery(attachmentsQuery))
+  const categoriesResult = useDrizzleQuery(categoriesQuery)
+  const accountsResult = useDrizzleQuery(accountsQuery)
+  const transactionsResult = useDrizzleQuery(transactionsQuery)
+  const budgetsResult = useDrizzleQuery(budgetsQuery)
+  const attachmentsResult = useDrizzleQuery(attachmentsQuery)
 
   const isLoading =
     categoriesResult.isLoading ||

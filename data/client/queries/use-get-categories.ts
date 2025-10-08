@@ -1,6 +1,5 @@
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, asc, eq, gte, isNull, lte } from 'drizzle-orm'
 import { categories, CATEGORY_TYPE, transactions } from '../db-schema'
 
@@ -83,7 +82,7 @@ export function useGetCategories({
     orderBy: [asc(categories.sortOrder), asc(categories.name)]
   })
 
-  const result = useQuery(toCompilableQuery(query))
+  const result = useDrizzleQuery(query)
 
   return result
 }

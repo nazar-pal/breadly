@@ -1,6 +1,5 @@
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, count, eq } from 'drizzle-orm'
 import { categories, transactions } from '../db-schema'
 
@@ -34,8 +33,8 @@ export function useCheckCategoryDependencies({
       and(eq(categories.userId, userId), eq(categories.parentId, categoryId))
     )
 
-  const transactionsResult = useQuery(toCompilableQuery(transactionsQuery))
-  const subcategoriesResult = useQuery(toCompilableQuery(subcategoriesQuery))
+  const transactionsResult = useDrizzleQuery(transactionsQuery)
+  const subcategoriesResult = useDrizzleQuery(subcategoriesQuery)
 
   const isLoading =
     transactionsResult.isLoading || subcategoriesResult.isLoading

@@ -1,7 +1,6 @@
 import { transactions } from '@/data/client/db-schema'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, count, eq, or } from 'drizzle-orm'
 
 export function useCheckAccountDependencies({
@@ -24,7 +23,7 @@ export function useCheckAccountDependencies({
       )
     )
 
-  const txCountResult = useQuery(toCompilableQuery(txCountQuery))
+  const txCountResult = useDrizzleQuery(txCountQuery)
 
   const isLoading = txCountResult.isLoading
   const transactionCount = txCountResult.data?.[0]?.count || 0

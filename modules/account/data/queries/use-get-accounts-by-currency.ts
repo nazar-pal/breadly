@@ -1,7 +1,6 @@
 import { accounts } from '@/data/client/db-schema'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, asc, eq, ne } from 'drizzle-orm'
 
 export function useGetAccountsByCurrency({
@@ -24,7 +23,7 @@ export function useGetAccountsByCurrency({
     orderBy: [asc(accounts.isArchived), asc(accounts.createdAt)]
   })
 
-  const result = useQuery(toCompilableQuery(query))
+  const result = useDrizzleQuery(query)
 
   return {
     ...result,

@@ -1,7 +1,6 @@
 import { accounts } from '@/data/client/db-schema'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, eq } from 'drizzle-orm'
 
 export function useGetAccount({
@@ -19,7 +18,7 @@ export function useGetAccount({
     limit: 1
   })
 
-  const result = useQuery(toCompilableQuery(query))
+  const result = useDrizzleQuery(query)
 
   return result
 }

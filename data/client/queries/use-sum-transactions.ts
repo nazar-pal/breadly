@@ -1,6 +1,5 @@
+import { useDrizzleQuery } from '@/lib/hooks'
 import { db } from '@/system/powersync/system'
-import { toCompilableQuery } from '@powersync/drizzle-driver'
-import { useQuery } from '@powersync/react-native'
 import { and, eq, gte, lte, sum } from 'drizzle-orm'
 import { CATEGORY_TYPE, transactions } from '../db-schema'
 
@@ -36,7 +35,7 @@ export function useSumTransactions({
     )
     .groupBy(transactions.currencyId)
 
-  const result = useQuery(toCompilableQuery(query))
+  const result = useDrizzleQuery(query)
 
   return result
 }
