@@ -1,11 +1,10 @@
-import { CenteredModal } from '@/components/modals'
-import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useGetCategories } from '@/data/client/queries'
 import { useUserSession } from '@/system/session-and-migration/hooks'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { CategoryModalProps } from '../types'
+import { ParamsModalShell } from './params-modal-shell'
 
 export function CategoryModal({
   visible,
@@ -30,19 +29,11 @@ export function CategoryModal({
   }
 
   return (
-    <CenteredModal
+    <ParamsModalShell
       visible={visible}
-      onRequestClose={onClose}
-      className="max-h-[60%]"
+      onClose={onClose}
+      title={`Select ${type === 'expense' ? 'Expense' : 'Income'} Category`}
     >
-      <View className="relative">
-        <Text className="mb-4 text-xl font-semibold text-foreground">
-          Select {type === 'expense' ? 'Expense' : 'Income'} Category
-        </Text>
-        <Pressable className="absolute -right-2 -top-2 p-2" onPress={onClose}>
-          <Icon name="X" className="h-5 w-5 text-muted-foreground" />
-        </Pressable>
-      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         {categoryPairs.map((pair, index) => (
           <View key={index} className="mb-2 flex-row gap-2">
@@ -69,6 +60,6 @@ export function CategoryModal({
           </View>
         ))}
       </ScrollView>
-    </CenteredModal>
+    </ParamsModalShell>
   )
 }

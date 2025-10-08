@@ -1,4 +1,3 @@
-import { CenteredModal } from '@/components/modals'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Text } from '@/components/ui/text'
@@ -8,6 +7,7 @@ import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { AccountModalProps } from '../types'
+import { ParamsModalShell } from './params-modal-shell'
 
 export function AccountModal({
   visible,
@@ -26,20 +26,11 @@ export function AccountModal({
 
   const [tab, setTab] = React.useState<'account' | 'currency'>('account')
   return (
-    <CenteredModal
+    <ParamsModalShell
       visible={visible}
-      onRequestClose={onClose}
-      className="max-h-[60%]"
+      onClose={onClose}
+      title="Select Account or Currency"
     >
-      <View className="mb-4 flex-row items-center justify-between">
-        <Text className="text-xl font-semibold text-foreground">
-          Select Account or Currency
-        </Text>
-        <Pressable className="absolute -right-2 -top-2 p-2" onPress={onClose}>
-          <Icon name="X" className="h-5 w-5 text-muted-foreground" />
-        </Pressable>
-      </View>
-
       <Tabs
         value={tab}
         onValueChange={(value: string) =>
@@ -158,6 +149,6 @@ export function AccountModal({
           </View>
         </TabsContent>
       </Tabs>
-    </CenteredModal>
+    </ParamsModalShell>
   )
 }
