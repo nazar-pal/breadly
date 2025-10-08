@@ -1,21 +1,23 @@
+import { router } from 'expo-router'
 import React from 'react'
 import { AccountDetails } from '../../data'
 import { AccountHero } from './account-hero'
 import { AccountInsights } from './account-insights'
 import { AccountProgress } from './account-progress'
 import { AccountTransactions } from './account-transactions'
-import { AccountTransferModal } from './account-transfer-modal'
 
 export function AccountDetailsScreen({ account }: { account: AccountDetails }) {
-  const [addVisible, setAddVisible] = React.useState(false)
-  const [transferVisible, setTransferVisible] = React.useState(false)
+  const handleOpenTransfer = () => {
+    const params = new URLSearchParams({
+      type: 'transfer',
+      fromAccountId: account.id
+    })
+    router.push(`/transaction-modal?${params}`)
+  }
 
   return (
     <>
-      <AccountHero
-        account={account}
-        onTransfer={() => setTransferVisible(true)}
-      />
+      <AccountHero account={account} onTransfer={handleOpenTransfer} />
 
       <AccountProgress account={account} />
 
@@ -23,11 +25,7 @@ export function AccountDetailsScreen({ account }: { account: AccountDetails }) {
 
       <AccountTransactions accountId={account.id} />
 
-      <AccountTransferModal
-        account={account}
-        visible={transferVisible}
-        onClose={() => setTransferVisible(false)}
-      />
+      {/** Transfer now handled by /transaction-modal */}
     </>
   )
 }

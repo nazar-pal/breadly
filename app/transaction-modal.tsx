@@ -1,4 +1,5 @@
 import { AddTransaction } from '@/modules/add-transaction'
+import { AddTransferTransaction } from '@/modules/add-transaction/components/add-transfer-transaction'
 import { router, useLocalSearchParams } from 'expo-router'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -26,7 +27,8 @@ const searchParamsSchema = z
         return { categoryId, accountId, type }
       if (categoryId && currencyCode && type !== 'transfer')
         return { categoryId, currencyCode, type }
-      if (fromAccountId && toAccountId && type === 'transfer')
+      if (type === 'transfer')
+        // Allow opening with only one side selected; the UI will enforce both before save
         return { fromAccountId, toAccountId, type }
       return undefined
     }
@@ -38,23 +40,18 @@ export default function TransactionModalScreen() {
   const rawParams = useLocalSearchParams()
 
   const params = searchParamsSchema.parse(rawParams)
+
   const handleClose = () => router.back()
 
-  if (!params) {
-    handleClose()
-    return null
-  }
-  // Check if it's a transfer or expense/income
-  const isTransfer = params.type === 'transfer'
+  if (!params) return handleClose()
 
   return (
     <SafeAreaView
       edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
       className="bg-popover p-4"
     >
-      {isTransfer ? (
-        // TODO: Add Transfer component
-        <></>
+      {params.type === 'transfer' ? (
+        <AddTransferTransaction params={params} onClose={handleClose} />
       ) : (
         <AddTransaction params={params} onClose={handleClose} />
       )}
