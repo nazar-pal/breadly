@@ -5,12 +5,11 @@ import { CommentModal } from './modal-comment'
 import { DateModal } from './modal-date'
 
 interface Props {
-  type: 'expense' | 'income'
   isDisabled: boolean
   handleSubmit: (amount: number, comment: string, txDate?: Date) => void
 }
 
-export function Calculator({ type, isDisabled, handleSubmit }: Props) {
+export function Calculator({ isDisabled, handleSubmit }: Props) {
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)

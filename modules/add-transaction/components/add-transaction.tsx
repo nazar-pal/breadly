@@ -115,7 +115,6 @@ export function AddTransaction({ params, onClose }: Props) {
       />
 
       <Calculator
-        type={type}
         isDisabled={!categoryId || (!account && !selectedCurrency)}
         handleSubmit={handleSubmit}
       />
