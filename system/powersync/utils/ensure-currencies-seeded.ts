@@ -18,7 +18,7 @@ export const DEFAULT_CURRENCIES: Pick<
   { id: 'SGD', code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
   { id: 'UAH', code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
   { id: 'USD', code: 'USD', symbol: '$', name: 'US Dollar' }
-]
+] as const
 
 export async function ensureCurrenciesSeeded(): Promise<void> {
   // Safety: only seed in local-only mode. When sync is enabled, the server
