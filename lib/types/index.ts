@@ -1,3 +1,2 @@
-export type StringWithAutocompleteOptions<TOptions extends string> =
-  | (string & {})
-  | TOptions
+export * from './defined-props'
+export * from './string-with-autocomplete-options'
