@@ -1,6 +1,5 @@
 export { createCategory } from './create-category'
 export { createOrUpdateUserPreferences } from './create-or-update-user-preferences'
-export { createTransaction } from './create-transaction'
 export { deleteCategory } from './delete-category'
 export { deleteTransaction } from './delete-transaction'
 export { reorderCategories } from './reorder-categories/reorder-categories'

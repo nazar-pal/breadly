@@ -12,6 +12,7 @@ export function useGetCategory({
 }) {
   const query = db.query.categories.findFirst({
     where: and(eq(categories.userId, userId), eq(categories.id, categoryId)),
+    columns: { id: true, name: true, icon: true },
     with: { parent: true }
   })
 

@@ -1,27 +1,22 @@
 import { useGetUserPreferences } from '@/data/client/queries'
 import { useCategoryDetailsActions } from '@/lib/storage/category-details-store'
+import { openExpenseIncomeBottomSheet } from '@/modules/add-transaction'
 import { CategoryCardsGrid } from '@/screens/tabs-categories'
 import { useUserSession } from '@/system/session-and-migration/hooks'
-import { router } from 'expo-router'
 
 export default function CategoriesIncomeScreen() {
   const { userId } = useUserSession()
   const { openCategoryDetailsModal } = useCategoryDetailsActions()
-  const { data: userPreferences } = useGetUserPreferences({ userId })
 
-  const defaultCurrencyCode =
-    userPreferences?.[0]?.defaultCurrency?.code || 'USD'
+  const { data: preferences } = useGetUserPreferences({ userId })
+  const currencyCode = preferences?.[0]?.defaultCurrency?.code || 'USD'
+
+  const openTransactionModal = (categoryId: string) =>
+    openExpenseIncomeBottomSheet({ type: 'income', categoryId, currencyCode })
 
   return (
     <CategoryCardsGrid
-      onPress={categoryId => {
-        const params = new URLSearchParams({
-          categoryId,
-          type: 'income',
-          currencyCode: defaultCurrencyCode
-        })
-        router.push(`/transaction-modal?${params}`)
-      }}
+      onPress={openTransactionModal}
       onLongPress={openCategoryDetailsModal}
     />
   )

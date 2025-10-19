@@ -1,4 +1,4 @@
-import { router } from 'expo-router'
+import { openTransferBottomSheet } from '@/modules/add-transaction'
 import React from 'react'
 import { AccountDetails } from '../../data'
 import { AccountHero } from './account-hero'
@@ -7,13 +7,12 @@ import { AccountProgress } from './account-progress'
 import { AccountTransactions } from './account-transactions'
 
 export function AccountDetailsScreen({ account }: { account: AccountDetails }) {
-  const handleOpenTransfer = () => {
-    const params = new URLSearchParams({
+  const handleOpenTransfer = () =>
+    openTransferBottomSheet({
       type: 'transfer',
-      fromAccountId: account.id
+      fromAccountId: account.id,
+      toAccountId: null
     })
-    router.push(`/transaction-modal?${params}`)
-  }
 
   return (
     <>
