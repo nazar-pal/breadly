@@ -51,6 +51,8 @@ interface CustomModalProps {
   closeThreshold?: number
   /** Additional safe area padding */
   additionalSafeAreaPadding?: number
+  /** Whether to add safe bottom padding */
+  safeBottomPadding?: boolean
   /** Accessibility label for the backdrop */
   backdropAccessibilityLabel?: string
 }
@@ -78,6 +80,7 @@ export function Modal({
   animationDuration,
   closeThreshold,
   additionalSafeAreaPadding = 12,
+  safeBottomPadding = true,
   backdropAccessibilityLabel = 'Close modal',
   // Spread all other native Modal props
   ...nativeModalProps
@@ -172,10 +175,12 @@ export function Modal({
 
             {children}
 
-            <SafeAreaView
-              edges={['bottom']}
-              style={{ paddingBottom: additionalSafeAreaPadding }}
-            />
+            {safeBottomPadding && (
+              <SafeAreaView
+                edges={['bottom']}
+                style={{ paddingBottom: additionalSafeAreaPadding }}
+              />
+            )}
           </SwipeToDismiss>
         </View>
       </GestureHandlerRootView>
