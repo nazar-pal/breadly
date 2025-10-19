@@ -19,7 +19,8 @@ import type { Query } from 'drizzle-orm'
  * This helper centralizes that conversion while preserving full static typing for
  * your Drizzle row type. It mirrors `useQuery`'s overloads, so you get the same return
  * types you expect depending on the options you pass. The first parameter can be either
- * a Drizzle query object or a factory function `(db) => drizzleQuery`.
+ * a Drizzle query object, a factory function `(db) => drizzleQuery`, or `undefined` to
+ * defer execution (runs a no-op `SELECT 0 WHERE 0`).
  *
  * ----------------------------------------------------------------------------
  * Before (without this hook)
@@ -77,6 +78,19 @@ import type { Query } from 'drizzle-orm'
  * ```
  *
  * ----------------------------------------------------------------------------
+ * Conditional/deferred execution
+ * ----------------------------------------------------------------------------
+ *
+ * Pass `undefined` when you don't have parameters yet; this avoids compiling and
+ * running a real query and instead executes a no-op `SELECT 0 WHERE 0`.
+ *
+ * ```ts
+ * const result = useDrizzleQuery(undefined)
+ * // or
+ * const result = useDrizzleQuery(condition ? query : undefined)
+ * ```
+ *
+ * ----------------------------------------------------------------------------
  * Differential vs non-differential usage
  * ----------------------------------------------------------------------------
  *
@@ -106,14 +120,14 @@ import type { Query } from 'drizzle-orm'
  * You will see this function declared multiple times below. This is a TypeScript
  * overload pattern:
  *
- * - Non-differential with a Drizzle query → returns `QueryResult<RowType>`
+ * - Non-differential with a Drizzle query or `undefined` → returns `QueryResult<RowType>`
  * - Non-differential with a factory `(db) => query` → returns `QueryResult<RowType>`
- * - Differential with a Drizzle query → returns `ReadonlyQueryResult<RowType>`
+ * - Differential with a Drizzle query or `undefined` → returns `ReadonlyQueryResult<RowType>`
  * - Differential with a factory `(db) => query` → returns `ReadonlyQueryResult<RowType>`
  * - And then a single implementation that calls `useQuery` exactly once
  *
- * Only the third is emitted at runtime; the first two are type-only and exist to
- * give you precise return types at compile-time.
+ * Only the implementation at the bottom is emitted at runtime; the overloads above are
+ * type-only and exist to give you precise return types at compile-time.
  */
 type DrizzleCompilable<RowType> = {
   execute: () => Promise<RowType | RowType[]>
@@ -123,7 +137,7 @@ type DrizzleCompilable<RowType> = {
 type DbInstance = typeof drizzleDb
 
 export function useDrizzleQuery<RowType>(
-  query: DrizzleCompilable<RowType>,
+  query: DrizzleCompilable<RowType> | undefined,
   options?: AdditionalOptions
 ): QueryResult<RowType>
 
@@ -133,7 +147,7 @@ export function useDrizzleQuery<RowType>(
 ): QueryResult<RowType>
 
 export function useDrizzleQuery<RowType>(
-  query: DrizzleCompilable<RowType>,
+  query: DrizzleCompilable<RowType> | undefined,
   options?: DifferentialHookOptions<RowType>
 ): ReadonlyQueryResult<RowType>
 
@@ -145,13 +159,18 @@ export function useDrizzleQuery<RowType>(
 export function useDrizzleQuery<RowType>(
   queryOrFactory:
     | DrizzleCompilable<RowType>
-    | ((db: DbInstance) => DrizzleCompilable<RowType>),
+    | ((db: DbInstance) => DrizzleCompilable<RowType>)
+    | undefined,
   options?: AdditionalOptions | DifferentialHookOptions<RowType>
 ): QueryResult<RowType> | ReadonlyQueryResult<RowType> {
-  const resolvedQuery: DrizzleCompilable<RowType> =
+  const resolvedQuery: DrizzleCompilable<RowType> | undefined =
     typeof queryOrFactory === 'function'
       ? queryOrFactory(drizzleDb)
       : queryOrFactory
 
-  return useQuery<RowType>(toCompilableQuery(resolvedQuery), [], options)
+  const compiledQuery = resolvedQuery
+    ? toCompilableQuery(resolvedQuery)
+    : 'SELECT 0 WHERE 0'
+
+  return useQuery<RowType>(compiledQuery, [], options)
 }
