@@ -22,18 +22,21 @@ export function SelectionList({
     return <LoadingMessage />
   }
 
+  const gap = 12
+
   return (
     <LegendList
-      className="flex-1"
       data={data}
       renderItem={({ item }) => <SelectionItem {...item} />}
       keyExtractor={item => item.itemKey}
       ListEmptyComponent={<EmptyListMessage>{emptyMessage}</EmptyListMessage>}
       numColumns={columns}
-      columnWrapperStyle={columns > 1 ? { gap: 8 } : undefined}
+      columnWrapperStyle={{ gap }}
+      contentContainerStyle={{
+        paddingHorizontal: columns > 1 ? gap / 2 : 0
+      }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{ paddingBottom: 12 }}
     />
   )
 }
