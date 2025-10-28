@@ -1,0 +1,20 @@
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ModalAccountForm } from './components/modal-account-form'
+
+export default function TransactionModalScreen() {
+  return (
+    <SafeAreaView
+      edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
+      className="flex-1 bg-popover p-4"
+    >
+      <KeyboardAvoidingView
+        className="flex-1 "
+        behavior="padding"
+        keyboardVerticalOffset={100}
+      >
+        <ModalAccountForm />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  )
+}

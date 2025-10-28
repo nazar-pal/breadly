@@ -4,6 +4,6 @@ const { getSentryExpoConfig } = require('@sentry/react-native/metro')
 const config = getSentryExpoConfig(__dirname)
 
 module.exports = withNativeWind(config, {
-  input: './app/global.css',
+  input: './src/app/global.css',
   inlineRem: 16
 })

@@ -43,7 +43,7 @@ module.exports = defineConfig([
     }
   },
   {
-    files: ['lib/icons/**/*.{ts,tsx,js,jsx}'],
+    files: ['src/lib/icons/**/*.{ts,tsx,js,jsx}'],
     rules: {
       'no-restricted-imports': 'off'
     }
