@@ -1,19 +1,14 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
 import { AccountDetails } from '@/data/client/queries/use-get-account'
-import { cn } from '@/lib/utils'
-import {
-  calculateAccountProgress,
-  getAccountProgressLabel
-} from '@/lib/utils/progress'
+import { cn, getAccountProgress } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
 export function AccountProgress({ account }: { account: AccountDetails }) {
   if (account.type === 'payment') return null
 
-  const progress = calculateAccountProgress(account)
-  const label = getAccountProgressLabel(account)
+  const { label, value: progress } = getAccountProgress(account)
 
   if (!progress) return null
 

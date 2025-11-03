@@ -1,10 +1,7 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Progress } from '@/components/ui/progress'
 import { AccountItem } from '@/data/client/queries/use-get-accounts'
-import {
-  calculateAccountProgress,
-  getAccountProgressLabel
-} from '@/lib/utils/progress'
+import { getAccountProgress } from '@/lib/utils'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { AccountCardShell } from './account-card-shell'
@@ -16,8 +13,7 @@ type Props = React.ComponentProps<typeof Pressable> & {
 export function AccountCardSaving({ account, ...rest }: Props) {
   const balanceAmount = account.balance || 0
 
-  const progress = calculateAccountProgress(account)
-  const progressLabel = getAccountProgressLabel(account)
+  const { label: progressLabel, value: progress } = getAccountProgress(account)
 
   return (
     <AccountCardShell

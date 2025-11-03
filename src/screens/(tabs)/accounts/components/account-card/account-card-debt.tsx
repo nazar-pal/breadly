@@ -1,10 +1,7 @@
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
 import { AccountItem } from '@/data/client/queries/use-get-accounts'
-import {
-  calculateAccountProgress,
-  getAccountProgressLabel
-} from '@/lib/utils/progress'
+import { getAccountProgress } from '@/lib/utils'
 import React from 'react'
 import { Pressable, View } from 'react-native'
 import { AccountCardShell } from './account-card-shell'
@@ -14,8 +11,7 @@ type Props = React.ComponentProps<typeof Pressable> & {
 }
 
 export function AccountCardDebt({ account, ...rest }: Props) {
-  const progress = calculateAccountProgress(account)
-  const progressLabel = getAccountProgressLabel(account)
+  const { label: progressLabel, value: progress } = getAccountProgress(account)
   const isReceivable = Boolean(account.debtIsOwedToMe)
 
   return (
