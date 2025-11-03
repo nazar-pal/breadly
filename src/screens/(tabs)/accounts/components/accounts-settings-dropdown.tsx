@@ -7,12 +7,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import React from 'react'
+import { View } from 'react-native'
 import {
   useAccountSettingsActions,
   useAccountSettingsState
-} from '@/lib/storage/account-settings-store'
-import React from 'react'
-import { View } from 'react-native'
+} from '../lib/account-settings-store'
 
 export function AccountsSettingsDropdown() {
   const { showArchived } = useAccountSettingsState()
