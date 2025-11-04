@@ -38,7 +38,7 @@ export default function DefaultCurrencySelect() {
     >
       <CurrenciesList
         onSelect={handleCurrencySelect}
-        currentCurrency={currentCurrency}
+        selectedCurrency={currentCurrency}
       />
     </ScrollView>
   )

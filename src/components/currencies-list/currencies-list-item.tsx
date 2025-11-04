@@ -10,7 +10,6 @@ interface Props extends PressableProps {
   isSelected: boolean
 }
 
-// Extracted CurrencyItem for better separation of concerns
 export function CurrenciesListItem({
   currency,
   isSelected,
