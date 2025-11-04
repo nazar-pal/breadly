@@ -1,1 +1,1 @@
-export { default } from './db'
+export { default } from './screen'

@@ -1,1 +1,1 @@
-export { default } from './trpc-test'
+export { default } from './screen'

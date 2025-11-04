@@ -1,1 +1,1 @@
-export { default } from './category-details'
+export { default } from './screen'

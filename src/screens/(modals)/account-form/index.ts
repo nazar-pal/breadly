@@ -1,1 +1,1 @@
-export { default } from './account-form'
+export { default } from './screen'

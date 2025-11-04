@@ -1,2 +1,2 @@
-export { default } from './add-transaction'
+export { default } from './screen'
 export { openExpenseIncomeBottomSheet, openTransferBottomSheet } from './utils'

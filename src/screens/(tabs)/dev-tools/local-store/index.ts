@@ -1,1 +1,1 @@
-export { default } from './local-store'
+export { default } from './screen'

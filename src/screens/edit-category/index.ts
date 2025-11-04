@@ -1,1 +1,1 @@
-export { Category } from './edit-category'
+export { Category } from './screen'

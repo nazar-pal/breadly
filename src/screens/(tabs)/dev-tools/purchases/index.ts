@@ -1,1 +1,1 @@
-export { default } from './purchases-details'
+export { default } from './screen'

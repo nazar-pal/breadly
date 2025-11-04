@@ -1,1 +1,1 @@
-export { default } from './default-currency-select'
+export { default } from './screen'

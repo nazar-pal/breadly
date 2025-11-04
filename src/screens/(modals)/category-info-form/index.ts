@@ -1,1 +1,1 @@
-export { default } from './category-info-form'
+export { default } from './screen'
