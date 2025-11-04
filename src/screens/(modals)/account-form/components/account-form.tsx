@@ -93,7 +93,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
 
   return (
     <Form {...form}>
-      <ScrollView className="flex-1 gap-6 ">
+      <ScrollView className="flex-1" contentContainerClassName="gap-6">
         <FormField
           control={form.control}
           name="name"
