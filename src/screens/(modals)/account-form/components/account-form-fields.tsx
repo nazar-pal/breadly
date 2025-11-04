@@ -27,9 +27,9 @@ export function AccountFormFields({ formType }: Props) {
 
   const form = useFormContext<AccountFormData>()
 
-  const [isTargetDateDrawerOpen, setIsTargetDateDrawerOpen] = useState(false)
-  const [isDueDateDrawerOpen, setIsDueDateDrawerOpen] = useState(false)
-  const [isCurrencyDrawerOpen, setIsCurrencyDrawerOpen] = useState(false)
+  const [openPicker, setOpenPicker] = useState<
+    'currency' | 'targetDate' | 'dueDate' | null
+  >(null)
 
   // Dynamic labels and placeholders (short and mobile-friendly)
   const debtIsOwedToMe =
@@ -127,7 +127,7 @@ export function AccountFormFields({ formType }: Props) {
                   <>
                     <Pressable
                       className="flex h-10 flex-row items-center rounded-md border border-input bg-background px-3 py-1 text-base shadow-sm shadow-black/5 dark:bg-input/30"
-                      onPress={() => setIsCurrencyDrawerOpen(true)}
+                      onPress={() => setOpenPicker('currency')}
                     >
                       <Text
                         className={
@@ -140,8 +140,8 @@ export function AccountFormFields({ formType }: Props) {
                       </Text>
                     </Pressable>
                     <Drawer
-                      isVisible={isCurrencyDrawerOpen}
-                      onClose={() => setIsCurrencyDrawerOpen(false)}
+                      isVisible={openPicker === 'currency'}
+                      onClose={() => setOpenPicker(null)}
                       height="85%"
                       safeBottomPadding={false}
                       title="Select account currency"
@@ -153,7 +153,7 @@ export function AccountFormFields({ formType }: Props) {
                         <CurrenciesList
                           onSelect={currency => {
                             field.onChange(currency.code)
-                            setIsCurrencyDrawerOpen(false)
+                            setOpenPicker(null)
                           }}
                           selectedCurrency={field.value}
                         />
@@ -200,7 +200,7 @@ export function AccountFormFields({ formType }: Props) {
                   <>
                     <Pressable
                       className="native:h-12 h-10 flex-row items-center rounded-md border border-input bg-background px-3"
-                      onPress={() => setIsTargetDateDrawerOpen(true)}
+                      onPress={() => setOpenPicker('targetDate')}
                     >
                       <Text
                         className={
@@ -213,8 +213,8 @@ export function AccountFormFields({ formType }: Props) {
                       </Text>
                     </Pressable>
                     <Drawer
-                      isVisible={isTargetDateDrawerOpen}
-                      onClose={() => setIsTargetDateDrawerOpen(false)}
+                      isVisible={openPicker === 'targetDate'}
+                      onClose={() => setOpenPicker(null)}
                       safeBottomPadding={true}
                       height="auto"
                       title="Pick target date"
@@ -223,7 +223,7 @@ export function AccountFormFields({ formType }: Props) {
                         date={field.value?.toString() ?? ''}
                         onDayPress={(date: DateData) => {
                           field.onChange(new Date(date.dateString))
-                          setIsTargetDateDrawerOpen(false)
+                          setOpenPicker(null)
                         }}
                       />
                     </Drawer>
@@ -312,7 +312,7 @@ export function AccountFormFields({ formType }: Props) {
                   <>
                     <Pressable
                       className="native:h-12 h-10 flex-row items-center rounded-md border border-input bg-background px-3"
-                      onPress={() => setIsDueDateDrawerOpen(true)}
+                      onPress={() => setOpenPicker('dueDate')}
                     >
                       <Text
                         className={
@@ -325,8 +325,8 @@ export function AccountFormFields({ formType }: Props) {
                       </Text>
                     </Pressable>
                     <Drawer
-                      isVisible={isDueDateDrawerOpen}
-                      onClose={() => setIsDueDateDrawerOpen(false)}
+                      isVisible={openPicker === 'dueDate'}
+                      onClose={() => setOpenPicker(null)}
                       height="auto"
                       title="Pick due date"
                     >
@@ -334,7 +334,7 @@ export function AccountFormFields({ formType }: Props) {
                         date={field.value?.toString() ?? ''}
                         onDayPress={(date: DateData) => {
                           field.onChange(new Date(date.dateString))
-                          setIsDueDateDrawerOpen(false)
+                          setOpenPicker(null)
                         }}
                       />
                     </Drawer>
