@@ -1,3 +1,4 @@
+import { CurrenciesList } from '@/components/currencies-list'
 import { Calendar } from '@/components/ui/calendar'
 import { Drawer } from '@/components/ui/drawer'
 import {
@@ -17,15 +18,9 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Pressable, ScrollView, View } from 'react-native'
 import { DateData } from 'react-native-calendars'
-import {
-  createDeptAccountFormSchema,
-  createPaymentAccountFormSchema,
-  createSavingAccountFormSchema,
-  updateDeptAccountFormSchema,
-  updatePaymentAccountFormSchema,
-  updateSavingAccountFormSchema,
-  type AccountFormData
-} from '../schema'
+import { type AccountFormData } from '../schema'
+import { formSchemas } from '../utils/form-schemas'
+import { getDefaultValues } from '../utils/get-default-values'
 import { AccountFormActionButtons } from './account-form-action-buttons'
 
 interface Props {
@@ -33,59 +28,20 @@ interface Props {
   onSubmit: (data: AccountFormData) => void
 }
 
-const config = {
-  payment: {
-    createSchema: createPaymentAccountFormSchema,
-    updateSchema: updatePaymentAccountFormSchema
-  },
-  saving: {
-    createSchema: createSavingAccountFormSchema,
-    updateSchema: updateSavingAccountFormSchema
-  },
-  debt: {
-    createSchema: createDeptAccountFormSchema,
-    updateSchema: updateDeptAccountFormSchema
-  }
-} as const
-
 export function AccountForm({ onCancel, onSubmit }: Props) {
   const { account, accountType } = useAccountModalState()
-  const isEditing = Boolean(account)
 
-  const createSchema = config[accountType].createSchema
-  const updateSchema = config[accountType].updateSchema
-
-  const formSchema = isEditing ? updateSchema : createSchema
+  const formType = account ? 'update' : 'create'
+  const formSchema = formSchemas[accountType][formType]
 
   const form = useForm<AccountFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: account?.name,
-      description: account?.description,
-      balance: account?.balance,
-      isArchived: account?.isArchived,
-
-      ...(isEditing ? {} : { currencyId: 'USD' }),
-
-      ...(accountType === 'saving'
-        ? {
-            savingsTargetAmount: account?.savingsTargetAmount,
-            savingsTargetDate: account?.savingsTargetDate
-          }
-        : {}),
-
-      ...(accountType === 'debt'
-        ? {
-            debtInitialAmount: account?.debtInitialAmount,
-            debtIsOwedToMe: account?.debtIsOwedToMe,
-            debtDueDate: account?.debtDueDate
-          }
-        : {})
-    }
+    defaultValues: getDefaultValues(account, accountType)
   })
 
-  const [open, setOpen] = useState(false)
-  const [open2, setOpen2] = useState(false)
+  const [isTargetDateDrawerOpen, setIsTargetDateDrawerOpen] = useState(false)
+  const [isDueDateDrawerOpen, setIsDueDateDrawerOpen] = useState(false)
+  const [isCurrencyDrawerOpen, setIsCurrencyDrawerOpen] = useState(false)
 
   // Dynamic labels and placeholders (short and mobile-friendly)
   const debtIsOwedToMe =
@@ -132,45 +88,98 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="balance"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                {accountType === 'debt'
-                  ? debtIsOwedToMe
-                    ? 'Received (optional)'
-                    : 'Repaid (optional)'
-                  : 'Balance (optional)'}
-              </FormLabel>
-              <FormControl>
-                <Input
-                  value={String(field.value ?? '')}
-                  onChangeText={text =>
-                    field.onChange(text === '' ? undefined : Number(text))
-                  }
-                  placeholder={
-                    accountType === 'debt'
-                      ? debtIsOwedToMe
-                        ? 'Amount received'
-                        : 'Amount repaid'
-                      : 'Amount'
-                  }
-                  keyboardType="decimal-pad"
-                />
-              </FormControl>
-              {accountType === 'debt' ? (
-                <FormDescription>
-                  {debtIsOwedToMe
-                    ? 'Amount received so far. Not remaining debt.'
-                    : 'Amount repaid so far. Not remaining debt.'}
-                </FormDescription>
-              ) : null}
-              <FormMessage />
-            </FormItem>
+        <View className="flex-row gap-2">
+          <FormField
+            control={form.control}
+            name="balance"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>
+                  {accountType === 'debt'
+                    ? debtIsOwedToMe
+                      ? 'Received (optional)'
+                      : 'Repaid (optional)'
+                    : 'Balance (optional)'}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    value={String(field.value ?? '')}
+                    onChangeText={text =>
+                      field.onChange(text === '' ? undefined : Number(text))
+                    }
+                    placeholder={
+                      accountType === 'debt'
+                        ? debtIsOwedToMe
+                          ? 'Amount received'
+                          : 'Amount repaid'
+                        : 'Amount'
+                    }
+                    keyboardType="decimal-pad"
+                  />
+                </FormControl>
+                {accountType === 'debt' ? (
+                  <FormDescription>
+                    {debtIsOwedToMe
+                      ? 'Amount received so far. Not remaining debt.'
+                      : 'Amount repaid so far. Not remaining debt.'}
+                  </FormDescription>
+                ) : null}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {formType === 'create' && (
+            <FormField
+              control={form.control}
+              name="currencyId"
+              render={({ field }) => (
+                <FormItem className="flex-[0.4]">
+                  <FormLabel>Currency</FormLabel>
+                  <FormControl>
+                    <>
+                      <Pressable
+                        className="flex h-10 flex-row items-center rounded-md border border-input bg-background px-3 py-1 text-base shadow-sm shadow-black/5 dark:bg-input/30"
+                        onPress={() => setIsCurrencyDrawerOpen(true)}
+                      >
+                        <Text
+                          className={
+                            field.value
+                              ? 'text-base text-foreground'
+                              : 'text-base text-muted-foreground'
+                          }
+                        >
+                          {field.value?.toString() || 'Currency'}
+                        </Text>
+                      </Pressable>
+                      <Drawer
+                        isVisible={isCurrencyDrawerOpen}
+                        onClose={() => setIsCurrencyDrawerOpen(false)}
+                        height="85%"
+                        safeBottomPadding={false}
+                        title="Select account currency"
+                      >
+                        <ScrollView
+                          showsVerticalScrollIndicator={false}
+                          contentContainerClassName="pb-8 px-3"
+                        >
+                          <CurrenciesList
+                            onSelect={currency => {
+                              field.onChange(currency.code)
+                              setIsCurrencyDrawerOpen(false)
+                            }}
+                            selectedCurrency={field.value}
+                          />
+                        </ScrollView>
+                      </Drawer>
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        />
+        </View>
 
         {accountType === 'saving' && (
           <>
@@ -204,7 +213,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
                     <>
                       <Pressable
                         className="native:h-12 h-10 flex-row items-center rounded-md border border-input bg-background px-3"
-                        onPress={() => setOpen(true)}
+                        onPress={() => setIsTargetDateDrawerOpen(true)}
                       >
                         <Text
                           className={
@@ -217,17 +226,17 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
                         </Text>
                       </Pressable>
                       <Drawer
-                        isVisible={open}
-                        onClose={() => setOpen(false)}
+                        isVisible={isTargetDateDrawerOpen}
+                        onClose={() => setIsTargetDateDrawerOpen(false)}
+                        safeBottomPadding={true}
                         height="auto"
-                        showDragIndicator={false}
                         title="Pick target date"
                       >
                         <Calendar
                           date={field.value?.toString() ?? ''}
                           onDayPress={(date: DateData) => {
                             field.onChange(new Date(date.dateString))
-                            setOpen(false)
+                            setIsTargetDateDrawerOpen(false)
                           }}
                         />
                       </Drawer>
@@ -316,7 +325,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
                     <>
                       <Pressable
                         className="native:h-12 h-10 flex-row items-center rounded-md border border-input bg-background px-3"
-                        onPress={() => setOpen2(true)}
+                        onPress={() => setIsDueDateDrawerOpen(true)}
                       >
                         <Text
                           className={
@@ -329,9 +338,8 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
                         </Text>
                       </Pressable>
                       <Drawer
-                        isVisible={open2}
-                        onClose={() => setOpen2(false)}
-                        showDragIndicator={false}
+                        isVisible={isDueDateDrawerOpen}
+                        onClose={() => setIsDueDateDrawerOpen(false)}
                         height="auto"
                         title="Pick due date"
                       >
@@ -339,7 +347,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
                           date={field.value?.toString() ?? ''}
                           onDayPress={(date: DateData) => {
                             field.onChange(new Date(date.dateString))
-                            setOpen2(false)
+                            setIsDueDateDrawerOpen(false)
                           }}
                         />
                       </Drawer>
@@ -355,7 +363,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
       <AccountFormActionButtons
         onCancel={onCancel}
         onSubmit={form.handleSubmit(onSubmit)}
-        submitLabel={account ? 'Save Changes' : 'Create Account'}
+        submitLabel={formType === 'update' ? 'Save Changes' : 'Create Account'}
         disabled={!form.formState.isValid}
         isSubmitting={form.formState.isSubmitting}
       />

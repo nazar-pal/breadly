@@ -6,7 +6,7 @@ export default function TransactionModalScreen() {
   return (
     <SafeAreaView
       edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
-      className="flex-1 bg-popover p-4"
+      className="flex-1 p-4"
     >
       <KeyboardAvoidingView
         className="flex-1 "
