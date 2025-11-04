@@ -1,6 +1,6 @@
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { AccountFormModal } from './components/account-form-modal'
+import { AccountForm } from './components/account-form'
 
 export default function AccountFormScreen() {
   return (
@@ -13,7 +13,7 @@ export default function AccountFormScreen() {
         behavior="padding"
         keyboardVerticalOffset={100}
       >
-        <AccountFormModal />
+        <AccountForm />
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
