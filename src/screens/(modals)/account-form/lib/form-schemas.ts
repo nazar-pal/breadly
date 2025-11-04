@@ -1,11 +1,11 @@
 import {
-  createDeptAccountFormSchema,
+  createDebtAccountFormSchema,
   createPaymentAccountFormSchema,
   createSavingAccountFormSchema,
-  updateDeptAccountFormSchema,
+  updateDebtAccountFormSchema,
   updatePaymentAccountFormSchema,
   updateSavingAccountFormSchema
-} from '../schema'
+} from './schema'
 
 export const formSchemas = {
   payment: {
@@ -17,7 +17,7 @@ export const formSchemas = {
     update: updateSavingAccountFormSchema
   },
   debt: {
-    create: createDeptAccountFormSchema,
-    update: updateDeptAccountFormSchema
+    create: createDebtAccountFormSchema,
+    update: updateDebtAccountFormSchema
   }
 } as const

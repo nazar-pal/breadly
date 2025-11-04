@@ -72,28 +72,28 @@ export type SavingFormData =
 // DEBT ACCOUNT SCHEMAS
 // ============================================================================
 // Create Debt Account Form Schema
-export const createDeptAccountFormSchema = commonCreateFieldsSchema.extend({
+export const createDebtAccountFormSchema = commonCreateFieldsSchema.extend({
   debtInitialAmount: accountInsertSchema.shape.debtInitialAmount,
   debtIsOwedToMe: accountInsertSchema.shape.debtIsOwedToMe,
   debtDueDate: accountInsertSchema.shape.debtDueDate
 })
-export type CreateDeptAccountFormValues = z.infer<
-  typeof createDeptAccountFormSchema
+export type CreateDebtAccountFormValues = z.infer<
+  typeof createDebtAccountFormSchema
 >
 
 // Update Debt Account Form Schema
-export const updateDeptAccountFormSchema = commonUpdateFieldsSchema.extend({
+export const updateDebtAccountFormSchema = commonUpdateFieldsSchema.extend({
   debtInitialAmount: accountUpdateSchema.shape.debtInitialAmount,
   debtIsOwedToMe: accountUpdateSchema.shape.debtIsOwedToMe,
   debtDueDate: accountUpdateSchema.shape.debtDueDate
 })
-export type UpdateDeptAccountFormValues = z.infer<
-  typeof updateDeptAccountFormSchema
+export type UpdateDebtAccountFormValues = z.infer<
+  typeof updateDebtAccountFormSchema
 >
 
 export type DebtFormData =
-  | CreateDeptAccountFormValues
-  | UpdateDeptAccountFormValues
+  | CreateDebtAccountFormValues
+  | UpdateDebtAccountFormValues
 
 // ============================================================================
 // ACCOUNT FORM VALUES
@@ -102,11 +102,11 @@ export type DebtFormData =
 export type CreateAccountData =
   | CreatePaymentAccountFormValues
   | CreateSavingAccountFormValues
-  | CreateDeptAccountFormValues
+  | CreateDebtAccountFormValues
 
 export type UpdateAccountData =
   | UpdatePaymentAccountFormValues
   | UpdateSavingAccountFormValues
-  | UpdateDeptAccountFormValues
+  | UpdateDebtAccountFormValues
 
 export type AccountFormData = CreateAccountData | UpdateAccountData

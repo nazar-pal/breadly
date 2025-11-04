@@ -1,7 +1,7 @@
 import { AccountType } from '@/data/client/db-schema'
 import { AccountDetails } from '@/data/client/queries/use-get-account'
 import { AccountItem } from '@/data/client/queries/use-get-accounts'
-import { type AccountFormData } from '../schema'
+import { type AccountFormData } from './schema'
 
 type Account = AccountItem | AccountDetails
 

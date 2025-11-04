@@ -11,7 +11,7 @@ interface Props {
   isSubmitting?: boolean
 }
 
-export function AccountFormActionButtons({
+export function AccountFormActions({
   onCancel,
   onSubmit,
   submitLabel,

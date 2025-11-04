@@ -5,15 +5,15 @@ import {
 } from '@/lib/storage/account-modal-store'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
+import { createAccount } from '../lib/create-account'
 import {
   type AccountFormData,
   type CreateAccountData,
   type UpdateAccountData
-} from '../schema'
-import { createAccount } from '../utils/create-account'
-import { AccountForm } from './account-form'
+} from '../lib/schema'
+import { AccountForm } from './form'
 
-export function ModalAccountForm() {
+export function AccountFormModal() {
   const { accountType, account } = useAccountModalState()
   const { closeAccountModal } = useAccountModalActions()
 

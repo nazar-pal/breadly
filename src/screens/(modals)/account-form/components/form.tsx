@@ -18,10 +18,10 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Pressable, ScrollView, View } from 'react-native'
 import { DateData } from 'react-native-calendars'
-import { type AccountFormData } from '../schema'
-import { formSchemas } from '../utils/form-schemas'
-import { getDefaultValues } from '../utils/get-default-values'
-import { AccountFormActionButtons } from './account-form-action-buttons'
+import { formSchemas } from '../lib/form-schemas'
+import { getDefaultValues } from '../lib/get-default-values'
+import { type AccountFormData } from '../lib/schema'
+import { AccountFormActions } from './form-actions'
 
 interface Props {
   onCancel: () => void
@@ -360,7 +360,7 @@ export function AccountForm({ onCancel, onSubmit }: Props) {
           </>
         )}
       </ScrollView>
-      <AccountFormActionButtons
+      <AccountFormActions
         onCancel={onCancel}
         onSubmit={form.handleSubmit(onSubmit)}
         submitLabel={formType === 'update' ? 'Save Changes' : 'Create Account'}
