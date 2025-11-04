@@ -122,7 +122,7 @@ export function AccountFormFields({ formType }: Props) {
             name="currencyId"
             render={({ field }) => (
               <FormItem className="flex-[0.4]">
-                <FormLabel>Currency</FormLabel>
+                <FormLabel>Currency *</FormLabel>
                 <FormControl>
                   <>
                     <Pressable

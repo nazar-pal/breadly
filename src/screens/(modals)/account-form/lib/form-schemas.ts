@@ -8,13 +8,18 @@ import { z } from 'zod'
 // BASE SCHEMA DEFINITIONS
 // ============================================================================
 // Create Fields Schema
-const commonCreateFieldsSchema = accountInsertSchema.pick({
-  name: true,
-  description: true,
-  currencyId: true,
-  balance: true,
-  isArchived: true
-})
+const commonCreateFieldsSchema = accountInsertSchema
+  .pick({
+    name: true,
+    description: true,
+    currencyId: true,
+    balance: true,
+    isArchived: true
+  })
+  .extend({
+    // Force explicit currency selection in the form (no implicit default)
+    currencyId: z.string().min(1, 'Currency is required')
+  })
 
 // Update Fields Schema
 const commonUpdateFieldsSchema = accountUpdateSchema.pick({
