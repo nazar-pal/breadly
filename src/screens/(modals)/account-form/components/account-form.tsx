@@ -53,22 +53,11 @@ export function AccountForm() {
     closeAccountModal()
   }
 
-  function isCreateAccountData(
-    data: AccountFormData
-  ): data is CreateAccountData {
-    return 'currencyId' in data
-  }
-
   function handleSubmit(data: AccountFormData) {
-    if (account) {
-      handleUpdateAccount({
-        id: account.id,
-        data
-      })
-    } else {
-      if (!isCreateAccountData(data)) return
-      handleCreateAccount(data)
-    }
+    // UPDATE EXISTING ACCOUNT
+    if (account) handleUpdateAccount({ id: account.id, data })
+    // CREATE NEW ACCOUNT ()
+    else if ('currencyId' in data) handleCreateAccount(data)
   }
 
   return (
