@@ -1,16 +1,45 @@
+import { CurrenciesList } from '@/components/currencies-list'
+import { CurrencySelectSQLite } from '@/data/client/db-schema'
+import { createOrUpdateUserPreferences } from '@/data/client/mutations'
+import { useGetUserPreferences } from '@/data/client/queries'
+import { DEFAULT_CURRENCY } from '@/lib/constants'
+import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'
-import { CurrencyList } from './components/modal-currencie-list'
 
 export default function DefaultCurrencySelect() {
+  const { userId } = useUserSession()
+  const { data: userPreferences } = useGetUserPreferences({ userId })
+
+  // Get current currency with fallback to default
+  const currentCurrency =
+    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY
+
+  const handleCurrencySelect = async (currency: CurrencySelectSQLite) => {
+    try {
+      await createOrUpdateUserPreferences({
+        userId,
+        data: {
+          defaultCurrency: currency.code
+        }
+      })
+      router.back()
+    } catch (error) {
+      console.error('Failed to update currency preference:', error)
+    }
+  }
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       className="p-4"
       contentContainerClassName="pb-12"
     >
-      <CurrencyList closeModal={() => router.back()} />
+      <CurrenciesList
+        onSelect={handleCurrencySelect}
+        currentCurrency={currentCurrency}
+      />
     </ScrollView>
   )
 }

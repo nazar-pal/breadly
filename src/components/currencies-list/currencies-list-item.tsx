@@ -1,47 +1,32 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
-import { createOrUpdateUserPreferences } from '@/data/client/mutations'
 import { cn } from '@/lib/utils'
-import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
-import { Pressable, View } from 'react-native'
+import { Pressable, PressableProps, View } from 'react-native'
 
-// Extracted CurrencyItem for better separation of concerns
-export function CurrencyItem({
-  currency,
-  isSelected,
-  closeModal
-}: {
+interface Props extends PressableProps {
   currency: CurrencySelectSQLite
   isSelected: boolean
-  closeModal: () => void
-}) {
-  const { userId } = useUserSession()
+}
 
-  const handleCurrencySelect = async (currency: CurrencySelectSQLite) => {
-    try {
-      await createOrUpdateUserPreferences({
-        userId,
-        data: {
-          defaultCurrency: currency.code
-        }
-      })
-      closeModal()
-    } catch (error) {
-      console.error('Failed to update currency preference:', error)
-    }
-  }
-
+// Extracted CurrencyItem for better separation of concerns
+export function CurrenciesListItem({
+  currency,
+  isSelected,
+  className,
+  ...rest
+}: Props) {
   return (
     <Pressable
       className={cn(
         'mb-2 flex-row items-center justify-between rounded-xl border p-4 transition-colors',
         isSelected
           ? 'border-primary bg-primary/10'
-          : 'border-border/20 bg-popover active:bg-muted'
+          : 'border-border/20 bg-popover active:bg-muted',
+        className
       )}
-      onPress={() => handleCurrencySelect(currency)}
+      {...rest}
     >
       <View className="flex-1">
         <View className="flex-row items-center gap-3">

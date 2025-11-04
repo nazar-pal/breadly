@@ -1,27 +1,19 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { useGetCurrencies, useGetUserPreferences } from '@/data/client/queries'
-import { DEFAULT_CURRENCY } from '@/lib/constants'
-import { useUserSession } from '@/system/session-and-migration'
+import { type CurrencySelectSQLite } from '@/data/client/db-schema'
+import { useGetCurrencies } from '@/data/client/queries'
 import React from 'react'
 import { View } from 'react-native'
-import { CurrencyItem } from './modal-currency-item'
+import { CurrenciesListItem } from './currencies-list-item'
 
-interface CurrencyListProps {
-  closeModal: () => void
+interface Props {
+  onSelect: (currency: CurrencySelectSQLite) => void
+  currentCurrency: CurrencySelectSQLite
 }
 
 // Extracted CurrencyList component for better reusability
-export function CurrencyList({ closeModal }: CurrencyListProps) {
+export function CurrenciesList({ onSelect, currentCurrency }: Props) {
   const { data: currencies = [], isLoading } = useGetCurrencies()
-  const { userId } = useUserSession()
-  const { data: userPreferences } = useGetUserPreferences({ userId })
-
-  console.log('userPreferences', userPreferences)
-
-  // Get current currency with fallback to default
-  const currentCurrency =
-    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY
 
   if (isLoading) {
     return (
@@ -57,11 +49,11 @@ export function CurrencyList({ closeModal }: CurrencyListProps) {
   return (
     <View className="gap-1">
       {currencies.map(currency => (
-        <CurrencyItem
+        <CurrenciesListItem
           key={currency.code}
           currency={currency}
           isSelected={currency.code === currentCurrency.code}
-          closeModal={closeModal}
+          onPress={() => onSelect(currency)}
         />
       ))}
     </View>
