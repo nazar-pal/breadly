@@ -1,4 +1,3 @@
-import { updateAccount } from '@/data/client/mutations/update-account'
 import {
   useAccountModalActions,
   useAccountModalState
@@ -10,7 +9,8 @@ import {
   type AccountFormData,
   type CreateAccountData,
   type UpdateAccountData
-} from '../lib/schema'
+} from '../lib/form-schemas'
+import { updateAccount } from '../lib/update-account'
 import { AccountForm } from './form'
 
 export function AccountFormModal() {

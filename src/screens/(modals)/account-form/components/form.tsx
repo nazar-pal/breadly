@@ -18,9 +18,8 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Pressable, ScrollView, View } from 'react-native'
 import { DateData } from 'react-native-calendars'
-import { formSchemas } from '../lib/form-schemas'
+import { formSchemas, type AccountFormData } from '../lib/form-schemas'
 import { getDefaultValues } from '../lib/get-default-values'
-import { type AccountFormData } from '../lib/schema'
 import { AccountFormActions } from './form-actions'
 
 interface Props {
