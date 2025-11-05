@@ -69,17 +69,21 @@ type UpdateSavingAccountFormValues = z.infer<
 // DEBT ACCOUNT SCHEMAS
 // ============================================================================
 // Create Debt Account Form Schema
+// Note: debtIsOwedToMe is a local UI field used to control balance sign,
+// it is NOT saved to the database
 const createDebtAccountFormSchema = commonCreateFieldsSchema.extend({
   debtInitialAmount: accountInsertSchema.shape.debtInitialAmount,
-  debtIsOwedToMe: accountInsertSchema.shape.debtIsOwedToMe,
+  debtIsOwedToMe: z.boolean().optional(), // Local UI field, not saved to DB
   debtDueDate: accountInsertSchema.shape.debtDueDate
 })
 type CreateDebtAccountFormValues = z.infer<typeof createDebtAccountFormSchema>
 
 // Update Debt Account Form Schema
+// Note: debtIsOwedToMe is a local UI field used to control balance sign,
+// it is NOT saved to the database
 const updateDebtAccountFormSchema = commonUpdateFieldsSchema.extend({
   debtInitialAmount: accountUpdateSchema.shape.debtInitialAmount,
-  debtIsOwedToMe: accountUpdateSchema.shape.debtIsOwedToMe,
+  debtIsOwedToMe: z.boolean().optional(), // Local UI field, not saved to DB
   debtDueDate: accountUpdateSchema.shape.debtDueDate
 })
 type UpdateDebtAccountFormValues = z.infer<typeof updateDebtAccountFormSchema>

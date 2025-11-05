@@ -64,15 +64,6 @@ export function AccountMetaInfo({ account }: { account: AccountDetails }) {
               </Text>
             </View>
           ) : null}
-          {account.type === 'debt' &&
-          typeof account.debtIsOwedToMe !== 'undefined' ? (
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">Owed to me</Text>
-              <Text className="text-sm font-medium text-foreground">
-                {account.debtIsOwedToMe ? 'Yes' : 'No'}
-              </Text>
-            </View>
-          ) : null}
         </View>
       </CardContent>
     </Card>

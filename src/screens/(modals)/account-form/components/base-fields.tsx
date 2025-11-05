@@ -18,7 +18,7 @@ import { OpenBottomSheetPicker } from '../lib/types'
 interface Props {
   formType: 'create' | 'update'
   accountType: AccountType
-  debtIsOwedToMe: boolean | null | undefined
+  debtIsOwedToMe?: boolean
   openPicker: OpenBottomSheetPicker
   setOpenPicker: (picker: OpenBottomSheetPicker) => void
 }
@@ -43,7 +43,7 @@ export function BaseFields({
 
       <FormInputField
         name="description"
-        label="Description (optional)"
+        label="Description"
         placeholder="Optional description"
         multiline
       />
@@ -54,15 +54,15 @@ export function BaseFields({
           label={
             accountType === 'debt'
               ? debtIsOwedToMe
-                ? 'Received (optional)'
-                : 'Repaid (optional)'
-              : 'Balance (optional)'
+                ? 'Remaining debt owed to you'
+                : 'Remaining debt you owe'
+              : 'Balance'
           }
           placeholder={
             accountType === 'debt'
               ? debtIsOwedToMe
-                ? 'Amount received'
-                : 'Amount repaid'
+                ? 'Amount still owed to you'
+                : 'Amount you still owe'
               : 'Amount'
           }
           kind="number"
@@ -70,8 +70,8 @@ export function BaseFields({
           description={
             accountType === 'debt'
               ? debtIsOwedToMe
-                ? 'Amount received so far. Not remaining debt.'
-                : 'Amount repaid so far. Not remaining debt.'
+                ? 'Amount that is still owed to you (remaining debt)'
+                : 'Amount that you still owe (remaining debt)'
               : undefined
           }
         />

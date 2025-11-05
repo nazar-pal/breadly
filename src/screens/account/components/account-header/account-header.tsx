@@ -39,7 +39,9 @@ const variants: Record<AccountType, AccountVisualStyle> = {
 export function AccountHeader({ account }: { account: AccountDetails }) {
   const v = variants[account.type]
   const isDebt = account.type === 'debt'
-  const isReceivable = isDebt && Boolean(account.debtIsOwedToMe)
+  // Positive balance = someone owes you (receivable)
+  // Negative balance = you owe someone (payable)
+  const isReceivable = isDebt && account.balance > 0
 
   const currencyLabel = account.currency?.name ?? account.currencyId ?? 'USD'
 

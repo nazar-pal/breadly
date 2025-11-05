@@ -12,7 +12,9 @@ type Props = React.ComponentProps<typeof Pressable> & {
 
 export function AccountCardDebt({ account, ...rest }: Props) {
   const { label: progressLabel, value: progress } = getAccountProgress(account)
-  const isReceivable = Boolean(account.debtIsOwedToMe)
+  // Positive balance = someone owes you (receivable)
+  // Negative balance = you owe someone (payable)
+  const isReceivable = account.balance > 0
 
   return (
     <AccountCardShell

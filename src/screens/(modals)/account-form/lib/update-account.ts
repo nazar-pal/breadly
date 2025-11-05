@@ -12,8 +12,9 @@ const accountUpdateSchema = createUpdateSchema(accounts).pick({
   isArchived: true,
   savingsTargetAmount: true,
   savingsTargetDate: true,
-  debtIsOwedToMe: true,
+  debtInitialAmount: true,
   debtDueDate: true
+  // Note: debtIsOwedToMe is removed - balance sign now represents debt direction
 })
 
 export async function updateAccount({

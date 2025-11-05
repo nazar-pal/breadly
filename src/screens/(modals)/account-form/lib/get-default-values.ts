@@ -26,7 +26,11 @@ export function getDefaultValues(
     ...(accountType === 'debt'
       ? {
           debtInitialAmount: account?.debtInitialAmount,
-          debtIsOwedToMe: account?.debtIsOwedToMe,
+          // Balance represents remaining debt. Default to owed-to-me when creating.
+          debtIsOwedToMe:
+            account?.balance != null
+              ? account.balance >= 0
+              : (account?.debtIsOwedToMe ?? true),
           debtDueDate: account?.debtDueDate
         }
       : {})

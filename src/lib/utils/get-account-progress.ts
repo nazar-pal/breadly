@@ -6,7 +6,6 @@ type Account = Pick<
   | 'type'
   | 'savingsTargetAmount'
   | 'debtInitialAmount'
-  | 'debtIsOwedToMe'
   | 'balance'
   | 'currencyId'
 >
@@ -30,9 +29,15 @@ function calculateProgress(account: Account): number | null {
   if (account.type === 'saving') return Math.min((balance / target) * 100, 100)
 
   if (account.type === 'debt') {
-    // For debt accounts, balance represents the amount paid/received so far
+    // For debt accounts, balance represents the remaining debt:
+    // - Negative balance = you owe (remaining debt)
+    // - Positive balance = someone owes you (remaining debt)
+    // Amount paid/received = initial debt - remaining debt
+    const remainingDebt = Math.abs(balance)
+    const amountPaidOrReceived = target - remainingDebt
+
     // Progress = (amount paid/received / initial debt) * 100
-    return Math.min(Math.max((balance / target) * 100, 0), 100)
+    return Math.min(Math.max((amountPaidOrReceived / target) * 100, 0), 100)
   }
 
   return null
@@ -49,10 +54,17 @@ function formatLabel(account: Account): string | null {
     return `${formatCurrency(balance, currency)} of ${formatCurrency(target, currency)} saved`
 
   if (account.type === 'debt') {
-    // For debt accounts, balance represents the amount paid/received so far
-    const isReceivable = Boolean(account.debtIsOwedToMe)
+    // Balance represents remaining debt:
+    // - Positive balance = someone owes you (remaining debt)
+    // - Negative balance = you owe someone (remaining debt)
+    const isReceivable = account.balance > 0
     const verb = isReceivable ? 'received' : 'paid'
-    return `${formatCurrency(balance, currency)} of ${formatCurrency(target, currency)} ${verb}`
+
+    // Calculate amount paid/received: initial debt - remaining debt
+    const remainingDebt = Math.abs(balance)
+    const amountPaidOrReceived = target - remainingDebt
+
+    return `${formatCurrency(amountPaidOrReceived, currency)} of ${formatCurrency(target, currency)} ${verb}`
   }
 
   return null

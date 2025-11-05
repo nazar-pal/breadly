@@ -54,9 +54,27 @@ export function AccountForm() {
   }
 
   function handleSubmit(data: AccountFormData) {
+    // For debt accounts, convert balance sign based on debtIsOwedToMe selector
+    // Balance represents remaining debt (always positive in form input)
+    // - If "I owe" (debtIsOwedToMe = false): balance should be negative (remaining debt you owe)
+    // - If "Owed to me" (debtIsOwedToMe = true): balance should be positive (remaining debt owed to you)
+    if (accountType === 'debt' && 'debtIsOwedToMe' in data) {
+      const debtIsOwedToMe = data.debtIsOwedToMe ?? false
+      const balance = data.balance ?? 0
+
+      // Apply sign based on selector: ensure balance sign matches selector
+      if (balance !== 0) {
+        const absBalance = Math.abs(balance)
+        data.balance = debtIsOwedToMe ? absBalance : -absBalance
+      }
+
+      // Remove debtIsOwedToMe from data before saving (it's only a UI field)
+      delete data.debtIsOwedToMe
+    }
+
     // UPDATE EXISTING ACCOUNT
     if (account) handleUpdateAccount({ id: account.id, data })
-    // CREATE NEW ACCOUNT ()
+    // CREATE NEW ACCOUNT
     else if ('currencyId' in data) handleCreateAccount(data)
   }
 

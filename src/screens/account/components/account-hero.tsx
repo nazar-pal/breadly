@@ -13,7 +13,9 @@ import { AccountHeaderBadge } from './account-header/account-header-badge'
 
 export function AccountHero({ account }: { account: AccountDetails }) {
   const isDebt = account.type === 'debt'
-  const isReceivable = isDebt && Boolean(account.debtIsOwedToMe)
+  // Positive balance = someone owes you (receivable)
+  // Negative balance = you owe someone (payable)
+  const isReceivable = isDebt && account.balance > 0
   const currencyCode = account.currency?.code ?? account.currencyId ?? 'USD'
 
   const handleOpenTransfer = () =>
@@ -150,13 +152,6 @@ export function AccountHero({ account }: { account: AccountDetails }) {
               <MetaRow
                 label="Due date"
                 value={account.debtDueDate.toLocaleDateString()}
-              />
-            ) : null}
-            {account.type === 'debt' &&
-            typeof account.debtIsOwedToMe !== 'undefined' ? (
-              <MetaRow
-                label="Owed to me"
-                value={account.debtIsOwedToMe ? 'Yes' : 'No'}
               />
             ) : null}
           </View>
