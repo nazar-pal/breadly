@@ -18,7 +18,6 @@ Key Features:
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
-  boolean,
   check,
   date,
   index,
@@ -84,9 +83,8 @@ export const accounts = pgTable(
     savingsTargetAmount: numeric({ precision: 14, scale: 2 }), // Target savings goal (savings only)
     savingsTargetDate: date(), // Target date to reach savings goal (savings only)
 
-    // Type-specific fields for debt accounts
+    // Type-specific fields for debt accounts  (balance sign represents debt direction - I owe someone or someone owes me)
     debtInitialAmount: numeric({ precision: 14, scale: 2 }), // Original debt amount (debt only)
-    debtIsOwedToMe: boolean(), // True if someone owes you, false if you owe someone (debt only)
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
@@ -116,11 +114,11 @@ export const accounts = pgTable(
     ), // Savings fields only for saving accounts
     check(
       'accounts_debt_fields_only_for_debt',
-      sql`(${table.type} = 'debt') OR (${table.debtInitialAmount} IS NULL AND ${table.debtIsOwedToMe} IS NULL AND ${table.debtDueDate} IS NULL)`
+      sql`(${table.type} = 'debt') OR (${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
     ), // Debt fields only for debt accounts
     check(
       'accounts_payment_no_type_specific_fields',
-      sql`(${table.type} != 'payment') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL AND ${table.debtInitialAmount} IS NULL AND ${table.debtIsOwedToMe} IS NULL AND ${table.debtDueDate} IS NULL)`
+      sql`(${table.type} != 'payment') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL AND ${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
     ), // Payment accounts cannot have type-specific fields
 
     // RLS: Users can only access their own accounts

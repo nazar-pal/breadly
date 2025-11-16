@@ -1,0 +1,5 @@
+ALTER TABLE "accounts" DROP CONSTRAINT "accounts_debt_fields_only_for_debt";--> statement-breakpoint
+ALTER TABLE "accounts" DROP CONSTRAINT "accounts_payment_no_type_specific_fields";--> statement-breakpoint
+ALTER TABLE "accounts" DROP COLUMN "debt_is_owed_to_me";--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_debt_fields_only_for_debt" CHECK (("accounts"."type" = 'debt') OR ("accounts"."debt_initial_amount" IS NULL AND "accounts"."debt_due_date" IS NULL));--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_payment_no_type_specific_fields" CHECK (("accounts"."type" != 'payment') OR ("accounts"."savings_target_amount" IS NULL AND "accounts"."savings_target_date" IS NULL AND "accounts"."debt_initial_amount" IS NULL AND "accounts"."debt_due_date" IS NULL));

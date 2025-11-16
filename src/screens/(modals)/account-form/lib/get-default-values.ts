@@ -28,9 +28,7 @@ export function getDefaultValues(
           debtInitialAmount: account?.debtInitialAmount,
           // Balance represents remaining debt. Default to owed-to-me when creating.
           debtIsOwedToMe:
-            account?.balance != null
-              ? account.balance >= 0
-              : (account?.debtIsOwedToMe ?? true),
+            account?.balance != null ? account.balance >= 0 : true,
           debtDueDate: account?.debtDueDate
         }
       : {})

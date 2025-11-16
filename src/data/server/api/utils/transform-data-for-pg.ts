@@ -45,7 +45,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   const booleanFields: Record<string, string[]> = {
     categories: ['is_archived'],
     budgets: ['is_active'], // (future-proof, not present in current schema)
-    accounts: ['is_archived', 'debt_is_owed_to_me'],
+    accounts: ['is_archived'],
     transactions: ['is_recurring'],
     attachments: [],
     transaction_attachments: [],

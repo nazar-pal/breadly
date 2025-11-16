@@ -43,6 +43,13 @@
       "when": 1757805016982,
       "tag": "0005_secret_toro",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763285222841,
+      "tag": "0006_sweet_scalphunter",
+      "breakpoints": true
     }
   ]
 }

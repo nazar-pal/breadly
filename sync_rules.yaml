@@ -74,7 +74,6 @@ bucket_definitions:
           CAST(savings_target_amount AS real) AS savings_target_amount,
           savings_target_date,
           CAST(debt_initial_amount AS real) AS debt_initial_amount,
-          debt_is_owed_to_me,
           debt_due_date,
           is_archived,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at

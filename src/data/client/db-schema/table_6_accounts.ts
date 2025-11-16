@@ -16,14 +16,7 @@ Key Features:
 
 import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import {
-  check,
-  index,
-  integer,
-  real,
-  sqliteTable,
-  text
-} from 'drizzle-orm/sqlite-core'
+import { check, index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { currencies } from './table_1_currencies'
 import {
@@ -82,9 +75,8 @@ const columns = {
   savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
   savingsTargetDate: dateOnlyText('savings_target_date'), // Target date to reach savings goal (YYYY-MM-DD TEXT)
 
-  // Type-specific fields for debt accounts
+  // Type-specific fields for debt accounts (balance sign represents debt direction - I owe someone or someone owes me)
   debtInitialAmount: real('debt_initial_amount'), // Original debt amount (debt only)
-  debtIsOwedToMe: integer('debt_is_owed_to_me', { mode: 'boolean' }), // True if someone owes you, false if you owe someone (debt only)
   debtDueDate: dateOnlyText('debt_due_date'), // Due date for debt payment (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
@@ -115,11 +107,11 @@ const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
   ), // Savings fields only for saving accounts
   check(
     'accounts_debt_fields_only_for_debt',
-    sql`(${table.type} = 'debt') OR (${table.debtInitialAmount} IS NULL AND ${table.debtIsOwedToMe} IS NULL AND ${table.debtDueDate} IS NULL)`
+    sql`(${table.type} = 'debt') OR (${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
   ), // Debt fields only for debt accounts
   check(
     'accounts_payment_no_type_specific_fields',
-    sql`(${table.type} != 'payment') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL AND ${table.debtInitialAmount} IS NULL AND ${table.debtIsOwedToMe} IS NULL AND ${table.debtDueDate} IS NULL)`
+    sql`(${table.type} != 'payment') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL AND ${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
   ) // Payment accounts cannot have type-specific fields
 ]
 
