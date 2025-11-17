@@ -1,1 +1,1 @@
-export { Category } from './screen'
+export default ({ categoryId }: { categoryId: string }) => null

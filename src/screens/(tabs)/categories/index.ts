@@ -1,2 +1,5 @@
-export { SettingsDropdown } from './components/settings-dropdown'
-export { default } from './screen'
+import { CategoryType } from '@/data/client/db-schema'
+
+export default ({ type }: { type: CategoryType }) => null
+
+export const SettingsDropdown = ({ type }: { type: CategoryType }) => null

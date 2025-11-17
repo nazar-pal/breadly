@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RootCategory } from './components/root-category'
 import { SubCategories } from './components/sub-categories'
 
-export function Category({ categoryId }: { categoryId: string }) {
+export default function Screen({ categoryId }: { categoryId: string }) {
   const { userId } = useUserSession()
 
   const insets = useSafeAreaInsets()

@@ -1,2 +1,5 @@
-export { AccountsSettingsDropdown } from './components/accounts-settings-dropdown'
-export { default } from './screen'
+import { AccountType } from '@/data/client/db-schema'
+
+export default ({ accountType }: { accountType: AccountType }) => null
+
+export const AccountsSettingsDropdown = () => null
