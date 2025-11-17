@@ -50,7 +50,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: 'metro',
     output: 'server',
-    favicon: './assets/icons/favicon.ico'
+    favicon: './assets/icons/adaptive-icon.png'
   },
   plugins: [
     'expo-router',
