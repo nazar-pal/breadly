@@ -1,7 +1,5 @@
 export { createOrUpdateUserPreferences } from './create-or-update-user-preferences'
-export { deleteCategory } from './delete-category'
 export { deleteTransaction } from './delete-transaction'
 export { reorderCategories } from './reorder-categories/reorder-categories'
-export { setCategoryArchiveStatus } from './set-category-archive-status'
 export { updateCategory } from './update-category'
 export { updateTransaction } from './update-transaction'

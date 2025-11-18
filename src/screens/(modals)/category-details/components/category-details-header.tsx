@@ -1,11 +1,8 @@
 import { Icon } from '@/components/ui/icon-by-name'
-import {
-  deleteCategory,
-  setCategoryArchiveStatus
-} from '@/data/client/mutations'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'
+import { deleteCategory, setCategoryArchiveStatus } from '../data'
 
 interface CategoryDetailsHeaderProps {
   categoryData: any

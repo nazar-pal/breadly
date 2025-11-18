@@ -1,5 +1,4 @@
 import {
-  useCheckCategoryDependencies,
   useGetCategories,
   useGetCategory,
   useSumTransactions
@@ -16,6 +15,7 @@ import { CategoryDetailsHeader } from './components/category-details-header'
 import { CategoryInfoCard } from './components/category-info-card'
 import { DetailsInfoSection } from './components/details-info-section'
 import { SubcategoriesSection } from './components/subcategories-section'
+import { useCheckCategoryDependencies } from './data'
 
 export default function CategoryDetailsModal() {
   const { categoryDetailsSelectedCategory } = useCategoryDetailsState()

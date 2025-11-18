@@ -1,21 +1,18 @@
+import { categories } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
-import { categories } from '../db-schema'
 
-export async function setCategoryArchiveStatus({
+export async function deleteCategory({
   id,
-  userId,
-  isArchived
+  userId
 }: {
   id: string
   userId: string
-  isArchived: boolean
 }) {
   const [error, result] = await asyncTryCatch(
     db
-      .update(categories)
-      .set({ isArchived })
+      .delete(categories)
       .where(and(eq(categories.id, id), eq(categories.userId, userId)))
   )
 

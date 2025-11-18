@@ -7,7 +7,7 @@ import { useUserSession } from '@/system/session-and-migration'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { View } from 'react-native'
-import { createCategory } from '../hooks/create-category'
+import { createCategory } from '../data'
 import { CategoryInput } from './category-details-form-input'
 
 interface FormData {
