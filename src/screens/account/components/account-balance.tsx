@@ -6,7 +6,11 @@ import { cn, formatCurrency } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
-export function AccountBalance({ account }: { account: AccountDetails }) {
+export function AccountBalance({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   const { balance, type, description, currency } = account
   return (
     <Card className="mb-4 border-0 bg-card/50 shadow-none">

@@ -7,7 +7,11 @@ import React from 'react'
 import { View } from 'react-native'
 import { useGetAccountTransactions } from '../hooks/use-get-account-transactions'
 
-export function AccountInsights({ account }: { account: AccountDetails }) {
+export function AccountInsights({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   const { userId } = useUserSession()
   const currencyCode = account.currency?.code ?? account.currencyId ?? 'USD'
 

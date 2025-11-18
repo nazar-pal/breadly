@@ -10,12 +10,11 @@ export function useGetAccount({
   userId: string
   accountId: string
 }) {
-  const query = db.query.accounts.findMany({
+  const query = db.query.accounts.findFirst({
     where: and(eq(accounts.userId, userId), eq(accounts.id, accountId)),
     with: {
       currency: true
-    },
-    limit: 1
+    }
   })
 
   const result = useDrizzleQuery(query)

@@ -5,7 +5,11 @@ import { formatCurrency } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
-export function AccountMetaInfo({ account }: { account: AccountDetails }) {
+export function AccountMetaInfo({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   return (
     <Card className="mb-4 border-0 bg-card/50 shadow-none">
       <CardContent className="py-4">

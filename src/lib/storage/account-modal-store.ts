@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 
-type Account = AccountItem | AccountDetails
+type Account = AccountItem | Exclude<AccountDetails, undefined>
 
 type AccountModalState = {
   account: Account | null

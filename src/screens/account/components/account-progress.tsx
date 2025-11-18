@@ -5,7 +5,11 @@ import { cn, getAccountProgress } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
-export function AccountProgress({ account }: { account: AccountDetails }) {
+export function AccountProgress({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   if (account.type === 'payment') return null
 
   const { label, value: progress } = getAccountProgress(account)

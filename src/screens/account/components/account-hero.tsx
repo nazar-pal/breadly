@@ -11,7 +11,11 @@ import { View } from 'react-native'
 import { DetailsHeaderActions } from './account-header/account-header-actions'
 import { AccountHeaderBadge } from './account-header/account-header-badge'
 
-export function AccountHero({ account }: { account: AccountDetails }) {
+export function AccountHero({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   const isDebt = account.type === 'debt'
   // Positive balance = someone owes you (receivable)
   // Negative balance = you owe someone (payable)

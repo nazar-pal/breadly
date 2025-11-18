@@ -36,7 +36,11 @@ const variants: Record<AccountType, AccountVisualStyle> = {
   }
 }
 
-export function AccountHeader({ account }: { account: AccountDetails }) {
+export function AccountHeader({
+  account
+}: {
+  account: Exclude<AccountDetails, undefined>
+}) {
   const v = variants[account.type]
   const isDebt = account.type === 'debt'
   // Positive balance = someone owes you (receivable)

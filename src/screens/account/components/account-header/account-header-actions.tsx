@@ -11,7 +11,7 @@ import { deleteAccount } from '../../utils/delete-account'
 import { updateAccount } from '../../utils/update-account'
 
 interface Props {
-  account: AccountDetails
+  account: Exclude<AccountDetails, undefined>
 }
 
 export function DetailsHeaderActions({ account }: Props) {
