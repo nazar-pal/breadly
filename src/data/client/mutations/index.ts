@@ -1,4 +1,3 @@
-export { createCategory } from './create-category'
 export { createOrUpdateUserPreferences } from './create-or-update-user-preferences'
 export { deleteCategory } from './delete-category'
 export { deleteTransaction } from './delete-transaction'

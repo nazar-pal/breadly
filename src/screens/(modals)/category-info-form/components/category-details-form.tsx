@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { updateCategory } from '@/data/client/mutations'
-import { createCategory } from '@/data/client/mutations/create-category'
 import { useGetCategory } from '@/data/client/queries'
 import { useUserSession } from '@/system/session-and-migration'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { View } from 'react-native'
+import { createCategory } from '../hooks/create-category'
 import { CategoryInput } from './category-details-form-input'
 
 interface FormData {
