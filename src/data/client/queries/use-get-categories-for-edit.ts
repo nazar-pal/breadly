@@ -1,7 +1,6 @@
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
-import { and, asc, eq, isNull } from 'drizzle-orm'
-import { categories, CATEGORY_TYPE } from '../db-schema'
+import { CATEGORY_TYPE } from '../db-schema'
+import { getCategoriesForEdit } from './get-categories-for-edit'
 
 export function useGetCategoriesForEdit({
   userId,
@@ -14,32 +13,7 @@ export function useGetCategoriesForEdit({
   parentId?: string | null
   isArchived?: boolean
 }) {
-  // Build the where conditions based on parentId parameter
-  const parentCondition =
-    parentId === undefined
-      ? undefined // No parent filter - get all categories
-      : parentId === null
-        ? isNull(categories.parentId) // Get only parent categories
-        : eq(categories.parentId, parentId) // Get subcategories of specific parent
-
-  const query = db.query.categories.findMany({
-    // root categories only
-    where: and(
-      eq(categories.userId, userId),
-      eq(categories.type, type),
-      parentCondition,
-      isArchived === undefined
-        ? undefined
-        : eq(categories.isArchived, isArchived)
-    ),
-    with: {
-      // bring in sub-categories in the same query
-      subcategories: {
-        orderBy: [asc(categories.sortOrder), asc(categories.name)]
-      }
-    },
-    orderBy: [asc(categories.sortOrder), asc(categories.name)]
-  })
+  const query = getCategoriesForEdit({ userId, type, parentId, isArchived })
 
   return useDrizzleQuery(query)
 }

@@ -1,7 +1,6 @@
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
-import { and, eq, gte, lte, sum } from 'drizzle-orm'
-import { CATEGORY_TYPE, transactions } from '../db-schema'
+import { CATEGORY_TYPE } from '../db-schema'
+import { sumTransactions } from './sum-transactions'
 
 export function useSumTransactions({
   userId,
@@ -16,24 +15,13 @@ export function useSumTransactions({
   transactionsFrom?: Date
   transactionsTo?: Date
 }) {
-  const query = db
-    .select({
-      totalAmount: sum(transactions.amount),
-      currencyId: transactions.currencyId
-    })
-    .from(transactions)
-    .where(
-      and(
-        eq(transactions.userId, userId),
-        categoryId ? eq(transactions.categoryId, categoryId) : undefined,
-        eq(transactions.type, type),
-        transactionsFrom
-          ? gte(transactions.txDate, transactionsFrom)
-          : undefined,
-        transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
-      )
-    )
-    .groupBy(transactions.currencyId)
+  const query = sumTransactions({
+    userId,
+    categoryId,
+    type,
+    transactionsFrom,
+    transactionsTo
+  })
 
   const result = useDrizzleQuery(query)
 

@@ -1,7 +1,6 @@
-import { accounts, AccountType } from '@/data/client/db-schema'
+import { AccountType } from '@/data/client/db-schema'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
-import { and, asc, eq } from 'drizzle-orm'
+import { getAccounts } from './get-accounts'
 
 export function useGetAccounts({
   userId,
@@ -12,17 +11,7 @@ export function useGetAccounts({
   accountType: AccountType
   isArchived?: boolean
 }) {
-  const query = db.query.accounts.findMany({
-    where: and(
-      eq(accounts.userId, userId),
-      eq(accounts.type, accountType),
-      isArchived !== undefined ? eq(accounts.isArchived, isArchived) : undefined
-    ),
-    with: {
-      currency: true
-    },
-    orderBy: [asc(accounts.isArchived), asc(accounts.createdAt)]
-  })
+  const query = getAccounts({ userId, accountType, isArchived })
 
   const result = useDrizzleQuery(query)
 

@@ -1,7 +1,5 @@
-import { accounts } from '@/data/client/db-schema'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
+import { getAccount } from './get-account'
 
 export function useGetAccount({
   userId,
@@ -10,12 +8,7 @@ export function useGetAccount({
   userId: string
   accountId: string
 }) {
-  const query = db.query.accounts.findFirst({
-    where: and(eq(accounts.userId, userId), eq(accounts.id, accountId)),
-    with: {
-      currency: true
-    }
-  })
+  const query = getAccount({ userId, accountId })
 
   const result = useDrizzleQuery(query)
 

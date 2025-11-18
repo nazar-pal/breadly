@@ -1,7 +1,6 @@
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
-import { and, asc, eq, gte, isNull, lte } from 'drizzle-orm'
-import { categories, CATEGORY_TYPE, transactions } from '../db-schema'
+import { CATEGORY_TYPE } from '../db-schema'
+import { getCategories } from './get-categories'
 
 /**
  * Flexible hook to fetch categories with optional parent filtering
@@ -42,44 +41,14 @@ export function useGetCategories({
    */
   includeSubcategoriesWithTransactions?: boolean
 }) {
-  // Build the where conditions based on parentId parameter
-  const parentCondition =
-    parentId === undefined
-      ? undefined // No parent filter - get all categories
-      : parentId === null
-        ? isNull(categories.parentId) // Get only parent categories
-        : eq(categories.parentId, parentId) // Get subcategories of specific parent
-
-  // Always include transactions filtered by user/type/date range
-  const baseTransactionsWhere = and(
-    eq(transactions.userId, userId),
-    eq(transactions.type, type),
-    transactionsFrom ? gte(transactions.txDate, transactionsFrom) : undefined,
-    transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
-  )
-
-  const query = db.query.categories.findMany({
-    where: and(
-      eq(categories.userId, userId),
-      eq(categories.type, type),
-      parentCondition,
-      isArchived === undefined
-        ? undefined
-        : eq(categories.isArchived, isArchived)
-    ),
-    with: {
-      transactions: {
-        where: baseTransactionsWhere
-      },
-      ...(includeSubcategoriesWithTransactions
-        ? {
-            subcategories: {
-              with: { transactions: { where: baseTransactionsWhere } }
-            }
-          }
-        : {})
-    },
-    orderBy: [asc(categories.sortOrder), asc(categories.name)]
+  const query = getCategories({
+    userId,
+    type,
+    parentId,
+    transactionsFrom,
+    transactionsTo,
+    isArchived,
+    includeSubcategoriesWithTransactions
   })
 
   const result = useDrizzleQuery(query)
