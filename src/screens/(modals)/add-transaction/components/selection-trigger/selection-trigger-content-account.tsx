@@ -1,8 +1,9 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { getAccount } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
-import { useGetAccount } from '../../hooks/use-get-account'
 
 export function SelectionTriggerContentAccount({
   accountId,
@@ -13,7 +14,9 @@ export function SelectionTriggerContentAccount({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useGetAccount({ userId, accountId: accountId ?? '' })
+  const { data } = useDrizzleQuery(
+    getAccount({ userId, accountId: accountId ?? '' })
+  )
   const account = data.length > 0 ? data[0] : null
 
   const accountName = account?.name ?? 'unknown'

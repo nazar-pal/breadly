@@ -1,9 +1,10 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { getCategory } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
-import { useGetCategory } from '../../hooks/use-get-category'
 import { SelectionSlot } from '../../utils/params-derived'
 
 export function SelectionTriggerContentCategory({
@@ -15,7 +16,9 @@ export function SelectionTriggerContentCategory({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useGetCategory({ userId, categoryId: slot.categoryId ?? '' })
+  const { data } = useDrizzleQuery(
+    getCategory({ userId, categoryId: slot.categoryId ?? '' })
+  )
   const category = data.length > 0 ? data[0] : null
 
   const categoryName = category?.parent?.name ?? category?.name ?? 'unknown'

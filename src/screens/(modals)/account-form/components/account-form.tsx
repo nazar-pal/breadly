@@ -1,4 +1,5 @@
 import { Form } from '@/components/ui/form'
+import { createAccount } from '@/data/client/mutations'
 import {
   useAccountModalActions,
   useAccountModalState
@@ -7,7 +8,6 @@ import { useUserSession } from '@/system/session-and-migration'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { createAccount } from '../lib/create-account'
 import {
   formSchemas,
   type AccountFormData,

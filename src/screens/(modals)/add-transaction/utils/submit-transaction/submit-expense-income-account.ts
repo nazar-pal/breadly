@@ -1,7 +1,5 @@
-import { accounts } from '@/data/client/db-schema'
-import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
-import { createTransaction } from '../create-transaction'
+import { createTransaction } from '@/data/client/mutations'
+import { getAccount } from '@/data/client/queries'
 import { CalculatorInputs, WorkflowMap } from './types'
 
 export async function submitExpenseIncomeAccount(
@@ -9,9 +7,8 @@ export async function submitExpenseIncomeAccount(
   args: WorkflowMap['expense-income:account'],
   inputs: CalculatorInputs
 ): Promise<void> {
-  const account = await db.query.accounts.findFirst({
-    where: and(eq(accounts.id, args.accountId), eq(accounts.userId, userId))
-  })
+  const accounts = await getAccount({ userId, accountId: args.accountId })
+  const account = accounts.length > 0 ? accounts[0] : null
   if (!account) throw new Error('Account not found')
 
   const [err] = await createTransaction({

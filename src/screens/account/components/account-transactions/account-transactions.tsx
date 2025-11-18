@@ -1,18 +1,21 @@
 import { Text } from '@/components/ui/text'
+import { getAccountTransactions } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
-import { useGetAccountTransactions } from '../../hooks/use-get-account-transactions'
 import { TransactionItem } from './transaction-item'
 
 export function AccountTransactions({ accountId }: { accountId: string }) {
   const { userId } = useUserSession()
 
-  const { data: transactions, isLoading } = useGetAccountTransactions({
-    userId,
-    accountId,
-    limit: 15
-  })
+  const { data: transactions, isLoading } = useDrizzleQuery(
+    getAccountTransactions({
+      userId,
+      accountId,
+      limit: 15
+    })
+  )
 
   return (
     <View className="mt-8">

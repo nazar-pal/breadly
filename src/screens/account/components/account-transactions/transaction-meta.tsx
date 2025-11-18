@@ -1,14 +1,14 @@
 import { Badge } from '@/components/ui/badge'
 import { Text } from '@/components/ui/text'
+import { GetAccountTransactionsItem } from '@/data/client/queries'
 import React from 'react'
 import { View } from 'react-native'
-import { AccountTransactionsItem } from '../../hooks/use-get-account-transactions'
 
-export function TransactionMeta({
-  transaction
-}: {
-  transaction: AccountTransactionsItem
-}) {
+interface TransactionMetaProps {
+  transaction: GetAccountTransactionsItem
+}
+
+export function TransactionMeta({ transaction }: TransactionMetaProps) {
   const parentCategoryName = transaction.category?.parent?.name
   const categoryName = transaction.category?.name
 

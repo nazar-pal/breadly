@@ -1,6 +1,6 @@
+import { GetAccountTransactionsItem } from '@/data/client/queries'
 import React from 'react'
 import { View } from 'react-native'
-import { AccountTransactionsItem } from '../../hooks/use-get-account-transactions'
 import { TransactionAmount } from './transaction-amount'
 import { TransactionIconBadge } from './transaction-icon-badge'
 import { TransactionMeta } from './transaction-meta'
@@ -8,7 +8,7 @@ import { TransactionMeta } from './transaction-meta'
 export function TransactionItem({
   transaction
 }: {
-  transaction: AccountTransactionsItem
+  transaction: GetAccountTransactionsItem
 }) {
   return (
     <View className="flex-row items-start gap-3 py-3">

@@ -1,7 +1,5 @@
-import { currencies } from '@/data/client/db-schema'
-import { db } from '@/system/powersync/system'
-import { eq } from 'drizzle-orm'
-import { createTransaction } from '../create-transaction'
+import { createTransaction } from '@/data/client/mutations'
+import { getCurrency } from '@/data/client/queries'
 import { CalculatorInputs, WorkflowMap } from './types'
 
 export async function submitExpenseIncomeCurrency(
@@ -9,10 +7,10 @@ export async function submitExpenseIncomeCurrency(
   args: WorkflowMap['expense-income:currency'],
   inputs: CalculatorInputs
 ): Promise<void> {
-  const currency = await db.query.currencies.findFirst({
-    where: eq(currencies.code, args.currencyCode)
-  })
-  if (!currency) throw new Error('No currency found for selected currency')
+  const currencies = await getCurrency({ currencyCode: args.currencyCode })
+  const currency = currencies.length > 0 ? currencies[0] : null
+  if (!currency) throw new Error('Currency not found')
+
   const [err] = await createTransaction({
     userId,
     data: {

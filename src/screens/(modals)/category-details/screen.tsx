@@ -1,5 +1,5 @@
 import {
-  getCategories,
+  getCategoriesWithTransactions,
   getCategory,
   sumTransactions
 } from '@/data/client/queries'
@@ -53,7 +53,7 @@ export default function CategoryDetailsModal() {
 
   // Get subcategories for this category using the unified hook
   const { data: subcategories } = useDrizzleQuery(
-    getCategories({
+    getCategoriesWithTransactions({
       userId,
       type: category?.[0]?.type || 'expense',
       parentId: categoryDetailsSelectedCategory ?? ''

@@ -10,6 +10,7 @@ interface Params {
 export function getCategory({ userId, categoryId }: Params) {
   return db.query.categories.findMany({
     where: and(eq(categories.userId, userId), eq(categories.id, categoryId)),
+    with: { parent: true },
     limit: 1
   })
 }

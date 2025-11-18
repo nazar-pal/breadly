@@ -1,3 +1,4 @@
+import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
@@ -12,14 +13,10 @@ export function SubcategoriesListData({
 }) {
   const { userId } = useUserSession()
 
-  const { data: categoriesData } = useDrizzleQuery(db =>
-    db.query.categories.findFirst({
-      columns: { id: true, parentId: true },
-      where: (categories, { and, eq }) =>
-        and(
-          eq(categories.id, selectedCategoryId),
-          eq(categories.userId, userId)
-        )
+  const { data: categoriesData } = useDrizzleQuery(
+    getCategory({
+      userId,
+      categoryId: selectedCategoryId
     })
   )
 

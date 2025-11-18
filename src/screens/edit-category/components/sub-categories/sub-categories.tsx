@@ -1,7 +1,10 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { reorderCategories } from '@/data/client/mutations'
-import { getCategories, GetCategoriesResultItem } from '@/data/client/queries'
+import {
+  getCategoriesWithTransactions,
+  GetCategoriesWithTransactionsResultItem
+} from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import { cn } from '@/lib/utils'
@@ -16,7 +19,7 @@ interface SubcategoriesInfoProps {
 }
 
 type SubcategoryRenderItemProps =
-  DragListRenderItemInfo<GetCategoriesResultItem>
+  DragListRenderItemInfo<GetCategoriesWithTransactionsResultItem>
 
 export function SubCategories({ category }: SubcategoriesInfoProps) {
   const { userId } = useUserSession()
@@ -24,7 +27,7 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
 
   // Fetch existing subcategories for this category
   const { data: existingSubcategories } = useDrizzleQuery(
-    getCategories({
+    getCategoriesWithTransactions({
       userId,
       type: category.type,
       parentId: category.id

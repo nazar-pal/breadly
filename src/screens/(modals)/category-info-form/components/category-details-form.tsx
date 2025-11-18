@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { updateCategory } from '@/data/client/mutations'
+import { createCategory, updateCategory } from '@/data/client/mutations'
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { View } from 'react-native'
-import { createCategory } from '../data'
 import { CategoryInput } from './category-details-form-input'
 
 interface FormData {

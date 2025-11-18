@@ -1,7 +1,8 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { getCurrency } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import React from 'react'
-import { useGetCurrency } from '../../hooks/use-get-currency'
 
 export function SelectionTriggerContentCurrency({
   currencyCode,
@@ -10,7 +11,9 @@ export function SelectionTriggerContentCurrency({
   currencyCode: string | null
   render: 'name' | 'icon'
 }) {
-  const { data } = useGetCurrency({ currencyCode: currencyCode ?? '' })
+  const { data } = useDrizzleQuery(
+    getCurrency({ currencyCode: currencyCode ?? '' })
+  )
   const currency = data?.length > 0 ? data[0] : null
 
   const currencyName = currency?.name ?? 'unknown'

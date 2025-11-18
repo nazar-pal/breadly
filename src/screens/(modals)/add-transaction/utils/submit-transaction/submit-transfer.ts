@@ -1,7 +1,5 @@
-import { accounts } from '@/data/client/db-schema'
-import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
-import { createTransaction } from '../create-transaction'
+import { createTransaction } from '@/data/client/mutations'
+import { getAccount } from '@/data/client/queries'
 import { CalculatorInputs, WorkflowMap } from './types'
 
 export async function submitTransfer(
@@ -9,14 +7,15 @@ export async function submitTransfer(
   args: WorkflowMap['transfer'],
   inputs: CalculatorInputs
 ): Promise<void> {
-  const fromAccount = await db.query.accounts.findFirst({
-    where: and(eq(accounts.id, args.fromAccountId), eq(accounts.userId, userId))
+  const fromAccounts = await getAccount({
+    userId,
+    accountId: args.fromAccountId
   })
+  const fromAccount = fromAccounts.length > 0 ? fromAccounts[0] : null
   if (!fromAccount) throw new Error('From account not found')
 
-  const toAccount = await db.query.accounts.findFirst({
-    where: and(eq(accounts.id, args.toAccountId), eq(accounts.userId, userId))
-  })
+  const toAccounts = await getAccount({ userId, accountId: args.toAccountId })
+  const toAccount = toAccounts.length > 0 ? toAccounts[0] : null
   if (!toAccount) throw new Error('To account not found')
 
   const [err] = await createTransaction({

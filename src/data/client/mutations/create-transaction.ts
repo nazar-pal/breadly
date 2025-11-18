@@ -1,9 +1,9 @@
+import { accounts, transactions } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
-import { accounts, transactions } from '../../../../data/client/db-schema'
 
 const transactionInsertSchema = createInsertSchema(transactions)
 

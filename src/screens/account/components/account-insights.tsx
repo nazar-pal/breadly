@@ -1,11 +1,14 @@
 import { Text } from '@/components/ui/text'
-import { GetAccountResultItem } from '@/data/client/queries/get-account'
+import {
+  GetAccountResultItem,
+  getAccountTransactions
+} from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { formatCurrency } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import { startOfMonth } from 'date-fns'
 import React from 'react'
 import { View } from 'react-native'
-import { useGetAccountTransactions } from '../hooks/use-get-account-transactions'
 
 export function AccountInsights({
   account
@@ -17,11 +20,13 @@ export function AccountInsights({
 
   const dateFrom = startOfMonth(new Date())
 
-  const { data: transactions = [], isLoading } = useGetAccountTransactions({
-    userId,
-    accountId: account.id,
-    dateFrom
-  })
+  const { data: transactions = [], isLoading } = useDrizzleQuery(
+    getAccountTransactions({
+      userId,
+      accountId: account.id,
+      dateFrom
+    })
+  )
 
   let inflow = 0
   let outflow = 0

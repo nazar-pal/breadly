@@ -1,5 +1,5 @@
 import { CategoryType } from '@/data/client/db-schema'
-import { getCategories } from '@/data/client/queries'
+import { getCategoriesWithTransactions } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
@@ -20,7 +20,7 @@ export function CategoriesList({ onSelect, listType }: Props) {
   const selectedCategoryId = params?.categoryId
 
   const { data: categories = [], isLoading } = useDrizzleQuery(
-    getCategories({
+    getCategoriesWithTransactions({
       userId,
       type: listType,
       parentId: null,
