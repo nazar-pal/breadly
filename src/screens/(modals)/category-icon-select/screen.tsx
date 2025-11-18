@@ -1,6 +1,7 @@
 import { type IconName } from '@/components/ui/icon-by-name'
 import { updateCategory } from '@/data/client/mutations'
-import { useGetCategory } from '@/data/client/queries'
+import { getCategory } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import {
   useCategoryFormModalActions,
   useCategoryFormModalState
@@ -15,8 +16,9 @@ export default function IconSelectionModal() {
   const { closeCategoryFormModal } = useCategoryFormModalActions()
   const { userId } = useUserSession()
 
-  const categoryData = useGetCategory({ userId, categoryId: categoryId ?? '' })
-    .data?.[0]
+  const categoryData = useDrizzleQuery(
+    getCategory({ userId, categoryId: categoryId ?? '' })
+  ).data?.[0]
 
   const handleIconSelect = async (iconName: IconName) => {
     if (!categoryData) return

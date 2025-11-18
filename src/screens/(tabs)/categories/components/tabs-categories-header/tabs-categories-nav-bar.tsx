@@ -1,5 +1,6 @@
 import { CategoryType } from '@/data/client/db-schema'
-import { useSumTransactions } from '@/data/client/queries'
+import { sumTransactions } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
 import { formatCurrency } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
@@ -15,18 +16,22 @@ export function TabsCategoriesNavBar({ type }: { type: CategoryType }) {
 
   const { dateRange } = useCategoriesDateRangeState()
 
-  const totalExpensesResult = useSumTransactions({
-    userId,
-    type: 'expense',
-    transactionsFrom: dateRange.start ?? undefined,
-    transactionsTo: dateRange.end ?? undefined
-  })
-  const totalIncomeResult = useSumTransactions({
-    userId,
-    type: 'income',
-    transactionsFrom: dateRange.start ?? undefined,
-    transactionsTo: dateRange.end ?? undefined
-  })
+  const totalExpensesResult = useDrizzleQuery(
+    sumTransactions({
+      userId,
+      type: 'expense',
+      transactionsFrom: dateRange.start ?? undefined,
+      transactionsTo: dateRange.end ?? undefined
+    })
+  )
+  const totalIncomeResult = useDrizzleQuery(
+    sumTransactions({
+      userId,
+      type: 'income',
+      transactionsFrom: dateRange.start ?? undefined,
+      transactionsTo: dateRange.end ?? undefined
+    })
+  )
 
   const totalExpenses = (totalExpensesResult.data ?? [])
     .map(row => ({

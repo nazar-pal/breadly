@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Text } from '@/components/ui/text'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { formatCurrency } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
@@ -8,7 +8,7 @@ import { View } from 'react-native'
 export function AccountMetaInfo({
   account
 }: {
-  account: Exclude<AccountDetails, undefined>
+  account: GetAccountResultItem
 }) {
   return (
     <Card className="mb-4 border-0 bg-card/50 shadow-none">

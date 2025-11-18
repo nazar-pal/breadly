@@ -1,13 +1,13 @@
 import { Progress } from '@/components/ui/progress'
 import { Text } from '@/components/ui/text'
-import { AccountItem } from '@/data/client/queries/use-get-accounts'
+import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { getAccountProgress } from '@/lib/utils'
 import React from 'react'
 import { Pressable, View } from 'react-native'
 import { AccountCardShell } from './account-card-shell'
 
 type Props = React.ComponentProps<typeof Pressable> & {
-  account: AccountItem
+  account: GetAccountsResultItem
 }
 
 export function AccountCardDebt({ account, ...rest }: Props) {

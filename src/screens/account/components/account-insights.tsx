@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/text'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { formatCurrency } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import { startOfMonth } from 'date-fns'
@@ -10,7 +10,7 @@ import { useGetAccountTransactions } from '../hooks/use-get-account-transactions
 export function AccountInsights({
   account
 }: {
-  account: Exclude<AccountDetails, undefined>
+  account: GetAccountResultItem
 }) {
   const { userId } = useUserSession()
   const currencyCode = account.currency?.code ?? account.currencyId ?? 'USD'

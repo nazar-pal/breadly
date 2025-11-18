@@ -1,4 +1,5 @@
-import { useGetAccounts } from '@/data/client/queries'
+import { getAccounts } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { useTransactionParamsState } from '../../../store'
@@ -16,11 +17,13 @@ export function AccountsList({ direction, onSelect }: Props) {
   const { userId } = useUserSession()
   const params = useTransactionParamsState()
 
-  const { data: accounts = [], isLoading } = useGetAccounts({
-    userId,
-    accountType: 'payment',
-    isArchived: false
-  })
+  const { data: accounts = [], isLoading } = useDrizzleQuery(
+    getAccounts({
+      userId,
+      accountType: 'payment',
+      isArchived: false
+    })
+  )
 
   const selectedAccountId =
     direction === 'from'

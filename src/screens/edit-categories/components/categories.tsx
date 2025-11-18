@@ -1,6 +1,10 @@
 import { CategoryType } from '@/data/client/db-schema'
 import { reorderCategories } from '@/data/client/mutations/reorder-categories/reorder-categories'
-import { useGetCategoriesForEdit } from '@/data/client/queries'
+import {
+  getCategoriesForEdit,
+  GetCategoriesForEditResultItem
+} from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
@@ -11,9 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 
-type RenderItemProps = DragListRenderItemInfo<
-  ReturnType<typeof useGetCategoriesForEdit>['data'][number]
->
+type RenderItemProps = DragListRenderItemInfo<GetCategoriesForEditResultItem>
 
 export function Categories({
   type,
@@ -27,12 +29,14 @@ export function Categories({
 
   const isArchived = archived
 
-  const { data: categories } = useGetCategoriesForEdit({
-    userId,
-    type,
-    isArchived,
-    parentId: null
-  })
+  const { data: categories } = useDrizzleQuery(
+    getCategoriesForEdit({
+      userId,
+      type,
+      isArchived,
+      parentId: null
+    })
+  )
 
   const handleReordered = async (fromIndex: number, targetIndex: number) => {
     const categoryId = categories[fromIndex].id

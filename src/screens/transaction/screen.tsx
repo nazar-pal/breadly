@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { useGetTransaction } from '@/data/client/queries'
+import { getTransaction } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
 import { useUserSession } from '@/system/session-and-migration'
@@ -140,10 +141,12 @@ function CategoryBreadcrumb({
 export default function TransactionDetailsScreen({ id }: { id: string }) {
   const insets = useSafeAreaInsets()
   const { userId } = useUserSession()
-  const transactions = useGetTransaction({
-    userId,
-    transactionId: id
-  })
+  const transactions = useDrizzleQuery(
+    getTransaction({
+      userId,
+      transactionId: id
+    })
+  )
 
   const transaction = transactions.data?.[0]
 

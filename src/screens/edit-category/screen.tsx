@@ -1,4 +1,5 @@
-import { useGetCategory } from '@/data/client/queries'
+import { getCategory } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { View } from 'react-native'
@@ -11,7 +12,9 @@ export default function Screen({ categoryId }: { categoryId: string }) {
 
   const insets = useSafeAreaInsets()
 
-  const { data, isLoading } = useGetCategory({ userId, categoryId })
+  const { data, isLoading } = useDrizzleQuery(
+    getCategory({ userId, categoryId })
+  )
   const category = data?.[0]
 
   if (isLoading || !category) return null

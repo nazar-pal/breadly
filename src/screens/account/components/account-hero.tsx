@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { cn, formatCurrency } from '@/lib/utils'
 import { openTransferBottomSheet } from '@/screens/(modals)/add-transaction'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -11,11 +11,7 @@ import { View } from 'react-native'
 import { DetailsHeaderActions } from './account-header/account-header-actions'
 import { AccountHeaderBadge } from './account-header/account-header-badge'
 
-export function AccountHero({
-  account
-}: {
-  account: Exclude<AccountDetails, undefined>
-}) {
+export function AccountHero({ account }: { account: GetAccountResultItem }) {
   const isDebt = account.type === 'debt'
   // Positive balance = someone owes you (receivable)
   // Negative balance = you owe someone (payable)

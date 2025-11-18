@@ -1,8 +1,9 @@
 import { CurrenciesList } from '@/components/currencies-list'
 import { CurrencySelectSQLite } from '@/data/client/db-schema'
 import { createOrUpdateUserPreferences } from '@/data/client/mutations'
-import { useGetUserPreferences } from '@/data/client/queries'
+import { getUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
@@ -10,7 +11,9 @@ import { ScrollView } from 'react-native'
 
 export default function DefaultCurrencySelect() {
   const { userId } = useUserSession()
-  const { data: userPreferences } = useGetUserPreferences({ userId })
+  const { data: userPreferences } = useDrizzleQuery(
+    getUserPreferences({ userId })
+  )
 
   // Get current currency with fallback to default
   const currentCurrency =

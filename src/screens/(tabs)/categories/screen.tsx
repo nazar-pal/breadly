@@ -1,5 +1,6 @@
 import { CategoryType } from '@/data/client/db-schema'
-import { useGetUserPreferences } from '@/data/client/queries'
+import { getUserPreferences } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
 import { useCategoryDetailsActions } from '@/lib/storage/category-details-store'
 import { openExpenseIncomeBottomSheet } from '@/screens/(modals)/add-transaction'
@@ -42,7 +43,7 @@ export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
 
   const { openCategoryDetailsModal } = useCategoryDetailsActions()
 
-  const { data: preferences } = useGetUserPreferences({ userId })
+  const { data: preferences } = useDrizzleQuery(getUserPreferences({ userId }))
   const currencyCode = preferences?.[0]?.defaultCurrency?.code || 'USD'
 
   const openTransactionModal = (categoryId: string) =>

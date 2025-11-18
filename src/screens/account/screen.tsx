@@ -1,5 +1,6 @@
 import { Text } from '@/components/ui/text'
-import { useGetAccount } from '@/data/client/queries/use-get-account'
+import { getAccount } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { ScrollView } from 'react-native'
@@ -13,11 +14,14 @@ export default function AccountScreen({ id }: { id: string }) {
   const insets = useSafeAreaInsets()
 
   const { userId } = useUserSession()
-  const { data: accounts, isLoading } = useGetAccount({
-    userId,
-    accountId: id
-  })
-  const account = accounts?.length ? accounts[0] : undefined
+  const { data: accounts, isLoading } = useDrizzleQuery(
+    getAccount({
+      userId,
+      accountId: id
+    })
+  )
+
+  const account = accounts?.[0]
 
   if (isLoading) return null
 

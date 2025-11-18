@@ -1,5 +1,6 @@
 import { CategoryType } from '@/data/client/db-schema'
-import { useGetCategories } from '@/data/client/queries'
+import { getCategories } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { useTransactionParamsState } from '../../../store'
@@ -18,12 +19,14 @@ export function CategoriesList({ onSelect, listType }: Props) {
 
   const selectedCategoryId = params?.categoryId
 
-  const { data: categories = [], isLoading } = useGetCategories({
-    userId,
-    type: listType,
-    parentId: null,
-    isArchived: false
-  })
+  const { data: categories = [], isLoading } = useDrizzleQuery(
+    getCategories({
+      userId,
+      type: listType,
+      parentId: null,
+      isArchived: false
+    })
+  )
 
   const data: SelectableRowProps[] = categories.map(category =>
     mapCategoryToSelectableRow(category, selectedCategoryId, onSelect)

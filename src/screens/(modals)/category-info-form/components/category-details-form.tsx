@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { updateCategory } from '@/data/client/mutations'
-import { useGetCategory } from '@/data/client/queries'
+import { getCategory } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -29,8 +30,9 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
 
   const { userId } = useUserSession()
 
-  const categoryData = useGetCategory({ userId, categoryId: categoryId ?? '' })
-    .data?.[0]
+  const categoryData = useDrizzleQuery(
+    getCategory({ userId, categoryId: categoryId ?? '' })
+  ).data?.[0]
 
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { name: '', description: '' }

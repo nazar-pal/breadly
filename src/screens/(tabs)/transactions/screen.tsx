@@ -1,5 +1,6 @@
 import { OperationListItem } from '@/components/operation-list-item'
-import { useGetTransactions } from '@/data/client/queries'
+import { getTransactions } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { LegendList } from '@legendapp/list'
 import { Link } from 'expo-router'
@@ -23,18 +24,22 @@ export default function TabsTransactionsScreen() {
 
   // Get today's transactions
   const { data: todaysTransactions, isLoading: isLoadingToday } =
-    useGetTransactions({
-      userId,
-      dateFrom: today,
-      dateTo: tomorrow
-    })
+    useDrizzleQuery(
+      getTransactions({
+        userId,
+        dateFrom: today,
+        dateTo: tomorrow
+      })
+    )
 
   // Get all transactions before today
   const { data: earlierTransactions, isLoading: isLoadingPrevious } =
-    useGetTransactions({
-      userId,
-      dateTo: yesterday
-    })
+    useDrizzleQuery(
+      getTransactions({
+        userId,
+        dateTo: yesterday
+      })
+    )
 
   const isLoading = isLoadingToday || isLoadingPrevious
 

@@ -1,9 +1,9 @@
 import { AccountType } from '@/data/client/db-schema'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
-import { AccountItem } from '@/data/client/queries/use-get-accounts'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
+import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { type AccountFormData } from './form-schemas'
 
-type Account = AccountItem | AccountDetails
+type Account = GetAccountsResultItem | GetAccountResultItem
 
 export function getDefaultValues(
   account: Account | null,

@@ -1,7 +1,8 @@
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
-import { useGetCurrencies } from '@/data/client/queries'
+import { getCurrencies } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
@@ -20,7 +21,11 @@ export function CurrenciesList({
   className,
   itemClassName
 }: Props) {
-  const { data: currencies = [], isLoading, error } = useGetCurrencies()
+  const {
+    data: currencies = [],
+    isLoading,
+    error
+  } = useDrizzleQuery(getCurrencies())
 
   if (isLoading) {
     return (

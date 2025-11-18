@@ -1,7 +1,7 @@
 import { Icon, IconName } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { AccountType } from '@/data/client/db-schema'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
@@ -36,11 +36,7 @@ const variants: Record<AccountType, AccountVisualStyle> = {
   }
 }
 
-export function AccountHeader({
-  account
-}: {
-  account: Exclude<AccountDetails, undefined>
-}) {
+export function AccountHeader({ account }: { account: GetAccountResultItem }) {
   const v = variants[account.type]
   const isDebt = account.type === 'debt'
   // Positive balance = someone owes you (receivable)

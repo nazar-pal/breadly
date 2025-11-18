@@ -1,4 +1,5 @@
-import { useGetCurrencies } from '@/data/client/queries'
+import { getCurrencies } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import React from 'react'
 import { useTransactionParamsState } from '../../../store'
 import { SelectionList } from '../primitives/selection-list'
@@ -14,7 +15,7 @@ export function CurrenciesList({ onSelect }: Props) {
 
   const selectedCurrencyCode = params?.currencyCode
 
-  const { data: currencies = [], isLoading } = useGetCurrencies()
+  const { data: currencies = [], isLoading } = useDrizzleQuery(getCurrencies())
 
   const data: SelectableRowProps[] = currencies.map(currency =>
     mapCurrencyToSelectableRow(currency, selectedCurrencyCode, onSelect)

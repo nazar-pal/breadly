@@ -1,6 +1,7 @@
 import { Icon } from '@/components/ui/icon-by-name'
-import { useGetUserPreferences } from '@/data/client/queries'
+import { getUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
@@ -8,7 +9,9 @@ import { PreferenceItem } from './preference-item'
 
 export function CurrencyPreference() {
   const { userId } = useUserSession()
-  const { data: userPreferences } = useGetUserPreferences({ userId })
+  const { data: userPreferences } = useDrizzleQuery(
+    getUserPreferences({ userId })
+  )
 
   // Get current currency with fallback to default
   const currentCurrency =

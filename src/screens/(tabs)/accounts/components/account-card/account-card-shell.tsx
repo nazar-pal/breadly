@@ -1,6 +1,6 @@
 import { Icon, type IconName } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { AccountItem } from '@/data/client/queries/use-get-accounts'
+import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { cn, formatCurrency } from '@/lib/utils'
 import React from 'react'
 import { Pressable, View } from 'react-native'
@@ -13,7 +13,7 @@ type AccountCardTheme = {
 }
 
 type Props = React.ComponentProps<typeof Pressable> & {
-  account: AccountItem
+  account: GetAccountsResultItem
   iconName: IconName
   theme: AccountCardTheme
   rightAccessory?: React.ReactNode

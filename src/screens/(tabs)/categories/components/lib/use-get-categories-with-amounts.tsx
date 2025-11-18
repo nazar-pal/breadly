@@ -2,7 +2,8 @@ import {
   categories as categoriesTable,
   CategoryType
 } from '@/data/client/db-schema'
-import { useGetCategories } from '@/data/client/queries'
+import { getCategories } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { InferSelectModel } from 'drizzle-orm'
 
@@ -29,15 +30,17 @@ export function useGetCategoriesWithAmounts({
 }): CategoryWithAmounts[] {
   const { userId } = useUserSession()
 
-  const { data: parentCategories } = useGetCategories({
-    userId,
-    type,
-    parentId: null, // Only get parent categories (no subcategories)
-    transactionsFrom: transactionsFrom ?? undefined,
-    transactionsTo: transactionsTo ?? undefined,
-    isArchived,
-    includeSubcategoriesWithTransactions: true
-  })
+  const { data: parentCategories } = useDrizzleQuery(
+    getCategories({
+      userId,
+      type,
+      parentId: null, // Only get parent categories (no subcategories)
+      transactionsFrom: transactionsFrom ?? undefined,
+      transactionsTo: transactionsTo ?? undefined,
+      isArchived,
+      includeSubcategoriesWithTransactions: true
+    })
+  )
 
   const list = parentCategories ?? []
 

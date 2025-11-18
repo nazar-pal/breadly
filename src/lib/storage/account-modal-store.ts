@@ -1,11 +1,11 @@
 import { AccountType } from '@/data/client/db-schema'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
-import { AccountItem } from '@/data/client/queries/use-get-accounts'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
+import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { router } from 'expo-router'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 
-type Account = AccountItem | Exclude<AccountDetails, undefined>
+type Account = GetAccountsResultItem | GetAccountResultItem
 
 type AccountModalState = {
   account: Account | null

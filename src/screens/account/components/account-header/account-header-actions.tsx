@@ -1,5 +1,5 @@
 import { Icon } from '@/components/ui/icon-by-name'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { useAccountModalActions } from '@/lib/storage/account-modal-store'
 import { cn } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
@@ -11,7 +11,7 @@ import { deleteAccount } from '../../utils/delete-account'
 import { updateAccount } from '../../utils/update-account'
 
 interface Props {
-  account: Exclude<AccountDetails, undefined>
+  account: GetAccountResultItem
 }
 
 export function DetailsHeaderActions({ account }: Props) {

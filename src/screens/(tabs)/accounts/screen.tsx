@@ -1,5 +1,6 @@
 import { AccountType } from '@/data/client/db-schema'
-import { useGetAccounts } from '@/data/client/queries'
+import { getAccounts } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import { useAccountModalActions } from '@/lib/storage/account-modal-store'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
@@ -23,11 +24,13 @@ export default function TabsAccountsScreen({ accountType }: Props) {
 
   const { showArchived } = useAccountSettingsState()
 
-  const { data: accounts } = useGetAccounts({
-    userId,
-    accountType,
-    isArchived: showArchived ? undefined : false
-  })
+  const { data: accounts } = useDrizzleQuery(
+    getAccounts({
+      userId,
+      accountType,
+      isArchived: showArchived ? undefined : false
+    })
+  )
 
   return (
     <ScrollView

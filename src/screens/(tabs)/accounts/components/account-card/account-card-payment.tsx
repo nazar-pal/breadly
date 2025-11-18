@@ -1,11 +1,11 @@
 import { Icon } from '@/components/ui/icon-by-name'
-import { AccountItem } from '@/data/client/queries/use-get-accounts'
+import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import React from 'react'
 import { Pressable } from 'react-native'
 import { AccountCardShell } from './account-card-shell'
 
 type Props = React.ComponentProps<typeof Pressable> & {
-  account: AccountItem
+  account: GetAccountsResultItem
 }
 
 export function AccountCardPayment({ account, ...rest }: Props) {

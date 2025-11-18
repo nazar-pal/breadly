@@ -1,16 +1,12 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
-import { AccountDetails } from '@/data/client/queries/use-get-account'
+import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { cn, formatCurrency } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
-export function AccountBalance({
-  account
-}: {
-  account: Exclude<AccountDetails, undefined>
-}) {
+export function AccountBalance({ account }: { account: GetAccountResultItem }) {
   const { balance, type, description, currency } = account
   return (
     <Card className="mb-4 border-0 bg-card/50 shadow-none">

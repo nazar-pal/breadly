@@ -1,8 +1,9 @@
 import {
-  useGetCategories,
-  useGetCategory,
-  useSumTransactions
+  getCategories,
+  getCategory,
+  sumTransactions
 } from '@/data/client/queries'
+import { useDrizzleQuery } from '@/lib/hooks'
 import {
   useCategoryDetailsActions,
   useCategoryDetailsState
@@ -23,16 +24,20 @@ export default function CategoryDetailsModal() {
 
   const { userId } = useUserSession()
 
-  const { data: category } = useGetCategory({
-    userId: userId,
-    categoryId: categoryDetailsSelectedCategory ?? ''
-  })
+  const { data: category } = useDrizzleQuery(
+    getCategory({
+      userId: userId,
+      categoryId: categoryDetailsSelectedCategory ?? ''
+    })
+  )
 
-  const { data: totals } = useSumTransactions({
-    userId,
-    categoryId: categoryDetailsSelectedCategory ?? '',
-    type: category?.[0]?.type || 'expense'
-  })
+  const { data: totals } = useDrizzleQuery(
+    sumTransactions({
+      userId,
+      categoryId: categoryDetailsSelectedCategory ?? '',
+      type: category?.[0]?.type || 'expense'
+    })
+  )
 
   const {
     canDelete,
@@ -47,11 +52,13 @@ export default function CategoryDetailsModal() {
   })
 
   // Get subcategories for this category using the unified hook
-  const { data: subcategories } = useGetCategories({
-    userId,
-    type: category?.[0]?.type || 'expense',
-    parentId: categoryDetailsSelectedCategory ?? ''
-  })
+  const { data: subcategories } = useDrizzleQuery(
+    getCategories({
+      userId,
+      type: category?.[0]?.type || 'expense',
+      parentId: categoryDetailsSelectedCategory ?? ''
+    })
+  )
 
   const categoryData = category?.[0]
   const totalsByCurrency = (totals ?? [])
