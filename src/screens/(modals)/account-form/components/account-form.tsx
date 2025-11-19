@@ -80,7 +80,7 @@ export function AccountForm() {
 
   return (
     <Form {...form}>
-      <AccountFormFields formType={formType} />
+      <AccountFormFields formType={formType} accountType={accountType} />
       <AccountFormActions
         onCancel={closeAccountModal}
         onSubmit={form.handleSubmit(handleSubmit)}

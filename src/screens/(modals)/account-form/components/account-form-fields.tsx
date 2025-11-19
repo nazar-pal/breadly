@@ -7,7 +7,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Text } from '@/components/ui/text'
-import { useAccountModalState } from '@/lib/storage/account-modal-store'
+import { AccountType } from '@/data/client/db-schema'
 import React, { useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Pressable, ScrollView, View } from 'react-native'
@@ -17,11 +17,10 @@ import { BaseFields } from './base-fields'
 
 interface Props {
   formType: 'create' | 'update'
+  accountType: AccountType
 }
 
-export function AccountFormFields({ formType }: Props) {
-  const { accountType } = useAccountModalState()
-
+export function AccountFormFields({ formType, accountType }: Props) {
   const form = useFormContext<AccountFormData>()
 
   const [openPicker, setOpenPicker] = useState<OpenBottomSheetPicker>(null)
