@@ -2,10 +2,10 @@ import { CategoryType } from '@/data/client/db-schema'
 import { getUserPreferences } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
-import { useCategoryDetailsActions } from '@/lib/storage/category-details-store'
 import { openExpenseIncomeBottomSheet } from '@/screens/(modals)/add-transaction'
 import { CategoryCardsGrid } from '@/screens/(tabs)/categories/components/category-cards-grid'
 import { useUserSession } from '@/system/session-and-migration/hooks'
+import { router } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -41,8 +41,6 @@ function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
 export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
   const { userId } = useUserSession()
 
-  const { openCategoryDetailsModal } = useCategoryDetailsActions()
-
   const { data: preferences } = useDrizzleQuery(getUserPreferences({ userId }))
   const currencyCode = preferences?.[0]?.defaultCurrency?.code || 'USD'
 
@@ -52,6 +50,10 @@ export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
       categoryId,
       currencyCode
     })
+
+  const openCategoryDetailsModal = (categoryId: string) =>
+    router.push({ pathname: '/category-details', params: { categoryId } })
+
   return (
     <GestureDetectorContainer>
       <View className="flex-1 bg-background" collapsable={false}>

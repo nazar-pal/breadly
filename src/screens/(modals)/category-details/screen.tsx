@@ -4,11 +4,8 @@ import {
   sumTransactions
 } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
-import {
-  useCategoryDetailsActions,
-  useCategoryDetailsState
-} from '@/lib/storage/category-details-store'
 import { useUserSession } from '@/system/session-and-migration'
+import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,25 +15,21 @@ import { DetailsInfoSection } from './components/details-info-section'
 import { SubcategoriesSection } from './components/subcategories-section'
 import { useCheckCategoryDependencies } from './data'
 
-export default function CategoryDetailsModal() {
-  const { categoryDetailsSelectedCategory } = useCategoryDetailsState()
-  const { closeCategoryDetailsModal } = useCategoryDetailsActions()
+interface Props {
+  categoryId: string
+}
 
+export default function CategoryDetailsModal({ categoryId }: Props) {
   const { userId } = useUserSession()
 
-  const { data: category } = useDrizzleQuery(
-    getCategory({
-      userId: userId,
-      categoryId: categoryDetailsSelectedCategory ?? ''
-    })
+  const { data: categories } = useDrizzleQuery(
+    getCategory({ userId, categoryId })
   )
+  const categoryData = categories.length > 0 ? categories[0] : null
+  const type = categoryData?.type || 'expense'
 
   const { data: totals } = useDrizzleQuery(
-    sumTransactions({
-      userId,
-      categoryId: categoryDetailsSelectedCategory ?? '',
-      type: category?.[0]?.type || 'expense'
-    })
+    sumTransactions({ userId, categoryId, type })
   )
 
   const {
@@ -46,21 +39,13 @@ export default function CategoryDetailsModal() {
     transactionCount,
     subcategoryCount,
     isLoading: isDependencyCheckLoading
-  } = useCheckCategoryDependencies({
-    userId,
-    categoryId: categoryDetailsSelectedCategory ?? ''
-  })
+  } = useCheckCategoryDependencies({ userId, categoryId })
 
   // Get subcategories for this category using the unified hook
   const { data: subcategories } = useDrizzleQuery(
-    getCategoriesWithTransactions({
-      userId,
-      type: category?.[0]?.type || 'expense',
-      parentId: categoryDetailsSelectedCategory ?? ''
-    })
+    getCategoriesWithTransactions({ userId, type, parentId: categoryId })
   )
 
-  const categoryData = category?.[0]
   const totalsByCurrency = (totals ?? [])
     .map(row => ({
       currencyId: row.currencyId as string,
@@ -69,9 +54,7 @@ export default function CategoryDetailsModal() {
     .filter(row => row.totalAmount > 0)
     .sort((a, b) => b.totalAmount - a.totalAmount)
 
-  if (!categoryData) {
-    return null
-  }
+  if (!categoryData) return null
 
   return (
     <SafeAreaView
@@ -87,7 +70,7 @@ export default function CategoryDetailsModal() {
         transactionCount={transactionCount}
         subcategoryCount={subcategoryCount}
         isDependencyCheckLoading={isDependencyCheckLoading}
-        onClose={closeCategoryDetailsModal}
+        onClose={() => router.back()}
       />
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>

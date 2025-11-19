@@ -1,1 +1,1 @@
-export default () => null
+export default ({ categoryId }: { categoryId: string }) => null
