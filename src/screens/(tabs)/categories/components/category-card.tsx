@@ -1,22 +1,15 @@
 import { cn, formatCurrency } from '@/lib/utils'
 import React, { useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, PressableProps, Text, View } from 'react-native'
 import { CategoryCardIcon } from './category-card-icon'
 import { CategoryWithAmounts } from './lib/use-get-categories-with-amounts'
 
-interface Props {
+interface Props extends PressableProps {
   category: CategoryWithAmounts
   className?: string
-  onPress: (categoryId: string) => void
-  onLongPress?: () => void
 }
 
-export function CategoryCard({
-  category,
-  className,
-  onPress,
-  onLongPress
-}: Props) {
+export function CategoryCard({ category, className, ...rest }: Props) {
   const [isPressed, setIsPressed] = useState(false)
 
   const renderTotals = () => {
@@ -42,11 +35,10 @@ export function CategoryCard({
         isPressed && 'opacity-70',
         className
       )}
-      onPress={() => onPress(category.id)}
-      onLongPress={onLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       delayLongPress={500}
+      {...rest}
     >
       <CategoryCardIcon name={category.icon} type={category.type} size={20} />
 

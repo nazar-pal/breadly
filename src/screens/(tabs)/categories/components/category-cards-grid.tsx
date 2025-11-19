@@ -7,6 +7,7 @@ import {
 import { Text } from '@/components/ui/text'
 import { CategoryType } from '@/data/client/db-schema'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
+import { cn } from '@/lib/utils'
 import React from 'react'
 import { ScrollView, useWindowDimensions, View } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
@@ -70,9 +71,6 @@ function CategoryGridSection({
   const CardComponent = CategoryCard
   const cardHeightPx = 56
   const cardHeightClass = 'h-full'
-  const cardClassName = isArchived
-    ? `rounded-xl border border-dashed border-border bg-muted/50 p-3 shadow-sm ${cardHeightClass}`
-    : `rounded-xl border border-border bg-card p-3 shadow-sm ${cardHeightClass}`
 
   return (
     <>
@@ -104,9 +102,15 @@ function CategoryGridSection({
               >
                 <CardComponent
                   category={category}
-                  onPress={() => onPress(category.id)}
+                  onPress={() => {
+                    if (!isArchived) onPress(category.id)
+                  }}
                   onLongPress={() => onLongPress(category.id)}
-                  className={cardClassName}
+                  className={cn(
+                    'rounded-xl border border-border  bg-card p-3 shadow-sm',
+                    cardHeightClass,
+                    isArchived && 'border-dashed shadow-none'
+                  )}
                 />
               </View>
             )
@@ -151,7 +155,7 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
   const numColumns = Math.max(2, Math.floor(availableWidth / minCardWidth))
 
   return (
-    <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
+    <ScrollView className="flex-1" contentContainerClassName="p-4 pb-2">
       {/* Active categories */}
       <CategoryGridSection
         data={categories}
@@ -164,29 +168,25 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
 
       {/* Archived categories */}
       {categoriesArchived.length > 0 && (
-        <View className="mt-6">
-          <Accordion type="multiple" collapsible className="w-full">
-            <AccordionItem value="archived-categories">
-              <AccordionTrigger>
-                <Text className="text-sm font-medium text-muted-foreground">
-                  Archived Categories ({categoriesArchived.length})
-                </Text>
-              </AccordionTrigger>
-              <AccordionContent>
-                <View className="pt-2">
-                  <CategoryGridSection
-                    data={categoriesArchived}
-                    isArchived
-                    numColumns={numColumns}
-                    onPress={onPress}
-                    onLongPress={onLongPress}
-                    type={type}
-                  />
-                </View>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </View>
+        <Accordion type="multiple" collapsible>
+          <AccordionItem value="archived-categories" className="border-b-0">
+            <AccordionTrigger>
+              <Text className="text-sm font-medium text-muted-foreground">
+                Archived Categories ({categoriesArchived.length})
+              </Text>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CategoryGridSection
+                data={categoriesArchived}
+                isArchived
+                numColumns={numColumns}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                type={type}
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       )}
     </ScrollView>
   )
