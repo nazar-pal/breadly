@@ -71,6 +71,7 @@ const columns = {
   icon: text({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
   sortOrder: integer('sort_order').notNull().default(1000),
   isArchived: isArchivedColumn(), // Soft deletion flag
+  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }),
   createdAt: createdAtColumn()
 }
 

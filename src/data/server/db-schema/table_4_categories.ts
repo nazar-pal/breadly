@@ -25,6 +25,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  timestamp,
   uniqueIndex,
   uuid,
   varchar
@@ -73,6 +74,7 @@ export const categories = pgTable(
     icon: varchar({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
     sortOrder: integer('sort_order').notNull().default(1000),
     isArchived: isArchivedColumn(), // Soft deletion flag
+    archivedAt: timestamp({ withTimezone: true }),
     createdAt: createdAtColumn()
   },
   table => [

@@ -9,8 +9,7 @@ const categoryUpdateSchema = createUpdateSchema(categories).pick({
   parentId: true,
   name: true,
   description: true,
-  icon: true,
-  isArchived: true
+  icon: true
 })
 
 export async function updateCategory({

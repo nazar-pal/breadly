@@ -90,6 +90,7 @@ CREATE TABLE accounts (
   currency_id VARCHAR(3) REFERENCES currencies(code),
   balance NUMERIC(14,2) DEFAULT 0,      -- Auto-updated by triggers
   is_archived BOOLEAN DEFAULT FALSE NOT NULL,
+  archived_at TIMESTAMPTZ
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 ```

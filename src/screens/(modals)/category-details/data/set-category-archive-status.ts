@@ -15,7 +15,10 @@ export async function setCategoryArchiveStatus({
   const [error, result] = await asyncTryCatch(
     db
       .update(categories)
-      .set({ isArchived })
+      .set({
+        isArchived,
+        ...(isArchived ? { archivedAt: new Date() } : {})
+      })
       .where(and(eq(categories.id, id), eq(categories.userId, userId)))
   )
 

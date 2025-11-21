@@ -21,7 +21,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Field mappings per table
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
-    categories: ['created_at'],
+    categories: ['created_at', 'archived_at'],
     budgets: ['created_at'],
     accounts: ['created_at'],
     transactions: ['created_at'],
