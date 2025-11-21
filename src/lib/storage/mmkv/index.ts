@@ -1,6 +1,6 @@
-import { MMKV } from 'react-native-mmkv'
+import { createMMKV } from 'react-native-mmkv'
 
-export const storage = new MMKV({ id: 'app-storage-v1' })
+export const storage = createMMKV({ id: 'app-storage-v1' })
 
 export const LocalStore = {
   getItem(key: string): string | null {
@@ -10,6 +10,6 @@ export const LocalStore = {
     storage.set(key, value)
   },
   removeItem(key: string): void {
-    storage.delete(key)
+    storage.remove(key)
   }
 }
