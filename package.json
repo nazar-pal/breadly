@@ -119,6 +119,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
+    "@types/papaparse": "^5.5.0",
     "@types/react": "~19.1.10",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.38.0",
