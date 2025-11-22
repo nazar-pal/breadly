@@ -6,7 +6,7 @@ import { Icon as UiIcon } from './icon'
 type LucideIconName = keyof typeof icons
 type IconName = StringWithAutocompleteOptions<LucideIconName>
 
-const allIcons: Record<LucideIconName, LucideIcon> = icons
+export const allIcons: Record<LucideIconName, LucideIcon> = icons
 
 function normalizeLucideKey(candidate: string): LucideIconName {
   const FALLBACK_ICON_KEY: LucideIconName = 'Circle'
