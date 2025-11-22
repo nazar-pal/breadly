@@ -7,7 +7,6 @@ import {
   Pressable,
   ScrollView,
   Text,
-  TouchableWithoutFeedback,
   View,
   useWindowDimensions
 } from 'react-native'
@@ -146,6 +145,42 @@ const DialogContent = R.forwardRef<View, DialogContentProps>(
     const { open, setOpen } = R.useContext(DialogContext)
     const { height: windowHeight } = useWindowDimensions()
     const contentMaxHeight = Math.floor(windowHeight * 0.8)
+    const [headerHeight, setHeaderHeight] = R.useState(0)
+    const [footerHeight, setFooterHeight] = R.useState(0)
+    const [bodyContentHeight, setBodyContentHeight] = R.useState(0)
+
+    const childrenArray = R.Children.toArray(children) as R.ReactNode[]
+    const headerChildren: R.ReactNode[] = []
+    const footerChildren: R.ReactNode[] = []
+    const bodyChildren: R.ReactNode[] = []
+
+    childrenArray.forEach(child => {
+      if (!R.isValidElement(child)) {
+        bodyChildren.push(child)
+        return
+      }
+      // @ts-ignore
+      const displayName = child.type?.displayName
+
+      if (displayName === 'DialogHeader') {
+        headerChildren.push(child)
+        return
+      }
+      if (displayName === 'DialogFooter') {
+        footerChildren.push(child)
+        return
+      }
+      bodyChildren.push(child)
+    })
+
+    const maxScrollViewHeight = Math.max(
+      0,
+      contentMaxHeight - headerHeight - footerHeight
+    )
+    const scrollViewportHeight =
+      bodyContentHeight > 0
+        ? Math.min(bodyContentHeight, maxScrollViewHeight)
+        : undefined
 
     const handleClose = () => setOpen(false)
 
@@ -157,56 +192,74 @@ const DialogContent = R.forwardRef<View, DialogContentProps>(
         animationType="fade"
         onRequestClose={handleClose}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            onInteractOutside?.()
-            handleClose()
-          }}
-        >
-          <View className="flex-1 bg-black/50">
-            <KeyboardAvoidingView
-              behavior={Platform.select({
-                ios: 'padding',
-                android: 'height'
-              })}
-              keyboardVerticalOffset={0}
-              style={{ flex: 1 }}
-            >
-              <View className="flex-1 items-center justify-center">
-                <TouchableWithoutFeedback>
-                  <View
-                    ref={ref}
-                    className={cn(
-                      'm-6 rounded-2xl bg-popover',
-                      'w-[92vw] max-w-sm',
-                      Platform.OS === 'ios'
-                        ? 'ios:shadow-xl'
-                        : 'android:elevation-8',
-                      className
-                    )}
-                    style={{ maxHeight: contentMaxHeight }}
-                    {...props}
+        <View className="flex-1 bg-black/50">
+          <Pressable
+            className="absolute inset-0"
+            onPress={() => {
+              onInteractOutside?.()
+              handleClose()
+            }}
+            accessibilityRole="button"
+          />
+          <KeyboardAvoidingView
+            behavior={Platform.select({
+              ios: 'padding',
+              android: 'height'
+            })}
+            keyboardVerticalOffset={0}
+            style={{ flex: 1 }}
+          >
+            <View className="flex-1 items-center justify-center">
+              <View
+                ref={ref}
+                className={cn(
+                  'm-6 rounded-2xl bg-popover',
+                  'w-[92vw] max-w-sm',
+                  Platform.OS === 'ios'
+                    ? 'ios:shadow-xl'
+                    : 'android:elevation-8',
+                  className
+                )}
+                style={{ maxHeight: contentMaxHeight }}
+                {...props}
+              >
+                {showCloseButton && (
+                  <Pressable
+                    onPress={handleClose}
+                    className="absolute right-4 top-4 z-50 rounded-full bg-muted/50 p-2"
                   >
-                    <ScrollView
-                      bounces={false}
-                      keyboardShouldPersistTaps="handled"
-                    >
-                      {showCloseButton && (
-                        <Pressable
-                          onPress={handleClose}
-                          className="absolute right-4 top-4 z-50 rounded-full bg-muted/50 p-2"
-                        >
-                          <Ionicons name="close" size={24} color="#666" />
-                        </Pressable>
-                      )}
-                      {children}
-                    </ScrollView>
-                  </View>
-                </TouchableWithoutFeedback>
+                    <Ionicons name="close" size={24} color="#666" />
+                  </Pressable>
+                )}
+
+                <View
+                  onLayout={e => setHeaderHeight(e.nativeEvent.layout.height)}
+                >
+                  {headerChildren}
+                </View>
+
+                <ScrollView
+                  bounces={false}
+                  keyboardShouldPersistTaps="handled"
+                  showsVerticalScrollIndicator={false}
+                  style={{ height: scrollViewportHeight }}
+                  contentContainerStyle={{
+                    paddingBottom: footerChildren.length ? 16 : 24
+                  }}
+                  onContentSizeChange={(_, h) => setBodyContentHeight(h)}
+                >
+                  {bodyChildren}
+                </ScrollView>
+
+                <View
+                  onLayout={e => setFooterHeight(e.nativeEvent.layout.height)}
+                >
+                  {footerChildren}
+                </View>
               </View>
-            </KeyboardAvoidingView>
-          </View>
-        </TouchableWithoutFeedback>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
       </Modal>
     )
   }
