@@ -1,4 +1,5 @@
 import { StringWithAutocompleteOptions } from '@/lib/types'
+import { StringCase } from '@/lib/utils'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { icons } from 'lucide-react-native'
 import { Icon as UiIcon } from './icon'
@@ -7,29 +8,23 @@ type LucideIconName = keyof typeof icons
 type IconName = StringWithAutocompleteOptions<LucideIconName>
 
 export const allIcons: Record<LucideIconName, LucideIcon> = icons
+export const allIconsKeys = Object.keys(allIcons) as LucideIconName[]
 
 function normalizeLucideKey(candidate: string): LucideIconName {
   const FALLBACK_ICON_KEY: LucideIconName = 'Circle'
   const isLucideKey = (key: string): key is LucideIconName => key in allIcons
 
-  const capitalizeFirst = (value: string): string =>
-    value.charAt(0).toUpperCase() + value.slice(1)
+  const trimmed = candidate.trim()
 
-  const toPascalCase = (value: string): string =>
-    value
-      .split(/[-_\s]+/)
-      .map(part => (part ? capitalizeFirst(part) : ''))
-      .join('')
+  // Early return for empty input
+  if (!trimmed.length) return FALLBACK_ICON_KEY
 
-  if (!candidate) return FALLBACK_ICON_KEY
+  // Try the trimmed input as-is first (most common case)
+  if (isLucideKey(trimmed)) return trimmed
 
-  const candidates = [
-    candidate,
-    capitalizeFirst(candidate),
-    toPascalCase(candidate)
-  ]
-
-  for (const key of candidates) if (isLucideKey(key)) return key
+  // Try Pascal case conversion (Lucide icons use Pascal case)
+  const pascalCase = StringCase.pascal(trimmed)
+  if (isLucideKey(pascalCase)) return pascalCase
 
   return FALLBACK_ICON_KEY
 }
