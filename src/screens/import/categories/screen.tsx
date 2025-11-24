@@ -8,9 +8,8 @@ import { router } from 'expo-router'
 import React, { useEffect, useTransition } from 'react'
 import { ActivityIndicator, Alert, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { EmptyState, PreviewList } from './components'
-import { BusyIndicator } from './components/busy-indicator'
-import { PreviewInfo } from './components/preview-info'
+import { BusyIndicator, EmptyState, PreviewInfo } from '../_components'
+import { PreviewList } from './components'
 import { CsvArr, csvSchema } from './lib/csv-arr-schema'
 
 export default function ImportCategoriesScreen() {
@@ -112,7 +111,7 @@ export default function ImportCategoriesScreen() {
           onCancel={cancel}
         />
       ) : (
-        <EmptyState onPress={pickAndParse} />
+        <EmptyState onPress={pickAndParse} type="categories" />
       )}
     </View>
   )
