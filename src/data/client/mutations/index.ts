@@ -1,5 +1,6 @@
 export * from './create-account'
 export * from './create-category'
+export * from './create-many-categories'
 export * from './create-or-update-user-preferences'
 export * from './create-transaction'
 export * from './delete-transaction'

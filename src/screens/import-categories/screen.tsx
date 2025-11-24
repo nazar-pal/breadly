@@ -1,0 +1,119 @@
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
+import { createManyCategories } from '@/data/client/mutations'
+import { useCsvImport } from '@/lib/hooks'
+import { formatBytes } from '@/lib/utils'
+import { useUserSession } from '@/system/session-and-migration'
+import { router } from 'expo-router'
+import React, { useEffect, useTransition } from 'react'
+import { ActivityIndicator, Alert, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { EmptyState, PreviewList } from './components'
+import { BusyIndicator } from './components/busy-indicator'
+import { PreviewInfo } from './components/preview-info'
+import { CsvArr, csvSchema } from './lib/csv-arr-schema'
+
+export default function ImportCategoriesScreen() {
+  const [isPending, startTransition] = useTransition()
+  const insets = useSafeAreaInsets()
+  const { userId } = useUserSession()
+  const {
+    pickAndParse,
+    cancel,
+    status,
+    progress,
+    data,
+    clearData,
+    warningsCount,
+    file,
+    error,
+    clearError
+  } = useCsvImport<CsvArr>(csvSchema)
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Import Error', error.message)
+      clearError()
+    }
+  }, [error, clearError])
+
+  const handleImport = () => {
+    if (!data || data.length === 0) return
+
+    startTransition(async () => {
+      const [error] = await createManyCategories({
+        rows: data,
+        userId
+      })
+
+      if (error) {
+        const message =
+          error instanceof Error ? error.message : 'Failed to import categories'
+        Alert.alert('Import Failed', message)
+        return
+      }
+
+      clearData()
+      router.navigate('/')
+    })
+  }
+
+  if (data && data.length > 0) {
+    const bottomInset = Math.max(insets.bottom, 16)
+    const floatingPadding = bottomInset + 72
+    const fileSizeLabel = formatBytes(file?.size)
+
+    return (
+      <View className="flex-1 bg-background pt-4">
+        <PreviewInfo
+          fileName={file?.name}
+          dataCount={data.length}
+          fileSizeLabel={fileSizeLabel}
+          warningsCount={warningsCount}
+          onChangeFile={pickAndParse}
+          onCancel={cancel}
+        />
+
+        <View className="flex-1 px-4 pt-2">
+          <PreviewList rows={data} bottomPadding={floatingPadding} />
+        </View>
+
+        <View
+          pointerEvents="box-none"
+          className="absolute left-4 right-4"
+          style={{
+            bottom: bottomInset
+          }}
+        >
+          <Button
+            onPress={handleImport}
+            className="shadow-lg"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : null}
+            <Text>
+              {isPending ? 'Importing...' : `Import ${data.length} Categories`}
+            </Text>
+          </Button>
+        </View>
+      </View>
+    )
+  }
+
+  return (
+    <View className="flex-1 ">
+      {status !== 'idle' ? (
+        <BusyIndicator
+          status={status}
+          progress={progress}
+          fileName={file?.name}
+          onCancel={cancel}
+        />
+      ) : (
+        <EmptyState onPress={pickAndParse} />
+      )}
+    </View>
+  )
+}

@@ -157,6 +157,7 @@ function StackRoutes() {
         name="test"
         options={{ title: 'tRPC Connectivity Tester' }}
       />
+      <Stack.Screen name="import" options={{ title: 'Import Data' }} />
       <Stack.Screen
         name="(modals)/paywall"
         options={{ headerShown: false, presentation: 'modal' }}
