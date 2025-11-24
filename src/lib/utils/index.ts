@@ -1,4 +1,5 @@
 export { cn } from './cn'
+export { formatBytes } from './format-bytes'
 export { formatCurrency, formatCurrencyWithSign } from './format-currency'
 export { getAccountProgress } from './get-account-progress'
 export * from './string-case'
