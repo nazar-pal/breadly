@@ -14,8 +14,8 @@ import * as Sentry from '@sentry/react-native'
 import { router, type Href } from 'expo-router'
 import * as Updates from 'expo-updates'
 import { useEffect, useState } from 'react'
-
 import { Pressable, ScrollView, Switch, View } from 'react-native'
+import { DeleteAllDataCard } from './components/delete-all-data'
 
 export default function SettingsScreen() {
   return (
@@ -41,6 +41,7 @@ export default function SettingsScreen() {
           <Preferences />
           <ImportDataCard />
           <UpdatesStatusCard />
+          <DeleteAllDataCard />
         </View>
       </ScrollView>
     </View>
