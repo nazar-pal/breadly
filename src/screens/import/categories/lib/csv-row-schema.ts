@@ -5,6 +5,11 @@ import { z } from 'zod'
 
 const trimStr = z.string().trim()
 
+/**
+ * Minimum allowed date (reasonable lower bound)
+ */
+const MIN_DATE = new Date('1970-01-01')
+
 export const csvRowSchema = z.object({
   id: trimStr.min(1),
   parentId: trimStr.min(1).optional(),
@@ -14,9 +19,14 @@ export const csvRowSchema = z.object({
     .transform(iconName => StringCase.pascal(iconName))
     .pipe(z.enum(allIconsKeys))
     .default('Circle'),
-  createdAt: trimStr.pipe(isoDateToDate),
+  createdAt: trimStr
+    .pipe(isoDateToDate)
+    .refine(date => date >= MIN_DATE, 'Date is too far in the past'),
   isArchived: trimStr.pipe(stringToBoolean).default(false),
-  archivedAt: trimStr.pipe(isoDateToDate).optional()
+  archivedAt: trimStr
+    .pipe(isoDateToDate)
+    .refine(date => date >= MIN_DATE, 'Archived date is too far in the past')
+    .optional()
 })
 
 export type CsvRow = z.infer<typeof csvRowSchema>

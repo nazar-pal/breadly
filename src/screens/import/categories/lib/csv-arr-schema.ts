@@ -39,9 +39,11 @@ function transformCsvRows(rows: CsvRowInput[]) {
 
 /**
  * Validate raw CSV rows and turn them into DB-ready category rows.
+ * Requires at least one valid row.
  */
 export const csvSchema = z
   .array(csvRowSchema)
+  .min(1, 'CSV file must contain at least one category row')
   .superRefine(addCsvValidationIssues)
   .transform(transformCsvRows)
 
