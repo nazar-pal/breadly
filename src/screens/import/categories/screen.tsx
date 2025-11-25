@@ -8,7 +8,9 @@ import { router } from 'expo-router'
 import React, { useEffect, useTransition } from 'react'
 import { ActivityIndicator, Alert, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ZodError } from 'zod'
 import { BusyIndicator, EmptyState, PreviewInfo } from '../_components'
+import { formatZodError } from '../_lib'
 import { PreviewList } from './components'
 import { CsvArr, csvSchema } from './lib/csv-arr-schema'
 
@@ -31,7 +33,9 @@ export default function ImportCategoriesScreen() {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('Import Error', error.message)
+      const message =
+        error instanceof ZodError ? formatZodError(error) : error.message
+      Alert.alert('Import Error', message)
       clearError()
     }
   }, [error, clearError])
