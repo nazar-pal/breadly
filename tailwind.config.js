@@ -3,11 +3,7 @@ const { hairlineWidth } = require('nativewind/theme')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: [
-    './app/**/*.{js,jsx,ts,tsx}',
-    './components/**/*.{js,jsx,ts,tsx}',
-    './modules/**/*.{js,jsx,ts,tsx}'
-  ],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
@@ -68,6 +64,11 @@ module.exports = {
           debt: 'hsl(var(--account-debt))'
         }
       },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
+      },
       borderWidth: {
         hairline: hairlineWidth()
       },
@@ -87,5 +88,6 @@ module.exports = {
       }
     }
   },
+  future: { hoverOnlyWhenSupported: true },
   plugins: [require('tailwindcss-animate')]
 }

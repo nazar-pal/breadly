@@ -32,7 +32,7 @@ bucket_definitions:
       # User preferences
       - SELECT user_id as id, user_id, default_currency, first_weekday, locale FROM user_preferences WHERE user_id = bucket.user_id
 
-      # User's categories (convert created_at)
+      # User's categories (convert created_at and archived_at)
       - |
         SELECT
           id,
@@ -44,11 +44,12 @@ bucket_definitions:
           icon,
           sort_order,
           is_archived,
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (convert start_date and end_date)
+      # User's budgets (leave date fields as DATE -> TEXT 'YYYY-MM-DD')
       - |
         SELECT
           id,
@@ -56,12 +57,12 @@ bucket_definitions:
           category_id,
           CAST(amount AS real) AS amount,
           currency,
-          CAST(unixepoch(start_date) * 1000 AS integer) AS start_date,
-          CAST(unixepoch(end_date) * 1000 AS integer) AS end_date
+          start_date,
+          end_date
         FROM budgets
         WHERE user_id = bucket.user_id
 
-      # User's accounts (convert savings_target_date, debt_due_date, created_at)
+      # User's accounts (leave date-only fields as DATE -> TEXT)
       - |
         SELECT
           id,
@@ -72,16 +73,15 @@ bucket_definitions:
           currency_id,
           CAST(balance AS real) AS balance,
           CAST(savings_target_amount AS real) AS savings_target_amount,
-          CAST(unixepoch(savings_target_date) * 1000 AS integer) AS savings_target_date,
+          savings_target_date,
           CAST(debt_initial_amount AS real) AS debt_initial_amount,
-          debt_is_owed_to_me,
-          CAST(unixepoch(debt_due_date) * 1000 AS integer) AS debt_due_date,
+          debt_due_date,
           is_archived,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
         FROM accounts
         WHERE user_id = bucket.user_id
 
-      # User's transactions (convert tx_date, created_at)
+      # User's transactions (leave tx_date as DATE -> TEXT)
       - |
         SELECT
           id,
@@ -92,7 +92,7 @@ bucket_definitions:
           category_id,
           CAST(amount AS real) AS amount,
           currency_id,
-          CAST(unixepoch(tx_date) * 1000 AS integer) AS tx_date,
+          tx_date,
           notes,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
         FROM transactions

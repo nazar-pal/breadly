@@ -1,22 +1,25 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
+
 ---
+
 description: "Checklist for AI-generated changes (MVP Focus)."
 globs: ["**/*.{ts,tsx}", "**/*.ts"]
 alwaysApply: false # Manual checklist
 version: 1.0.0
+
 ---
 
 # AI-Generated Change Verification (MVP)
 
 After AI edits:
 
-1.  **Lint & Format**: Run `npm run lint`. Fix errors.
-2.  **Type Check**: Run `npm run typecheck`. Fix errors.
+1.  **Lint & Format**: Run `bun run lint`. Fix errors.
+2.  **Type Check**: Run `bun run typecheck`. Fix errors.
 3.  **Review Logic**:
-    -   Does it meet the prompt's requirements?
-    -   Does it follow project rules (theme, naming, etc.)?
-    -   Any obvious anti-patterns?
+    - Does it meet the prompt's requirements?
+    - Does it follow project rules (theme, naming, etc.)?
+    - Any obvious anti-patterns?

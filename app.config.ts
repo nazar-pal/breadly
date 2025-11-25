@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
-const IS_DEV = process.env.APP_VARIANT === 'development'
-const IS_PREVIEW = process.env.APP_VARIANT === 'preview'
+const IS_DEV = process.env.EXPO_PUBLIC_APP_VARIANT === 'development'
+const IS_PREVIEW = process.env.EXPO_PUBLIC_APP_VARIANT === 'preview'
 
 const getUniqueIdentifier = () => {
   if (IS_DEV) return 'com.devnazar.breadly.dev'
@@ -19,9 +19,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: getAppName(),
   slug: 'breadly-expense-tracker',
-  version: '1.0.0',
+  version: '1.0.5',
   orientation: 'portrait',
-  icon: './assets/images/icon.png',
+  icon: './assets/icons/adaptive-icon.png',
   scheme: 'myapp',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -35,11 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       NSMicrophoneUsageDescription:
         'Breadly uses the microphone to capture your voice inputs for adding transactions.'
     },
-    icon: {
-      dark: './assets/icons/ios-dark.png',
-      light: './assets/icons/ios-light.png',
-      tinted: './assets/icons/ios-tinted.png'
-    }
+    icon: './assets/icons/ios.icon'
   },
   android: {
     adaptiveIcon: {
@@ -48,31 +44,41 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff'
     },
     edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: true,
     package: getUniqueIdentifier()
   },
   web: {
     bundler: 'metro',
     output: 'server',
-    favicon: './assets/images/favicon.png'
+    favicon: './assets/icons/adaptive-icon.png'
   },
   plugins: [
     'expo-router',
     [
       'expo-splash-screen',
       {
-        image: './assets/icons/splash-icon-dark.png',
+        image: './assets/icons/splash-icon.png',
         imageWidth: 200,
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
         dark: {
-          image: './assets/icons/splash-icon-light.png',
+          image: './assets/icons/splash-icon.png',
           backgroundColor: '#000000'
         }
       }
     ],
     'expo-font',
     'expo-web-browser',
-    'expo-secure-store'
+    'expo-secure-store',
+    [
+      '@sentry/react-native/expo',
+      {
+        url: 'https://sentry.io/',
+        note: 'Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.',
+        project: 'breadly',
+        organization: 'no-e10'
+      }
+    ]
   ],
   experiments: {
     typedRoutes: true,
@@ -83,6 +89,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     eas: {
       projectId: '36c0d713-fd76-42c0-99ba-9cbef6a99863'
     }
+  },
+  updates: {
+    url: 'https://u.expo.dev/36c0d713-fd76-42c0-99ba-9cbef6a99863'
+  },
+  runtimeVersion: {
+    policy: 'appVersion'
   },
   owner: 'devnazar'
 })
