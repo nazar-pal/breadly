@@ -3,7 +3,12 @@ import Papa from 'papaparse'
 import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
 
-type ImportStatus = 'idle' | 'reading' | 'parsing' | 'validating'
+type ImportStatus =
+  | 'idle'
+  | 'reading'
+  | 'parsing'
+  | 'validating'
+  | 'post-validating'
 
 type CsvFileMeta = {
   name?: string
@@ -13,17 +18,66 @@ type CsvFileMeta = {
   rowCount?: number
 }
 
-export function useCsvImport<T>(schema: z.ZodType<T>) {
+/**
+ * Generic row-level validation error from post-validation
+ */
+export type RowValidationError<TType extends string = string> = {
+  rowIndex: number
+  type: TType
+  message: string
+}
+
+/**
+ * Result from post-validation function
+ */
+export type PostValidationResult<TType extends string = string> = {
+  errors: RowValidationError<TType>[]
+  isValid: boolean
+}
+
+/**
+ * Post-validation function type.
+ * Called after Zod schema validation passes.
+ * Should return validation result with row-level errors.
+ */
+export type PostValidateFn<T, TType extends string = string> = (
+  data: T
+) => Promise<PostValidationResult<TType>> | PostValidationResult<TType>
+
+type UseCsvImportOptions<T, TType extends string = string> = {
+  /**
+   * Optional function to perform additional validation after schema validation.
+   * Useful for async validations like checking database constraints.
+   */
+  postValidate?: PostValidateFn<T, TType>
+}
+
+type PostValidationStatus = 'idle' | 'running' | 'completed' | 'error'
+
+export function useCsvImport<T, TType extends string = string>(
+  schema: z.ZodType<T>,
+  options?: UseCsvImportOptions<T, TType>
+) {
   const [status, setStatus] = useState<ImportStatus>('idle')
   const [progress, setProgress] = useState<number | null>(null)
   const [error, setError] = useState<Error | z.ZodError | null>(null)
   const [data, setData] = useState<T | null>(null)
   const [warningsCount, setWarningsCount] = useState(0)
   const [file, setFile] = useState<CsvFileMeta | null>(null)
+  const [postValidationResult, setPostValidationResult] =
+    useState<PostValidationResult<TType> | null>(null)
+  const [postValidationStatus, setPostValidationStatus] =
+    useState<PostValidationStatus>('idle')
   const operationIdRef = useRef(0)
   const activeTaskIdRef = useRef<number | null>(null)
   const parserRef = useRef<Papa.Parser | null>(null)
   const readerRef = useRef<AbortController | null>(null)
+  const postValidateRef = useRef(options?.postValidate)
+
+  // Keep postValidate ref updated
+  useEffect(() => {
+    postValidateRef.current = options?.postValidate
+  }, [options?.postValidate])
 
   function beginTask(meta?: CsvFileMeta | null) {
     const id = ++operationIdRef.current
@@ -35,6 +89,8 @@ export function useCsvImport<T>(schema: z.ZodType<T>) {
     setWarningsCount(0)
     setData(null)
     setFile(meta ?? null)
+    setPostValidationResult(null)
+    setPostValidationStatus('idle')
     return id
   }
 
@@ -60,6 +116,8 @@ export function useCsvImport<T>(schema: z.ZodType<T>) {
     setWarningsCount(0)
     setFile(null)
     setData(null)
+    setPostValidationResult(null)
+    setPostValidationStatus('idle')
   }
 
   useEffect(() => {
@@ -97,12 +155,35 @@ export function useCsvImport<T>(schema: z.ZodType<T>) {
 
       setWarningsCount(warnings)
       if (result.success) {
-        setData(result.data)
-        const rowCount = Array.isArray(result.data)
-          ? (result.data as unknown[]).length
+        const validatedData = result.data
+        setData(validatedData)
+
+        const rowCount = Array.isArray(validatedData)
+          ? (validatedData as unknown[]).length
           : undefined
         if (rowCount != null) {
           setFile(prev => ({ ...(prev ?? {}), rowCount }))
+        }
+
+        // Run post-validation if provided
+        const postValidateFn = postValidateRef.current
+        if (postValidateFn) {
+          if (taskId !== operationIdRef.current) return
+
+          setStatus('post-validating')
+          setPostValidationStatus('running')
+          try {
+            const postResult = await postValidateFn(validatedData)
+            if (taskId !== operationIdRef.current) return
+            setPostValidationResult(postResult)
+            setPostValidationStatus('completed')
+          } catch (postErr) {
+            if (taskId !== operationIdRef.current) return
+            console.error('Post-validation error:', postErr)
+            // Mark as error - the mutation will catch actual issues
+            setPostValidationResult({ errors: [], isValid: false })
+            setPostValidationStatus('error')
+          }
         }
       } else {
         setError(result.error)
@@ -253,6 +334,13 @@ export function useCsvImport<T>(schema: z.ZodType<T>) {
     setData(null)
   }
 
+  // Derived values for convenience
+  const hasPostValidation = !!options?.postValidate
+  const isPostValid = hasPostValidation
+    ? postValidationStatus === 'completed' &&
+      postValidationResult?.isValid === true
+    : true
+
   return {
     status,
     progress,
@@ -263,6 +351,16 @@ export function useCsvImport<T>(schema: z.ZodType<T>) {
     file,
     clearError,
     data,
-    clearData
+    clearData,
+    /** Post-validation result (null if no post-validate fn or not yet run) */
+    postValidationResult,
+    /** Status of post-validation: 'idle' | 'running' | 'completed' | 'error' */
+    postValidationStatus,
+    /** Whether a post-validation function was provided */
+    hasPostValidation,
+    /** True if post-validation passed, or no post-validation was provided */
+    isPostValid,
+    /** Post-validation errors array (empty if none) */
+    postValidationErrors: postValidationResult?.errors ?? []
   }
 }
