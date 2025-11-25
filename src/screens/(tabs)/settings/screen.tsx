@@ -15,7 +15,7 @@ import { router, type Href } from 'expo-router'
 import * as Updates from 'expo-updates'
 import { useEffect, useState } from 'react'
 
-import { ScrollView, Switch, View } from 'react-native'
+import { Pressable, ScrollView, Switch, View } from 'react-native'
 
 export default function SettingsScreen() {
   return (
@@ -39,6 +39,7 @@ export default function SettingsScreen() {
 
           <PowerSyncStatus />
           <Preferences />
+          <ImportDataCard />
           <UpdatesStatusCard />
         </View>
       </ScrollView>
@@ -184,6 +185,58 @@ function AccountStatusCard() {
         </CardContent>
       </Card>
     </>
+  )
+}
+
+function ImportDataCard() {
+  return (
+    <Card className="mt-4">
+      <CardHeader className="pb-2">
+        <CardTitle>Import Data</CardTitle>
+        <Text variant="muted">Import categories or transactions from CSV</Text>
+      </CardHeader>
+      <CardContent className="gap-2 pt-2">
+        <Pressable
+          className="flex-row items-center rounded-lg border border-border bg-card px-4 py-3 active:bg-muted"
+          onPress={() => router.push('/import/categories' as Href)}
+        >
+          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+            <Icon name="Folders" size={18} className="text-primary" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-base font-medium">Import Categories</Text>
+            <Text className="text-sm text-muted-foreground">
+              Add categories from a CSV file
+            </Text>
+          </View>
+          <Icon
+            name="ChevronRight"
+            size={20}
+            className="text-muted-foreground"
+          />
+        </Pressable>
+
+        <Pressable
+          className="flex-row items-center rounded-lg border border-border bg-card px-4 py-3 active:bg-muted"
+          onPress={() => router.push('/import/transactions' as Href)}
+        >
+          <View className="mr-3 h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+            <Icon name="ArrowLeftRight" size={18} className="text-primary" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-base font-medium">Import Transactions</Text>
+            <Text className="text-sm text-muted-foreground">
+              Add transactions from a CSV file
+            </Text>
+          </View>
+          <Icon
+            name="ChevronRight"
+            size={20}
+            className="text-muted-foreground"
+          />
+        </Pressable>
+      </CardContent>
+    </Card>
   )
 }
 

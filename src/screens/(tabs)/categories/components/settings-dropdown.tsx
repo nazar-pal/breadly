@@ -32,18 +32,6 @@ export function SettingsDropdown({ type }: { type: CategoryType }) {
             description="Create, rename, and reorder categories"
           />
         </DropdownMenuItem>
-
-        <DropdownMenuItem closeOnPress={true} asChild>
-          <SettingsDropdownLinkItem
-            href={{
-              pathname: '/import/categories',
-              params: { type: categoryType }
-            }}
-            icon="Import"
-            title="Import categories"
-            description="Import categories from a file"
-          />
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

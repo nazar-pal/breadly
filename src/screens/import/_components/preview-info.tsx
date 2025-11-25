@@ -10,6 +10,7 @@ type PreviewInfoProps = {
   warningsCount: number
   onChangeFile: () => void
   onCancel: () => void
+  type: 'transactions' | 'categories'
 }
 export function PreviewInfo({
   fileName,
@@ -17,8 +18,18 @@ export function PreviewInfo({
   fileSizeLabel,
   warningsCount,
   onChangeFile,
-  onCancel
+  onCancel,
+  type
 }: PreviewInfoProps) {
+  const label =
+    type === 'transactions'
+      ? dataCount === 1
+        ? 'transaction'
+        : 'transactions'
+      : dataCount === 1
+        ? 'category'
+        : 'categories'
+
   return (
     <View className="flex-row items-center justify-between px-4 pb-2">
       <View className="flex-1">
@@ -29,7 +40,7 @@ export function PreviewInfo({
         ) : null}
         <View className="flex-row flex-wrap items-center gap-x-2">
           <Text className="text-xs text-muted-foreground">
-            {dataCount} {dataCount === 1 ? 'category' : 'categories'}
+            {dataCount} {label}
           </Text>
           {fileSizeLabel ? (
             <Text className="text-xs text-muted-foreground">

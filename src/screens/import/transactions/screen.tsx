@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { createManyCategories } from '@/data/client/mutations'
+import { createManyTransactions } from '@/data/client/mutations'
 import { useCsvImport } from '@/lib/hooks'
 import { formatBytes } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
@@ -13,11 +13,16 @@ import { BusyIndicator, EmptyState, PreviewInfo } from '../_components'
 import { formatZodError } from '../_lib'
 import { PreviewList } from './components'
 import { CsvArr, csvSchema } from './lib/csv-arr-schema'
+import {
+  createTransactionPostValidator,
+  type TransactionValidationErrorType
+} from './lib/validate-import-rows'
 
-export default function ImportCategoriesScreen() {
+export default function ImportTransactionsScreen() {
   const [isPending, startTransition] = useTransition()
   const insets = useSafeAreaInsets()
   const { userId } = useUserSession()
+
   const {
     pickAndParse,
     cancel,
@@ -28,8 +33,15 @@ export default function ImportCategoriesScreen() {
     warningsCount,
     file,
     error,
-    clearError
-  } = useCsvImport<CsvArr>(csvSchema)
+    clearError,
+    isPostValid,
+    postValidationStatus,
+    postValidationErrors
+  } = useCsvImport<CsvArr, TransactionValidationErrorType>(csvSchema, {
+    postValidate: createTransactionPostValidator(userId)
+  })
+
+  const isPostValidating = postValidationStatus === 'running'
 
   useEffect(() => {
     if (error) {
@@ -42,22 +54,25 @@ export default function ImportCategoriesScreen() {
 
   const handleImport = () => {
     if (!data || data.length === 0) return
+    if (!isPostValid) return
 
     startTransition(async () => {
-      const [error] = await createManyCategories({
+      const [error] = await createManyTransactions({
         rows: data,
         userId
       })
 
       if (error) {
         const message =
-          error instanceof Error ? error.message : 'Failed to import categories'
+          error instanceof Error
+            ? error.message
+            : 'Failed to import transactions'
         Alert.alert('Import Failed', message)
         return
       }
 
       clearData()
-      router.navigate('/')
+      router.navigate('/(tabs)/transactions')
     })
   }
 
@@ -65,6 +80,9 @@ export default function ImportCategoriesScreen() {
     const bottomInset = Math.max(insets.bottom, 16)
     const floatingPadding = bottomInset + 72
     const fileSizeLabel = formatBytes(file?.size)
+    const errorCount = postValidationErrors.length
+    const hasErrors = errorCount > 0
+    const canImport = !isPostValidating && !isPending && isPostValid
 
     return (
       <View className="flex-1 bg-background pt-4">
@@ -75,11 +93,29 @@ export default function ImportCategoriesScreen() {
           warningsCount={warningsCount}
           onChangeFile={pickAndParse}
           onCancel={cancel}
-          type="categories"
+          type="transactions"
         />
 
+        {/* Validation error banner */}
+        {hasErrors && !isPostValidating && (
+          <View className="mx-4 mt-2 rounded-md bg-destructive/10 p-3">
+            <Text className="text-sm font-medium text-destructive">
+              {errorCount} {errorCount === 1 ? 'error' : 'errors'} found
+            </Text>
+            <Text className="mt-1 text-xs text-destructive/80">
+              Fix the issues below before importing. Categories must exist and
+              transactions for archived categories must have dates on or before
+              the archive date.
+            </Text>
+          </View>
+        )}
+
         <View className="flex-1 px-4 pt-2">
-          <PreviewList rows={data} bottomPadding={floatingPadding} />
+          <PreviewList
+            rows={data}
+            bottomPadding={floatingPadding}
+            validationErrors={postValidationErrors}
+          />
         </View>
 
         <View
@@ -92,13 +128,20 @@ export default function ImportCategoriesScreen() {
           <Button
             onPress={handleImport}
             className="shadow-lg"
-            disabled={isPending}
+            disabled={!canImport}
+            variant={hasErrors ? 'destructive' : 'default'}
           >
-            {isPending ? (
+            {isPending || isPostValidating ? (
               <ActivityIndicator size="small" color="white" />
             ) : null}
             <Text>
-              {isPending ? 'Importing...' : `Import ${data.length} Categories`}
+              {isPostValidating
+                ? 'Validating...'
+                : isPending
+                  ? 'Importing...'
+                  : hasErrors
+                    ? `${errorCount} ${errorCount === 1 ? 'Error' : 'Errors'} - Fix to Import`
+                    : `Import ${data.length} Transactions`}
             </Text>
           </Button>
         </View>
@@ -107,7 +150,7 @@ export default function ImportCategoriesScreen() {
   }
 
   return (
-    <View className="flex-1 ">
+    <View className="flex-1">
       {status !== 'idle' ? (
         <BusyIndicator
           status={status}
@@ -116,7 +159,7 @@ export default function ImportCategoriesScreen() {
           onCancel={cancel}
         />
       ) : (
-        <EmptyState onPress={pickAndParse} type="categories" />
+        <EmptyState onPress={pickAndParse} type="transactions" />
       )}
     </View>
   )
