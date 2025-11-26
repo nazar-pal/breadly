@@ -12,6 +12,7 @@ import React from 'react'
 import { ScrollView, useWindowDimensions, View } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
+import { useArchivedCategoriesExpanded } from './lib/use-archived-categories-expanded'
 import {
   useGetCategoriesWithAmounts,
   type CategoryWithAmounts
@@ -130,9 +131,12 @@ function CategoryGridSection({
 // Public component
 // -----------------------------------------------------------------------------
 
+const ARCHIVED_ACCORDION_VALUE = 'archived-categories'
+
 export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
   const { dateRange } = useCategoriesDateRangeState()
   const { width } = useWindowDimensions()
+  const { isExpanded, setExpanded } = useArchivedCategoriesExpanded()
 
   const categories = useGetCategoriesWithAmounts({
     transactionsFrom: dateRange.start,
@@ -154,6 +158,12 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
   const minCardWidth = 152
   const numColumns = Math.max(2, Math.floor(availableWidth / minCardWidth))
 
+  const accordionValue = isExpanded ? [ARCHIVED_ACCORDION_VALUE] : []
+
+  const handleValueChange = (value: string[]) => {
+    setExpanded(value.includes(ARCHIVED_ACCORDION_VALUE))
+  }
+
   return (
     <ScrollView className="flex-1" contentContainerClassName="p-4 pb-2">
       {/* Active categories */}
@@ -168,8 +178,15 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
 
       {/* Archived categories */}
       {categoriesArchived.length > 0 && (
-        <Accordion type="multiple" collapsible>
-          <AccordionItem value="archived-categories" className="border-b-0">
+        <Accordion
+          type="multiple"
+          value={accordionValue}
+          onValueChange={handleValueChange}
+        >
+          <AccordionItem
+            value={ARCHIVED_ACCORDION_VALUE}
+            className="border-b-0"
+          >
             <AccordionTrigger>
               <Text className="text-sm font-medium text-muted-foreground">
                 Archived Categories ({categoriesArchived.length})
