@@ -1,13 +1,13 @@
+import { Button } from '@/components/ui/button'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog'
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
@@ -63,128 +63,73 @@ export function ConfirmationDialog({
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md">
-        <AlertDialogHeader>
-          <View className="mb-2 items-center">
-            <View className="h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
-              <Icon
-                name="TriangleAlert"
-                size={28}
-                className="text-red-600 dark:text-red-400"
-              />
-            </View>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton={false}>
+        <DialogHeader className="items-center">
+          <View className="mb-1 h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
+            <Icon
+              name="TriangleAlert"
+              size={24}
+              className="text-red-600 dark:text-red-400"
+            />
           </View>
-          <AlertDialogTitle className="text-center text-xl text-red-600 dark:text-red-400">
+          <DialogTitle className="text-center text-red-600 dark:text-red-400">
             Delete All Data?
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
-            This action is{' '}
-            <Text className="font-bold text-red-600 dark:text-red-400">
-              permanent and irreversible
-            </Text>
-            . All your data will be permanently deleted, including:
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            This will permanently delete all your data including transactions,
+            accounts, categories, and budgets.
+          </DialogDescription>
+        </DialogHeader>
 
-        <View className="my-2 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/30">
-          <View className="gap-2">
-            <View className="flex-row items-center gap-2">
-              <Icon
-                name="ArrowLeftRight"
-                size={16}
-                className="text-red-600 dark:text-red-400"
-              />
-              <Text className="text-sm text-red-700 dark:text-red-300">
-                All transactions
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <Icon
-                name="Wallet"
-                size={16}
-                className="text-red-600 dark:text-red-400"
-              />
-              <Text className="text-sm text-red-700 dark:text-red-300">
-                All accounts and balances
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <Icon
-                name="Folders"
-                size={16}
-                className="text-red-600 dark:text-red-400"
-              />
-              <Text className="text-sm text-red-700 dark:text-red-300">
-                All categories
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <Icon
-                name="PiggyBank"
-                size={16}
-                className="text-red-600 dark:text-red-400"
-              />
-              <Text className="text-sm text-red-700 dark:text-red-300">
-                All budgets
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <Icon
-                name="Settings"
-                size={16}
-                className="text-red-600 dark:text-red-400"
-              />
-              <Text className="text-sm text-red-700 dark:text-red-300">
-                All preferences and settings
-              </Text>
-            </View>
+        <View className="gap-3 px-6">
+          <View className="gap-1.5">
+            <Text className="text-center text-sm text-muted-foreground">
+              Type{' '}
+              <Text className="font-mono font-semibold text-foreground">
+                {CONFIRMATION_PHRASE}
+              </Text>{' '}
+              to confirm
+            </Text>
+            <Input
+              value={confirmationText}
+              onChangeText={setConfirmationText}
+              placeholder={CONFIRMATION_PHRASE}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              autoComplete="off"
+              className="rounded-xl border-red-200 bg-red-50 text-center font-mono text-sm dark:border-red-900/50 dark:bg-red-950/20"
+              placeholderClassName="text-red-300 dark:text-red-700"
+              editable={!isDeleting}
+            />
           </View>
+
+          {error && (
+            <View className="rounded-lg bg-red-100 p-2 dark:bg-red-950/50">
+              <Text className="text-center text-xs text-red-600 dark:text-red-400">
+                {error}
+              </Text>
+            </View>
+          )}
         </View>
 
-        <View className="gap-2">
-          <Text className="text-center text-sm text-muted-foreground">
-            To confirm, type{' '}
-            <Text className="font-mono font-bold text-foreground">
-              {CONFIRMATION_PHRASE}
-            </Text>{' '}
-            below:
-          </Text>
-          <Input
-            value={confirmationText}
-            onChangeText={setConfirmationText}
-            placeholder={CONFIRMATION_PHRASE}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            autoComplete="off"
-            className="text-center font-mono"
-            editable={!isDeleting}
-          />
-        </View>
-
-        {error && (
-          <View className="rounded-lg bg-red-100 p-3 dark:bg-red-950/50">
-            <Text className="text-center text-sm text-red-600 dark:text-red-400">
-              {error}
-            </Text>
-          </View>
-        )}
-
-        <AlertDialogFooter className="mt-2">
-          <AlertDialogCancel onPress={handleCancel} disabled={isDeleting}>
-            <Text>Cancel</Text>
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onPress={handleDelete}
+        <DialogFooter className="gap-2">
+          <DialogClose>
+            <Button variant="outline" disabled={isDeleting} onPress={handleCancel}>
+              <Text>Cancel</Text>
+            </Button>
+          </DialogClose>
+          <Button
             disabled={!isConfirmed || isDeleting}
-            className="bg-red-600 hover:bg-red-700 disabled:opacity-50"
+            onPress={handleDelete}
+            className="bg-red-600 active:bg-red-700"
           >
             <Text className="text-white">
-              {isDeleting ? 'Deleting...' : 'Delete Everything'}
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </Text>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
