@@ -1,11 +1,13 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { deleteTransaction } from '@/data/client/mutations'
 import { cn } from '@/lib/utils'
 import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
 import { LinearGradient } from 'expo-linear-gradient'
-import React from 'react'
-import { View } from 'react-native'
+import { router } from 'expo-router'
+import React, { useState } from 'react'
+import { Alert, Pressable, View } from 'react-native'
 import type { Transaction } from '../lib/types'
 import { formatDate, getTypeConfig, type TransactionType } from '../lib/utils'
 import { CategoryBadge } from './category-badge'
@@ -13,9 +15,43 @@ import { Chip } from './chip'
 
 interface TransactionHeroProps {
   transaction: Transaction
+  userId: string
 }
 
-export function TransactionHero({ transaction }: TransactionHeroProps) {
+export function TransactionHero({ transaction, userId }: TransactionHeroProps) {
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Transaction',
+      'Are you sure you want to delete this transaction? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            setIsDeleting(true)
+            try {
+              const [error] = await deleteTransaction({
+                transactionId: transaction.id,
+                userId
+              })
+              if (error) {
+                Alert.alert('Error', 'Failed to delete transaction.')
+              } else {
+                router.back()
+              }
+            } catch {
+              Alert.alert('Error', 'Failed to delete transaction.')
+            } finally {
+              setIsDeleting(false)
+            }
+          }
+        }
+      ]
+    )
+  }
   const currencyCode =
     transaction.currencyId || transaction.account?.currencyId || 'USD'
 
@@ -42,7 +78,11 @@ export function TransactionHero({ transaction }: TransactionHeroProps) {
                 typeConfig.bg
               )}
             >
-              <Icon name={typeConfig.icon} size={24} className={typeConfig.color} />
+              <Icon
+                name={typeConfig.icon}
+                size={24}
+                className={typeConfig.color}
+              />
             </View>
             <View className="flex-1">
               <Text className="text-3xl font-extrabold tracking-tight text-foreground">
@@ -52,6 +92,17 @@ export function TransactionHero({ transaction }: TransactionHeroProps) {
                 {formatDate(transaction.txDate)}
               </Text>
             </View>
+            <Pressable
+              onPress={handleDelete}
+              disabled={isDeleting}
+              className="h-9 w-9 items-center justify-center rounded-full bg-foreground/5 active:bg-foreground/10"
+            >
+              <Icon
+                name={isDeleting ? 'Loader2' : 'Trash2'}
+                size={18}
+                className="text-muted-foreground"
+              />
+            </Pressable>
           </View>
 
           <View className="mt-4 flex-row flex-wrap items-center gap-2">
@@ -64,7 +115,8 @@ export function TransactionHero({ transaction }: TransactionHeroProps) {
               />
             )}
             <Chip>
-              {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+              {transaction.type.charAt(0).toUpperCase() +
+                transaction.type.slice(1)}
             </Chip>
             <Chip>{currencyCode}</Chip>
           </View>
@@ -73,4 +125,3 @@ export function TransactionHero({ transaction }: TransactionHeroProps) {
     </Card>
   )
 }
-

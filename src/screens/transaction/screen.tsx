@@ -57,7 +57,7 @@ export default function TransactionDetailsScreen({ id }: Props) {
       }}
       showsVerticalScrollIndicator={false}
     >
-      <TransactionHero transaction={transaction} />
+      <TransactionHero transaction={transaction} userId={userId} />
       <TransactionDetailsCard transaction={transaction} />
       <ReceiptsCard receipts={receipts} />
       <VoiceMemosCard voiceMemos={voiceMemos} />
