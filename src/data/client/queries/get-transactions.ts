@@ -7,13 +7,15 @@ interface GetTransactionsParams {
   dateFrom?: Date
   dateTo?: Date
   limit?: number
+  offset?: number
 }
 
 export function getTransactions({
   userId,
   dateFrom,
   dateTo,
-  limit
+  limit,
+  offset
 }: GetTransactionsParams) {
   // Build where conditions
   const whereConditions = [eq(transactions.userId, userId)]
@@ -32,7 +34,8 @@ export function getTransactions({
       transactionAttachments: { with: { attachment: true } }
     },
     orderBy: [desc(transactions.txDate)],
-    ...(limit && { limit })
+    ...(limit && { limit }),
+    ...(offset && { offset })
   })
 }
 
