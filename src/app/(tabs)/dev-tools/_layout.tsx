@@ -21,7 +21,7 @@ const TopTabs = withLayoutContext<
 export default function DevOnlyLayout() {
   if (!__DEV__) return null
   return (
-    <SafeAreaView className="flex-1 ">
+    <SafeAreaView className="flex-1" edges={['top']}>
       <TopTabs
         screenOptions={{
           tabBarItemStyle: { flexDirection: 'row' },

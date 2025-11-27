@@ -3,12 +3,10 @@ import { Text } from '@/components/ui/text'
 import { useQuery } from '@powersync/react-native'
 import { useState } from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { EntityList, HeaderControls, SessionStoreCard } from './components'
 import { getTableGroupNumber, type SortMode, type SortOrder } from './lib'
 
 export default function DbScreen() {
-  const insets = useSafeAreaInsets()
   const [activeTab, setActiveTab] = useState('tables')
   const [sortMode, setSortMode] = useState<SortMode>('default')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
@@ -68,8 +66,7 @@ export default function DbScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
-          padding: 16,
-          paddingBottom: insets.bottom + 20
+          padding: 16
         }}
       >
         <HeaderControls

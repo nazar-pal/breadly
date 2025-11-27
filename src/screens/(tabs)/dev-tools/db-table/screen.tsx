@@ -1,28 +1,10 @@
-import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
-import { router } from 'expo-router'
-import { lazy, Suspense } from 'react'
 import { View } from 'react-native'
-
-const CatchAll = lazy(() =>
-  import('@/screens/(tabs)/dev-tools/db-table/components/db-catch-all').then(
-    module => ({
-      default: module.CatchAll
-    })
-  )
-)
+import { TableContent } from './components/table-content'
 
 export default function DbTableScreen() {
   return (
     <View className="flex-1 bg-background">
-      <View className="px-4 pt-3">
-        <Button variant="ghost" size="icon" onPress={() => router.back()}>
-          <Icon name="ArrowLeft" size={24} className="text-foreground" />
-        </Button>
-      </View>
-      <Suspense fallback={null}>
-        <CatchAll />
-      </Suspense>
+      <TableContent />
     </View>
   )
 }

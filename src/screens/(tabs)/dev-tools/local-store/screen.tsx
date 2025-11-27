@@ -1,7 +1,6 @@
 import { Accordion } from '@/components/ui/accordion'
 import { useState } from 'react'
 import { ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   EmptyState,
   HeaderCard,
@@ -17,7 +16,6 @@ import {
 } from './lib'
 
 export default function LocalStoreScreen() {
-  const insets = useSafeAreaInsets()
   const [allItems, setAllItems] = useState(getStorageItems)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<StorageItem | null>(null)
@@ -65,10 +63,7 @@ export default function LocalStoreScreen() {
     <View className="flex-1 bg-background">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{
-          padding: 16,
-          paddingBottom: insets.bottom + 20
-        }}
+        contentContainerStyle={{ padding: 16 }}
       >
         <HeaderCard
           totalItems={allItems.length}

@@ -1,12 +1,10 @@
 import { trpcClient } from '@/data/trpc/react'
 import { useState } from 'react'
 import { View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { InfoCard, LogViewer, TestActions } from './components'
 import type { LogEntry, LogLevel } from './lib'
 
 export default function TrpcTestScreen() {
-  const insets = useSafeAreaInsets()
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isRunning, setIsRunning] = useState(false)
 
@@ -58,10 +56,7 @@ export default function TrpcTestScreen() {
     })
 
   return (
-    <View
-      className="flex-1 bg-background p-4"
-      style={{ paddingBottom: insets.bottom + 16 }}
-    >
+    <View className="flex-1 bg-background p-4">
       <InfoCard />
       <TestActions
         onRunHello={runHello}

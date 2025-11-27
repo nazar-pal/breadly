@@ -4,4 +4,3 @@ export {
   getTableGroupNumber,
   renderHighlightedName
 } from './table-sorting'
-

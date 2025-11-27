@@ -2,7 +2,6 @@ import { usePurchasesStore } from '@/system/purchases'
 import { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import Purchases, { type PurchasesOfferings } from 'react-native-purchases'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   AccountCard,
   HeaderCard,
@@ -11,7 +10,6 @@ import {
 } from './components'
 
 export default function PurchasesScreen() {
-  const insets = useSafeAreaInsets()
   const {
     isPremium,
     customerInfo,
@@ -66,13 +64,7 @@ export default function PurchasesScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          padding: 16,
-          paddingBottom: insets.bottom + 20
-        }}
-      >
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
         <HeaderCard
           appUserId={appUserId}
           isPremium={isPremium}
