@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: getAppName(),
   slug: 'breadly-expense-tracker',
-  version: '1.0.5',
+  version: '1.0.6',
   orientation: 'portrait',
   icon: './assets/icons/adaptive-icon.png',
   scheme: 'myapp',
