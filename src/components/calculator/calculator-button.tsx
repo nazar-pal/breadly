@@ -1,18 +1,13 @@
 import { Text } from '@/components/ui/text'
-import React from 'react'
 import { Pressable } from 'react-native'
+
+type ButtonVariant = 'default' | 'operation' | 'success' | 'success-disabled'
 
 interface Props {
   label: string | React.ReactNode
   onPress: () => void
-  variant?:
-    | 'default'
-    | 'operation'
-    | 'equal'
-    | 'special'
-    | 'success'
-    | 'success-disabled'
-    | 'control'
+  onLongPress?: () => void
+  variant?: ButtonVariant
   accessibilityLabel?: string
   disabled?: boolean
 }
@@ -20,6 +15,7 @@ interface Props {
 export function CalculatorButton({
   label,
   onPress,
+  onLongPress,
   variant = 'default',
   accessibilityLabel,
   disabled = false
@@ -33,20 +29,11 @@ export function CalculatorButton({
       case 'operation':
         variantClasses = 'bg-primary active:bg-primary/90'
         break
-      case 'equal':
-        variantClasses = 'bg-primary active:bg-primary/90'
-        break
-      case 'special':
-        variantClasses = 'bg-orange-500 active:bg-orange-600'
-        break
       case 'success':
         variantClasses = 'bg-emerald-500 active:bg-emerald-600'
         break
       case 'success-disabled':
         variantClasses = 'bg-emerald-500/30'
-        break
-      case 'control':
-        variantClasses = 'bg-secondary/70 dark:bg-muted/60 active:bg-muted'
         break
       default:
         variantClasses = 'bg-secondary/70 dark:bg-muted/60 active:bg-muted'
@@ -59,30 +46,17 @@ export function CalculatorButton({
   }
 
   const getTextClasses = () => {
-    const baseClasses = 'text-lg font-semibold'
+    const textBase = 'text-lg font-semibold'
 
-    let colorClass = ''
     switch (variant) {
-      case 'equal':
-        colorClass = 'text-primary-foreground'
-        break
       case 'operation':
-        colorClass = 'text-primary-foreground'
-        break
-      case 'special':
-        colorClass = 'text-primary-foreground'
-        break
       case 'success':
-        colorClass = 'text-primary-foreground'
-        break
+        return `${textBase} text-primary-foreground`
       case 'success-disabled':
-        colorClass = 'text-primary-foreground/60'
-        break
+        return `${textBase} text-primary-foreground/60`
       default:
-        colorClass = 'text-foreground'
+        return `${textBase} text-foreground`
     }
-
-    return `${baseClasses} ${colorClass}`
   }
 
   return (
@@ -90,6 +64,7 @@ export function CalculatorButton({
       accessibilityLabel={accessibilityLabel}
       className={getButtonClasses()}
       onPress={onPress}
+      onLongPress={onLongPress}
       disabled={disabled}
     >
       {typeof label === 'string' ? (

@@ -1,6 +1,7 @@
 import { Text } from '@/components/ui/text'
+import { useCalculator } from '@/lib/hooks/use-calculator'
 import { format } from 'date-fns'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CalculatorDisplay } from './calculator-display'
@@ -15,47 +16,35 @@ interface Props {
 
 export function Calculator({ isDisabled, handleSubmit }: Props) {
   const insets = useSafeAreaInsets()
+
+  // Calculator logic
+  const calculator = useCalculator()
+
+  // Transaction metadata
   const [comment, setComment] = useState('')
-  const [showCommentModal, setShowCommentModal] = useState(false)
-  const [showDateModal, setShowDateModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-  const [currentInput, setCurrentInput] = useState('0')
-  const [expression, setExpression] = useState<string[]>([])
+  // Modal visibility
+  const [showCommentModal, setShowCommentModal] = useState(false)
+  const [showDateModal, setShowDateModal] = useState(false)
 
-  const numericCurrentValue = parseFloat(currentInput)
+  // Derived state
+  const numericValue = parseFloat(calculator.currentInput)
+  const isSaveDisabled =
+    calculator.shouldShowEquals ||
+    isDisabled ||
+    !Number.isFinite(numericValue) ||
+    numericValue <= 0
 
-  const shouldShowEquals = (() => {
-    if (expression.length === 0) {
-      return false
+  const handleSave = () => {
+    if (!isSaveDisabled) {
+      handleSubmit(numericValue, comment, selectedDate)
     }
-
-    const lastToken = expression[expression.length - 1]
-    const hasOperator = /[+\-*/]/.test(lastToken)
-
-    return hasOperator || expression.length >= 2
-  })()
-
-  const isSaveDisabled = (() => {
-    if (shouldShowEquals) {
-      return true
-    }
-
-    if (isDisabled) {
-      return true
-    }
-
-    // Check for NaN, Infinity, or non-positive values
-    if (!Number.isFinite(numericCurrentValue) || numericCurrentValue <= 0) {
-      return true
-    }
-
-    return false
-  })()
+  }
 
   return (
     <>
-      <CalculatorDisplay expression={expression} currentInput={currentInput} />
+      <CalculatorDisplay displayValue={calculator.displayValue} />
 
       {/* Fixed height comment area - prevents layout shift */}
       <View className="h-8 items-center justify-center px-4">
@@ -71,19 +60,18 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       </View>
 
       <CalculatorKeypad
-        currentInput={currentInput}
-        setCurrentInput={setCurrentInput}
-        expression={expression}
-        setExpression={setExpression}
-        onSubmit={() => {
-          if (!isSaveDisabled) {
-            handleSubmit(parseFloat(currentInput), comment, selectedDate)
-          }
-        }}
-        showSubmit={shouldShowEquals}
-        submitDisabled={isSaveDisabled}
+        onPressNumber={calculator.pressNumber}
+        onPressOperation={calculator.pressOperation}
+        onPressEquals={calculator.pressEquals}
+        onPressBackspace={calculator.pressBackspace}
+        onClear={calculator.clear}
+        onPressDecimal={calculator.pressDecimal}
+        onToggleSign={calculator.toggleSign}
         onPressComment={() => setShowCommentModal(true)}
         onPressDate={() => setShowDateModal(true)}
+        onSubmit={handleSave}
+        showEquals={calculator.shouldShowEquals}
+        submitDisabled={isSaveDisabled}
         hasComment={Boolean(comment)}
       />
 
@@ -107,7 +95,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       <DateModal
         visible={showDateModal}
         selectedDate={selectedDate}
-        onSelectDate={d => setSelectedDate(d)}
+        onSelectDate={setSelectedDate}
         onClose={() => setShowDateModal(false)}
       />
     </>
