@@ -1,4 +1,8 @@
+import { Text } from '@/components/ui/text'
+import { format } from 'date-fns'
 import React, { useState } from 'react'
+import { View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './modal-comment'
@@ -10,6 +14,7 @@ interface Props {
 }
 
 export function Calculator({ isDisabled, handleSubmit }: Props) {
+  const insets = useSafeAreaInsets()
   const [comment, setComment] = useState('')
   const [showCommentModal, setShowCommentModal] = useState(false)
   const [showDateModal, setShowDateModal] = useState(false)
@@ -49,12 +54,20 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
 
   return (
     <>
-      <CalculatorDisplay
-        comment={comment}
-        expression={expression}
-        currentInput={currentInput}
-        selectedDate={selectedDate}
-      />
+      <CalculatorDisplay expression={expression} currentInput={currentInput} />
+
+      {/* Fixed height comment area - prevents layout shift */}
+      <View className="h-8 items-center justify-center">
+        {comment ? (
+          <Text
+            className="text-center text-xs text-muted-foreground"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {comment}
+          </Text>
+        ) : null}
+      </View>
 
       <CalculatorKeypad
         currentInput={currentInput}
@@ -72,6 +85,16 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
         onPressDate={() => setShowDateModal(true)}
         hasComment={Boolean(comment)}
       />
+
+      {/* Transaction date - extends into safe area with small padding */}
+      <View
+        className="mt-3 items-center"
+        style={{ marginBottom: -insets.bottom, paddingBottom: 8 }}
+      >
+        <Text className="text-sm text-muted-foreground">
+          {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+        </Text>
+      </View>
 
       <CommentModal
         visible={showCommentModal}
