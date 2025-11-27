@@ -1,8 +1,8 @@
-export * from './types'
 export {
   clearAllStorage,
   deleteStorageItem,
   getStorageItems,
   hasStorageKey,
-  setStorageItem
+  setStorageItem,
+  type StorageItem
 } from './storage-utils'

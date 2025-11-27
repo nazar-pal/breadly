@@ -1,5 +1,11 @@
 import { storage } from '@/lib/storage/mmkv'
-import type { StorageItem } from './types'
+
+export type StorageItem = {
+  key: string
+  value: string | undefined
+  isJson: boolean
+  formattedValue: string
+}
 
 export function getStorageItems(): StorageItem[] {
   const keys = storage.getAllKeys()

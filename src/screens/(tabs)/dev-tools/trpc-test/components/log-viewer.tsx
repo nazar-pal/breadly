@@ -4,7 +4,7 @@ import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useEffect, useRef } from 'react'
 import { ScrollView, View } from 'react-native'
-import type { LogEntry } from '../lib/types'
+import type { LogEntry } from '../lib'
 
 type LogViewerProps = {
   logs: LogEntry[]
@@ -84,4 +84,3 @@ function LogLine({ log }: { log: LogEntry }) {
     </View>
   )
 }
-

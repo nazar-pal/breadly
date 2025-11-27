@@ -1,9 +1,5 @@
 export type EntityType = 'table' | 'view'
 
-export type DbEntity = {
-  name: string
-}
-
 export type ColumnInfo = {
   name: string
   type?: string
@@ -12,4 +8,3 @@ export type ColumnInfo = {
 
 export type SortMode = 'default' | 'rows'
 export type SortOrder = 'asc' | 'desc'
-
