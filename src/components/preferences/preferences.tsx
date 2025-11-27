@@ -4,11 +4,8 @@ import { CurrencyPreference } from './preference-currency'
 
 export function Preferences() {
   return (
-    <Card className="mt-4">
-      {/* <CardHeader>
-        <CardTitle>Preferences</CardTitle>
-      </CardHeader> */}
-      <CardContent>
+    <Card>
+      <CardContent className="py-2">
         <CurrencyPreference />
       </CardContent>
     </Card>

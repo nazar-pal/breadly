@@ -1,11 +1,12 @@
 import { Icon } from '@/components/ui/icon-by-name'
+import { Text } from '@/components/ui/text'
 import { getUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
-import { PreferenceItem } from './preference-item'
+import { Pressable, View } from 'react-native'
 
 export function CurrencyPreference() {
   const { userId } = useUserSession()
@@ -18,20 +19,20 @@ export function CurrencyPreference() {
     userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY
 
   return (
-    <>
-      <PreferenceItem
-        icon={<Icon name="DollarSign" size={20} className="text-primary" />}
-        title="Default Currency"
-        subtitle={`${currentCurrency.name} (${currentCurrency.symbol})`}
-        rightElement={
-          <Icon
-            name="ChevronRight"
-            size={20}
-            className="text-muted-foreground"
-          />
-        }
-        onPress={() => router.push('/default-currency-select')}
-      />
-    </>
+    <Pressable
+      className="flex-row items-center py-3 active:opacity-70"
+      onPress={() => router.push('/default-currency-select')}
+    >
+      <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+        <Icon name="DollarSign" size={18} className="text-primary" />
+      </View>
+      <View className="flex-1">
+        <Text className="font-medium">Default Currency</Text>
+        <Text className="text-sm text-muted-foreground">
+          {currentCurrency.name} ({currentCurrency.symbol})
+        </Text>
+      </View>
+      <Icon name="ChevronRight" size={18} className="text-muted-foreground" />
+    </Pressable>
   )
 }
