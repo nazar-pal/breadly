@@ -95,31 +95,21 @@ export function CalculatorKeypad({
     }
   }
 
-  const handleDoubleZero = () => {
-    if (isNewNumber) {
-      setCurrentInput('0')
-      setIsNewNumber(false)
+  const handleToggleSign = () => {
+    if (currentInput === '0') {
       return
     }
 
-    if (currentInput === '0' || currentInput === '-0') {
-      return
+    if (currentInput.startsWith('-')) {
+      setCurrentInput(currentInput.slice(1))
+    } else {
+      setCurrentInput('-' + currentInput)
     }
-
-    setCurrentInput(currentInput + '00')
   }
 
   return (
     <View className="gap-2">
       <View className="flex-row gap-2">
-        <CalculatorButton
-          label="÷"
-          onPress={() => handleOperationPress('/')}
-          variant="operation"
-        />
-        <CalculatorButton label="7" onPress={() => handleNumberPress('7')} />
-        <CalculatorButton label="8" onPress={() => handleNumberPress('8')} />
-        <CalculatorButton label="9" onPress={() => handleNumberPress('9')} />
         <CalculatorButton
           label={
             <Icon name="Delete" size={20} className="text-primary-foreground" />
@@ -128,17 +118,6 @@ export function CalculatorKeypad({
           variant="operation"
           accessibilityLabel="Delete"
         />
-      </View>
-
-      <View className="flex-row gap-2">
-        <CalculatorButton
-          label="×"
-          onPress={() => handleOperationPress('*')}
-          variant="operation"
-        />
-        <CalculatorButton label="4" onPress={() => handleNumberPress('4')} />
-        <CalculatorButton label="5" onPress={() => handleNumberPress('5')} />
-        <CalculatorButton label="6" onPress={() => handleNumberPress('6')} />
         <CalculatorButton
           label={
             <View className="relative">
@@ -151,31 +130,53 @@ export function CalculatorKeypad({
           onPress={onPressComment}
           accessibilityLabel="Add comment"
         />
-      </View>
-
-      <View className="flex-row gap-2">
-        <CalculatorButton
-          label="−"
-          onPress={() => handleOperationPress('-')}
-          variant="operation"
-        />
-        <CalculatorButton label="1" onPress={() => handleNumberPress('1')} />
-        <CalculatorButton label="2" onPress={() => handleNumberPress('2')} />
-        <CalculatorButton label="3" onPress={() => handleNumberPress('3')} />
         <CalculatorButton
           label={<Icon name="Calendar" size={20} className="text-primary" />}
           onPress={onPressDate}
           accessibilityLabel="Change date"
         />
+        <CalculatorButton
+          label="÷"
+          onPress={() => handleOperationPress('/')}
+          variant="operation"
+        />
       </View>
 
       <View className="flex-row gap-2">
+        <CalculatorButton label="7" onPress={() => handleNumberPress('7')} />
+        <CalculatorButton label="8" onPress={() => handleNumberPress('8')} />
+        <CalculatorButton label="9" onPress={() => handleNumberPress('9')} />
+        <CalculatorButton
+          label="×"
+          onPress={() => handleOperationPress('*')}
+          variant="operation"
+        />
+      </View>
+
+      <View className="flex-row gap-2">
+        <CalculatorButton label="4" onPress={() => handleNumberPress('4')} />
+        <CalculatorButton label="5" onPress={() => handleNumberPress('5')} />
+        <CalculatorButton label="6" onPress={() => handleNumberPress('6')} />
+        <CalculatorButton
+          label="−"
+          onPress={() => handleOperationPress('-')}
+          variant="operation"
+        />
+      </View>
+
+      <View className="flex-row gap-2">
+        <CalculatorButton label="1" onPress={() => handleNumberPress('1')} />
+        <CalculatorButton label="2" onPress={() => handleNumberPress('2')} />
+        <CalculatorButton label="3" onPress={() => handleNumberPress('3')} />
         <CalculatorButton
           label="+"
           onPress={() => handleOperationPress('+')}
           variant="operation"
         />
-        <CalculatorButton label="00" onPress={handleDoubleZero} />
+      </View>
+
+      <View className="flex-row gap-2">
+        <CalculatorButton label="±" onPress={handleToggleSign} />
         <CalculatorButton label="0" onPress={() => handleNumberPress('0')} />
         <CalculatorButton label="." onPress={handleDecimal} />
         {showSubmit ? (
