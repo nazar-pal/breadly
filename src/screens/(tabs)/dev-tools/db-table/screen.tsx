@@ -5,9 +5,11 @@ import { lazy, Suspense } from 'react'
 import { View } from 'react-native'
 
 const CatchAll = lazy(() =>
-  import('@/components/dev-tools/db-catch-all').then(module => ({
-    default: module.CatchAll
-  }))
+  import('@/screens/(tabs)/dev-tools/db-table/components/db-catch-all').then(
+    module => ({
+      default: module.CatchAll
+    })
+  )
 )
 
 export default function DbTableScreen() {
