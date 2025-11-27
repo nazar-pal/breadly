@@ -1,11 +1,10 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import * as Clipboard from 'expo-clipboard'
 import { useState } from 'react'
-import { View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 type StoreItem = {
   label: string
@@ -15,6 +14,7 @@ type StoreItem = {
 }
 
 export function SessionStoreCard() {
+  const [expanded, setExpanded] = useState(false)
   const state = sessionPersistentStore.getState()
 
   const items: StoreItem[] = [
@@ -36,15 +36,26 @@ export function SessionStoreCard() {
   ]
 
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <View className="flex-row items-center gap-2">
-          <Icon name="UserCog" size={14} className="text-primary" />
-          <CardTitle className="text-sm">Session Store</CardTitle>
+    <View className="mb-3 rounded-lg border border-border bg-card">
+      {/* Header - Pressable to toggle */}
+      <Pressable
+        onPress={() => setExpanded(prev => !prev)}
+        className="flex-row items-center justify-between px-2.5 py-1.5"
+      >
+        <View className="flex-row items-center gap-1.5">
+          <Icon name="UserCog" size={12} className="text-primary" />
+          <Text className="text-xs font-semibold">Session Store</Text>
         </View>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <View className="rounded-lg border border-border bg-muted/30">
+        <Icon
+          name={expanded ? 'ChevronUp' : 'ChevronDown'}
+          size={14}
+          className="text-muted-foreground"
+        />
+      </Pressable>
+
+      {/* Items - only visible when expanded */}
+      {expanded && (
+        <View className="border-t border-border">
           {items.map((item, idx) => (
             <StoreItemRow
               key={item.label}
@@ -53,8 +64,8 @@ export function SessionStoreCard() {
             />
           ))}
         </View>
-      </CardContent>
-    </Card>
+      )}
+    </View>
   )
 }
 
@@ -79,16 +90,16 @@ function StoreItemRow({
 
   return (
     <View
-      className={`flex-row items-center justify-between gap-2 px-3 py-2 ${
+      className={`flex-row items-center justify-between gap-2 px-2.5 py-1 ${
         !isLast ? 'border-b border-border' : ''
       }`}
     >
-      <Text className="shrink-0 text-xs text-muted-foreground">
+      <Text className="shrink-0 text-[11px] text-muted-foreground">
         {item.label}
       </Text>
-      <View className="min-w-0 shrink flex-row items-center gap-1">
+      <View className="min-w-0 shrink flex-row items-center gap-0.5">
         <Text
-          className={`min-w-0 shrink text-xs ${item.mono ? 'font-mono' : 'font-medium'} text-foreground`}
+          className={`min-w-0 shrink text-[11px] ${item.mono ? 'font-mono' : 'font-medium'} text-foreground`}
           numberOfLines={1}
         >
           {item.value}
@@ -97,12 +108,12 @@ function StoreItemRow({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 shrink-0"
+            className="h-5 w-5 shrink-0"
             onPress={handleCopy}
           >
             <Icon
               name={copied ? 'Check' : 'Copy'}
-              size={12}
+              size={10}
               className={copied ? 'text-green-600' : 'text-muted-foreground'}
             />
           </Button>

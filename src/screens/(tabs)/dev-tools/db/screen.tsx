@@ -9,7 +9,7 @@ import { getTableGroupNumber, type SortMode, type SortOrder } from './lib'
 export default function DbScreen() {
   const [activeTab, setActiveTab] = useState('tables')
   const [sortMode, setSortMode] = useState<SortMode>('default')
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [rowCounts, setRowCounts] = useState<Record<string, number>>({})
 
   // Query for all user tables (exclude internal sqlite_*)

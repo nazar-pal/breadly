@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native'
 import Purchases, { type PurchasesOfferings } from 'react-native-purchases'
 import {
   AccountCard,
+  ActionButtons,
   HeaderCard,
   JsonViewerCard,
   OfferingCard
@@ -64,15 +65,15 @@ export default function PurchasesScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 12 }}>
+        <ActionButtons onRefresh={handleRefresh} onLogDebug={handleLogDebug} />
+
         <HeaderCard
           appUserId={appUserId}
           isPremium={isPremium}
           isCustomerInfoFresh={isCustomerInfoFresh}
           packageCount={packageCount}
           entitlementCount={entitlementCount}
-          onRefresh={handleRefresh}
-          onLogDebug={handleLogDebug}
         />
 
         {currentOffering && <OfferingCard offering={currentOffering} />}
