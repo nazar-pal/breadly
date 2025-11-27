@@ -45,11 +45,12 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       return true
     }
 
-    if (Number.isNaN(numericCurrentValue)) {
+    // Check for NaN, Infinity, or non-positive values
+    if (!Number.isFinite(numericCurrentValue) || numericCurrentValue <= 0) {
       return true
     }
 
-    return numericCurrentValue <= 0
+    return false
   })()
 
   return (

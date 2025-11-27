@@ -68,6 +68,15 @@ export function CalculatorKeypad({
     if (expression.length > 0) {
       const fullExpression = [...expression, currentInput]
       const resultValue = evaluateExpression(fullExpression)
+
+      // Handle invalid results (Infinity, -Infinity, NaN)
+      if (!Number.isFinite(resultValue)) {
+        setCurrentInput('0')
+        setExpression([])
+        setIsNewNumber(true)
+        return
+      }
+
       setCurrentInput(resultValue.toString())
       setExpression([])
       setIsNewNumber(true)
@@ -75,28 +84,55 @@ export function CalculatorKeypad({
   }
 
   const handleBackspace = () => {
+    // If we just pressed an operator, undo it and restore the previous number
+    if (isNewNumber && expression.length >= 2) {
+      const previousNumber = expression[expression.length - 2]
+      setCurrentInput(previousNumber)
+      setExpression(expression.slice(0, -2))
+      setIsNewNumber(false)
+      return
+    }
+
     if (isNewNumber || currentInput.length === 0) {
       return
     }
 
-    if (currentInput.length === 1) {
+    // Single character or just minus sign - reset to 0
+    if (currentInput.length === 1 || currentInput === '-0') {
       setCurrentInput('0')
       setIsNewNumber(true)
       return
     }
 
-    setCurrentInput(currentInput.slice(0, -1))
+    const newValue = currentInput.slice(0, -1)
+
+    // If backspace would leave just '-', reset to 0
+    if (newValue === '-') {
+      setCurrentInput('0')
+      setIsNewNumber(true)
+      return
+    }
+
+    setCurrentInput(newValue)
   }
 
   const handleDecimal = () => {
+    // If starting fresh (after = or operation), begin with "0."
+    if (isNewNumber) {
+      setCurrentInput('0.')
+      setIsNewNumber(false)
+      return
+    }
+
+    // Only add decimal if there isn't one already
     if (!currentInput.includes('.')) {
       setCurrentInput(currentInput + '.')
-      setIsNewNumber(false)
     }
   }
 
   const handleToggleSign = () => {
-    if (currentInput === '0') {
+    // Don't toggle sign for zero or zero with decimal
+    if (currentInput === '0' || currentInput === '0.') {
       return
     }
 
@@ -105,6 +141,7 @@ export function CalculatorKeypad({
     } else {
       setCurrentInput('-' + currentInput)
     }
+    setIsNewNumber(false)
   }
 
   return (
