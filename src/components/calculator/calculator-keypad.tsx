@@ -111,11 +111,8 @@ export function CalculatorKeypad({
     <View className="gap-2">
       <View className="flex-row gap-2">
         <CalculatorButton
-          label={
-            <Icon name="Delete" size={20} className="text-primary-foreground" />
-          }
+          label={<Icon name="Delete" size={20} className="text-primary" />}
           onPress={handleBackspace}
-          variant="operation"
           accessibilityLabel="Delete"
         />
         <CalculatorButton
@@ -176,7 +173,11 @@ export function CalculatorKeypad({
       </View>
 
       <View className="flex-row gap-2">
-        <CalculatorButton label="±" onPress={handleToggleSign} />
+        <CalculatorButton
+          label="±"
+          onPress={handleToggleSign}
+          accessibilityLabel="Toggle sign"
+        />
         <CalculatorButton label="0" onPress={() => handleNumberPress('0')} />
         <CalculatorButton label="." onPress={handleDecimal} />
         {showSubmit ? (

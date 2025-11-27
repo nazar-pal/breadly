@@ -18,8 +18,13 @@ export function CalculatorDisplay({ expression, currentInput }: Props) {
   }
 
   return (
-    <View className="rounded-2xl bg-card p-4 shadow-sm">
-      <Text className="text-right text-4xl font-bold text-foreground">
+    <View className="min-h-[72px] justify-center rounded-2xl bg-card px-4 py-3 shadow-sm">
+      <Text
+        className="text-right text-4xl font-bold text-foreground"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.5}
+      >
         {getDisplayExpression(expression, currentInput)}
       </Text>
     </View>

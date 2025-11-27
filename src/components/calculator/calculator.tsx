@@ -57,14 +57,14 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       <CalculatorDisplay expression={expression} currentInput={currentInput} />
 
       {/* Fixed height comment area - prevents layout shift */}
-      <View className="h-8 items-center justify-center">
+      <View className="h-8 items-center justify-center px-4">
         {comment ? (
           <Text
-            className="text-center text-xs text-muted-foreground"
+            className="text-center text-sm italic text-muted-foreground"
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {comment}
+            {`"${comment}"`}
           </Text>
         ) : null}
       </View>
