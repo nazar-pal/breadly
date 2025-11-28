@@ -99,7 +99,7 @@ export function ConfirmationDialog({
               autoCorrect={false}
               autoComplete="off"
               className="rounded-xl border-red-200 bg-red-50 text-center font-mono text-sm dark:border-red-900/50 dark:bg-red-950/20"
-              placeholderClassName="text-red-300 dark:text-red-700"
+              placeholderTextColorClassName="text-red-300 dark:text-red-700"
               editable={!isDeleting}
             />
           </View>

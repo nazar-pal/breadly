@@ -2,7 +2,7 @@ import { Calculator } from '@/components/calculator'
 import { useUserSession } from '@/system/session-and-migration'
 import * as Sentry from '@sentry/react-native'
 import React, { useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { ParamsSelection } from './components/params-selection'
 import { useTransactionParamsActions, useTransactionParamsState } from './store'
 import {

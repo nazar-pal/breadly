@@ -39,7 +39,7 @@ export function CommentModal({
             placeholder="Type your comment..."
             multiline
             textAlignVertical="top"
-            placeholderClassName="text-muted-foreground"
+            placeholderTextColorClassName="text-muted-foreground"
           />
         </View>
         <DialogFooter>

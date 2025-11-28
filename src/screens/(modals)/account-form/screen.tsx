@@ -1,5 +1,5 @@
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { KeyboardAvoidingView } from '@/components/ui/keyboard-avoiding-view'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { AccountForm } from './components/account-form'
 
 export default function AccountFormScreen() {

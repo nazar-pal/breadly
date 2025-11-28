@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { Header } from './components/header'
 import { ModeSelection } from './components/mode-selection'
 

@@ -1,5 +1,5 @@
 import { Icon } from '@/components/ui/icon-by-name'
-import { useColorScheme } from 'nativewind'
+import { useColorScheme } from 'react-native'
 import React, { useMemo } from 'react'
 import {
   Calendar as RNCalendar,
@@ -21,7 +21,7 @@ export function Calendar({
   style,
   ...restCalendarProps
 }: CalendarProps) {
-  const { colorScheme } = useColorScheme()
+  const colorScheme = useColorScheme()
 
   // Prepare Calendar theme merged with external theme
   const isDark = colorScheme === 'dark'

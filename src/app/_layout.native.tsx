@@ -1,6 +1,7 @@
+import { GestureHandlerRootView } from '@/components/ui/gesture-handler-root-view'
 import { queryClient } from '@/data/trpc/query-client'
 import { env } from '@/env'
-import { NAV_THEME } from '@/lib/theme'
+import { useNavTheme } from '@/lib/hooks'
 import { PowerSyncContextProvider } from '@/system/powersync/context'
 import { PurchasesInitializer } from '@/system/purchases/purchases-initializer'
 import { UserSessionInitializer } from '@/system/session-and-migration'
@@ -15,15 +16,13 @@ import { isRunningInExpoGo } from 'expo'
 import type { ErrorBoundaryProps } from 'expo-router'
 import { Stack, useNavigationContainerRef } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { useColorScheme } from 'nativewind'
 import * as React from 'react'
 import { useEffect } from 'react'
-import { Platform, Pressable, Text, View } from 'react-native'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Platform, Pressable, Text, useColorScheme, View } from 'react-native'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import 'react-native-reanimated'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import './global.css'
+import '../global.css'
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   React.useEffect(() => {
@@ -78,7 +77,8 @@ export const unstable_settings = {
 
 function RootLayoutNative() {
   const hasMounted = React.useRef(false)
-  const { colorScheme } = useColorScheme()
+  const colorScheme = useColorScheme()
+  const navTheme = useNavTheme()
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
@@ -105,27 +105,27 @@ function RootLayoutNative() {
     <SafeAreaProvider>
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-            <ClerkProvider
-              publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-              tokenCache={tokenCache}
-              __experimental_resourceCache={resourceCache}
-            >
-              <ClerkLoaded>
-                <UserSessionInitializer>
-                  <PurchasesInitializer />
-                  <PowerSyncContextProvider>
-                    <GestureHandlerRootView className="flex-1">
-                      <StatusBar
-                        style={colorScheme === 'dark' ? 'light' : 'dark'}
-                      />
-                      <StackRoutes />
-                      <PortalHost />
-                    </GestureHandlerRootView>
-                  </PowerSyncContextProvider>
-                </UserSessionInitializer>
-              </ClerkLoaded>
-            </ClerkProvider>
+        <ThemeProvider value={navTheme}>
+          <ClerkProvider
+            publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+            tokenCache={tokenCache}
+            __experimental_resourceCache={resourceCache}
+          >
+            <ClerkLoaded>
+              <UserSessionInitializer>
+                <PurchasesInitializer />
+                <PowerSyncContextProvider>
+                  <GestureHandlerRootView className="flex-1">
+                    <StatusBar
+                      style={colorScheme === 'dark' ? 'light' : 'dark'}
+                    />
+                    <StackRoutes />
+                    <PortalHost />
+                  </GestureHandlerRootView>
+                </PowerSyncContextProvider>
+              </UserSessionInitializer>
+            </ClerkLoaded>
+          </ClerkProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </KeyboardProvider>
@@ -152,10 +152,6 @@ function StackRoutes() {
       <Stack.Screen
         name="transactions/[id]"
         options={{ title: 'Transaction Details' }}
-      />
-      <Stack.Screen
-        name="test"
-        options={{ title: 'tRPC Connectivity Tester' }}
       />
       <Stack.Screen name="import" options={{ title: 'Import Data' }} />
       <Stack.Screen

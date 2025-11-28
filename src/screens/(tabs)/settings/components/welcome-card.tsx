@@ -3,11 +3,11 @@ import { Text } from '@/components/ui/text'
 import { GoogleOAuthButton } from '@/system/session-and-migration'
 import { DataLossWarning } from '@/system/session-and-migration/components/data-loss-warning'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useColorScheme } from 'nativewind'
+import { useColorScheme } from 'react-native'
 import { View } from 'react-native'
 
 export function WelcomeCard() {
-  const { colorScheme } = useColorScheme()
+  const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
 
   // Softer, darker gradient for dark mode to reduce eye strain

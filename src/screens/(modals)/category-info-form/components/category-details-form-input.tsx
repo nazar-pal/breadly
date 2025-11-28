@@ -40,7 +40,7 @@ export function CategoryInput<T extends FieldValues>({
             placeholder={placeholder}
             multiline
             textAlignVertical="top"
-            placeholderClassName="text-muted-foreground"
+            placeholderTextColorClassName="text-muted-foreground"
           />
           {error && (
             <Text className="mt-1 text-sm text-red-500">{error.message}</Text>

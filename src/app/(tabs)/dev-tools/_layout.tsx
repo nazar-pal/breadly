@@ -1,4 +1,5 @@
 import { Icon, IconName } from '@/components/ui/icon-by-name'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { cn } from '@/lib/utils'
 import {
   createMaterialTopTabNavigator,
@@ -8,7 +9,6 @@ import {
 import { ParamListBase, TabNavigationState } from '@react-navigation/native'
 import { withLayoutContext } from 'expo-router'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { Navigator } = createMaterialTopTabNavigator()
 const TopTabs = withLayoutContext<

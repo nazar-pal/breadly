@@ -2,7 +2,7 @@ import { env } from '@/env'
 import * as Sentry from '@sentry/react-native'
 import { Stack, type ErrorBoundaryProps } from 'expo-router'
 import React from 'react'
-import './global.css'
+import '../global.css'
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   React.useEffect(() => {

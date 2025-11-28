@@ -1,6 +1,6 @@
 import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
 import { router } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { CustomDatePicker } from './components/custom-date-picker'
 
 export default function TransactionCustomDateRangeModal() {
