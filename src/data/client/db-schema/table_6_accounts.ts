@@ -18,6 +18,7 @@ import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { check, index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
@@ -119,3 +120,72 @@ export const accounts = sqliteTable('accounts', columns, extraConfig)
 
 export const getAccountsSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
+
+/**
+ * Account insert schema with CHECK constraint validations.
+ * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ */
+export const accountInsertSchema = createInsertSchema(accounts, {
+  // Non-empty name after trimming whitespace
+  name: schema =>
+    schema.refine(
+      name => name.trim().length > 0,
+      'Account name cannot be empty'
+    ),
+  // Currency defaults to USD (mirrors database default for validation)
+  currencyId: schema => schema.default('USD'),
+  // Make type-specific nullable fields optional (undefined -> null transform)
+  savingsTargetAmount: schema =>
+    schema
+      .nullish()
+      .transform(val => val ?? null)
+      .refine(
+        val => val === null || val > 0,
+        'Savings target amount must be positive'
+      ),
+  savingsTargetDate: schema => schema.nullish().transform(val => val ?? null),
+  debtInitialAmount: schema =>
+    schema
+      .nullish()
+      .transform(val => val ?? null)
+      .refine(
+        val => val === null || val > 0,
+        'Debt initial amount must be positive'
+      ),
+  debtDueDate: schema => schema.nullish().transform(val => val ?? null)
+})
+  // Savings fields only for saving accounts
+  .refine(
+    data =>
+      data.type === 'saving' ||
+      (data.savingsTargetAmount == null && data.savingsTargetDate == null),
+    'Savings fields can only be set for saving accounts'
+  )
+  // Debt fields only for debt accounts
+  .refine(
+    data =>
+      data.type === 'debt' ||
+      (data.debtInitialAmount == null && data.debtDueDate == null),
+    'Debt fields can only be set for debt accounts'
+  )
+
+export const accountUpdateSchema = createUpdateSchema(accounts, {
+  // Non-empty name after trimming whitespace (when updating name)
+  name: schema =>
+    schema.refine(
+      name => name === undefined || name.trim().length > 0,
+      'Account name cannot be empty'
+    ),
+  // Positive savings target amount (if provided)
+  savingsTargetAmount: schema =>
+    schema.refine(
+      val => val === null || val === undefined || val > 0,
+      'Savings target amount must be positive'
+    ),
+  // Positive debt initial amount (if provided)
+  debtInitialAmount: schema =>
+    schema.refine(
+      val => val === null || val === undefined || val > 0,
+      'Debt initial amount must be positive'
+    )
+})

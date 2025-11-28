@@ -12,6 +12,9 @@ Key Features:
 - SQLite-compatible table definitions
 - Full schema export
 - Type definitions for all tables
+
+Note: Since PowerSync views don't enforce database CHECK constraints,
+      Zod schemas are extended with refinements to enforce these rules at runtime.
 ================================================================================
 */
 
@@ -129,15 +132,19 @@ export type ExchangeRateSelectSQLite = typeof exchangeRates.$inferSelect
 export type UserPreferenceSelectSQLite = typeof userPreferences.$inferSelect
 export type UserPreferenceInsertSQLite = typeof userPreferences.$inferInsert
 
-export const userPreferenceInsertSchema = createInsertSchema(userPreferences)
-export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences)
+export {
+  userPreferenceInsertSchema,
+  userPreferenceUpdateSchema
+} from './table_3_user-preferences'
 
 // table_4_categories
 export type CategorySelectSQLite = typeof categories.$inferSelect
 export type CategoryInsertSQLite = typeof categories.$inferInsert
 
-export const categoryInsertSchema = createInsertSchema(categories)
-export const categoryUpdateSchema = createUpdateSchema(categories)
+export {
+  categoryInsertSchema,
+  categoryUpdateSchema
+} from './table_4_categories'
 
 // table_5_budgets
 export type BudgetSelectSQLite = typeof budgets.$inferSelect
@@ -150,15 +157,18 @@ export const budgetUpdateSchema = createUpdateSchema(budgets)
 export type AccountSelectSQLite = typeof accounts.$inferSelect
 export type AccountInsertSQLite = typeof accounts.$inferInsert
 
-export const accountInsertSchema = createInsertSchema(accounts)
-export const accountUpdateSchema = createUpdateSchema(accounts)
+export { accountInsertSchema, accountUpdateSchema } from './table_6_accounts'
 
 // table_7_transactions
 export type TransactionSelectSQLite = typeof transactions.$inferSelect
 export type TransactionInsertSQLite = typeof transactions.$inferInsert
 
-export const transactionInsertSchema = createInsertSchema(transactions)
-export const transactionUpdateSchema = createUpdateSchema(transactions)
+export {
+  MAX_TRANSACTION_AMOUNT,
+  MIN_TRANSACTION_DATE,
+  transactionInsertSchema,
+  transactionUpdateSchema
+} from './table_7_transactions'
 
 // table_8_attachments
 export type AttachmentSelectSQLite = typeof attachments.$inferSelect

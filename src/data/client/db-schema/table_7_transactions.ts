@@ -21,6 +21,7 @@ import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { check, index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import { accounts } from './table_6_accounts'
@@ -32,6 +33,17 @@ import {
   monetaryAmountColumn,
   uuidPrimaryKey
 } from './utils'
+
+/**
+ * Maximum transaction amount (matches NUMERIC(14,2) database constraint)
+ * Used for validation in Zod schemas
+ */
+export const MAX_TRANSACTION_AMOUNT = 999_999_999_999.99
+
+/**
+ * Minimum allowed transaction date (reasonable lower bound)
+ */
+export const MIN_TRANSACTION_DATE = new Date('1970-01-01')
 
 // ============================================================================
 // TRANSACTION TYPE DEFINITIONS
@@ -117,3 +129,79 @@ export const transactions = sqliteTable('transactions', columns, extraConfig)
 
 export const getTransactionsSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
+
+/**
+ * Transaction insert schema with CHECK constraint validations.
+ * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ */
+export const transactionInsertSchema = createInsertSchema(transactions, {
+  // Positive transaction amount within database limits
+  amount: schema =>
+    schema
+      .refine(val => val > 0, 'Transaction amount must be positive')
+      .refine(
+        val => val <= MAX_TRANSACTION_AMOUNT,
+        'Transaction amount exceeds maximum allowed value'
+      ),
+  // Transaction date cannot be in the future (CHECK constraint replacement)
+  txDate: schema =>
+    schema.refine(val => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const txDay = new Date(val)
+      txDay.setHours(0, 0, 0, 0)
+      return txDay <= today
+    }, 'Transaction date cannot be in the future')
+})
+  // Transfers must have a source account
+  .refine(data => data.type !== 'transfer' || data.accountId != null, {
+    message: 'Transfer must have a source account',
+    path: ['accountId']
+  })
+  // Transfers must have a counter account that is different from the source
+  .refine(
+    data =>
+      data.type !== 'transfer' ||
+      (data.counterAccountId != null &&
+        data.accountId !== data.counterAccountId),
+    {
+      message: 'Transfer must have different source and destination accounts',
+      path: ['counterAccountId']
+    }
+  )
+  // Non-transfers cannot have a counter account
+  .refine(data => data.type === 'transfer' || data.counterAccountId == null, {
+    message: 'Only transfers can have a destination account',
+    path: ['counterAccountId']
+  })
+
+/**
+ * Transaction update schema with CHECK constraint validations.
+ *
+ * Note: Cross-field validations (like transfer source !== destination) cannot be
+ * fully validated at schema level for partial updates since we don't know the
+ * existing values. These are validated inside the mutation with the merged state.
+ */
+export const transactionUpdateSchema = createUpdateSchema(transactions, {
+  // Positive transaction amount within database limits (if provided)
+  amount: schema =>
+    schema
+      .refine(
+        val => val === undefined || val > 0,
+        'Transaction amount must be positive'
+      )
+      .refine(
+        val => val === undefined || val <= MAX_TRANSACTION_AMOUNT,
+        'Transaction amount exceeds maximum allowed value'
+      ),
+  // Transaction date cannot be in the future (if provided)
+  txDate: schema =>
+    schema.refine(val => {
+      if (val === undefined) return true
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const txDay = new Date(val)
+      txDay.setHours(0, 0, 0, 0)
+      return txDay <= today
+    }, 'Transaction date cannot be in the future')
+})

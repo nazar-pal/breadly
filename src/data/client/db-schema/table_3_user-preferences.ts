@@ -25,6 +25,7 @@ PowerSync Client Adaptations:
 import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { check, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
@@ -77,3 +78,25 @@ export const userPreferences = sqliteTable(
 
 export const getUserPreferencesSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
+
+/**
+ * User preference insert schema with CHECK constraint validations.
+ * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ */
+export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
+  // First weekday must be 1-7 (Monday-Sunday)
+  firstWeekday: schema =>
+    schema.refine(
+      val => val == null || (val >= 1 && val <= 7),
+      'First weekday must be between 1 (Monday) and 7 (Sunday)'
+    )
+})
+
+export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences, {
+  // First weekday must be 1-7 (Monday-Sunday)
+  firstWeekday: schema =>
+    schema.refine(
+      val => val === undefined || val == null || (val >= 1 && val <= 7),
+      'First weekday must be between 1 (Monday) and 7 (Sunday)'
+    )
+})

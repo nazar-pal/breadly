@@ -27,6 +27,7 @@ import {
   text,
   uniqueIndex
 } from 'drizzle-orm/sqlite-core'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -108,3 +109,30 @@ export const categories = sqliteTable('categories', columns, extraConfig)
 
 export const getCategoriesSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
+
+/**
+ * Category insert schema with CHECK constraint validations.
+ * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ */
+export const categoryInsertSchema = createInsertSchema(categories, {
+  // Non-empty name after trimming whitespace
+  name: schema =>
+    schema.refine(
+      name => name.trim().length > 0,
+      'Category name cannot be empty'
+    )
+})
+  // Prevent self-referencing parent (mirrors CHECK constraint)
+  .refine(data => data.parentId == null || data.parentId !== data.id, {
+    message: 'Category cannot be its own parent',
+    path: ['parentId']
+  })
+
+export const categoryUpdateSchema = createUpdateSchema(categories, {
+  // Non-empty name after trimming whitespace (when updating name)
+  name: schema =>
+    schema.refine(
+      name => name === undefined || name.trim().length > 0,
+      'Category name cannot be empty'
+    )
+})
