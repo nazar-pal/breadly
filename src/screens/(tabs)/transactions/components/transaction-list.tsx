@@ -1,39 +1,40 @@
-import { OperationListItem } from '@/components/operation-list-item'
+import { cn } from '@/lib/utils'
 import { LegendList } from '@legendapp/list'
 import React from 'react'
-import { View } from 'react-native'
+import { View, useColorScheme } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import type { ListItem, Transaction } from '../lib/types'
+import type { DateGroup, ListItem } from '../lib/types'
 import { EmptyTodayMessage, SectionHeader } from './index'
 import { LoadingFooter } from './loading-footer'
+import { TransactionItem } from './transaction-item'
 
 interface TransactionListProps {
-  todaysTransactions: Transaction[]
-  earlierTransactions: Transaction[]
+  dateGroups: DateGroup[]
   onEndReached?: () => void
   isLoadingMore?: boolean
 }
 
 export function TransactionList({
-  todaysTransactions,
-  earlierTransactions,
+  dateGroups,
   onEndReached,
   isLoadingMore
 }: TransactionListProps) {
   const insets = useSafeAreaInsets()
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme === 'dark'
 
-  const listData = buildListData(todaysTransactions, earlierTransactions)
+  const listData = buildListData(dateGroups)
 
   return (
-    <View className="bg-background flex-1">
+    <View className={cn('flex-1', isDark ? 'bg-background' : 'bg-background')}>
       <LegendList
         data={listData}
-        renderItem={renderItem}
+        renderItem={({ item }) => <RenderItem item={item} />}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         style={{ paddingHorizontal: 12, paddingTop: 12 }}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 20
+          paddingBottom: insets.bottom + 16
         }}
         recycleItems={false}
         onEndReached={onEndReached}
@@ -44,50 +45,60 @@ export function TransactionList({
   )
 }
 
-function buildListData(
-  todaysTransactions: Transaction[],
-  earlierTransactions: Transaction[]
-): ListItem[] {
+function buildListData(dateGroups: DateGroup[]): ListItem[] {
   const data: ListItem[] = []
 
-  // Today's section
-  data.push({ type: 'header', id: 'today-header', title: 'Today' })
+  // If no groups, show Today with empty message
+  if (dateGroups.length === 0) {
+    data.push({ type: 'header', id: 'today-header', title: 'Today' })
+    data.push({ type: 'empty', id: 'today-empty' })
+    return data
+  }
 
-  if (todaysTransactions.length > 0) {
-    todaysTransactions.forEach(tx => {
-      data.push({ type: 'transaction', id: tx.id, transaction: tx })
-    })
-  } else {
+  // Check if today has any transactions
+  const todayKey = new Date().toISOString().split('T')[0]
+  const hasTodayGroup = dateGroups.some(g => g.key === todayKey)
+
+  // If no today group, add empty today section first
+  if (!hasTodayGroup) {
+    data.push({ type: 'header', id: 'today-header', title: 'Today' })
     data.push({ type: 'empty', id: 'today-empty' })
   }
 
-  // Earlier section
-  if (earlierTransactions.length > 0) {
-    data.push({ type: 'header', id: 'earlier-header', title: 'Earlier' })
+  // Add each date group
+  dateGroups.forEach(group => {
+    data.push({
+      type: 'header',
+      id: `header-${group.key}`,
+      title: group.label,
+      count: group.transactions.length
+    })
 
-    earlierTransactions.forEach(tx => {
+    group.transactions.forEach(tx => {
       data.push({ type: 'transaction', id: tx.id, transaction: tx })
     })
-  }
+  })
 
   return data
 }
 
-function renderItem({ item }: { item: ListItem }) {
+function RenderItem({ item }: { item: ListItem }) {
   switch (item.type) {
     case 'header':
+      const todayKey = new Date().toISOString().split('T')[0]
+      const isFirstSection =
+        item.id === 'today-header' || item.id.includes(todayKey)
       return (
         <SectionHeader
           title={item.title!}
-          isFirst={item.id === 'today-header'}
+          isFirst={isFirstSection}
+          count={item.count}
         />
       )
 
     case 'transaction':
       return item.transaction ? (
-        <View className="mb-2">
-          <OperationListItem operation={item.transaction} />
-        </View>
+        <TransactionItem transaction={item.transaction} />
       ) : null
 
     case 'empty':

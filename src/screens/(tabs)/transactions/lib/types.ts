@@ -9,4 +9,11 @@ export interface ListItem {
   id: string
   title?: string
   transaction?: Transaction
+  count?: number
+}
+
+export interface DateGroup {
+  key: string
+  label: string
+  transactions: Transaction[]
 }

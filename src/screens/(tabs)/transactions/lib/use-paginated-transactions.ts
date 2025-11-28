@@ -1,9 +1,10 @@
 import { getTransactions } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { useState } from 'react'
-import { getDateRanges } from './utils'
+import { useMemo, useState } from 'react'
+import type { DateGroup } from './types'
+import { groupTransactionsByDate } from './utils'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 30
 
 interface UsePaginatedTransactionsParams {
   userId: string
@@ -12,46 +13,36 @@ interface UsePaginatedTransactionsParams {
 export function usePaginatedTransactions({
   userId
 }: UsePaginatedTransactionsParams) {
-  const { today, tomorrow, yesterday } = getDateRanges()
   const [limit, setLimit] = useState(PAGE_SIZE)
 
-  // Today's transactions - no pagination needed (typically small)
-  const { data: todaysTransactions, isLoading: isLoadingToday } =
-    useDrizzleQuery(
-      getTransactions({
-        userId,
-        dateFrom: today,
-        dateTo: tomorrow
-      })
-    )
+  // Get all transactions with pagination
+  const { data: transactions, isLoading } = useDrizzleQuery(
+    getTransactions({
+      userId,
+      limit
+    })
+  )
 
-  // Earlier transactions - just increase limit to load more
-  const { data: earlierTransactions, isLoading: isLoadingEarlier } =
-    useDrizzleQuery(
-      getTransactions({
-        userId,
-        dateTo: yesterday,
-        limit
-      })
-    )
+  // Group transactions by date
+  const dateGroups: DateGroup[] = useMemo(() => {
+    return groupTransactionsByDate(transactions)
+  }, [transactions])
 
-  const hasMoreEarlier = earlierTransactions.length >= limit
+  const hasMore = transactions.length >= limit
 
   const loadMore = () => {
-    if (!isLoadingEarlier && hasMoreEarlier) {
+    if (!isLoading && hasMore) {
       setLimit(prev => prev + PAGE_SIZE)
     }
   }
 
-  const isLoading = isLoadingToday || (limit === PAGE_SIZE && isLoadingEarlier)
-  const isLoadingMore = limit > PAGE_SIZE && isLoadingEarlier
+  const isLoadingMore = limit > PAGE_SIZE && isLoading
 
   return {
-    todaysTransactions,
-    earlierTransactions,
-    isLoading,
+    dateGroups,
+    isLoading: limit === PAGE_SIZE && isLoading,
     isLoadingMore,
-    hasMoreEarlier,
+    hasMore,
     loadMore
   }
 }
