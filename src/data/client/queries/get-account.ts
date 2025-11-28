@@ -8,12 +8,11 @@ interface Params {
 }
 
 export function getAccount({ userId, accountId }: Params) {
-  return db.query.accounts.findMany({
+  return db.query.accounts.findFirst({
     where: and(eq(accounts.userId, userId), eq(accounts.id, accountId)),
-    with: { currency: true },
-    limit: 1
+    with: { currency: true }
   })
 }
 
 export type GetAccountResult = Awaited<ReturnType<typeof getAccount>>
-export type GetAccountResultItem = GetAccountResult[number]
+export type GetAccountResultItem = Exclude<GetAccountResult, undefined>

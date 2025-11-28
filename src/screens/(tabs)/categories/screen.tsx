@@ -41,8 +41,10 @@ function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
 export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
   const { userId } = useUserSession()
 
-  const { data: preferences } = useDrizzleQuery(getUserPreferences({ userId }))
-  const currencyCode = preferences?.[0]?.defaultCurrency?.code || 'USD'
+  const {
+    data: [userPreferences]
+  } = useDrizzleQuery(getUserPreferences({ userId }))
+  const currencyCode = userPreferences?.defaultCurrency?.code || 'USD'
 
   const openTransactionModal = (categoryId: string) =>
     openExpenseIncomeBottomSheet({

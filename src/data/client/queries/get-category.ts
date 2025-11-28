@@ -1,6 +1,6 @@
+import { categories } from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
-import { categories } from '../db-schema'
 
 interface Params {
   userId: string
@@ -8,12 +8,11 @@ interface Params {
 }
 
 export function getCategory({ userId, categoryId }: Params) {
-  return db.query.categories.findMany({
+  return db.query.categories.findFirst({
     where: and(eq(categories.userId, userId), eq(categories.id, categoryId)),
-    with: { parent: true },
-    limit: 1
+    with: { parent: true }
   })
 }
 
 export type GetCategoryResult = Awaited<ReturnType<typeof getCategory>>
-export type GetCategoryResultItem = GetCategoryResult[number]
+export type GetCategoryResultItem = Exclude<GetCategoryResult, undefined>

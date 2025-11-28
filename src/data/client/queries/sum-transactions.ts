@@ -1,6 +1,6 @@
+import { CATEGORY_TYPE, transactions } from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { and, eq, gte, lte, sum } from 'drizzle-orm'
-import { CATEGORY_TYPE, transactions } from '../db-schema'
 
 interface Params {
   userId: string
@@ -26,12 +26,12 @@ export function sumTransactions({
     .where(
       and(
         eq(transactions.userId, userId),
-        categoryId ? eq(transactions.categoryId, categoryId) : undefined,
         eq(transactions.type, type),
-        transactionsFrom
-          ? gte(transactions.txDate, transactionsFrom)
-          : undefined,
-        transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
+        ...(categoryId ? [eq(transactions.categoryId, categoryId)] : []),
+        ...(transactionsFrom
+          ? [gte(transactions.txDate, transactionsFrom)]
+          : []),
+        ...(transactionsTo ? [lte(transactions.txDate, transactionsTo)] : [])
       )
     )
     .groupBy(transactions.currencyId)

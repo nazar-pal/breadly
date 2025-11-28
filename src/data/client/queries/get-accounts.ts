@@ -13,7 +13,7 @@ export function getAccounts({ userId, accountType, isArchived }: Params) {
     where: and(
       eq(accounts.userId, userId),
       eq(accounts.type, accountType),
-      isArchived !== undefined ? eq(accounts.isArchived, isArchived) : undefined
+      ...(isArchived !== undefined ? [eq(accounts.isArchived, isArchived)] : [])
     ),
     with: { currency: true },
     orderBy: [asc(accounts.isArchived), asc(accounts.createdAt)]

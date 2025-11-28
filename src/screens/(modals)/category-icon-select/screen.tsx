@@ -16,10 +16,9 @@ export default function IconSelectionModal() {
   const { closeCategoryFormModal } = useCategoryFormModalActions()
   const { userId } = useUserSession()
 
-  const categoryData = useDrizzleQuery(
-    getCategory({ userId, categoryId: categoryId ?? '' })
-  ).data?.[0]
-
+  const {
+    data: [categoryData]
+  } = useDrizzleQuery(getCategory({ userId, categoryId: categoryId ?? '' }))
   const handleIconSelect = async (iconName: IconName) => {
     if (!categoryData) return
 

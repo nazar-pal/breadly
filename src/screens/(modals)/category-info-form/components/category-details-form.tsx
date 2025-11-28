@@ -29,9 +29,11 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
 
   const { userId } = useUserSession()
 
-  const categoryData = useDrizzleQuery(
-    getCategory({ userId, categoryId: categoryId ?? '' })
-  ).data?.[0]
+  const {
+    data: [categoryData]
+  } = useDrizzleQuery(
+    categoryId ? getCategory({ userId, categoryId }) : undefined
+  )
 
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { name: '', description: '' }

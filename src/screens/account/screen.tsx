@@ -14,14 +14,15 @@ export default function AccountScreen({ id }: { id: string }) {
   const insets = useSafeAreaInsets()
 
   const { userId } = useUserSession()
-  const { data: accounts, isLoading } = useDrizzleQuery(
+  const {
+    data: [account],
+    isLoading
+  } = useDrizzleQuery(
     getAccount({
       userId,
       accountId: id
     })
   )
-
-  const account = accounts?.[0]
 
   if (isLoading) return null
 

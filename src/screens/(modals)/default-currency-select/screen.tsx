@@ -11,13 +11,12 @@ import { ScrollView } from 'react-native'
 
 export default function DefaultCurrencySelect() {
   const { userId } = useUserSession()
-  const { data: userPreferences } = useDrizzleQuery(
-    getUserPreferences({ userId })
-  )
+  const {
+    data: [userPreferences]
+  } = useDrizzleQuery(getUserPreferences({ userId }))
 
   // Get current currency with fallback to default
-  const currentCurrency =
-    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY
+  const currentCurrency = userPreferences?.defaultCurrency || DEFAULT_CURRENCY
 
   const handleCurrencySelect = async (currency: CurrencySelectSQLite) => {
     try {

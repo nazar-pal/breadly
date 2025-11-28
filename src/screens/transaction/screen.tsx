@@ -21,11 +21,10 @@ export default function TransactionDetailsScreen({ id }: Props) {
   const insets = useSafeAreaInsets()
   const { userId } = useUserSession()
 
-  const { data: transactions, isLoading } = useDrizzleQuery(
-    getTransaction({ userId, transactionId: id })
-  )
-
-  const transaction = transactions?.[0]
+  const {
+    data: [transaction],
+    isLoading
+  } = useDrizzleQuery(getTransaction({ userId, transactionId: id }))
 
   // Extract attachments by type
   const receipts = (transaction?.transactionAttachments ?? [])

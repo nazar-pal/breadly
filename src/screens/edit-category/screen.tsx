@@ -12,10 +12,10 @@ export default function Screen({ categoryId }: { categoryId: string }) {
 
   const insets = useSafeAreaInsets()
 
-  const { data, isLoading } = useDrizzleQuery(
-    getCategory({ userId, categoryId })
-  )
-  const category = data?.[0]
+  const {
+    data: [category],
+    isLoading
+  } = useDrizzleQuery(getCategory({ userId, categoryId }))
 
   if (isLoading || !category) return null
 

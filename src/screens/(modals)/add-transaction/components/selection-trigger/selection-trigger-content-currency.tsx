@@ -11,10 +11,9 @@ export function SelectionTriggerContentCurrency({
   currencyCode: string | null
   render: 'name' | 'icon'
 }) {
-  const { data } = useDrizzleQuery(
-    getCurrency({ currencyCode: currencyCode ?? '' })
-  )
-  const currency = data?.length > 0 ? data[0] : null
+  const {
+    data: [currency]
+  } = useDrizzleQuery(currencyCode ? getCurrency({ currencyCode }) : undefined)
 
   const currencyName = currency?.name ?? 'unknown'
 

@@ -1,8 +1,8 @@
+import { transactions } from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { and, desc, eq, gte, lte } from 'drizzle-orm'
-import { transactions } from '../db-schema'
 
-interface GetTransactionsParams {
+interface Params {
   userId: string
   dateFrom?: Date
   dateTo?: Date
@@ -16,16 +16,13 @@ export function getTransactions({
   dateTo,
   limit,
   offset
-}: GetTransactionsParams) {
-  // Build where conditions
-  const whereConditions = [eq(transactions.userId, userId)]
-
-  if (dateFrom) whereConditions.push(gte(transactions.txDate, dateFrom))
-
-  if (dateTo) whereConditions.push(lte(transactions.txDate, dateTo))
-
+}: Params) {
   return db.query.transactions.findMany({
-    where: and(...whereConditions),
+    where: and(
+      eq(transactions.userId, userId),
+      ...(dateFrom ? [gte(transactions.txDate, dateFrom)] : []),
+      ...(dateTo ? [lte(transactions.txDate, dateTo)] : [])
+    ),
     with: {
       category: { with: { parent: true } },
       account: true,
@@ -34,8 +31,8 @@ export function getTransactions({
       transactionAttachments: { with: { attachment: true } }
     },
     orderBy: [desc(transactions.txDate)],
-    ...(limit && { limit }),
-    ...(offset && { offset })
+    limit,
+    offset
   })
 }
 

@@ -14,10 +14,9 @@ export function SelectionTriggerContentAccount({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useDrizzleQuery(
-    getAccount({ userId, accountId: accountId ?? '' })
-  )
-  const account = data.length > 0 ? data[0] : null
+  const {
+    data: [account]
+  } = useDrizzleQuery(getAccount({ userId, accountId: accountId ?? '' }))
 
   const accountName = account?.name ?? 'unknown'
 

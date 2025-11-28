@@ -20,14 +20,14 @@ export function SelectionSubcategories({
   const [showAddDialog, setShowAddDialog] = useState(false)
 
   // Get the current category to determine parent info
-  const { data: categoriesData } = useDrizzleQuery(
+  const {
+    data: [selectedCategory]
+  } = useDrizzleQuery(
     getCategory({
       userId,
       categoryId: categoryId ?? ''
     })
   )
-
-  const selectedCategory = categoriesData.length > 0 ? categoriesData[0] : null
 
   // Determine parent category info for creating subcategories
   // If current category has a parent, use the parent as the container

@@ -16,10 +16,11 @@ export function SelectionTriggerContentCategory({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useDrizzleQuery(
+  const {
+    data: [category]
+  } = useDrizzleQuery(
     getCategory({ userId, categoryId: slot.categoryId ?? '' })
   )
-  const category = data.length > 0 ? data[0] : null
 
   const categoryName = category?.parent?.name ?? category?.name ?? 'unknown'
   const categoryIcon = category?.parent?.icon ?? category?.icon ?? 'Unknown'

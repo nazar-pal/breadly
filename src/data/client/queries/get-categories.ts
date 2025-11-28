@@ -1,6 +1,6 @@
+import { categories, CATEGORY_TYPE } from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { and, asc, eq, isNull } from 'drizzle-orm'
-import { categories, CATEGORY_TYPE } from '../db-schema'
 
 interface Params {
   userId: string
@@ -12,6 +12,12 @@ interface Params {
    * - `string`: Get subcategories that belong to the specified parent ID
    */
   parentId?: string | null
+  /**
+   * Controls archived status filtering:
+   * - `undefined` (default): Get all categories regardless of archived status
+   * - `true`: Get only archived categories
+   * - `false`: Get only non-archived categories
+   */
   isArchived?: boolean
 }
 
@@ -24,24 +30,24 @@ interface Params {
  * getCategories({ userId, type: 'expense', parentId: 'parent-id' }) // Subcategories of parent
  */
 export function getCategories({ userId, type, parentId, isArchived }: Params) {
-  // Build the where conditions based on parentId parameter
+  // parentId: undefined = all, null = root only, string = children of parent
   const parentCondition =
     parentId === undefined
-      ? undefined // No parent filter - get all categories
+      ? undefined
       : parentId === null
-        ? isNull(categories.parentId) // Get only parent categories
-        : eq(categories.parentId, parentId) // Get subcategories of specific parent
+        ? isNull(categories.parentId)
+        : eq(categories.parentId, parentId)
 
   return db.query.categories.findMany({
     where: and(
       eq(categories.userId, userId),
-      type === undefined ? undefined : eq(categories.type, type),
-      parentCondition,
-      isArchived === undefined
-        ? undefined
-        : eq(categories.isArchived, isArchived)
+      ...(type ? [eq(categories.type, type)] : []),
+      ...(parentCondition ? [parentCondition] : []),
+      // isArchived: undefined = all (both archived and non-archived), boolean = filter by that value
+      ...(isArchived !== undefined
+        ? [eq(categories.isArchived, isArchived)]
+        : [])
     ),
-
     orderBy: [asc(categories.sortOrder), asc(categories.name)]
   })
 }

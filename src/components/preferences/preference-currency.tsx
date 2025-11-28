@@ -10,13 +10,12 @@ import { Pressable, View } from 'react-native'
 
 export function CurrencyPreference() {
   const { userId } = useUserSession()
-  const { data: userPreferences } = useDrizzleQuery(
-    getUserPreferences({ userId })
-  )
+  const {
+    data: [userPreferences]
+  } = useDrizzleQuery(getUserPreferences({ userId }))
 
   // Get current currency with fallback to default
-  const currentCurrency =
-    userPreferences?.[0]?.defaultCurrency || DEFAULT_CURRENCY
+  const currentCurrency = userPreferences?.defaultCurrency || DEFAULT_CURRENCY
 
   return (
     <Pressable
