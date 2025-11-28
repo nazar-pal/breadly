@@ -24,10 +24,9 @@ import { eq } from 'drizzle-orm'
  *
  * The deletion will sync to the server when PowerSync connects.
  *
- * @param userId - The ID of the user whose data should be deleted
  * @returns A tuple of [error, result] where error is null on success
  */
-export async function deleteAllUserData(userId: string) {
+export async function deleteAllUserData({ userId }: { userId: string }) {
   if (__DEV__) {
     console.log(`🗑️ Starting deletion of all data for user ${userId}`)
   }
@@ -68,5 +67,5 @@ export async function deleteAllUserData(userId: string) {
     })
   )
 
-  return [error, result] as const
+  return [error, result]
 }

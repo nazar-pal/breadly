@@ -1,9 +1,9 @@
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import {
-    LoadingState,
-    NoTransactionsState,
-    TransactionList
+  LoadingState,
+  NoTransactionsState,
+  TransactionList
 } from './components'
 import { usePaginatedTransactions } from './lib'
 

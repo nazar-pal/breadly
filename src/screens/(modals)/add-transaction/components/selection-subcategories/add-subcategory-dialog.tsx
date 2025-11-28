@@ -60,7 +60,7 @@ export function AddSubcategoryDialog({
 
     setIsSubmitting(false)
 
-    if (err || !result) {
+    if (err || !result || !('id' in result)) {
       setError('Failed to create subcategory. Please try again.')
       return
     }

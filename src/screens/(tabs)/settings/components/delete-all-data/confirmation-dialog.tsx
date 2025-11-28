@@ -42,11 +42,15 @@ export function ConfirmationDialog({
     setIsDeleting(true)
     setError(null)
 
-    const [err] = await deleteAllUserData(userId)
+    const [err] = await deleteAllUserData({ userId })
 
     if (err) {
       Sentry.captureException(err)
-      setError(err.message || 'Failed to delete data. Please try again.')
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Failed to delete data. Please try again.'
+      setError(message)
       setIsDeleting(false)
       return
     }

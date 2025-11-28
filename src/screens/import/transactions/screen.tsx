@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { createManyTransactions } from '@/data/client/mutations'
 import { useCsvImport } from '@/lib/hooks'
-import { formatBytes } from '@/lib/utils'
+import { asyncTryCatch, formatBytes } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React, { useEffect, useTransition } from 'react'
@@ -13,6 +13,7 @@ import { BusyIndicator, EmptyState, PreviewInfo } from '../_components'
 import { formatZodError } from '../_lib'
 import { PreviewList } from './components'
 import { CsvArr, csvSchema } from './lib/csv-arr-schema'
+import { transformCsvRowsToTransactions } from './lib/transform-csv-to-transactions'
 import {
   createTransactionPostValidator,
   type TransactionValidationErrorType
@@ -57,17 +58,27 @@ export default function ImportTransactionsScreen() {
     if (!isPostValid) return
 
     startTransition(async () => {
-      const [error] = await createManyTransactions({
-        rows: data,
-        userId
+      const [transformError, transactionData] = await asyncTryCatch(
+        transformCsvRowsToTransactions(data, userId)
+      )
+
+      if (transformError) {
+        Alert.alert('Import Failed', transformError.message)
+        return
+      }
+
+      const [importError] = await createManyTransactions({
+        userId,
+        data: transactionData
       })
 
-      if (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Failed to import transactions'
-        Alert.alert('Import Failed', message)
+      if (importError) {
+        Alert.alert(
+          'Import Failed',
+          importError instanceof Error
+            ? importError.message
+            : 'Failed to import'
+        )
         return
       }
 
