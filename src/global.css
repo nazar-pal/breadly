@@ -14,101 +14,97 @@
 @layer theme {
   :root {
     @variant light {
-      --color-background: hsl(0 0% 100%);
-      --color-foreground: hsl(224 71.4% 4.1%);
+      --color-background: oklch(100% 0 0);
+      --color-foreground: oklch(14.08% 0.027 267.05);
 
-      --color-card: hsl(0 0% 100%);
-      --color-card-foreground: hsl(224 71.4% 4.1%);
+      --color-card: oklch(100% 0 0);
+      --color-card-foreground: oklch(14.08% 0.027 267.05);
 
-      --color-popover: hsl(0 0% 100%);
-      --color-popover-foreground: hsl(0 0% 0%);
+      --color-popover: oklch(100% 0 0);
+      --color-popover-foreground: oklch(0% 0 0);
 
-      --color-primary: hsl(262.1 83.3% 57.8%);
-      --color-primary-foreground: hsl(210 20% 98%);
+      --color-primary: oklch(55.41% 0.249 292.37);
+      --color-primary-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-secondary: hsl(220 14.3% 95.9%);
-      --color-secondary-foreground: hsl(220.9 39.3% 11%);
+      --color-secondary: oklch(96.68% 0.004 264.53);
+      --color-secondary-foreground: oklch(21.03% 0.038 264.18);
 
-      --color-muted: hsl(220 14.3% 95.9%);
-      --color-muted-foreground: hsl(220 8.9% 46.1%);
+      --color-muted: oklch(96.68% 0.004 264.53);
+      --color-muted-foreground: oklch(55.18% 0.017 259.81);
 
-      --color-accent: hsl(220 14.3% 95.9%);
-      --color-accent-foreground: hsl(220.9 39.3% 11%);
+      --color-accent: oklch(96.68% 0.004 264.53);
+      --color-accent-foreground: oklch(21.03% 0.038 264.18);
 
-      --color-destructive: hsl(0 84.2% 60.2%);
-      --color-destructive-foreground: hsl(210 20% 98%);
+      --color-destructive: oklch(62.77% 0.217 24.59);
+      --color-destructive-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-border: hsl(220 13% 91%);
-      --color-input: hsl(220 13% 91%);
-      --color-ring: hsl(262.1 83.3% 57.8%);
+      --color-border: oklch(92.76% 0.006 264.43);
+      --color-input: oklch(92.76% 0.006 264.43);
+      --color-ring: oklch(55.41% 0.249 292.37);
 
-      --color-chart-1: hsl(12 76% 61%);
-      --color-chart-2: hsl(173 58% 39%);
-      --color-chart-3: hsl(197 37% 24%);
-      --color-chart-4: hsl(43 74% 66%);
-      --color-chart-5: hsl(27 87% 67%);
+      --color-chart-1: oklch(66.15% 0.176 36.13);
+      --color-chart-2: oklch(58.14% 0.102 175.75);
+      --color-chart-3: oklch(34.9% 0.046 237.35);
+      --color-chart-4: oklch(78.22% 0.138 84.43);
+      --color-chart-5: oklch(73.37% 0.161 50.36);
 
       /* Transaction colors */
-      --color-income: hsl(142 76% 36%);
-      --color-expense: hsl(0 84.2% 60.2%);
-      --color-transfer: hsl(262.1 83.3% 57.8%);
-      --color-savings: hsl(186 84% 42%);
+      --color-income: oklch(55.29% 0.162 149.21);
+      --color-expense: oklch(62.77% 0.217 24.59);
+      --color-transfer: oklch(55.41% 0.249 292.37);
+      --color-savings: oklch(65.44% 0.121 197.99);
 
       /* Account type colors */
-      --color-account-payment: hsl(
-        262.1 83.3% 57.8%
-      ); /* Purple - matches primary */
-      --color-account-savings: hsl(186 84% 42%); /* Teal - matches savings */
-      --color-account-debt: hsl(0 84.2% 60.2%); /* Red - matches destructive */
+      --color-account-payment: oklch(55.41% 0.249 292.37); /* Purple - matches primary */
+      --color-account-savings: oklch(65.44% 0.121 197.99); /* Teal - matches savings */
+      --color-account-debt: oklch(62.77% 0.217 24.59); /* Red - matches destructive */
     }
 
     @variant dark {
-      --color-background: hsl(224 71.4% 4.1%);
-      --color-foreground: hsl(210 20% 98%);
+      --color-background: oklch(14.08% 0.027 267.05);
+      --color-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-card: hsl(224 71.4% 4.1%);
-      --color-card-foreground: hsl(210 20% 98%);
+      --color-card: oklch(14.08% 0.027 267.05);
+      --color-card-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-popover: hsl(215 24% 10%);
-      --color-popover-foreground: hsl(0 0% 100%);
+      --color-popover: oklch(19.39% 0.02 257.69);
+      --color-popover-foreground: oklch(100% 0 0);
 
-      --color-primary: hsl(263.4 70% 50.4%);
-      --color-primary-foreground: hsl(210 20% 98%);
+      --color-primary: oklch(51.21% 0.222 292.72);
+      --color-primary-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-secondary: hsl(215 27.9% 16.9%);
-      --color-secondary-foreground: hsl(210 20% 98%);
+      --color-secondary: oklch(27.06% 0.028 256.85);
+      --color-secondary-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-muted: hsl(215 27.9% 16.9%);
-      --color-muted-foreground: hsl(217.9 10.6% 64.9%);
+      --color-muted: oklch(27.06% 0.028 256.85);
+      --color-muted-foreground: oklch(71.19% 0.013 256.09);
 
-      --color-accent: hsl(215 27.9% 16.9%);
-      --color-accent-foreground: hsl(210 20% 98%);
+      --color-accent: oklch(27.06% 0.028 256.85);
+      --color-accent-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-destructive: hsl(0 62.8% 30.6%);
-      --color-destructive-foreground: hsl(210 20% 98%);
+      --color-destructive: oklch(39.7% 0.127 25.72);
+      --color-destructive-foreground: oklch(98.35% 0.001 247.84);
 
-      --color-border: hsl(215 27.9% 16.9%);
-      --color-input: hsl(215 27.9% 16.9%);
-      --color-ring: hsl(263.4 70% 50.4%);
+      --color-border: oklch(27.06% 0.028 256.85);
+      --color-input: oklch(27.06% 0.028 256.85);
+      --color-ring: oklch(51.21% 0.222 292.72);
 
-      --color-chart-1: hsl(220 70% 50%);
-      --color-chart-2: hsl(160 60% 45%);
-      --color-chart-3: hsl(30 80% 55%);
-      --color-chart-4: hsl(280 65% 60%);
-      --color-chart-5: hsl(340 75% 55%);
+      --color-chart-1: oklch(53.87% 0.192 261.94);
+      --color-chart-2: oklch(60.43% 0.123 163.38);
+      --color-chart-3: oklch(66.75% 0.162 49.04);
+      --color-chart-4: oklch(58.97% 0.196 308.35);
+      --color-chart-5: oklch(60.56% 0.206 5.02);
 
       /* Transaction colors */
-      --color-income: hsl(142 70% 48%);
-      --color-expense: hsl(0 84% 65%);
-      --color-transfer: hsl(263.4 70% 50.4%);
-      --color-savings: hsl(186 75% 50%);
+      --color-income: oklch(65.02% 0.181 149.58);
+      --color-expense: oklch(66.67% 0.21 24.28);
+      --color-transfer: oklch(51.21% 0.222 292.72);
+      --color-savings: oklch(70.62% 0.125 197.23);
 
       /* Account type colors */
-      --color-account-payment: hsl(
-        263.4 70% 50.4%
-      ); /* Purple - matches primary */
-      --color-account-savings: hsl(186 75% 50%); /* Teal - matches savings */
-      --color-account-debt: hsl(0 84% 65%); /* Red - matches destructive */
+      --color-account-payment: oklch(51.21% 0.222 292.72); /* Purple - matches primary */
+      --color-account-savings: oklch(70.62% 0.125 197.23); /* Teal - matches savings */
+      --color-account-debt: oklch(66.67% 0.21 24.28); /* Red - matches destructive */
     }
   }
 }
