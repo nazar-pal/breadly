@@ -28,7 +28,7 @@ export function SelectionTriggerContentCategory({
     return (
       <Text
         className={cn(
-          'text-sm font-semibold text-foreground',
+          'text-foreground text-sm font-semibold',
           slot.type === 'income' && slot.direction === 'to' && 'text-income',
           slot.type === 'expense' && slot.direction === 'to' && 'text-expense'
         )}

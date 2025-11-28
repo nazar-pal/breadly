@@ -84,9 +84,9 @@ export function StorageItemDialog({
 
         <View className="gap-4 px-6">
           <View className="gap-2">
-            <Text className="text-sm font-medium text-foreground">Key</Text>
+            <Text className="text-foreground text-sm font-medium">Key</Text>
             {isEditMode ? (
-              <Text className="font-mono text-sm text-muted-foreground">
+              <Text className="text-muted-foreground font-mono text-sm">
                 {key}
               </Text>
             ) : (
@@ -97,21 +97,21 @@ export function StorageItemDialog({
                 autoFocus
               />
             )}
-            {error && <Text className="text-xs text-destructive">{error}</Text>}
+            {error && <Text className="text-destructive text-xs">{error}</Text>}
           </View>
 
           <View className="gap-2">
-            <Text className="text-sm font-medium text-foreground">Value</Text>
+            <Text className="text-foreground text-sm font-medium">Value</Text>
             <TextInput
               value={value}
               onChangeText={setValue}
               placeholder="Enter value (can be JSON)..."
               multiline
-              className="max-h-[150px] min-h-[100px] rounded-md border border-input bg-background p-3 font-mono text-sm text-foreground"
+              className="border-input bg-background text-foreground max-h-[150px] min-h-[100px] rounded-md border p-3 font-mono text-sm"
               textAlignVertical="top"
               autoFocus={isEditMode}
             />
-            <Text className="text-xs text-muted-foreground">
+            <Text className="text-muted-foreground text-xs">
               Tip: You can enter JSON and it will be formatted automatically.
             </Text>
           </View>

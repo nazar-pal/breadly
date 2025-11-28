@@ -213,7 +213,7 @@ const DialogContent = R.forwardRef<View, DialogContentProps>(
               <View
                 ref={ref}
                 className={cn(
-                  'm-6 rounded-2xl bg-popover',
+                  'bg-popover m-6 rounded-2xl',
                   'w-[92vw] max-w-sm',
                   Platform.OS === 'ios'
                     ? 'ios:shadow-xl'
@@ -226,7 +226,7 @@ const DialogContent = R.forwardRef<View, DialogContentProps>(
                 {showCloseButton && (
                   <Pressable
                     onPress={handleClose}
-                    className="absolute right-4 top-4 z-50 rounded-full bg-muted/50 p-2"
+                    className="bg-muted/50 absolute top-4 right-4 z-50 rounded-full p-2"
                   >
                     <Ionicons name="close" size={24} color="#666" />
                   </Pressable>
@@ -299,7 +299,7 @@ const DialogTitle = R.forwardRef<Text, DialogTitleProps>(
     <Text
       ref={ref}
       className={cn(
-        'text-xl font-semibold leading-none tracking-tight text-foreground',
+        'text-foreground text-xl leading-none font-semibold tracking-tight',
         className
       )}
       {...props}
@@ -315,7 +315,7 @@ const DialogDescription = R.forwardRef<Text, DialogDescriptionProps>(
   ({ className, children, ...props }, ref) => (
     <Text
       ref={ref}
-      className={cn('mt-2 text-base text-muted-foreground', className)}
+      className={cn('text-muted-foreground mt-2 text-base', className)}
       {...props}
     >
       {children}

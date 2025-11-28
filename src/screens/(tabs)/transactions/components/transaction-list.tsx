@@ -25,7 +25,7 @@ export function TransactionList({
   const listData = buildListData(todaysTransactions, earlierTransactions)
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <LegendList
         data={listData}
         renderItem={renderItem}

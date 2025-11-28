@@ -31,11 +31,11 @@ export function UpdatesRow() {
 
   return (
     <Pressable
-      className="flex-row items-center justify-between border-b border-border/30 py-3 active:opacity-70"
+      className="border-border/30 flex-row items-center justify-between border-b py-3 active:opacity-70"
       onPress={handlePress}
     >
       <View className="flex-row items-center">
-        <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+        <View className="bg-muted mr-3 h-10 w-10 items-center justify-center rounded-full">
           <Icon name="RefreshCw" size={18} className="text-primary" />
         </View>
         <Text className="font-medium">App Updates</Text>
@@ -50,9 +50,8 @@ export function UpdatesRow() {
                 : 'bg-gray-400'
           }`}
         />
-        <Text className="text-sm text-muted-foreground">{status.label}</Text>
+        <Text className="text-muted-foreground text-sm">{status.label}</Text>
       </View>
     </Pressable>
   )
 }
-

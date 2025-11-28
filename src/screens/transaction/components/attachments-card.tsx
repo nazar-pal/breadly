@@ -34,14 +34,14 @@ export function ReceiptsCard({ receipts }: ReceiptsCardProps) {
 
 function ReceiptItem({ receipt }: { receipt: TransactionAttachment }) {
   return (
-    <View className="w-[48%] overflow-hidden rounded-xl bg-secondary/50">
+    <View className="bg-secondary/50 w-[48%] overflow-hidden rounded-xl">
       <Image
         source={{ uri: receipt.bucketPath || undefined }}
         className="h-36 w-full"
         resizeMode="cover"
       />
       <View className="px-3 py-2">
-        <Text numberOfLines={1} className="text-xs text-muted-foreground">
+        <Text numberOfLines={1} className="text-muted-foreground text-xs">
           {receipt.fileName}
         </Text>
       </View>
@@ -75,19 +75,18 @@ export function VoiceMemosCard({ voiceMemos }: VoiceMemosCardProps) {
 
 function VoiceMemoItem({ memo }: { memo: TransactionAttachment }) {
   return (
-    <View className="flex-row items-center rounded-xl bg-secondary/40 p-3">
-      <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+    <View className="bg-secondary/40 flex-row items-center rounded-xl p-3">
+      <View className="bg-primary/10 mr-3 h-10 w-10 items-center justify-center rounded-full">
         <Icon name="Play" size={18} className="text-primary" />
       </View>
       <View className="flex-1">
-        <Text numberOfLines={1} className="text-sm font-medium text-foreground">
+        <Text numberOfLines={1} className="text-foreground text-sm font-medium">
           {memo.fileName}
         </Text>
-        <Text className="mt-0.5 text-xs text-muted-foreground">
+        <Text className="text-muted-foreground mt-0.5 text-xs">
           {formatDuration(memo.duration)}
         </Text>
       </View>
     </View>
   )
 }
-

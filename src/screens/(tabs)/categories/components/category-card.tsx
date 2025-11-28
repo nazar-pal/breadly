@@ -47,7 +47,7 @@ export function CategoryCard({ category, className, ...rest }: Props) {
           numberOfLines={1}
           ellipsizeMode="tail"
           className={cn(
-            'font-semibold text-foreground',
+            'text-foreground font-semibold',
             'text-[13px] leading-4'
           )}
         >

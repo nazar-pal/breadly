@@ -28,7 +28,7 @@ export function TransactionAmount({
         {formatCurrency(amount, currencyId || 'USD')}
       </Text>
       {txDateLabel ? (
-        <Text className="mt-0.5 text-[11px] text-muted-foreground">
+        <Text className="text-muted-foreground mt-0.5 text-[11px]">
           {txDateLabel}
         </Text>
       ) : null}

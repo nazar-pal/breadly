@@ -21,7 +21,7 @@ export default function Screen({ categoryId }: { categoryId: string }) {
 
   return (
     <View
-      className=" gap-4 bg-background px-4 pt-4"
+      className="bg-background gap-4 px-4 pt-4"
       style={{ paddingBottom: insets.bottom + 16, paddingTop: 16 }}
     >
       <RootCategory category={category} />

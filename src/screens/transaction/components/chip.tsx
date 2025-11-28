@@ -8,11 +8,10 @@ interface ChipProps {
 
 export function Chip({ children }: ChipProps) {
   return (
-    <View className="rounded-full bg-muted/60 px-2.5 py-1">
-      <Text className="text-xs font-medium text-muted-foreground">
+    <View className="bg-muted/60 rounded-full px-2.5 py-1">
+      <Text className="text-muted-foreground text-xs font-medium">
         {children}
       </Text>
     </View>
   )
 }
-

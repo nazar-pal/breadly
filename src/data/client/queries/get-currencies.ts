@@ -10,4 +10,3 @@ export function getCurrencies() {
 
 export type GetCurrenciesResult = Awaited<ReturnType<typeof getCurrencies>>
 export type GetCurrenciesResultItem = GetCurrenciesResult[number]
-

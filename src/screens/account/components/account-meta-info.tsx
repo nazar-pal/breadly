@@ -11,27 +11,27 @@ export function AccountMetaInfo({
   account: GetAccountResultItem
 }) {
   return (
-    <Card className="mb-4 border-0 bg-card/50 shadow-none">
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
       <CardContent className="py-4">
         <View className="gap-3">
           <View className="flex-row items-center justify-between">
-            <Text className="text-sm text-muted-foreground">Currency</Text>
-            <Text className="text-sm font-medium text-foreground">
+            <Text className="text-muted-foreground text-sm">Currency</Text>
+            <Text className="text-foreground text-sm font-medium">
               {account.currencyId || 'USD'}
             </Text>
           </View>
           {account.createdAt ? (
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">Created</Text>
-              <Text className="text-sm font-medium text-foreground">
+              <Text className="text-muted-foreground text-sm">Created</Text>
+              <Text className="text-foreground text-sm font-medium">
                 {account.createdAt.toLocaleDateString()}
               </Text>
             </View>
           ) : null}
           {account.type === 'saving' && account.savingsTargetAmount ? (
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">Target</Text>
-              <Text className="text-sm font-medium text-foreground">
+              <Text className="text-muted-foreground text-sm">Target</Text>
+              <Text className="text-foreground text-sm font-medium">
                 {formatCurrency(
                   account.savingsTargetAmount,
                   account.currencyId || 'USD'
@@ -41,18 +41,18 @@ export function AccountMetaInfo({
           ) : null}
           {account.type === 'saving' && account.savingsTargetDate ? (
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">Target date</Text>
-              <Text className="text-sm font-medium text-foreground">
+              <Text className="text-muted-foreground text-sm">Target date</Text>
+              <Text className="text-foreground text-sm font-medium">
                 {account.savingsTargetDate.toLocaleDateString()}
               </Text>
             </View>
           ) : null}
           {account.type === 'debt' && account.debtInitialAmount ? (
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-muted-foreground text-sm">
                 Initial amount
               </Text>
-              <Text className="text-sm font-medium text-foreground">
+              <Text className="text-foreground text-sm font-medium">
                 {formatCurrency(
                   account.debtInitialAmount,
                   account.currencyId || 'USD'
@@ -62,8 +62,8 @@ export function AccountMetaInfo({
           ) : null}
           {account.type === 'debt' && account.debtDueDate ? (
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-muted-foreground">Due date</Text>
-              <Text className="text-sm font-medium text-foreground">
+              <Text className="text-muted-foreground text-sm">Due date</Text>
+              <Text className="text-foreground text-sm font-medium">
                 {account.debtDueDate.toLocaleDateString()}
               </Text>
             </View>

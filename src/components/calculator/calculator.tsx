@@ -50,7 +50,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       <View className="h-8 items-center justify-center px-4">
         {comment ? (
           <Text
-            className="text-center text-sm italic text-muted-foreground"
+            className="text-muted-foreground text-center text-sm italic"
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -80,7 +80,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
         className="mt-3 items-center"
         style={{ marginBottom: -insets.bottom, paddingBottom: 8 }}
       >
-        <Text className="text-sm text-muted-foreground">
+        <Text className="text-muted-foreground text-sm">
           {format(selectedDate, 'EEEE, MMMM d, yyyy')}
         </Text>
       </View>

@@ -19,12 +19,12 @@ export function SettingsDropdownLinkItem({
   return (
     <Link {...linkProps}>
       <View className="flex-row items-center gap-3">
-        <View className="rounded-lg bg-primary/10 p-2">
+        <View className="bg-primary/10 rounded-lg p-2">
           <Icon name={icon} size={16} className="text-primary" />
         </View>
         <View>
-          <Text className="font-medium text-foreground">{title}</Text>
-          <Text className="text-xs text-muted-foreground">{description}</Text>
+          <Text className="text-foreground font-medium">{title}</Text>
+          <Text className="text-muted-foreground text-xs">{description}</Text>
         </View>
       </View>
     </Link>

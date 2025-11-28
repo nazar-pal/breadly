@@ -36,7 +36,7 @@ export function SessionStoreCard() {
   ]
 
   return (
-    <View className="mb-3 rounded-lg border border-border bg-card">
+    <View className="border-border bg-card mb-3 rounded-lg border">
       {/* Header - Pressable to toggle */}
       <Pressable
         onPress={() => setExpanded(prev => !prev)}
@@ -55,7 +55,7 @@ export function SessionStoreCard() {
 
       {/* Items - only visible when expanded */}
       {expanded && (
-        <View className="border-t border-border">
+        <View className="border-border border-t">
           {items.map((item, idx) => (
             <StoreItemRow
               key={item.label}
@@ -69,13 +69,7 @@ export function SessionStoreCard() {
   )
 }
 
-function StoreItemRow({
-  item,
-  isLast
-}: {
-  item: StoreItem
-  isLast: boolean
-}) {
+function StoreItemRow({ item, isLast }: { item: StoreItem; isLast: boolean }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -91,10 +85,10 @@ function StoreItemRow({
   return (
     <View
       className={`flex-row items-center justify-between gap-2 px-2.5 py-1 ${
-        !isLast ? 'border-b border-border' : ''
+        !isLast ? 'border-border border-b' : ''
       }`}
     >
-      <Text className="shrink-0 text-[11px] text-muted-foreground">
+      <Text className="text-muted-foreground shrink-0 text-[11px]">
         {item.label}
       </Text>
       <View className="min-w-0 shrink flex-row items-center gap-0.5">

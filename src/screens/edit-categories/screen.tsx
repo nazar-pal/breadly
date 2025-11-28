@@ -13,7 +13,7 @@ export default function EditCategoriesLayout({
 }) {
   return (
     <SafeAreaView
-      className="flex-1 bg-background px-4"
+      className="bg-background flex-1 px-4"
       collapsable={false}
       edges={['bottom']}
       mode="padding"

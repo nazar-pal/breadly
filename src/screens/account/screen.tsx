@@ -27,7 +27,7 @@ export default function AccountScreen({ id }: { id: string }) {
 
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      className="bg-background flex-1"
       contentContainerStyle={{
         padding: 16,
         paddingBottom: insets.bottom + 20
@@ -42,7 +42,7 @@ export default function AccountScreen({ id }: { id: string }) {
           <AccountTransactions accountId={account.id} />
         </>
       ) : (
-        <Text className="mt-10 text-center text-lg text-destructive">
+        <Text className="text-destructive mt-10 text-center text-lg">
           Account not found
         </Text>
       )}

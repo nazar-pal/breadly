@@ -22,17 +22,17 @@ export function SettingsRow({
   return (
     <Pressable
       className={`flex-row items-center py-3 active:opacity-70 ${
-        showDivider ? 'border-b border-border/30' : ''
+        showDivider ? 'border-border/30 border-b' : ''
       }`}
       onPress={onPress}
     >
-      <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+      <View className="bg-muted mr-3 h-10 w-10 items-center justify-center rounded-full">
         <Icon name={icon} size={18} className="text-primary" />
       </View>
       <View className="flex-1">
         <Text className="font-medium">{title}</Text>
         {subtitle && (
-          <Text className="text-sm text-muted-foreground">{subtitle}</Text>
+          <Text className="text-muted-foreground text-sm">{subtitle}</Text>
         )}
       </View>
       {rightElement || (
@@ -41,4 +41,3 @@ export function SettingsRow({
     </Pressable>
   )
 }
-

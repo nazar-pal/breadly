@@ -33,7 +33,7 @@ export function CategoryInput<T extends FieldValues>({
       }) => (
         <View>
           <Input
-            className="native:h-[80px] mb-5 rounded-xl border-none bg-muted/60 px-4 py-3 text-base"
+            className="native:h-[80px] bg-muted/60 mb-5 rounded-xl border-none px-4 py-3 text-base"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}

@@ -9,9 +9,9 @@ type StatsBarProps = {
 
 export function StatsBar({ columns, totalRows }: StatsBarProps) {
   return (
-    <View className="mb-3 flex-row items-center gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5">
+    <View className="border-border bg-muted/30 mb-3 flex-row items-center gap-4 rounded-lg border px-4 py-2.5">
       <StatItem icon="Rows3" value={totalRows} label="rows" />
-      <View className="h-5 w-px bg-border" />
+      <View className="bg-border h-5 w-px" />
       <StatItem icon="Columns3" value={columns.length} label="columns" />
     </View>
   )
@@ -30,8 +30,8 @@ function StatItem({
     <View className="flex-row items-center gap-2">
       <Icon name={icon} size={14} className="text-muted-foreground" />
       <View className="flex-row items-baseline gap-1">
-        <Text className="text-base font-semibold text-foreground">{value}</Text>
-        <Text className="text-xs text-muted-foreground">{label}</Text>
+        <Text className="text-foreground text-base font-semibold">{value}</Text>
+        <Text className="text-muted-foreground text-xs">{label}</Text>
       </View>
     </View>
   )

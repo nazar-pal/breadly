@@ -100,7 +100,9 @@ export function SyncDiagnostics() {
       color: 'text-blue-600 dark:text-blue-400',
       bgColor: 'bg-blue-500/10 border-blue-500/20',
       title: isSynced ? 'Reconnecting…' : 'Connecting…',
-      message: isSynced ? `Last sync: ${lastSyncMsg}` : 'Establishing connection'
+      message: isSynced
+        ? `Last sync: ${lastSyncMsg}`
+        : 'Establishing connection'
     },
     syncing: {
       icon: 'spinner',
@@ -193,9 +195,13 @@ function StatusCard({
             })}
           />
         )}
-        <Text className={cn('font-semibold', config.color)}>{config.title}</Text>
+        <Text className={cn('font-semibold', config.color)}>
+          {config.title}
+        </Text>
       </View>
-      <Text className="mt-1 text-xs text-muted-foreground">{config.message}</Text>
+      <Text className="text-muted-foreground mt-1 text-xs">
+        {config.message}
+      </Text>
       {children}
     </View>
   )
@@ -226,13 +232,13 @@ function DebugPanel({
   ]
 
   return (
-    <View className="mt-3 border-t border-border/30 pt-3">
+    <View className="border-border/30 mt-3 border-t pt-3">
       {/* Quick Stats Grid */}
       <View className="flex-row flex-wrap gap-2">
         {quickStats.map(({ label, value, good }) => (
           <View
             key={label}
-            className="flex-row items-center gap-1.5 rounded-md bg-background/50 px-2 py-1"
+            className="bg-background/50 flex-row items-center gap-1.5 rounded-md px-2 py-1"
           >
             <View
               className={cn('h-1.5 w-1.5 rounded-full', {
@@ -243,7 +249,7 @@ function DebugPanel({
                 'bg-amber-500': value === undefined
               })}
             />
-            <Text className="text-[10px] text-muted-foreground">{label}</Text>
+            <Text className="text-muted-foreground text-[10px]">{label}</Text>
           </View>
         ))}
       </View>
@@ -260,13 +266,13 @@ function DebugPanel({
       {/* Download Progress */}
       {pr && (
         <View className="mt-2">
-          <View className="h-1.5 overflow-hidden rounded-full bg-background/50">
+          <View className="bg-background/50 h-1.5 overflow-hidden rounded-full">
             <View
               className="h-full rounded-full bg-blue-500"
               style={{ width: `${(pr.downloadedFraction || 0) * 100}%` }}
             />
           </View>
-          <Text className="mt-1 text-[10px] text-muted-foreground">
+          <Text className="text-muted-foreground mt-1 text-[10px]">
             {pr.downloadedOperations}/{pr.totalOperations} operations
           </Text>
         </View>
@@ -282,18 +288,18 @@ function DebugPanel({
           size={12}
           className="text-muted-foreground"
         />
-        <Text className="text-[10px] font-medium text-muted-foreground">
+        <Text className="text-muted-foreground text-[10px] font-medium">
           {showDetails ? 'Hide raw data' : 'Show raw data'}
         </Text>
       </Pressable>
 
       {/* Raw Details */}
       {showDetails && (
-        <View className="mt-2 rounded-md bg-background/50 p-2">
+        <View className="bg-background/50 mt-2 rounded-md p-2">
           {/* Priority Entries */}
           {entries.length > 0 && (
             <View className="mb-2">
-              <Text className="mb-1 text-[10px] font-medium text-foreground">
+              <Text className="text-foreground mb-1 text-[10px] font-medium">
                 Priority Queues:
               </Text>
               {entries.map((entry: any) => {
@@ -301,7 +307,7 @@ function DebugPanel({
                 return (
                   <Text
                     key={entry.priority}
-                    className="text-[9px] font-mono text-muted-foreground"
+                    className="text-muted-foreground font-mono text-[9px]"
                   >
                     P{entry.priority}: synced={String(entry.hasSynced)}, last=
                     {lastSync}
@@ -312,11 +318,11 @@ function DebugPanel({
           )}
 
           {/* Raw JSON */}
-          <Text className="text-[10px] font-medium text-foreground">
+          <Text className="text-foreground text-[10px] font-medium">
             Raw Status:
           </Text>
           <Text
-            className="mt-1 text-[9px] font-mono text-muted-foreground"
+            className="text-muted-foreground mt-1 font-mono text-[9px]"
             selectable
           >
             {serializeStatus(status)}
@@ -348,4 +354,3 @@ function serializeStatus(status: SyncStatus): string {
     return 'Unable to serialize'
   }
 }
-

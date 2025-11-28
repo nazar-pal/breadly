@@ -20,7 +20,7 @@ import {
 
 export default function SettingsScreen() {
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <ScrollView
         className="flex-1"
         contentContainerClassName="px-4 pb-10 pt-6"
@@ -109,12 +109,12 @@ function AboutSection() {
             onPress={() => setIsExpanded(!isExpanded)}
           >
             <View className="flex-row items-center">
-              <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+              <View className="bg-muted mr-3 h-10 w-10 items-center justify-center rounded-full">
                 <Icon name="Smartphone" size={18} className="text-primary" />
               </View>
               <View>
                 <Text className="font-medium">Breadly</Text>
-                <Text className="text-sm text-muted-foreground">
+                <Text className="text-muted-foreground text-sm">
                   v{appVersion} ({buildVersion})
                 </Text>
               </View>
@@ -127,7 +127,7 @@ function AboutSection() {
           </Pressable>
 
           {isExpanded && (
-            <View className="border-t border-border/30 pt-2">
+            <View className="border-border/30 border-t pt-2">
               <UpdatesRow />
               <SettingsRow
                 icon="FileText"
@@ -146,12 +146,12 @@ function AboutSection() {
                 onPress={() => setShowSyncDebug(!showSyncDebug)}
               >
                 <View className="flex-row items-center">
-                  <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+                  <View className="bg-muted mr-3 h-10 w-10 items-center justify-center rounded-full">
                     <Icon name="Bug" size={18} className="text-primary" />
                   </View>
                   <View>
                     <Text className="font-medium">Sync Diagnostics</Text>
-                    <Text className="text-sm text-muted-foreground">
+                    <Text className="text-muted-foreground text-sm">
                       For troubleshooting sync issues
                     </Text>
                   </View>
@@ -164,7 +164,7 @@ function AboutSection() {
               </Pressable>
 
               {showSyncDebug && (
-                <View className="ml-13 mb-2">
+                <View className="mb-2 ml-13">
                   <SyncDiagnostics />
                 </View>
               )}

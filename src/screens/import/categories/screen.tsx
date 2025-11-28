@@ -67,7 +67,7 @@ export default function ImportCategoriesScreen() {
     const fileSizeLabel = formatBytes(file?.size)
 
     return (
-      <View className="flex-1 bg-background pt-4">
+      <View className="bg-background flex-1 pt-4">
         <PreviewInfo
           fileName={file?.name}
           dataCount={data.length}
@@ -84,7 +84,7 @@ export default function ImportCategoriesScreen() {
 
         <View
           pointerEvents="box-none"
-          className="absolute left-4 right-4"
+          className="absolute right-4 left-4"
           style={{
             bottom: bottomInset
           }}
@@ -107,7 +107,7 @@ export default function ImportCategoriesScreen() {
   }
 
   return (
-    <View className="flex-1 ">
+    <View className="flex-1">
       {status !== 'idle' ? (
         <BusyIndicator
           status={status}

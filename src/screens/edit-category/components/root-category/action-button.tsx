@@ -19,12 +19,12 @@ export function ActionButton({
     <Pressable
       onPress={onPress}
       className={cn(
-        'flex-row items-center justify-center gap-3 rounded-xl border border-border bg-background/80 py-4 backdrop-blur-sm active:scale-[0.98]',
+        'border-border bg-background/80 flex-row items-center justify-center gap-3 rounded-xl border py-4 backdrop-blur-sm active:scale-[0.98]',
         className
       )}
     >
       <View className="h-6 w-6 items-center justify-center">{icon}</View>
-      <Text className="text-base font-semibold text-foreground">{title}</Text>
+      <Text className="text-foreground text-base font-semibold">{title}</Text>
     </Pressable>
   )
 }

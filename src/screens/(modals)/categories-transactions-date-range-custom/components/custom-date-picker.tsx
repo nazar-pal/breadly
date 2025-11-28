@@ -206,10 +206,10 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
       {/* Action buttons ------------------------------------------------------*/}
       <View className="flex-row gap-3 px-5 pt-5">
         <Pressable
-          className="flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl border border-input bg-background py-3 active:opacity-90"
+          className="border-input bg-background flex-[0.4] flex-row items-center justify-center gap-1 rounded-2xl border py-3 active:opacity-90"
           onPress={handleCancel}
         >
-          <Text className="text-base font-semibold text-foreground">
+          <Text className="text-foreground text-base font-semibold">
             Cancel
           </Text>
         </Pressable>

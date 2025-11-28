@@ -62,7 +62,7 @@ export function TabsCategoriesNavBar({ type }: { type: CategoryType }) {
         onPress={() => router.setParams({ type: 'expense' })}
         className={`flex-1 items-center rounded-full px-3 py-1.5 ${
           activeCategoryType === 'expense'
-            ? 'border border-primary bg-primary/10'
+            ? 'border-primary bg-primary/10 border'
             : 'bg-transparent'
         }`}
       >
@@ -94,7 +94,7 @@ export function TabsCategoriesNavBar({ type }: { type: CategoryType }) {
         onPress={() => router.setParams({ type: 'income' })}
         className={`flex-1 items-center rounded-full px-3 py-1.5 ${
           activeCategoryType === 'income'
-            ? 'border border-primary bg-primary/10'
+            ? 'border-primary bg-primary/10 border'
             : 'bg-transparent'
         }`}
       >

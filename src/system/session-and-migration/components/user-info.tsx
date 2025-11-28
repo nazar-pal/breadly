@@ -44,7 +44,7 @@ export function UserInfo() {
       className="native:max-w-md w-full max-w-sm"
     >
       <AccordionItem value="user-info">
-        <AccordionTrigger className="rounded-xl border border-border/10 px-4 py-4">
+        <AccordionTrigger className="border-border/10 rounded-xl border px-4 py-4">
           <Avatar alt={displayName}>
             <AvatarImage source={{ uri: imageUrl }} />
             <AvatarFallback>
@@ -53,20 +53,20 @@ export function UserInfo() {
           </Avatar>
 
           <View className="ml-4 flex-1">
-            <Text className="mb-1 text-lg font-semibold text-popover-foreground">
+            <Text className="text-popover-foreground mb-1 text-lg font-semibold">
               {displayName}
             </Text>
             {emails.map((email, idx) => (
               <Text
                 key={email}
-                className="text-sm text-muted-foreground"
+                className="text-muted-foreground text-sm"
                 style={idx > 0 ? { marginTop: 2 } : undefined}
               >
                 {email}
               </Text>
             ))}
             {username && (
-              <Text className="mt-1 text-xs text-muted-foreground">
+              <Text className="text-muted-foreground mt-1 text-xs">
                 Username: {username}
               </Text>
             )}

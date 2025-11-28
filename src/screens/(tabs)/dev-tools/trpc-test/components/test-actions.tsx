@@ -63,8 +63,7 @@ function ActionButton({
         <Icon name={icon} size={14} className="text-foreground" />
         <Text className="font-medium">{label}</Text>
       </View>
-      <Text className="text-xs text-muted-foreground">{description}</Text>
+      <Text className="text-muted-foreground text-xs">{description}</Text>
     </Button>
   )
 }
-

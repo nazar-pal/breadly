@@ -84,9 +84,9 @@ export function ConfirmationDialog({
 
         <View className="gap-3 px-6">
           <View className="gap-1.5">
-            <Text className="text-center text-sm text-muted-foreground">
+            <Text className="text-muted-foreground text-center text-sm">
               Type{' '}
-              <Text className="font-mono font-semibold text-foreground">
+              <Text className="text-foreground font-mono font-semibold">
                 {CONFIRMATION_PHRASE}
               </Text>{' '}
               to confirm
@@ -115,7 +115,11 @@ export function ConfirmationDialog({
 
         <DialogFooter className="gap-2">
           <DialogClose>
-            <Button variant="outline" disabled={isDeleting} onPress={handleCancel}>
+            <Button
+              variant="outline"
+              disabled={isDeleting}
+              onPress={handleCancel}
+            >
               <Text>Cancel</Text>
             </Button>
           </DialogClose>

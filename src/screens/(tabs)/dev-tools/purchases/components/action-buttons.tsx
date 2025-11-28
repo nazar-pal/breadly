@@ -37,9 +37,8 @@ export function ActionButtons({ onRefresh, onLogDebug }: ActionButtonsProps) {
         onPress={onLogDebug}
       >
         <Icon name="Bug" size={14} className="text-muted-foreground" />
-        <Text className="text-xs font-medium text-muted-foreground">Debug</Text>
+        <Text className="text-muted-foreground text-xs font-medium">Debug</Text>
       </Button>
     </View>
   )
 }
-

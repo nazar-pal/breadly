@@ -60,7 +60,7 @@ export function ImportInstructionsDialog({
       <DialogTrigger className="relative">
         {shouldAnimate && (
           <Animated.View
-            className="absolute inset-0 rounded-full bg-primary"
+            className="bg-primary absolute inset-0 rounded-full"
             style={{
               opacity: 0,
               animationName: pingKeyframes,
@@ -123,23 +123,23 @@ function ImportInstructionsCard({
       )}
 
       {additionalRules && additionalRules.length > 0 && (
-        <View className="gap-1 rounded-md bg-primary/5 p-3">
-          <Text className="text-sm font-semibold text-primary">
+        <View className="bg-primary/5 gap-1 rounded-md p-3">
+          <Text className="text-primary text-sm font-semibold">
             Additional Rules
           </Text>
           {additionalRules.map((rule, index) => (
-            <Text key={index} className="text-sm text-muted-foreground">
+            <Text key={index} className="text-muted-foreground text-sm">
               • {rule}
             </Text>
           ))}
         </View>
       )}
 
-      <View className="gap-1 rounded-md bg-muted/30 p-3">
-        <Text className="text-xs font-semibold text-muted-foreground">
+      <View className="bg-muted/30 gap-1 rounded-md p-3">
+        <Text className="text-muted-foreground text-xs font-semibold">
           Note
         </Text>
-        <Text className="text-xs text-muted-foreground">{note}</Text>
+        <Text className="text-muted-foreground text-xs">{note}</Text>
       </View>
     </View>
   )
@@ -154,11 +154,11 @@ function ColumnsSection({
 }) {
   return (
     <View className="gap-3">
-      <Text className="font-medium text-primary">{title}</Text>
+      <Text className="text-primary font-medium">{title}</Text>
       {items.map(item => (
-        <View key={item.label} className="gap-2 rounded-md bg-muted/30 p-3">
+        <View key={item.label} className="bg-muted/30 gap-2 rounded-md p-3">
           <Text className="font-mono text-xs font-semibold">{item.label}</Text>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-muted-foreground text-sm">
             {item.description}
           </Text>
         </View>

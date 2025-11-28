@@ -39,11 +39,11 @@ export function PreviewInfo({
           </Text>
         ) : null}
         <View className="flex-row flex-wrap items-center gap-x-2">
-          <Text className="text-xs text-muted-foreground">
+          <Text className="text-muted-foreground text-xs">
             {dataCount} {label}
           </Text>
           {fileSizeLabel ? (
-            <Text className="text-xs text-muted-foreground">
+            <Text className="text-muted-foreground text-xs">
               • {fileSizeLabel}
             </Text>
           ) : null}

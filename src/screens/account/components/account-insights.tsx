@@ -48,10 +48,10 @@ export function AccountInsights({
   return (
     <View>
       <View className="mb-2 flex-row items-center justify-between">
-        <Text className="text-base font-medium text-foreground">
+        <Text className="text-foreground text-base font-medium">
           This month
         </Text>
-        <Text className="text-xs text-muted-foreground">
+        <Text className="text-muted-foreground text-xs">
           {count} transactions
         </Text>
       </View>
@@ -91,7 +91,7 @@ function InsightTile({
 
   return (
     <View className={`flex-1 rounded-2xl ${bgClass} px-3 py-3`}>
-      <Text className="text-xs text-muted-foreground">{label}</Text>
+      <Text className="text-muted-foreground text-xs">{label}</Text>
       <Text className={`mt-1 text-lg font-semibold ${textClass}`}>{value}</Text>
     </View>
   )

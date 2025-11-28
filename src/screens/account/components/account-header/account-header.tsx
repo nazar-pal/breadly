@@ -61,7 +61,7 @@ export function AccountHeader({ account }: { account: GetAccountResultItem }) {
           />
         </View>
         <View>
-          <Text className="text-2xl font-bold text-foreground">
+          <Text className="text-foreground text-2xl font-bold">
             {account.name}
           </Text>
           <View className="mt-1 flex-row items-center gap-2">

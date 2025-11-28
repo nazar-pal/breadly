@@ -7,15 +7,14 @@ export function EmptyState() {
   return (
     <Card>
       <CardContent className="items-center py-8">
-        <View className="mb-3 rounded-full bg-muted p-3">
+        <View className="bg-muted mb-3 rounded-full p-3">
           <Icon name="Inbox" size={24} className="text-muted-foreground" />
         </View>
-        <Text className="text-sm font-medium text-foreground">No Rows</Text>
-        <Text className="mt-1 text-xs text-muted-foreground">
+        <Text className="text-foreground text-sm font-medium">No Rows</Text>
+        <Text className="text-muted-foreground mt-1 text-xs">
           This table is empty
         </Text>
       </CardContent>
     </Card>
   )
 }
-

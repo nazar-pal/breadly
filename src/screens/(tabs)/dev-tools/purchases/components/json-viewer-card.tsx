@@ -30,7 +30,7 @@ export function JsonViewerCard({
         </View>
       </CardHeader>
       <CardContent className="pt-0">
-        <Accordion type="multiple" className="rounded-lg border border-border">
+        <Accordion type="multiple" className="border-border rounded-lg border">
           <JsonSection title="Offerings" data={offerings} />
           <JsonSection title="CustomerInfo" data={customerInfo} isLast />
         </Accordion>
@@ -71,12 +71,12 @@ function JsonSection({
   return (
     <AccordionItem
       value={title}
-      className={!isLast ? 'border-b border-border' : ''}
+      className={!isLast ? 'border-border border-b' : ''}
     >
       <AccordionTrigger className="items-center px-3 py-2">
         <View className="flex-1 flex-row items-center justify-between">
-          <Text className="text-xs font-medium text-foreground">{title}</Text>
-          <Text className="text-[10px] text-muted-foreground">
+          <Text className="text-foreground text-xs font-medium">{title}</Text>
+          <Text className="text-muted-foreground text-[10px]">
             {formatted.length} chars
           </Text>
         </View>
@@ -101,10 +101,10 @@ function JsonSection({
             </Text>
           </Button>
         </View>
-        <View className="rounded-md bg-muted/50 p-2">
+        <View className="bg-muted/50 rounded-md p-2">
           <Text
             selectable
-            className="font-mono text-[10px] leading-4 text-foreground"
+            className="text-foreground font-mono text-[10px] leading-4"
           >
             {formatted}
           </Text>
@@ -113,4 +113,3 @@ function JsonSection({
     </AccordionItem>
   )
 }
-

@@ -17,9 +17,9 @@ export function LayoutHeader({
     <View className="mt-1 flex-row gap-2">
       <Pressable
         onPress={() => handlePress('expense')}
-        className={`mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2 ${
+        className={`mt-2 mb-1 flex-1 items-center rounded-md px-2 py-2 ${
           activeCategoryType === 'expense'
-            ? 'border border-primary bg-primary/10'
+            ? 'border-primary bg-primary/10 border'
             : 'bg-transparent'
         }`}
       >
@@ -36,9 +36,9 @@ export function LayoutHeader({
 
       <Pressable
         onPress={() => handlePress('income')}
-        className={`mb-1 mt-2 flex-1 items-center rounded-md px-2 py-2 ${
+        className={`mt-2 mb-1 flex-1 items-center rounded-md px-2 py-2 ${
           activeCategoryType === 'income'
-            ? 'border border-primary bg-primary/10'
+            ? 'border-primary bg-primary/10 border'
             : 'bg-transparent'
         }`}
       >

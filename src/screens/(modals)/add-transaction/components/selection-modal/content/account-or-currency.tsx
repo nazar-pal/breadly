@@ -47,12 +47,12 @@ export function AccountOrCurrency({
     >
       <TabsList className="mb-3">
         <TabsTrigger value="account">
-          <Icon name="CreditCard" size={14} className="mr-1 text-foreground" />
+          <Icon name="CreditCard" size={14} className="text-foreground mr-1" />
           <Text>Accounts</Text>
         </TabsTrigger>
 
         <TabsTrigger value="currency">
-          <Icon name="DollarSign" size={14} className="mr-1 text-foreground" />
+          <Icon name="DollarSign" size={14} className="text-foreground mr-1" />
           <Text>Currencies</Text>
         </TabsTrigger>
       </TabsList>

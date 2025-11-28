@@ -38,7 +38,7 @@ export function HeaderCard({
         {/* Stats on the left */}
         <View className="flex-row items-center gap-4">
           <Stat value={totalItems} label="items" />
-          <View className="h-4 w-px bg-border" />
+          <View className="bg-border h-4 w-px" />
           <Stat value={jsonCount} label="JSON" />
         </View>
 
@@ -95,8 +95,8 @@ export function HeaderCard({
 function Stat({ value, label }: { value: number; label: string }) {
   return (
     <View className="flex-row items-baseline gap-1">
-      <Text className="text-lg font-semibold text-foreground">{value}</Text>
-      <Text className="text-xs text-muted-foreground">{label}</Text>
+      <Text className="text-foreground text-lg font-semibold">{value}</Text>
+      <Text className="text-muted-foreground text-xs">{label}</Text>
     </View>
   )
 }

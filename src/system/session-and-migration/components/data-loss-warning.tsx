@@ -36,9 +36,7 @@ export function DataLossWarning() {
           </Text>
         )}
         {stats.budgets > 0 && (
-          <Text className="text-xs text-white/70">
-            {stats.budgets} budgets
-          </Text>
+          <Text className="text-xs text-white/70">{stats.budgets} budgets</Text>
         )}
       </View>
     </View>

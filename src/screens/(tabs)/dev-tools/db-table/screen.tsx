@@ -3,7 +3,7 @@ import { TableContent } from './components/table-content'
 
 export default function DbTableScreen() {
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <TableContent />
     </View>
   )

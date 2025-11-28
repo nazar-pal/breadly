@@ -10,7 +10,7 @@ export function CategoryCardIcon({
   type: CategoryType
 }) {
   return (
-    <View className="h-9 w-9 items-center justify-center rounded-lg bg-muted/70">
+    <View className="bg-muted/70 h-9 w-9 items-center justify-center rounded-lg">
       <Icon
         name={name || 'House'}
         size={20}

@@ -85,7 +85,7 @@ export default function ImportTransactionsScreen() {
     const canImport = !isPostValidating && !isPending && isPostValid
 
     return (
-      <View className="flex-1 bg-background pt-4">
+      <View className="bg-background flex-1 pt-4">
         <PreviewInfo
           fileName={file?.name}
           dataCount={data.length}
@@ -98,11 +98,11 @@ export default function ImportTransactionsScreen() {
 
         {/* Validation error banner */}
         {hasErrors && !isPostValidating && (
-          <View className="mx-4 mt-2 rounded-md bg-destructive/10 p-3">
-            <Text className="text-sm font-medium text-destructive">
+          <View className="bg-destructive/10 mx-4 mt-2 rounded-md p-3">
+            <Text className="text-destructive text-sm font-medium">
               {errorCount} {errorCount === 1 ? 'error' : 'errors'} found
             </Text>
-            <Text className="mt-1 text-xs text-destructive/80">
+            <Text className="text-destructive/80 mt-1 text-xs">
               Fix the issues below before importing. Categories must exist and
               transactions for archived categories must have dates on or before
               the archive date.
@@ -120,7 +120,7 @@ export default function ImportTransactionsScreen() {
 
         <View
           pointerEvents="box-none"
-          className="absolute left-4 right-4"
+          className="absolute right-4 left-4"
           style={{
             bottom: bottomInset
           }}

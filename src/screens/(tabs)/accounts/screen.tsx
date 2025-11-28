@@ -34,7 +34,7 @@ export default function TabsAccountsScreen({ accountType }: Props) {
 
   return (
     <ScrollView
-      className="my-4 flex-1 bg-background"
+      className="bg-background my-4 flex-1"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[
         { paddingHorizontal: 16, paddingTop: 8 },

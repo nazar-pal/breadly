@@ -252,10 +252,10 @@ function TableData({ type, name }: { type: 'table' | 'view'; name: string }) {
       >
         <Pressable
           onPress={scrollToTop}
-          className="flex-row items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 shadow-lg"
+          className="bg-primary flex-row items-center gap-1.5 rounded-full px-4 py-2.5 shadow-lg"
         >
           <Icon name="ArrowUp" size={14} className="text-primary-foreground" />
-          <Text className="text-xs font-medium text-primary-foreground">
+          <Text className="text-primary-foreground text-xs font-medium">
             Back to top
           </Text>
         </Pressable>
@@ -274,7 +274,7 @@ function FloatingBackButton({
   const colorScheme = useColorScheme()
 
   return (
-    <View className="absolute left-3 top-2 z-10 overflow-hidden rounded-full">
+    <View className="absolute top-2 left-3 z-10 overflow-hidden rounded-full">
       <BlurView
         intensity={80}
         tint={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -291,7 +291,7 @@ function FloatingBackButton({
             className="text-primary"
           />
           <Text
-            className="max-w-[180px] text-xs font-medium text-foreground"
+            className="text-foreground max-w-[180px] text-xs font-medium"
             numberOfLines={1}
           >
             {name}

@@ -9,8 +9,7 @@ interface SectionHeaderProps {
 export function SectionHeader({ title, isFirst }: SectionHeaderProps) {
   return (
     <View className={`mb-2 ${isFirst ? 'mt-0' : 'mt-4'}`}>
-      <Text className="text-base font-semibold text-foreground">{title}</Text>
+      <Text className="text-foreground text-base font-semibold">{title}</Text>
     </View>
   )
 }
-

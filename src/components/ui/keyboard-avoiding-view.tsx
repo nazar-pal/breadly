@@ -6,4 +6,3 @@ import { withUniwind } from 'uniwind'
  * Use this instead of importing directly from react-native-keyboard-controller.
  */
 export const KeyboardAvoidingView = withUniwind(RNKeyboardAvoidingView)
-

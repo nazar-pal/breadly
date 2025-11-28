@@ -5,4 +5,3 @@ export type Transaction = GetTransactionResultItem
 export type TransactionAttachment = NonNullable<
   Transaction['transactionAttachments'][number]['attachment']
 >
-

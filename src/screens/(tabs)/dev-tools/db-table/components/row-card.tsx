@@ -15,13 +15,13 @@ export function RowCard({ row, rowNumber }: RowCardProps) {
   const entries = Object.entries(row)
 
   return (
-    <View className="overflow-hidden rounded-lg border border-border bg-card">
+    <View className="border-border bg-card overflow-hidden rounded-lg border">
       {/* Row number header - tappable to expand/collapse */}
       <Pressable
         onPress={() => setExpanded(prev => !prev)}
-        className="flex-row items-center justify-between border-b border-border bg-muted/50 px-3 py-1.5"
+        className="border-border bg-muted/50 flex-row items-center justify-between border-b px-3 py-1.5"
       >
-        <Text className="font-mono text-xs text-muted-foreground">
+        <Text className="text-muted-foreground font-mono text-xs">
           Row #{rowNumber}
         </Text>
         <Icon
@@ -74,11 +74,11 @@ function FieldRow({
 
   return (
     <View
-      className={`px-1 py-1.5 ${!isLast ? 'border-b border-border/50' : ''}`}
+      className={`px-1 py-1.5 ${!isLast ? 'border-border/50 border-b' : ''}`}
     >
       <View className="flex-row items-start">
         <Text
-          className="w-1/3 shrink-0 text-xs text-muted-foreground"
+          className="text-muted-foreground w-1/3 shrink-0 text-xs"
           numberOfLines={expanded ? undefined : 1}
         >
           {fieldKey}
@@ -87,7 +87,7 @@ function FieldRow({
           {!expanded || !isJson ? (
             <Text
               className={`min-w-0 flex-1 font-mono text-xs ${
-                isNull ? 'italic text-muted-foreground' : 'text-foreground'
+                isNull ? 'text-muted-foreground italic' : 'text-foreground'
               }`}
               selectable
               numberOfLines={expanded ? undefined : 3}
@@ -185,21 +185,21 @@ function JsonViewer({ value, depth = 0 }: { value: unknown; depth?: number }) {
 
   if (Array.isArray(value)) {
     if (value.length === 0) {
-      return <Text className="font-mono text-xs text-foreground">[]</Text>
+      return <Text className="text-foreground font-mono text-xs">[]</Text>
     }
 
     return (
       <View>
-        <Text className="font-mono text-xs text-foreground">[</Text>
+        <Text className="text-foreground font-mono text-xs">[</Text>
         {value.map((item, idx) => (
           <View key={idx} className="flex-row" style={{ paddingLeft: 12 }}>
             <JsonViewer value={item} depth={depth + 1} />
             {idx < value.length - 1 && (
-              <Text className="font-mono text-xs text-foreground">,</Text>
+              <Text className="text-foreground font-mono text-xs">,</Text>
             )}
           </View>
         ))}
-        <Text className="font-mono text-xs text-foreground">]</Text>
+        <Text className="text-foreground font-mono text-xs">]</Text>
       </View>
     )
   }
@@ -207,34 +207,34 @@ function JsonViewer({ value, depth = 0 }: { value: unknown; depth?: number }) {
   if (typeof value === 'object') {
     const entries = Object.entries(value as Record<string, unknown>)
     if (entries.length === 0) {
-      return <Text className="font-mono text-xs text-foreground">{'{}'}</Text>
+      return <Text className="text-foreground font-mono text-xs">{'{}'}</Text>
     }
 
     return (
       <View>
-        <Text className="font-mono text-xs text-foreground">{'{'}</Text>
+        <Text className="text-foreground font-mono text-xs">{'{'}</Text>
         {entries.map(([key, val], idx) => (
           <View
             key={key}
             className="flex-row flex-wrap"
             style={{ paddingLeft: 12 }}
           >
-            <Text className="font-mono text-xs text-primary">
+            <Text className="text-primary font-mono text-xs">
               &quot;{key}&quot;
             </Text>
-            <Text className="font-mono text-xs text-foreground">: </Text>
+            <Text className="text-foreground font-mono text-xs">: </Text>
             <JsonViewer value={val} depth={depth + 1} />
             {idx < entries.length - 1 && (
-              <Text className="font-mono text-xs text-foreground">,</Text>
+              <Text className="text-foreground font-mono text-xs">,</Text>
             )}
           </View>
         ))}
-        <Text className="font-mono text-xs text-foreground">{'}'}</Text>
+        <Text className="text-foreground font-mono text-xs">{'}'}</Text>
       </View>
     )
   }
 
   return (
-    <Text className="font-mono text-xs text-foreground">{String(value)}</Text>
+    <Text className="text-foreground font-mono text-xs">{String(value)}</Text>
   )
 }

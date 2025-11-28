@@ -27,9 +27,9 @@ function InfoRow({
 }) {
   return (
     <View className="flex-row items-center justify-between">
-      <Text className="text-sm text-muted-foreground">{label}</Text>
+      <Text className="text-muted-foreground text-sm">{label}</Text>
       <Text
-        className={`text-sm text-foreground ${mono ? 'font-mono' : ''}`}
+        className={`text-foreground text-sm ${mono ? 'font-mono' : ''}`}
         numberOfLines={1}
       >
         {value}
@@ -37,4 +37,3 @@ function InfoRow({
     </View>
   )
 }
-

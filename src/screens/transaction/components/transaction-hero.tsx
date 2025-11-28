@@ -85,17 +85,17 @@ export function TransactionHero({ transaction, userId }: TransactionHeroProps) {
               />
             </View>
             <View className="flex-1">
-              <Text className="text-3xl font-extrabold tracking-tight text-foreground">
+              <Text className="text-foreground text-3xl font-extrabold tracking-tight">
                 {amountDisplay}
               </Text>
-              <Text className="mt-0.5 text-sm text-muted-foreground">
+              <Text className="text-muted-foreground mt-0.5 text-sm">
                 {formatDate(transaction.txDate)}
               </Text>
             </View>
             <Pressable
               onPress={handleDelete}
               disabled={isDeleting}
-              className="h-9 w-9 items-center justify-center rounded-full bg-foreground/5 active:bg-foreground/10"
+              className="bg-foreground/5 active:bg-foreground/10 h-9 w-9 items-center justify-center rounded-full"
             >
               <Icon
                 name={isDeleting ? 'Loader2' : 'Trash2'}

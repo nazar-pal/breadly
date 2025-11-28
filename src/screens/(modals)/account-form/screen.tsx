@@ -9,7 +9,7 @@ export default function AccountFormScreen() {
       className="flex-1 p-4"
     >
       <KeyboardAvoidingView
-        className="flex-1 "
+        className="flex-1"
         behavior="padding"
         keyboardVerticalOffset={100}
       >

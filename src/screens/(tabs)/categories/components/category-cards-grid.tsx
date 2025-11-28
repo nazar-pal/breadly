@@ -86,7 +86,7 @@ function CategoryGridSection({
                   style={{ height: cardHeightPx }}
                 >
                   <ButtonAddCategory
-                    className={`rounded-xl border border-dashed border-border bg-muted/50 p-3 shadow-sm ${cardHeightClass}`}
+                    className={`border-border bg-muted/50 rounded-xl border border-dashed p-3 shadow-sm ${cardHeightClass}`}
                     type={type}
                   />
                 </View>
@@ -108,7 +108,7 @@ function CategoryGridSection({
                   }}
                   onLongPress={() => onLongPress(category.id)}
                   className={cn(
-                    'rounded-xl border border-border  bg-card p-3 shadow-sm',
+                    'border-border bg-card rounded-xl border p-3 shadow-sm',
                     cardHeightClass,
                     isArchived && 'border-dashed shadow-none'
                   )}
@@ -188,7 +188,7 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
             className="border-b-0"
           >
             <AccordionTrigger>
-              <Text className="text-sm font-medium text-muted-foreground">
+              <Text className="text-muted-foreground text-sm font-medium">
                 Archived Categories ({categoriesArchived.length})
               </Text>
             </AccordionTrigger>

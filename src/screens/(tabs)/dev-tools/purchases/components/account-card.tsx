@@ -45,9 +45,13 @@ export function AccountCard({
         </View>
       </CardHeader>
       <CardContent className="pt-0">
-        <View className="rounded-lg border border-border bg-muted/30 p-2">
+        <View className="border-border bg-muted/30 rounded-lg border p-2">
           <InfoRow label="App User ID" value={appUserId} mono />
-          <InfoRow label="Original ID" value={customerInfo.originalAppUserId} mono />
+          <InfoRow
+            label="Original ID"
+            value={customerInfo.originalAppUserId}
+            mono
+          />
           <InfoRow label="Member Since" value={memberSince} />
           <InfoRow
             label="Active Entitlements"
@@ -74,7 +78,7 @@ function InfoRow({
 }) {
   return (
     <View className="flex-row items-center justify-between py-1">
-      <Text className="text-xs text-muted-foreground">{label}</Text>
+      <Text className="text-muted-foreground text-xs">{label}</Text>
       <Text
         className={`max-w-[60%] text-xs ${mono ? 'font-mono' : 'font-medium'} text-foreground`}
         numberOfLines={1}
@@ -84,4 +88,3 @@ function InfoRow({
     </View>
   )
 }
-

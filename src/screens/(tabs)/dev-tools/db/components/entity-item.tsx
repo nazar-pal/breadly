@@ -45,7 +45,10 @@ export function EntityItem({
   const textNormal = isRefreshing ? 'text-muted-foreground' : 'text-foreground'
 
   return (
-    <AccordionItem value={name} className="border-b border-border last:border-0">
+    <AccordionItem
+      value={name}
+      className="border-border border-b last:border-0"
+    >
       <View className="flex-row items-center">
         <Button
           variant="ghost"
@@ -57,7 +60,7 @@ export function EntityItem({
           }
         >
           {groupNumber != null && (
-            <Text className="mr-1 text-xs text-muted-foreground">
+            <Text className="text-muted-foreground mr-1 text-xs">
               {groupNumber}.
             </Text>
           )}
@@ -86,12 +89,12 @@ export function EntityItem({
         ) : columnsCount === 0 ? (
           <Text className={`text-xs ${textMuted}`}>No columns</Text>
         ) : (
-          <View className="rounded-md bg-muted/30 p-2">
+          <View className="bg-muted/30 rounded-md p-2">
             {columns.map((col, idx) => (
               <View
                 key={col.name}
                 className={`flex-row items-center justify-between py-1 ${
-                  idx < columns.length - 1 ? 'border-b border-border/50' : ''
+                  idx < columns.length - 1 ? 'border-border/50 border-b' : ''
                 }`}
               >
                 <Text className={`text-xs ${textNormal}`}>{col.name}</Text>
@@ -102,7 +105,7 @@ export function EntityItem({
                     </Text>
                   )}
                   {col.pk === 1 && (
-                    <Text className="text-[10px] font-medium text-primary">
+                    <Text className="text-primary text-[10px] font-medium">
                       PK
                     </Text>
                   )}
@@ -147,4 +150,3 @@ function RowCount({
     </Text>
   )
 }
-

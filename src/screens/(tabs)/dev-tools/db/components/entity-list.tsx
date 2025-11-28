@@ -3,7 +3,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
 import { View } from 'react-native'
-import { createEntityComparator, type EntityType, type SortMode, type SortOrder } from '../lib'
+import {
+  createEntityComparator,
+  type EntityType,
+  type SortMode,
+  type SortOrder
+} from '../lib'
 import { EntityItem } from './entity-item'
 
 type EntityListProps = {
@@ -32,9 +37,9 @@ export function EntityList({
           <Icon
             name={entityType === 'table' ? 'Table' : 'Eye'}
             size={24}
-            className="mb-2 text-muted-foreground"
+            className="text-muted-foreground mb-2"
           />
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-muted-foreground text-sm">
             No {entityType}s found
           </Text>
         </CardContent>
@@ -49,7 +54,7 @@ export function EntityList({
     <View className={isRefreshing ? 'opacity-60' : ''}>
       <Accordion
         type="multiple"
-        className="rounded-lg border border-border bg-card"
+        className="border-border bg-card rounded-lg border"
       >
         {sortedEntities.map(item => (
           <EntityItem
@@ -64,4 +69,3 @@ export function EntityList({
     </View>
   )
 }
-

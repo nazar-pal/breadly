@@ -59,7 +59,7 @@ export default function CategoryDetailsModal({ categoryId }: Props) {
   return (
     <SafeAreaView
       edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
-      className="flex-1 bg-popover p-4"
+      className="bg-popover flex-1 p-4"
     >
       <CategoryDetailsHeader
         categoryData={categoryData}

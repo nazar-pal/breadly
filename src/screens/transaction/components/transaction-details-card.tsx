@@ -123,28 +123,23 @@ function DetailItem({
     <View className="relative flex-row py-3">
       {/* Timeline connector */}
       <View className="mr-3 w-5 items-center">
-        {!isFirst && (
-          <View className="absolute top-0 h-1/2 w-px bg-border" />
-        )}
-        <View className="h-2.5 w-2.5 rounded-full bg-primary" />
-        {!isLast && (
-          <View className="absolute bottom-0 h-1/2 w-px bg-border" />
-        )}
+        {!isFirst && <View className="bg-border absolute top-0 h-1/2 w-px" />}
+        <View className="bg-primary h-2.5 w-2.5 rounded-full" />
+        {!isLast && <View className="bg-border absolute bottom-0 h-1/2 w-px" />}
       </View>
 
       {/* Content */}
       <View className="flex-1">
         <View className="mb-1 flex-row items-center gap-1.5">
           <Icon name={icon} size={14} className="text-muted-foreground" />
-          <Text className="text-xs text-muted-foreground">{label}</Text>
+          <Text className="text-muted-foreground text-xs">{label}</Text>
         </View>
         {customContent ? (
           <View className="mt-0.5">{customContent}</View>
         ) : (
-          <Text className="text-base font-medium text-foreground">{value}</Text>
+          <Text className="text-foreground text-base font-medium">{value}</Text>
         )}
       </View>
     </View>
   )
 }
-

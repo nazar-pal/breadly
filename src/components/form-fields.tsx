@@ -58,7 +58,7 @@ export function FormDateField<TFieldValues extends FieldValues>({
           <FormControl>
             <>
               <Pressable
-                className="native:h-12 h-10 flex-row items-center rounded-md border border-input bg-background px-3"
+                className="native:h-12 border-input bg-background h-10 flex-row items-center rounded-md border px-3"
                 onPress={openPicker}
               >
                 <Text

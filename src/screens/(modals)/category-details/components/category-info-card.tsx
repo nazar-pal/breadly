@@ -24,7 +24,7 @@ export function CategoryInfoCard({
       <CategoryCardIcon name={categoryData.icon} type={categoryData.type} />
       <View className="ml-4 flex-1">
         <View className="mb-2 flex-row items-center gap-2">
-          <Text className="text-lg font-bold text-foreground">
+          <Text className="text-foreground text-lg font-bold">
             {categoryData.name}
           </Text>
           <Badge

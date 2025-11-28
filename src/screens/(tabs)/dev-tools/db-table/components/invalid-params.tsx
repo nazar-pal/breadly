@@ -9,19 +9,19 @@ type InvalidParamsProps = {
 
 export function InvalidParams({ message }: InvalidParamsProps) {
   return (
-    <View className="flex-1 bg-background p-4">
+    <View className="bg-background flex-1 p-4">
       <Card>
         <CardContent className="items-center py-8">
-          <View className="mb-3 rounded-full bg-destructive/10 p-3">
+          <View className="bg-destructive/10 mb-3 rounded-full p-3">
             <Icon name="AlertTriangle" size={24} className="text-destructive" />
           </View>
-          <Text className="text-sm font-medium text-foreground">
+          <Text className="text-foreground text-sm font-medium">
             Invalid Parameters
           </Text>
-          <Text className="mt-1 text-center text-xs text-muted-foreground">
+          <Text className="text-muted-foreground mt-1 text-center text-xs">
             {message}
           </Text>
-          <Text className="mt-3 rounded bg-muted px-2 py-1 font-mono text-xs text-muted-foreground">
+          <Text className="bg-muted text-muted-foreground mt-3 rounded px-2 py-1 font-mono text-xs">
             Expected: /db/[view|table]/[name]
           </Text>
         </CardContent>
@@ -29,4 +29,3 @@ export function InvalidParams({ message }: InvalidParamsProps) {
     </View>
   )
 }
-

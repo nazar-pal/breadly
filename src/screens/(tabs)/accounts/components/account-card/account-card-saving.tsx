@@ -30,7 +30,7 @@ export function AccountCardSaving({ account, ...rest }: Props) {
           <Icon
             name="TrendingUp"
             size={12}
-            className="mr-0.5 text-account-savings"
+            className="text-account-savings mr-0.5"
           />
         ) : null
       }
@@ -40,12 +40,12 @@ export function AccountCardSaving({ account, ...rest }: Props) {
             {progressLabel ? (
               <View className="mb-1 flex-row items-center justify-between">
                 <Text
-                  className="text-xs text-muted-foreground"
+                  className="text-muted-foreground text-xs"
                   numberOfLines={1}
                 >
                   {progressLabel}
                 </Text>
-                <Text className="text-xs font-semibold text-account-savings">
+                <Text className="text-account-savings text-xs font-semibold">
                   {progress.toFixed(0)}%
                 </Text>
               </View>

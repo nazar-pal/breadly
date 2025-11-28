@@ -19,7 +19,7 @@ export function AccountFormActions({
   isSubmitting = false
 }: Props) {
   return (
-    <View className="mt-auto flex-row gap-3 rounded-xl border-t border-border px-5 py-4">
+    <View className="border-border mt-auto flex-row gap-3 rounded-xl border-t px-5 py-4">
       <Button
         variant="outline"
         className="flex-1"
@@ -30,7 +30,7 @@ export function AccountFormActions({
       </Button>
 
       <Button
-        className=" flex-1 flex-row items-center justify-center rounded-xl"
+        className="flex-1 flex-row items-center justify-center rounded-xl"
         onPress={onSubmit}
         disabled={disabled || isSubmitting}
       >

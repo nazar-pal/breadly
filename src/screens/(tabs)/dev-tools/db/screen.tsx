@@ -52,9 +52,9 @@ export default function DbScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View className="bg-background flex-1 items-center justify-center">
         <ActivityIndicator size="large" />
-        <Text className="mt-4 text-sm text-muted-foreground">
+        <Text className="text-muted-foreground mt-4 text-sm">
           Loading database schema...
         </Text>
       </View>
@@ -62,7 +62,7 @@ export default function DbScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{

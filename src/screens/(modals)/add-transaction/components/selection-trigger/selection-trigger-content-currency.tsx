@@ -20,7 +20,7 @@ export function SelectionTriggerContentCurrency({
 
   if (render === 'name') {
     return (
-      <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+      <Text className="text-foreground text-sm font-semibold" numberOfLines={1}>
         {currencyCode ? currencyName : 'Select account or currency'}
       </Text>
     )

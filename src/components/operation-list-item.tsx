@@ -124,12 +124,12 @@ export function OperationListItem({ operation }: OperationCardProps) {
   return (
     <Link href={`/transactions/${operation.id}`} asChild>
       <Pressable>
-        <Card className="border-0 bg-card/50 py-1">
+        <Card className="bg-card/50 border-0 py-1">
           <CardContent className="px-3 py-2">
             <View className="flex-row items-center">
               <View
                 className={cn(
-                  'mr-3 h-6 w-6 items-center justify-center rounded-lg ring-1 ring-border/40 dark:ring-border/60',
+                  'ring-border/40 dark:ring-border/60 mr-3 h-6 w-6 items-center justify-center rounded-lg ring-1',
                   'bg-muted/60 dark:bg-muted/40'
                 )}
               >
@@ -143,7 +143,7 @@ export function OperationListItem({ operation }: OperationCardProps) {
               <View className="flex-1 gap-1">
                 <View className="flex-row items-center justify-between">
                   <Text
-                    className="mr-2 flex-1 text-sm font-medium text-foreground"
+                    className="text-foreground mr-2 flex-1 text-sm font-medium"
                     numberOfLines={1}
                   >
                     {title}
@@ -158,9 +158,9 @@ export function OperationListItem({ operation }: OperationCardProps) {
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1 flex-row items-center gap-2">
                     {showCategoryPill && (
-                      <View className="rounded bg-muted/50 px-1.5 py-0.5">
+                      <View className="bg-muted/50 rounded px-1.5 py-0.5">
                         <Text
-                          className="text-[11px] font-medium text-muted-foreground"
+                          className="text-muted-foreground text-[11px] font-medium"
                           numberOfLines={1}
                         >
                           {categoryName}
@@ -173,7 +173,7 @@ export function OperationListItem({ operation }: OperationCardProps) {
                         size={12}
                         className="text-muted-foreground"
                       />
-                      <Text className="text-[11px] text-muted-foreground">
+                      <Text className="text-muted-foreground text-[11px]">
                         {formatDate(operation.txDate)}
                       </Text>
                     </View>
@@ -184,13 +184,13 @@ export function OperationListItem({ operation }: OperationCardProps) {
                     <Icon
                       as={ArrowRight}
                       size={12}
-                      className="ml-1 text-muted-foreground/60"
+                      className="text-muted-foreground/60 ml-1"
                     />
                   </View>
                 </View>
 
                 {subtext && (
-                  <Text className="text-xs text-muted-foreground">
+                  <Text className="text-muted-foreground text-xs">
                     {subtext}
                   </Text>
                 )}

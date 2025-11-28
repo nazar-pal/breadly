@@ -12,7 +12,7 @@ export function AddAccountButton({ className, ...rest }: Props) {
   return (
     <Pressable
       className={cn(
-        'mt-4 min-h-16 flex-row items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border bg-card p-3',
+        'border-border bg-card mt-4 min-h-16 flex-row items-center justify-center gap-3 rounded-xl border-2 border-dashed p-3',
         className
       )}
       {...rest}

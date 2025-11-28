@@ -54,7 +54,7 @@ export function CalculatorKeypad({
             <View className="relative">
               <Icon name="MessageSquare" size={20} className="text-primary" />
               {hasComment && (
-                <View className="absolute right-0 top-0 h-1.5 w-1.5 rounded-full bg-primary" />
+                <View className="bg-primary absolute top-0 right-0 h-1.5 w-1.5 rounded-full" />
               )}
             </View>
           }

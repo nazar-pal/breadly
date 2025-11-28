@@ -12,14 +12,14 @@ export function PrivacySubsection({ subsection }: Props) {
   const { title, content } = subsection
 
   return (
-    <View className="rounded-2xl border border-border/40 bg-muted/10 p-4">
+    <View className="border-border/40 bg-muted/10 rounded-2xl border p-4">
       <Text
         variant="h3"
-        className="text-lg font-semibold tracking-tight text-foreground"
+        className="text-foreground text-lg font-semibold tracking-tight"
       >
         {title}
       </Text>
-      <FormattedText content={content} className="mt-2 text-muted-foreground" />
+      <FormattedText content={content} className="text-muted-foreground mt-2" />
     </View>
   )
 }

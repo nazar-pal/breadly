@@ -40,7 +40,7 @@ Breadly uses a **PostgreSQL database** hosted on **Neon** with a sophisticated m
 | `categories`              | Hierarchical transaction classification       | ✅                 | ✅          |
 | `transactions`            | All money movements (income/expense/transfer) | ✅                 | ✅          |
 | `attachments`             | File metadata (receipts, voice notes)         | ❌ Shared          | ❌          |
-| `transaction_attachments` | Many-to-many transaction ↔ attachment links  | ✅ Via Transaction | ✅          |
+| `transaction_attachments` | Many-to-many transaction ↔ attachment links   | ✅ Via Transaction | ✅          |
 | `budgets`                 | Per-category spending limits                  | ✅                 | ✅          |
 | `user_preferences`        | User settings and defaults                    | ✅                 | ✅          |
 

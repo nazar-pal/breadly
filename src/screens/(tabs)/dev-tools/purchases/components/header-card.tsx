@@ -40,10 +40,10 @@ export function HeaderCard({
         {appUserId && (
           <Pressable
             onPress={handleCopyUserId}
-            className="flex-row items-center gap-2 rounded-md bg-muted/50 px-2.5 py-1.5"
+            className="bg-muted/50 flex-row items-center gap-2 rounded-md px-2.5 py-1.5"
           >
             <Text
-              className="min-w-0 flex-1 font-mono text-[11px] text-muted-foreground"
+              className="text-muted-foreground min-w-0 flex-1 font-mono text-[11px]"
               numberOfLines={1}
             >
               {appUserId}
@@ -93,14 +93,14 @@ function Stat({
   highlight?: boolean
 }) {
   return (
-    <View className="flex-row items-center justify-between rounded-lg bg-muted/40 px-2.5 py-2">
+    <View className="bg-muted/40 flex-row items-center justify-between rounded-lg px-2.5 py-2">
       <View className="flex-row items-center gap-1.5">
         <Icon
           name={icon}
           size={12}
           className={highlight ? 'text-amber-500' : 'text-muted-foreground'}
         />
-        <Text className="text-[10px] text-muted-foreground">{label}</Text>
+        <Text className="text-muted-foreground text-[10px]">{label}</Text>
       </View>
       <Text
         className={`text-xs font-semibold ${highlight ? 'text-amber-600' : 'text-foreground'}`}
@@ -110,4 +110,3 @@ function Stat({
     </View>
   )
 }
-

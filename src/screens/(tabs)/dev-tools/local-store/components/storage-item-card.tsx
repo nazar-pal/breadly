@@ -36,7 +36,7 @@ export function StorageItemCard({
   return (
     <AccordionItem
       value={item.key}
-      className="overflow-hidden rounded-lg border border-border bg-card"
+      className="border-border bg-card overflow-hidden rounded-lg border"
     >
       <AccordionTrigger className="items-center px-4 py-3">
         {/* Left side: Icon and Key */}
@@ -44,10 +44,10 @@ export function StorageItemCard({
           <Icon
             name={item.isJson ? 'Braces' : 'Type'}
             size={14}
-            className="shrink-0 text-muted-foreground"
+            className="text-muted-foreground shrink-0"
           />
           <Text
-            className="flex-1 font-mono text-sm font-medium text-foreground"
+            className="text-foreground flex-1 font-mono text-sm font-medium"
             numberOfLines={1}
           >
             {item.key}
@@ -91,7 +91,7 @@ export function StorageItemCard({
         </View>
       </AccordionTrigger>
 
-      <AccordionContent className="border-t border-border bg-muted/30 px-4">
+      <AccordionContent className="border-border bg-muted/30 border-t px-4">
         <ViewMode item={item} />
       </AccordionContent>
     </AccordionItem>
@@ -115,8 +115,8 @@ function ViewMode({ item }: { item: StorageItem }) {
     <View className="gap-3 py-2">
       {/* Key (full, selectable) */}
       <View>
-        <Text className="text-xs font-medium text-muted-foreground">Key</Text>
-        <Text className="mt-1 font-mono text-sm text-foreground" selectable>
+        <Text className="text-muted-foreground text-xs font-medium">Key</Text>
+        <Text className="text-foreground mt-1 font-mono text-sm" selectable>
           {item.key}
         </Text>
       </View>
@@ -125,12 +125,12 @@ function ViewMode({ item }: { item: StorageItem }) {
       <View>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Text className="text-xs font-medium text-muted-foreground">
+            <Text className="text-muted-foreground text-xs font-medium">
               {item.isJson ? 'JSON' : 'String'} Value
             </Text>
             {item.isJson && (
-              <View className="rounded bg-primary/10 px-1.5 py-0.5">
-                <Text className="text-[10px] font-medium text-primary">
+              <View className="bg-primary/10 rounded px-1.5 py-0.5">
+                <Text className="text-primary text-[10px] font-medium">
                   JSON
                 </Text>
               </View>
@@ -154,9 +154,9 @@ function ViewMode({ item }: { item: StorageItem }) {
             </Text>
           </Button>
         </View>
-        <View className="mt-1 rounded-md bg-background p-3">
+        <View className="bg-background mt-1 rounded-md p-3">
           <Text
-            className="font-mono text-xs leading-5 text-foreground"
+            className="text-foreground font-mono text-xs leading-5"
             selectable
           >
             {item.formattedValue}

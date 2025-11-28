@@ -12,7 +12,7 @@ export function CategoryCardIcon({
   size?: number
 }) {
   return (
-    <View className="items-center justify-center rounded-lg bg-muted/70 dark:bg-muted/50">
+    <View className="bg-muted/70 dark:bg-muted/50 items-center justify-center rounded-lg">
       <Icon
         name={name || 'House'}
         size={size}

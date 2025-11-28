@@ -56,7 +56,7 @@ export default function TrpcTestScreen() {
     })
 
   return (
-    <View className="flex-1 bg-background p-4">
+    <View className="bg-background flex-1 p-4">
       <InfoCard />
       <TestActions
         onRunHello={runHello}

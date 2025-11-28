@@ -2,8 +2,6 @@ import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native'
 import { useColorScheme } from 'react-native'
 import { useCSSVariable } from 'uniwind'
 
-
-
 /**
  * Hook that returns React Navigation theme colors using Uniwind's CSS variables.
  * This hook automatically updates when the theme changes.

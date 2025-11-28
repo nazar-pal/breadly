@@ -27,7 +27,7 @@ export function AccountCardPayment({ account, ...rest }: Props) {
           <Icon
             name="TrendingDown"
             size={12}
-            className="mr-0.5 text-account-debt"
+            className="text-account-debt mr-0.5"
           />
         ) : null
       }

@@ -10,4 +10,3 @@ export interface ListItem {
   title?: string
   transaction?: Transaction
 }
-

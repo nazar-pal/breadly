@@ -25,7 +25,7 @@ export function ButtonAddCategory({ type, className }: Props) {
       onPress={handleAddCategory}
     >
       <Icon name="Plus" className="text-muted-foreground" />
-      <Text className="text-sm font-medium text-foreground">Add Category</Text>
+      <Text className="text-foreground text-sm font-medium">Add Category</Text>
     </Pressable>
   )
 }

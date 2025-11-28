@@ -63,7 +63,7 @@ export function ModeSelection() {
               >
                 {option.label}
               </Text>
-              <Text className="text-xs text-muted-foreground">
+              <Text className="text-muted-foreground text-xs">
                 {option.description}
               </Text>
             </View>

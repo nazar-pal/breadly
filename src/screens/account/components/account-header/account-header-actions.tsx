@@ -117,7 +117,7 @@ export function DetailsHeaderActions({ account }: Props) {
           'h-9 w-9 items-center justify-center rounded-full',
           'bg-background/80',
           'active:bg-muted',
-          'border border-border/30'
+          'border-border/30 border'
         )}
       >
         <Icon name="Pencil" size={16} className="text-muted-foreground" />
@@ -141,7 +141,7 @@ export function DetailsHeaderActions({ account }: Props) {
             'h-9 w-9 items-center justify-center rounded-full',
             'bg-destructive/10',
             'active:bg-destructive/20',
-            'border border-destructive/30'
+            'border-destructive/30 border'
           )}
         >
           <Icon name="Trash" size={16} className="text-destructive" />

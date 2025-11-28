@@ -60,4 +60,3 @@ export function formatDuration(seconds?: number | null): string {
   const s = Math.floor(seconds % 60)
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
-

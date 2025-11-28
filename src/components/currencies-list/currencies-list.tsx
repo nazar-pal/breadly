@@ -33,9 +33,9 @@ export function CurrenciesList({
         <Icon
           name="RefreshCw"
           size={32}
-          className="mb-3 animate-spin text-primary"
+          className="text-primary mb-3 animate-spin"
         />
-        <Text className="text-center text-base text-muted-foreground">
+        <Text className="text-muted-foreground text-center text-base">
           Loading currencies...
         </Text>
       </View>
@@ -45,13 +45,13 @@ export function CurrenciesList({
   if (error) {
     return (
       <View className="items-center justify-center py-12">
-        <View className="mb-4 rounded-full bg-muted p-4">
+        <View className="bg-muted mb-4 rounded-full p-4">
           <Icon name="AlertCircle" size={24} className="text-destructive" />
         </View>
-        <Text className="mb-1 text-center text-base font-medium text-foreground">
+        <Text className="text-foreground mb-1 text-center text-base font-medium">
           Failed to load currencies
         </Text>
-        <Text className="text-center text-sm text-muted-foreground">
+        <Text className="text-muted-foreground text-center text-sm">
           Please try again later
         </Text>
       </View>
@@ -61,13 +61,13 @@ export function CurrenciesList({
   if (!currencies.length) {
     return (
       <View className="items-center justify-center py-12">
-        <View className="mb-4 rounded-full bg-muted p-4">
+        <View className="bg-muted mb-4 rounded-full p-4">
           <Text className="text-2xl">💱</Text>
         </View>
-        <Text className="mb-1 text-center text-base font-medium text-foreground">
+        <Text className="text-foreground mb-1 text-center text-base font-medium">
           No currencies available
         </Text>
-        <Text className="text-center text-sm text-muted-foreground">
+        <Text className="text-muted-foreground text-center text-sm">
           No currencies found in the database
         </Text>
       </View>

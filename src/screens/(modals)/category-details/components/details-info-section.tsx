@@ -24,7 +24,7 @@ export function DetailsInfoSection({
 
   return (
     <Card className="p-4">
-      <Text className="mb-4 text-base font-semibold text-foreground">
+      <Text className="text-foreground mb-4 text-base font-semibold">
         Information
       </Text>
 
@@ -35,13 +35,13 @@ export function DetailsInfoSection({
             <Icon
               name="TextAlignStart"
               size={18}
-              className="mt-0.5 text-muted-foreground"
+              className="text-muted-foreground mt-0.5"
             />
             <View className="flex-1">
-              <Text className="mb-1 text-sm font-medium text-foreground">
+              <Text className="text-foreground mb-1 text-sm font-medium">
                 Description
               </Text>
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-muted-foreground text-sm">
                 {categoryData.description}
               </Text>
             </View>
@@ -54,10 +54,10 @@ export function DetailsInfoSection({
       <View className="mb-4 flex-row items-center gap-3">
         <Icon name="Tag" size={18} className="text-muted-foreground" />
         <View className="flex-1">
-          <Text className="mb-1 text-sm font-medium text-foreground">
+          <Text className="text-foreground mb-1 text-sm font-medium">
             Category Type
           </Text>
-          <Text className="text-sm capitalize text-muted-foreground">
+          <Text className="text-muted-foreground text-sm capitalize">
             {categoryData.type} Category
           </Text>
         </View>
@@ -69,7 +69,7 @@ export function DetailsInfoSection({
       <View className="mb-4 flex-row items-center gap-3">
         <Icon name="Banknote" size={18} className="text-muted-foreground" />
         <View className="flex-1">
-          <Text className="mb-1 text-sm font-medium text-foreground">
+          <Text className="text-foreground mb-1 text-sm font-medium">
             Total {categoryData.type === 'income' ? 'Earned' : 'Spent'}
           </Text>
           <View className="gap-1">
@@ -93,7 +93,7 @@ export function DetailsInfoSection({
                 </Text>
               ))}
             {!totalsByCurrency?.length && (
-              <Text className="text-sm text-muted-foreground">0</Text>
+              <Text className="text-muted-foreground text-sm">0</Text>
             )}
           </View>
         </View>
@@ -105,10 +105,10 @@ export function DetailsInfoSection({
       <View className="flex-row items-center gap-3">
         <Icon name="Calendar" size={18} className="text-muted-foreground" />
         <View className="flex-1">
-          <Text className="mb-1 text-sm font-medium text-foreground">
+          <Text className="text-foreground mb-1 text-sm font-medium">
             Created On
           </Text>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-muted-foreground text-sm">
             {formatDate(categoryData.createdAt)}
           </Text>
         </View>

@@ -60,11 +60,8 @@ export default function LocalStoreScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ padding: 16 }}
-      >
+    <View className="bg-background flex-1">
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
         <HeaderCard
           totalItems={allItems.length}
           jsonCount={jsonCount}

@@ -7,9 +7,9 @@ interface Props {
 
 export function CalculatorDisplay({ displayValue }: Props) {
   return (
-    <View className="min-h-[72px] justify-center rounded-2xl bg-card px-4 py-3 shadow-sm">
+    <View className="bg-card min-h-[72px] justify-center rounded-2xl px-4 py-3 shadow-sm">
       <Text
-        className="text-right text-4xl font-bold text-foreground"
+        className="text-foreground text-right text-4xl font-bold"
         numberOfLines={1}
         adjustsFontSizeToFit
         minimumFontScale={0.5}

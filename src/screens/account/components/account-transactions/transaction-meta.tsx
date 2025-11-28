@@ -35,7 +35,7 @@ export function TransactionMeta({ transaction }: TransactionMetaProps) {
 
       {hasNotes ? (
         <Text
-          className="mt-1 pr-4 text-xs text-muted-foreground"
+          className="text-muted-foreground mt-1 pr-4 text-xs"
           numberOfLines={1}
         >
           {transaction.notes}

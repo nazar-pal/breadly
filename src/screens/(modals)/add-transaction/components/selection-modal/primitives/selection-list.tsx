@@ -48,7 +48,7 @@ export function SelectionList({
 function EmptyListMessage({ children }: { children: ReactNode }) {
   return (
     <View className="items-center justify-center py-8">
-      <Text className="text-sm text-muted-foreground">{children}</Text>
+      <Text className="text-muted-foreground text-sm">{children}</Text>
     </View>
   )
 }

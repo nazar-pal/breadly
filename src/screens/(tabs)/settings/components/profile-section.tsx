@@ -63,7 +63,7 @@ export function ProfileSection() {
 
             <View className="flex-1">
               <Text className="text-lg font-semibold">{displayName}</Text>
-              <Text className="text-sm text-muted-foreground">{email}</Text>
+              <Text className="text-muted-foreground text-sm">{email}</Text>
 
               <View className="mt-2 flex-row flex-wrap gap-1.5">
                 {isPremium ? (
@@ -114,7 +114,7 @@ export function ProfileSection() {
             </View>
           </View>
 
-          <View className="mt-4 border-t border-border/50 pt-4">
+          <View className="border-border/50 mt-4 border-t pt-4">
             <SignOutButton />
           </View>
         </CardContent>
@@ -122,4 +122,3 @@ export function ProfileSection() {
     </View>
   )
 }
-

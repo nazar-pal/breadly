@@ -56,7 +56,7 @@ export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
 
   return (
     <GestureDetectorContainer>
-      <View className="flex-1 bg-background" collapsable={false}>
+      <View className="bg-background flex-1" collapsable={false}>
         <TabsCategoriesHeader type={type} />
         <CategoryCardsGrid
           onPress={openTransactionModal}

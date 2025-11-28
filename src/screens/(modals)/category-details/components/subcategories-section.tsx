@@ -20,7 +20,7 @@ export function SubcategoriesSection({
     <Card className="mb-6 p-4">
       <View className="mb-4 flex-row items-center gap-2">
         <Icon name="Tag" size={18} className="text-primary" />
-        <Text className="text-base font-semibold text-foreground">
+        <Text className="text-foreground text-base font-semibold">
           Subcategories ({subcategories.length})
         </Text>
       </View>
@@ -36,11 +36,11 @@ export function SubcategoriesSection({
             <View key={subcategory.id}>
               <View className="flex-row items-center justify-between">
                 <View className="flex-1">
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="text-foreground text-sm font-medium">
                     {subcategory.name}
                   </Text>
                   {subcategory.description && (
-                    <Text className="mt-1 text-xs text-muted-foreground">
+                    <Text className="text-muted-foreground mt-1 text-xs">
                       {subcategory.description}
                     </Text>
                   )}

@@ -116,4 +116,3 @@ export function createEntityComparator(
     return ka.fullLower.localeCompare(kb.fullLower)
   }
 }
-

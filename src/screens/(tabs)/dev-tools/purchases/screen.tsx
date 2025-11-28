@@ -64,7 +64,7 @@ export default function PurchasesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View className="bg-background flex-1">
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 12 }}>
         <ActionButtons onRefresh={handleRefresh} onLogDebug={handleLogDebug} />
 

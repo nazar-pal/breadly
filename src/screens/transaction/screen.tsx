@@ -40,8 +40,8 @@ export default function TransactionDetailsScreen({ id }: Props) {
 
   if (!transaction) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <Text className="text-lg text-muted-foreground">
+      <View className="bg-background flex-1 items-center justify-center">
+        <Text className="text-muted-foreground text-lg">
           Transaction not found
         </Text>
       </View>
@@ -50,7 +50,7 @@ export default function TransactionDetailsScreen({ id }: Props) {
 
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      className="bg-background flex-1"
       contentContainerStyle={{
         padding: 16,
         paddingBottom: insets.bottom + 20

@@ -41,7 +41,7 @@ export default function IconSelectionModal() {
       bounces={true}
       alwaysBounceVertical={false}
     >
-      <Text className="mb-3 text-xl font-semibold text-foreground">
+      <Text className="text-foreground mb-3 text-xl font-semibold">
         {categoryData.name} category
       </Text>
       <IconsGrid

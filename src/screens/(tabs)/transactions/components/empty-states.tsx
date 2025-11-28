@@ -12,11 +12,11 @@ export function EmptyTodayMessage() {
 
 export function NoTransactionsState() {
   return (
-    <View className="flex-1 items-center justify-center bg-background px-4">
-      <Text className="mb-2 text-center text-foreground">
+    <View className="bg-background flex-1 items-center justify-center px-4">
+      <Text className="text-foreground mb-2 text-center">
         You haven&apos;t created any transactions yet.
       </Text>
-      <Text className="text-center text-muted-foreground">
+      <Text className="text-muted-foreground text-center">
         Head over to the{' '}
         <Link
           href={{ pathname: '/', params: { type: 'expense' } }}
@@ -33,7 +33,7 @@ export function NoTransactionsState() {
 export function LoadingState() {
   return (
     <View className="flex-1 items-center justify-center px-4">
-      <Text className="text-center text-foreground">
+      <Text className="text-foreground text-center">
         Loading transactions...
       </Text>
     </View>

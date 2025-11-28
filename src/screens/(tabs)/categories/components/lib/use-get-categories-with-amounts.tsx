@@ -12,8 +12,9 @@ export interface CategoryCurrencyTotal {
   amount: number
 }
 
-export interface CategoryWithAmounts
-  extends InferSelectModel<typeof categoriesTable> {
+export interface CategoryWithAmounts extends InferSelectModel<
+  typeof categoriesTable
+> {
   totalsByCurrency: CategoryCurrencyTotal[]
 }
 

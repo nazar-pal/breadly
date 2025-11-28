@@ -32,7 +32,7 @@ export function LogViewer({ logs, onClear }: LogViewerProps) {
             onPress={onClear}
           >
             <Icon name="Trash2" size={12} className="text-muted-foreground" />
-            <Text className="text-xs text-muted-foreground">Clear</Text>
+            <Text className="text-muted-foreground text-xs">Clear</Text>
           </Button>
         )}
       </CardHeader>
@@ -47,9 +47,9 @@ export function LogViewer({ logs, onClear }: LogViewerProps) {
               <Icon
                 name="Terminal"
                 size={24}
-                className="mb-2 text-muted-foreground"
+                className="text-muted-foreground mb-2"
               />
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-muted-foreground text-sm">
                 No output yet
               </Text>
             </View>
@@ -77,7 +77,7 @@ function LogLine({ log }: { log: LogEntry }) {
 
   return (
     <View className="flex-row gap-2">
-      <Text className="font-mono text-xs text-muted-foreground">{time}</Text>
+      <Text className="text-muted-foreground font-mono text-xs">{time}</Text>
       <Text className={`flex-1 text-xs ${levelStyles[log.level]}`}>
         {log.message}
       </Text>

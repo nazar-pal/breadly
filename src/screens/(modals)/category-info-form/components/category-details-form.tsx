@@ -84,7 +84,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
     <>
       {/* Category Name */}
       <View>
-        <Text className="mb-3 text-center text-lg font-bold text-foreground">
+        <Text className="text-foreground mb-3 text-center text-lg font-bold">
           {isSubCategory ? 'Subcategory Name' : 'Category Name'}
         </Text>
 
@@ -106,7 +106,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
 
       {/* Category Name */}
       <View>
-        <Text className="mb-3 text-center text-lg font-bold text-foreground">
+        <Text className="text-foreground mb-3 text-center text-lg font-bold">
           {isSubCategory ? 'Subcategory Description' : 'Category Description'}
         </Text>
 
@@ -137,14 +137,14 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
         </Button>
         <Button
           onPress={handleSubmit(onSubmit)}
-          className="flex-1 flex-row items-center justify-center rounded-lg bg-primary py-2"
+          className="bg-primary flex-1 flex-row items-center justify-center rounded-lg py-2"
         >
           <Icon
             name="Check"
             size={16}
-            className="mr-1 text-primary-foreground"
+            className="text-primary-foreground mr-1"
           />
-          <Text className="text-base text-primary-foreground">Save</Text>
+          <Text className="text-primary-foreground text-base">Save</Text>
         </Button>
       </View>
     </>

@@ -18,10 +18,10 @@ export function IconsGrid({ categoryType, selectedIcon, onIconSelect }: Props) {
   return (
     <View>
       <View className="mb-3 flex-row items-center justify-between">
-        <Text className="text-sm font-semibold text-foreground">
+        <Text className="text-foreground text-sm font-semibold">
           Choose Icon
         </Text>
-        <Text className="text-xs font-medium text-muted-foreground">
+        <Text className="text-muted-foreground text-xs font-medium">
           Selected: {selectedIcon}
         </Text>
       </View>

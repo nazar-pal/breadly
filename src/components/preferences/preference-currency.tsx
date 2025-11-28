@@ -23,12 +23,12 @@ export function CurrencyPreference() {
       className="flex-row items-center py-3 active:opacity-70"
       onPress={() => router.push('/default-currency-select')}
     >
-      <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-muted">
+      <View className="bg-muted mr-3 h-10 w-10 items-center justify-center rounded-full">
         <Icon name="DollarSign" size={18} className="text-primary" />
       </View>
       <View className="flex-1">
         <Text className="font-medium">Default Currency</Text>
-        <Text className="text-sm text-muted-foreground">
+        <Text className="text-muted-foreground text-sm">
           {currentCurrency.name} ({currentCurrency.symbol})
         </Text>
       </View>
