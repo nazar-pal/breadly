@@ -1,7 +1,7 @@
 import { getClerkInstance } from '@clerk/clerk-expo'
 import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
-import SuperJSON from 'superjson'
+import { SuperJSON } from 'superjson'
 import type { AppRouter } from '../server/api'
 import { getBaseUrl } from './base-url'
 import { queryClient } from './query-client'
