@@ -50,7 +50,7 @@ export const categoryFormModalStore = create<CategoryFormModalStore>(set => {
     // Actions
     actions: {
       openCategoryFormModal: (params: OpenCategoryFormModalParams) => {
-        router.push(`/category-info-form`)
+        router.push('/category-info-form')
         set({
           ...params,
           isUpdating: params.categoryId !== null
@@ -75,7 +75,8 @@ export const useCategoryFormModalState = () => {
     useShallow(state => ({
       categoryId: state.categoryId,
       parentId: state.parentId,
-      isUpdating: state.isUpdating
+      isUpdating: state.isUpdating,
+      type: state.type
     }))
   )
 }

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { CategoryType } from '@/data/client/db-schema'
 import { createCategory, updateCategory } from '@/data/client/mutations'
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -19,9 +20,15 @@ interface Props {
   onClose: () => void
   parentId: string | null
   categoryId?: string
+  type: CategoryType
 }
 
-export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
+export function CategoryDetailsForm({
+  onClose,
+  categoryId,
+  parentId,
+  type
+}: Props) {
   const isEditMode = Boolean(categoryId)
   const isSubCategory = Boolean(parentId)
 
@@ -64,7 +71,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
     } else {
       const [error] = await createCategory({
         userId,
-        data: { name, description, parentId, type: 'expense' }
+        data: { name, description, parentId, type }
       })
       if (error) {
         setSubmitError('Something went wrong. Please try again.')
