@@ -1,11 +1,12 @@
 import { CategoryType } from '@/data/client/db-schema'
-import { getUserPreferences } from '@/data/client/queries'
+import { getAccount, getUserPreferences } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import {
   useCategoriesDateRangeActions,
   useCategoriesDateRangeState
 } from '@/lib/storage/categories-date-range-store'
 import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animation-store'
+import { useLastParams } from '@/lib/storage/last-transaction-params-store'
 import { openExpenseIncomeBottomSheet } from '@/screens/(modals)/add-transaction'
 import { CategoryCardsGrid } from '@/screens/(tabs)/categories/components/category-cards-grid'
 import { useUserSession } from '@/system/session-and-migration/hooks'
@@ -59,14 +60,29 @@ export default function TabsCategoriesScreen({ type }: { type: CategoryType }) {
   const {
     data: [userPreferences]
   } = useDrizzleQuery(getUserPreferences({ userId }))
-  const currencyCode = userPreferences?.defaultCurrency?.code || 'USD'
+
+  const lastParams = useLastParams(state => state[type])
+
+  const lastAccountId =
+    lastParams.from === 'account' ? lastParams.id : undefined
+  const {
+    data: [lastAccount]
+  } = useDrizzleQuery(
+    lastAccountId ? getAccount({ userId, accountId: lastAccountId }) : undefined
+  )
+
+  const lastCurrencyCode =
+    lastParams.from === 'currency' ? lastParams.id : undefined
+
+  const currencyCode =
+    lastCurrencyCode || userPreferences?.defaultCurrency?.code || 'USD'
 
   const openTransactionModal = (categoryId: string) =>
-    openExpenseIncomeBottomSheet({
-      type,
-      categoryId,
-      currencyCode
-    })
+    openExpenseIncomeBottomSheet(
+      lastAccount && lastAccount.type === 'payment'
+        ? { type, categoryId, accountId: lastAccount.id }
+        : { type, categoryId, currencyCode }
+    )
 
   const openCategoryDetailsModal = (categoryId: string) =>
     router.push({ pathname: '/category-details', params: { categoryId } })
