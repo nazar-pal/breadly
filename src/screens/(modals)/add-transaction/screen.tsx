@@ -1,8 +1,9 @@
 import { Calculator } from '@/components/calculator'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
+import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animation-store'
 import { useUserSession } from '@/system/session-and-migration'
 import * as Sentry from '@sentry/react-native'
 import React, { useEffect } from 'react'
-import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { ParamsSelection } from './components/params-selection'
 import { useTransactionParamsActions, useTransactionParamsState } from './store'
 import {
@@ -45,6 +46,10 @@ export default function AddTransaction() {
       })
       return
     }
+
+    // Mark that a transaction was just created - any category whose
+    // total changes within the next 2 seconds will animate
+    categoryTotalAnimationStore.getState().markTransactionCreated()
 
     closeTransactionBottomSheet()
   }

@@ -1,12 +1,16 @@
 import { CategoryType } from '@/data/client/db-schema'
 import { getUserPreferences } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { useCategoriesDateRangeActions } from '@/lib/storage/categories-date-range-store'
+import {
+  useCategoriesDateRangeActions,
+  useCategoriesDateRangeState
+} from '@/lib/storage/categories-date-range-store'
+import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animation-store'
 import { openExpenseIncomeBottomSheet } from '@/screens/(modals)/add-transaction'
 import { CategoryCardsGrid } from '@/screens/(tabs)/categories/components/category-cards-grid'
 import { useUserSession } from '@/system/session-and-migration/hooks'
 import { router } from 'expo-router'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { scheduleOnRN } from 'react-native-worklets'
@@ -14,6 +18,17 @@ import { TabsCategoriesHeader } from './components/tabs-categories-header'
 
 function GestureDetectorContainer({ children }: { children: React.ReactNode }) {
   const { navigatePrevious, navigateNext } = useCategoriesDateRangeActions()
+  const { dateRange } = useCategoriesDateRangeState()
+
+  // Clear the animation marker when navigating between date periods
+  // This prevents stale animations when viewing a period where a transaction was created earlier
+  const prevDateRangeRef = useRef(dateRange)
+  useEffect(() => {
+    if (prevDateRangeRef.current !== dateRange) {
+      categoryTotalAnimationStore.getState().clearTransactionMarker()
+      prevDateRangeRef.current = dateRange
+    }
+  }, [dateRange])
 
   // Create pan gesture for full-screen swipe support
   const panGesture = Gesture.Pan()
