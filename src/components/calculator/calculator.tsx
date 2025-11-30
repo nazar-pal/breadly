@@ -3,7 +3,6 @@ import { useCalculator } from '@/lib/hooks/use-calculator'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './modal-comment'
@@ -15,8 +14,6 @@ interface Props {
 }
 
 export function Calculator({ isDisabled, handleSubmit }: Props) {
-  const insets = useSafeAreaInsets()
-
   // Calculator logic
   const calculator = useCalculator()
 
@@ -76,10 +73,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       />
 
       {/* Transaction date - extends into safe area with small padding */}
-      <View
-        className="mt-3 items-center"
-        style={{ marginBottom: -insets.bottom, paddingBottom: 8 }}
-      >
+      <View className="mt-3 items-center">
         <Text className="text-muted-foreground text-sm">
           {format(selectedDate, 'EEEE, MMMM d, yyyy')}
         </Text>

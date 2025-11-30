@@ -4,6 +4,8 @@ import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animat
 import { useUserSession } from '@/system/session-and-migration'
 import * as Sentry from '@sentry/react-native'
 import React, { useEffect } from 'react'
+import { Platform, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ParamsSelection } from './components/params-selection'
 import { useTransactionParamsActions, useTransactionParamsState } from './store'
 import {
@@ -54,9 +56,21 @@ export default function AddTransaction() {
     closeTransactionBottomSheet()
   }
 
+  const insets = useSafeAreaInsets()
+
+  // TODO: Find a better way to handle this in a cross-platform way
+  const Container = Platform.OS === 'ios' ? SafeAreaView : View
+
   return (
-    <SafeAreaView
-      edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
+    <Container
+      style={{
+        paddingBottom:
+          Platform.OS === 'ios'
+            ? insets.bottom >= 16
+              ? 0
+              : 16 - insets.bottom
+            : Math.max(16, insets.bottom)
+      }}
       className="bg-popover p-4"
     >
       <ParamsSelection />
@@ -65,6 +79,6 @@ export default function AddTransaction() {
         isDisabled={!Boolean(determineSubmitWorkflow(params))}
         handleSubmit={handleSubmit}
       />
-    </SafeAreaView>
+    </Container>
   )
 }

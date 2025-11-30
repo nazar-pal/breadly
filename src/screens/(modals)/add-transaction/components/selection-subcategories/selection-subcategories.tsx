@@ -67,13 +67,11 @@ export function SelectionSubcategories({
           />
         )}
 
-        {categoryId && parentCategoryId && (
-          <SubcategoriesItem
-            label="+ Add Subcategory"
-            variant="muted-dashed"
-            onPress={() => setShowAddDialog(true)}
-          />
-        )}
+        <SubcategoriesItem
+          label="+ Add Subcategory"
+          variant="muted-dashed"
+          onPress={() => setShowAddDialog(true)}
+        />
       </ScrollView>
 
       {parentCategoryId && (
