@@ -102,34 +102,34 @@ function RootLayoutNative() {
   if (!isColorSchemeLoaded) return null
 
   return (
-    <SafeAreaProvider>
-      <KeyboardProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={navTheme}>
-            <ClerkProvider
-              publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-              tokenCache={tokenCache}
-              __experimental_resourceCache={resourceCache}
-            >
-              <ClerkLoaded>
-                <UserSessionInitializer>
-                  <PurchasesInitializer />
-                  <PowerSyncContextProvider>
-                    <GestureHandlerRootView className="flex-1">
+    <GestureHandlerRootView className="flex-1">
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={navTheme}>
+              <ClerkProvider
+                publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+                tokenCache={tokenCache}
+                __experimental_resourceCache={resourceCache}
+              >
+                <ClerkLoaded>
+                  <UserSessionInitializer>
+                    <PurchasesInitializer />
+                    <PowerSyncContextProvider>
                       <StatusBar
                         style={colorScheme === 'dark' ? 'light' : 'dark'}
                       />
                       <StackRoutes />
                       <PortalHost />
-                    </GestureHandlerRootView>
-                  </PowerSyncContextProvider>
-                </UserSessionInitializer>
-              </ClerkLoaded>
-            </ClerkProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </KeyboardProvider>
-    </SafeAreaProvider>
+                    </PowerSyncContextProvider>
+                  </UserSessionInitializer>
+                </ClerkLoaded>
+              </ClerkProvider>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }
 

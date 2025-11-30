@@ -66,10 +66,10 @@ export default function AddTransaction() {
       style={{
         paddingBottom:
           Platform.OS === 'ios'
-            ? insets.bottom >= 16
+            ? insets.bottom >= 12
               ? 0
-              : 16 - insets.bottom
-            : Math.max(16, insets.bottom)
+              : 12 - insets.bottom
+            : Math.max(12, insets.bottom)
       }}
       className="bg-popover p-4"
     >
