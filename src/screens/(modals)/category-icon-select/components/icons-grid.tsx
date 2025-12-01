@@ -1,7 +1,7 @@
 import { type IconName } from '@/components/ui/icon-by-name'
 import React from 'react'
 import { Text, View } from 'react-native'
-import { expenseIcons, incomeIcons } from '../lib'
+import { getCategoriesForCategoryType } from '../lib'
 import { IconButton } from './icon-button'
 
 type CategoryType = 'income' | 'expense'
@@ -13,36 +13,28 @@ interface Props {
 }
 
 export function IconsGrid({ categoryType, selectedIcon, onIconSelect }: Props) {
-  const iconNames = categoryType === 'income' ? incomeIcons : expenseIcons
+  const categories = getCategoriesForCategoryType(categoryType)
 
   return (
-    <View>
-      <View className="mb-3 flex-row items-center justify-between">
-        <Text className="text-foreground text-sm font-semibold">
-          Choose Icon
-        </Text>
-        <Text className="text-muted-foreground text-xs font-medium">
-          Selected: {selectedIcon}
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          gap: 8,
-          justifyContent: 'flex-start'
-        }}
-      >
-        {iconNames.map(iconName => (
-          <IconButton
-            key={iconName}
-            iconName={iconName}
-            isSelected={selectedIcon === iconName}
-            categoryType={categoryType}
-            onPress={onIconSelect}
-          />
-        ))}
-      </View>
+    <View className="gap-6">
+      {categories.map(category => (
+        <View key={category.id}>
+          <Text className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
+            {category.name}
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {category.icons.map(iconName => (
+              <IconButton
+                key={`${category.id}-${iconName}`}
+                iconName={iconName}
+                isSelected={selectedIcon === iconName}
+                categoryType={categoryType}
+                onPress={onIconSelect}
+              />
+            ))}
+          </View>
+        </View>
+      ))}
     </View>
   )
 }
