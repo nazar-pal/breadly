@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Icon } from '@/components/ui/icon-by-name'
 import { Text } from '@/components/ui/text'
+import { Icon } from '@/components/ui/unified-icons'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import Animated, { type CSSAnimationKeyframes } from 'react-native-reanimated'
@@ -86,7 +86,11 @@ export function ImportInstructionsDialog({
           pointerEvents="none"
         >
           <Button variant="ghost" size="icon" pointerEvents="none">
-            <Icon name="Info" size={18} className="text-foreground" />
+            <Icon
+              select={{ from: 'fontisto', name: 'info' }}
+              size={18}
+              className="text-foreground"
+            />
           </Button>
         </Animated.View>
       </DialogTrigger>
