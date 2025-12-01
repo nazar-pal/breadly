@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Progress } from '@/components/ui/progress'
 import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { getAccountProgress } from '@/lib/utils'

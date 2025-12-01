@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import * as Clipboard from 'expo-clipboard'
 import { useState } from 'react'

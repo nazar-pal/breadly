@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import React from 'react'
 import { View } from 'react-native'

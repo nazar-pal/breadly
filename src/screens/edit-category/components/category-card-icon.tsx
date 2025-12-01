@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategoryType } from '@/data/client/db-schema'
 import { View } from 'react-native'
 

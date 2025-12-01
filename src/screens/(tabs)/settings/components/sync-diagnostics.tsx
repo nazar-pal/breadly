@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 import { SignedIn, SignedOut } from '@clerk/clerk-expo'

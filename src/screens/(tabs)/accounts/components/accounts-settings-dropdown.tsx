@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import React from 'react'
 import { View } from 'react-native'

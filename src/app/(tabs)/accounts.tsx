@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { type AccountType } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
 import TabsAccountsScreen from '@/screens/(tabs)/accounts'

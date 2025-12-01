@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useState } from 'react'
 import { Pressable, View } from 'react-native'

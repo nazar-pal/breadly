@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { router, type Href } from 'expo-router'
 import { View } from 'react-native'

@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { cn, formatCurrency } from '@/lib/utils'

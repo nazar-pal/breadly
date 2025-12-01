@@ -1,4 +1,4 @@
-import { Icon, IconName } from '@/components/ui/icon-by-name'
+import { Icon, IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { AccountType } from '@/data/client/db-schema'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'

@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { AccountsSettingsDropdown } from '@/screens/(tabs)/accounts'
 import { Tabs } from 'expo-router'
 import React from 'react'

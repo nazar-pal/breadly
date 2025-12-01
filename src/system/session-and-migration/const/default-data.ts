@@ -1,5 +1,5 @@
 // Note: Default seed icons are stored as strings; runtime resolves icons safely
-import { type IconName } from '@/components/ui/icon-by-name'
+import { type IconName } from '@/components/ui/lucide-icon-by-name'
 import {
   CategoryType,
   type AccountInsertSQLite,

@@ -1,5 +1,5 @@
 import { Calendar } from '@/components/ui/calendar'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import {
   DateRange,
   useCategoriesDateRangeActions

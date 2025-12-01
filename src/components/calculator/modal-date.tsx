@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/text'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { Button } from '../ui/button'
-import { Icon } from '../ui/icon-by-name'
+import { Icon } from '../ui/lucide-icon-by-name'
 
 export function DateModal({
   visible,

@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/utils'
 import { Text, View } from 'react-native'

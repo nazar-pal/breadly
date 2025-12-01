@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon'
+import { Icon } from '@/components/ui/lucide-icon'
 import { cn, formatCurrency } from '@/lib/utils'
 import { Link } from 'expo-router'
 import {

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { useAccountModalActions } from '@/lib/storage/account-modal-store'
 import { cn } from '@/lib/utils'

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { usePurchasesStore } from '@/system/purchases'

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon'
+import { Icon } from '@/components/ui/lucide-icon'
 import { NativeOnlyAnimatedView } from '@/components/ui/native-only-animated-view'
 import { TextClassContext } from '@/components/ui/text'
 import { cn } from '@/lib/utils'

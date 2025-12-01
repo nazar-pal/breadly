@@ -15,7 +15,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import * as Clipboard from 'expo-clipboard'
 import { useState } from 'react'

@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
+import { View } from 'react-native'
 import type {
   PurchasesOffering,
   PurchasesPackage
 } from 'react-native-purchases'
-import { View } from 'react-native'
 
 type OfferingCardProps = {
   offering: PurchasesOffering

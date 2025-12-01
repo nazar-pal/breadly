@@ -1,6 +1,6 @@
-import { Icon } from '@/components/ui/icon-by-name'
-import { useColorScheme } from 'react-native'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import React, { useMemo } from 'react'
+import { useColorScheme } from 'react-native'
 import {
   Calendar as RNCalendar,
   CalendarProps as RNCalendarProps

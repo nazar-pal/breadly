@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
 import React, { ComponentProps } from 'react'

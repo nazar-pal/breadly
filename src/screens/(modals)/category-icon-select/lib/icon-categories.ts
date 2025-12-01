@@ -1,4 +1,4 @@
-import { LucideIconName } from '@/components/ui/icon-by-name'
+import { LucideIconName } from '@/components/ui/lucide-icon-by-name'
 
 export type IconCategory = {
   id: string

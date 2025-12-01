@@ -1,4 +1,4 @@
-import type { IconName } from '@/components/ui/icon-by-name'
+import type { IconName } from '@/components/ui/lucide-icon-by-name'
 
 export type TransactionType = 'income' | 'expense' | 'transfer'
 

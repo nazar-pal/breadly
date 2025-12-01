@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GoogleOAuthButton } from '@/system/session-and-migration'
 import { DataLossWarning } from '@/system/session-and-migration/components/data-loss-warning'

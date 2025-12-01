@@ -1,4 +1,4 @@
-import { allIconsKeys } from '@/components/ui/icon-by-name'
+import { allIconsKeys } from '@/components/ui/lucide-icon-by-name'
 import { CATEGORY_TYPE } from '@/data/client/db-schema/table_4_categories'
 import { StringCase, isoDateToDate, stringToBoolean } from '@/lib/utils'
 import { z } from 'zod'

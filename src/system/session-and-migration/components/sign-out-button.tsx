@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { sqliteSchema } from '@/data/client/db-schema'
 import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'

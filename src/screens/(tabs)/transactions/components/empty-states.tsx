@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon'
+import { Icon } from '@/components/ui/lucide-icon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { LinearGradient } from 'expo-linear-gradient'

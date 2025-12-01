@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { Pressable, View } from 'react-native'

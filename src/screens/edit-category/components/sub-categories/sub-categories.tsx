@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { reorderCategories } from '@/data/client/mutations'
 import {

@@ -1,4 +1,4 @@
-import { Icon, IconName } from '@/components/ui/icon-by-name'
+import { Icon, IconName } from '@/components/ui/lucide-icon-by-name'
 import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { cn } from '@/lib/utils'
 import {

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategoryType } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import { cn } from '@/lib/utils'

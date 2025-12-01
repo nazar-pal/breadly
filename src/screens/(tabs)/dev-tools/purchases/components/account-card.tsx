@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
-import type { CustomerInfo } from 'react-native-purchases'
 import { View } from 'react-native'
+import type { CustomerInfo } from 'react-native-purchases'
 
 type AccountCardProps = {
   customerInfo: CustomerInfo

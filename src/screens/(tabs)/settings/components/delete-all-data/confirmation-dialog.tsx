@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { Icon } from '@/components/ui/icon-by-name'
 import { Input } from '@/components/ui/input'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { deleteAllUserData } from '@/data/client/mutations/delete-all-user-data'
 import { useUserSession } from '@/system/session-and-migration'

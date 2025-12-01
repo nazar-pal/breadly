@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import React from 'react'
 import { Pressable } from 'react-native'

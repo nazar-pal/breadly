@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import type { Digit, Operator } from '@/lib/hooks/use-calculator'
 import { View } from 'react-native'
 import { CalculatorButton } from './calculator-button'

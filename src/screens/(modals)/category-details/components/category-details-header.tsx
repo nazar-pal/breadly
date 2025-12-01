@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'

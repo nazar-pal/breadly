@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { updateCategory } from '@/data/client/mutations'
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'

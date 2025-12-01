@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { router } from 'expo-router'
 import React from 'react'
 
