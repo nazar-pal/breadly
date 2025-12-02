@@ -28,29 +28,29 @@ import {
   getUserPreferencesSqliteTable,
   userPreferences
 } from './table_3_user-preferences'
+import type { CategoryType } from './table_4_categories'
 import {
   categories,
   CATEGORY_TYPE,
-  CategoryType,
   getCategoriesSqliteTable
 } from './table_4_categories'
 import { budgets, getBudgetsSqliteTable } from './table_5_budgets'
+import type { AccountType } from './table_6_accounts'
 import {
   ACCOUNT_TYPE,
   accounts,
-  AccountType,
   getAccountsSqliteTable
 } from './table_6_accounts'
+import type { TransactionType } from './table_7_transactions'
 import {
   getTransactionsSqliteTable,
   TRANSACTION_TYPE,
-  transactions,
-  TransactionType
+  transactions
 } from './table_7_transactions'
+import type { AttachmentType } from './table_8_attachments'
 import {
   ATTACHMENT_TYPE,
   attachments,
-  AttachmentType,
   getAttachmentsSqliteTable
 } from './table_8_attachments'
 import {
