@@ -21,7 +21,11 @@ import { useEffect } from 'react'
 import { Platform, Pressable, Text, useColorScheme, View } from 'react-native'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import 'react-native-reanimated'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import {
+  SafeAreaListener,
+  SafeAreaProvider
+} from 'react-native-safe-area-context'
+import { Uniwind } from 'uniwind'
 import '../global.css'
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
@@ -104,30 +108,34 @@ function RootLayoutNative() {
   return (
     <GestureHandlerRootView className="flex-1">
       <SafeAreaProvider>
-        <KeyboardProvider>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={navTheme}>
-              <ClerkProvider
-                publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-                tokenCache={tokenCache}
-                __experimental_resourceCache={resourceCache}
-              >
-                <ClerkLoaded>
-                  <UserSessionInitializer>
-                    <PurchasesInitializer />
-                    <PowerSyncContextProvider>
-                      <StatusBar
-                        style={colorScheme === 'dark' ? 'light' : 'dark'}
-                      />
-                      <StackRoutes />
-                      <PortalHost />
-                    </PowerSyncContextProvider>
-                  </UserSessionInitializer>
-                </ClerkLoaded>
-              </ClerkProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </KeyboardProvider>
+        <SafeAreaListener
+          onChange={({ insets }) => Uniwind.updateInsets(insets)}
+        >
+          <KeyboardProvider>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider value={navTheme}>
+                <ClerkProvider
+                  publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+                  tokenCache={tokenCache}
+                  __experimental_resourceCache={resourceCache}
+                >
+                  <ClerkLoaded>
+                    <UserSessionInitializer>
+                      <PurchasesInitializer />
+                      <PowerSyncContextProvider>
+                        <StatusBar
+                          style={colorScheme === 'dark' ? 'light' : 'dark'}
+                        />
+                        <StackRoutes />
+                        <PortalHost />
+                      </PowerSyncContextProvider>
+                    </UserSessionInitializer>
+                  </ClerkLoaded>
+                </ClerkProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </KeyboardProvider>
+        </SafeAreaListener>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   )
