@@ -69,7 +69,11 @@ export default function CategoryDetailsModal({ categoryId }: Props) {
         onClose={() => router.back()}
       />
 
-      <ScrollView className="flex-1" contentContainerClassName="pb-safe-or-4" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-safe-or-4"
+        showsVerticalScrollIndicator={false}
+      >
         <CategoryInfoCard
           categoryData={categoryData}
           totalsByCurrency={totalsByCurrency}
