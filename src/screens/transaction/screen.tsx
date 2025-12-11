@@ -4,7 +4,6 @@ import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   ReceiptsCard,
   TransactionDetailsCard,
@@ -18,7 +17,6 @@ interface Props {
 }
 
 export default function TransactionDetailsScreen({ id }: Props) {
-  const insets = useSafeAreaInsets()
   const { userId } = useUserSession()
 
   const {
@@ -50,10 +48,7 @@ export default function TransactionDetailsScreen({ id }: Props) {
   return (
     <ScrollView
       className="bg-background flex-1"
-      contentContainerStyle={{
-        padding: 16,
-        paddingBottom: insets.bottom + 20
-      }}
+      contentContainerClassName="pb-safe-offset-5 p-4"
       showsVerticalScrollIndicator={false}
     >
       <TransactionHero transaction={transaction} userId={userId} />

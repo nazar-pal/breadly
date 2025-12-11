@@ -11,7 +11,6 @@ import { router } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
 
@@ -25,7 +24,6 @@ export function Categories({
   archived: boolean
 }) {
   const { userId } = useUserSession()
-  const insets = useSafeAreaInsets()
 
   const isArchived = archived
 
@@ -68,17 +66,19 @@ export function Categories({
   )
 
   return (
-    <DragList
-      data={categories}
-      keyExtractor={item => item.id}
-      renderItem={renderItem}
-      containerStyle={{ marginTop: 16, marginBottom: insets.bottom + 16 }}
-      showsVerticalScrollIndicator={false}
-      onReordered={handleReordered}
-      ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-      ListFooterComponent={
-        !isArchived ? () => <ButtonAddCategory type={type} /> : undefined
-      }
-    />
+    <View className="mb-safe-offset-4">
+      <DragList
+        data={categories}
+        keyExtractor={item => item.id}
+        renderItem={renderItem}
+        containerStyle={{ marginTop: 16 }}
+        showsVerticalScrollIndicator={false}
+        onReordered={handleReordered}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        ListFooterComponent={
+          !isArchived ? () => <ButtonAddCategory type={type} /> : undefined
+        }
+      />
+    </View>
   )
 }

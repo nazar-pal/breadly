@@ -2,7 +2,6 @@ import { Text } from '@/components/ui/text'
 import { LegendList } from '@legendapp/list'
 import React, { type ReactNode } from 'react'
 import { ActivityIndicator, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { SelectableRowProps } from '../types'
 import { SelectionItem } from './selection-item'
 
@@ -19,8 +18,6 @@ export function SelectionList({
   columns = 1,
   isLoading
 }: Props) {
-  const safeAreaInsets = useSafeAreaInsets()
-
   if (isLoading) {
     return <LoadingMessage />
   }
@@ -36,9 +33,9 @@ export function SelectionList({
       numColumns={columns}
       columnWrapperStyle={{ gap }}
       contentContainerStyle={{
-        paddingHorizontal: columns > 1 ? gap / 2 : 0,
-        paddingBottom: Math.max(safeAreaInsets.bottom, 32)
+        paddingHorizontal: columns > 1 ? gap / 2 : 0
       }}
+      contentContainerClassName="pb-safe-or-8"
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     />

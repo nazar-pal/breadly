@@ -2,7 +2,6 @@ import { cn } from '@/lib/utils'
 import { LegendList } from '@legendapp/list'
 import React from 'react'
 import { View, useColorScheme } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { DateGroup, ListItem } from '../lib/types'
 import { EmptyTodayMessage, SectionHeader } from './index'
 import { LoadingFooter } from './loading-footer'
@@ -19,7 +18,6 @@ export function TransactionList({
   onEndReached,
   isLoadingMore
 }: TransactionListProps) {
-  const insets = useSafeAreaInsets()
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
 
@@ -33,9 +31,7 @@ export function TransactionList({
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         style={{ paddingHorizontal: 12, paddingTop: 12 }}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + 16
-        }}
+        contentContainerClassName="pb-safe-offset-4"
         recycleItems={false}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}

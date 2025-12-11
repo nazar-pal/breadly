@@ -1,16 +1,13 @@
 import React from 'react'
-import { SafeAreaView } from '@/components/ui/safe-area-view'
+import { View } from 'react-native'
 import { Header } from './components/header'
 import { ModeSelection } from './components/mode-selection'
 
 export default function ModalTransactionsDateRange() {
   return (
-    <SafeAreaView
-      edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
-      className="bg-popover p-4"
-    >
+    <View className="bg-popover android:pb-safe-or-4 ios:pb-0 p-4">
       <Header />
       <ModeSelection />
-    </SafeAreaView>
+    </View>
   )
 }

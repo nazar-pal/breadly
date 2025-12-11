@@ -85,7 +85,7 @@ export function CustomDatePicker({ onDone, onCancel }: CustomDatePickerProps) {
   }
 
   return (
-    <View>
+    <View className="bg-popover ios:pb-0 android:pb-safe-or-4 px-4 pt-4">
       <View style={{ height: calendarHeight }}>
         <Calendar.List
           calendarInitialMonthId={initialMonthId}

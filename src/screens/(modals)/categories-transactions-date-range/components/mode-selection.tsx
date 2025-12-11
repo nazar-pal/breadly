@@ -6,7 +6,7 @@ import {
 } from '@/lib/storage/categories-date-range-store'
 import { router } from 'expo-router'
 import React from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 
 const MODE_OPTIONS: {
   mode: DateRangeMode
@@ -41,7 +41,7 @@ export function ModeSelection() {
   }
 
   return (
-    <ScrollView className="flex-grow pt-3" showsVerticalScrollIndicator={false}>
+
       <View className="flex-row flex-wrap justify-between">
         {MODE_OPTIONS.map(option => (
           <Pressable
@@ -73,6 +73,6 @@ export function ModeSelection() {
           </Pressable>
         ))}
       </View>
-    </ScrollView>
+
   )
 }

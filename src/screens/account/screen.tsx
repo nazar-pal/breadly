@@ -4,15 +4,12 @@ import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import React from 'react'
 import { ScrollView } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AccountHero } from './components/account-hero'
 import { AccountInsights } from './components/account-insights'
 import { AccountProgress } from './components/account-progress'
 import { AccountTransactions } from './components/account-transactions'
 
 export default function AccountScreen({ id }: { id: string }) {
-  const insets = useSafeAreaInsets()
-
   const { userId } = useUserSession()
   const {
     data: [account],
@@ -29,10 +26,7 @@ export default function AccountScreen({ id }: { id: string }) {
   return (
     <ScrollView
       className="bg-background flex-1"
-      contentContainerStyle={{
-        padding: 16,
-        paddingBottom: insets.bottom + 20
-      }}
+      contentContainerClassName="p-4 pb-safe-offset-5"
       showsVerticalScrollIndicator={false}
     >
       {account ? (

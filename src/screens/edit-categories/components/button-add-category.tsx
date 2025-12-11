@@ -19,7 +19,7 @@ export function ButtonAddCategory({ className, type }: Props) {
   return (
     <Pressable
       className={cn(
-        'border-border bg-muted/50 mt-4 flex flex-row items-center justify-center gap-2 rounded-2xl border border-dashed p-3',
+        'border-border mb-safe-offset-4 bg-muted/50 mt-4 flex flex-row items-center justify-center gap-2 rounded-2xl border border-dashed p-3',
         className
       )}
       onPress={handleAddCategory}
