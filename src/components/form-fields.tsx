@@ -1,5 +1,4 @@
-import { Calendar } from '@/components/ui/calendar'
-import { Drawer } from '@/components/ui/drawer'
+import { CalendarDialog } from '@/components/ui/calendar-dialog'
 import {
   FormControl,
   FormDescription,
@@ -10,14 +9,20 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
-import { format } from 'date-fns'
-import React from 'react'
-import { Path, useFormContext, type FieldValues } from 'react-hook-form'
+import { toDateId } from '@marceloterreiro/flash-calendar'
+import { useRef } from 'react'
+import {
+  Path,
+  useFormContext,
+  useWatch,
+  type FieldValues
+} from 'react-hook-form'
 import { Pressable } from 'react-native'
-import { DateData } from 'react-native-calendars'
 
-// Narrower for runtime Date checks when field values are typed as unknown
 const isDate = (value: unknown): value is Date => value instanceof Date
+
+/** Get today's date as a DateId */
+const getTodayId = (): string => toDateId(new Date())
 
 interface DateFieldProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>
@@ -26,11 +31,13 @@ interface DateFieldProps<TFieldValues extends FieldValues> {
   isPickerOpen: boolean
   openPicker: () => void
   closePicker: () => void
-  drawerTitle: string
-  safeBottomPadding?: boolean
-  height?: number | `${number}%` | 'auto'
+  dialogTitle: string
   valueToLabel?: (value: unknown) => string
-  transformSelectedDate?: (date: DateData) => unknown
+  transformSelectedDate?: (date: Date) => unknown
+  /** If true, only allows selecting future dates (today and onwards) */
+  futureOnly?: boolean
+  /** If true, only allows selecting past dates (today and before) */
+  pastOnly?: boolean
 }
 
 export function FormDateField<TFieldValues extends FieldValues>({
@@ -40,86 +47,79 @@ export function FormDateField<TFieldValues extends FieldValues>({
   isPickerOpen,
   openPicker,
   closePicker,
-  drawerTitle,
-  safeBottomPadding = true,
-  height = 'auto',
+  dialogTitle,
   valueToLabel,
-  transformSelectedDate
+  transformSelectedDate,
+  futureOnly = false,
+  pastOnly = false
 }: DateFieldProps<TFieldValues>) {
   const form = useFormContext<TFieldValues>()
+  const todayId = getTodayId()
+  const fieldValue = useWatch({ control: form.control, name })
+
+  // Use ref to hold the onChange function from render prop
+  const onChangeRef = useRef<(value: unknown) => void>(() => {})
+
+  // Format the display value
+  const displayValue = (() => {
+    const hasValue =
+      fieldValue !== undefined && fieldValue !== null && fieldValue !== ''
+    if (hasValue) {
+      return valueToLabel
+        ? valueToLabel(fieldValue)
+        : isDate(fieldValue)
+          ? fieldValue.toLocaleDateString()
+          : String(fieldValue)
+    }
+    return placeholder || label
+  })()
+
+  const handleDateSelect = (date: Date) => {
+    const nextValue = transformSelectedDate ? transformSelectedDate(date) : date
+    onChangeRef.current(nextValue)
+    closePicker()
+  }
 
   return (
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <>
-              <Pressable
-                className="native:h-12 border-input bg-background h-10 flex-row items-center rounded-md border px-3"
-                onPress={openPicker}
-              >
-                <Text
-                  className={
-                    field.value ? 'text-foreground' : 'text-muted-foreground'
-                  }
+      render={({ field }) => {
+        // Store onChange in ref for stable callback reference
+        onChangeRef.current = field.onChange
+
+        return (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              <>
+                <Pressable
+                  className="native:h-12 border-input bg-background h-10 flex-row items-center rounded-md border px-3"
+                  onPress={openPicker}
                 >
-                  {(() => {
-                    const hasValue =
-                      field.value !== undefined &&
-                      field.value !== null &&
-                      field.value !== ''
-                    if (hasValue)
-                      return valueToLabel
-                        ? valueToLabel(field.value)
-                        : isDate(field.value)
-                          ? field.value.toLocaleDateString()
-                          : String(field.value)
-
-                    return placeholder || label
-                  })()}
-                </Text>
-              </Pressable>
-              <Drawer
-                isVisible={isPickerOpen}
-                onClose={closePicker}
-                safeBottomPadding={safeBottomPadding}
-                height={height}
-                title={drawerTitle}
-              >
-                {(() => {
-                  const selectedKey = (() => {
-                    if (isDate(field.value))
-                      return format(field.value, 'yyyy-MM-dd')
-                    if (typeof field.value === 'string') return field.value
-                    return undefined
-                  })()
-                  const marked = selectedKey
-                    ? { [selectedKey]: { selected: true } as const }
-                    : undefined
-
-                  return (
-                    <Calendar
-                      initialDate={selectedKey}
-                      markedDates={marked}
-                      onDayPress={(date: DateData) => {
-                        const nextValue = transformSelectedDate
-                          ? transformSelectedDate(date)
-                          : new Date(date.year, date.month - 1, date.day)
-                        field.onChange(nextValue)
-                        closePicker()
-                      }}
-                    />
-                  )
-                })()}
-              </Drawer>
-            </>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+                  <Text
+                    className={
+                      field.value ? 'text-foreground' : 'text-muted-foreground'
+                    }
+                  >
+                    {displayValue}
+                  </Text>
+                </Pressable>
+                <CalendarDialog
+                  open={isPickerOpen}
+                  onOpenChange={o => !o && closePicker()}
+                  title={dialogTitle}
+                  selectedDate={fieldValue}
+                  onDateSelect={handleDateSelect}
+                  calendarMinDateId={futureOnly ? todayId : undefined}
+                  calendarMaxDateId={pastOnly ? todayId : undefined}
+                />
+              </>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )
+      }}
     />
   )
 }
@@ -146,6 +146,7 @@ export function FormInputField<TFieldValues extends FieldValues>({
   description
 }: InputFieldProps<TFieldValues>) {
   const form = useFormContext<TFieldValues>()
+
   const toNumeric = (input: string): number | undefined => {
     const sanitized = input.replace(',', '.').trim()
     if (sanitized === '') return undefined

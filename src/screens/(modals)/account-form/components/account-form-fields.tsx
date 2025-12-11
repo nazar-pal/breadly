@@ -106,9 +106,7 @@ export function AccountFormFields({ formType, accountType }: Props) {
             isPickerOpen={openPicker === 'targetDate'}
             openPicker={() => setOpenPicker('targetDate')}
             closePicker={() => setOpenPicker(null)}
-            drawerTitle="Pick target date"
-            safeBottomPadding
-            height="auto"
+            dialogTitle="Pick target date"
           />
         </>
       )}
@@ -129,8 +127,7 @@ export function AccountFormFields({ formType, accountType }: Props) {
             isPickerOpen={openPicker === 'dueDate'}
             openPicker={() => setOpenPicker('dueDate')}
             closePicker={() => setOpenPicker(null)}
-            drawerTitle="Pick due date"
-            height="auto"
+            dialogTitle="Pick due date"
           />
         </>
       )}
