@@ -7,6 +7,7 @@ import {
   PowerSyncBackendConnector,
   UpdateType
 } from '@powersync/react-native'
+import * as Sentry from '@sentry/react-native'
 import { z } from 'zod'
 
 export class Connector implements PowerSyncBackendConnector {
@@ -17,6 +18,15 @@ export class Connector implements PowerSyncBackendConnector {
         template: 'powersync'
       })
       if (!authToken) throw new Error('No auth token found for PowerSync')
+
+      // Set Sentry user context for all future error reports
+      const userId = clerkInstance.user?.id
+      if (userId)
+        Sentry.setUser({
+          id: userId,
+          email: clerkInstance.user?.emailAddresses[0].emailAddress,
+          username: clerkInstance.user?.fullName ?? undefined
+        })
 
       return {
         endpoint: env.EXPO_PUBLIC_POWERSYNC_WSS,
@@ -33,11 +43,11 @@ export class Connector implements PowerSyncBackendConnector {
 
     if (!transaction) return
 
-    let lastOp: { table: string; op: UpdateType } | null = null
+    let lastOp: { table: string; op: UpdateType; id: string } | null = null
     try {
       for (const op of transaction.crud) {
         // The data that needs to be changed in the remote db
-        lastOp = { table: op.table, op: op.op }
+        lastOp = { table: op.table, op: op.op, id: op.id }
 
         const record = { ...op.opData, id: op.id }
 
@@ -86,11 +96,82 @@ export class Connector implements PowerSyncBackendConnector {
       await transaction.complete()
       // If we get here, the transaction was successful.
     } catch (error) {
+      const errorInfo = this.categorizeError(error)
+
+      // Only report non-recoverable errors to Sentry
+      // Transient network issues will resolve on retry - no need to report
+      if (!errorInfo.isRecoverable) {
+        Sentry.captureException(error, {
+          tags: {
+            context: 'powersync:uploadData',
+            errorCategory: errorInfo.category,
+            table: lastOp?.table ?? 'unknown',
+            operation: lastOp?.op ?? 'unknown'
+          },
+          extra: {
+            recordId: lastOp?.id,
+            transactionId: transaction.transactionId,
+            crudCount: transaction.crud.length
+          }
+        })
+      }
+
+      // Always log locally for debugging
       console.error(
-        `Connector.uploadData error on op ${lastOp?.op} for table ${lastOp?.table}:`,
+        `[PowerSync] Upload failed - ${errorInfo.category}:`,
+        { table: lastOp?.table, op: lastOp?.op, id: lastOp?.id },
         error
       )
+
+      // Re-throw to block the queue (preserves order)
       throw error
     }
+  }
+
+  /**
+   * Categorize errors to determine handling strategy
+   */
+  private categorizeError(error: unknown): {
+    category: string
+    isRecoverable: boolean
+  } {
+    const message = error instanceof Error ? error.message : String(error)
+
+    // Constraint violations (likely client-side validation gaps)
+    if (
+      message.includes('violates foreign key') ||
+      message.includes('does not belong to user') ||
+      message.includes('currency') ||
+      message.includes('constraint')
+    ) {
+      return { category: 'constraint_violation', isRecoverable: false }
+    }
+
+    // Network errors (transient, will retry automatically)
+    if (
+      message.includes('network') ||
+      message.includes('timeout') ||
+      message.includes('Network request failed') ||
+      message.includes('ETIMEDOUT') ||
+      message.includes('ECONNREFUSED')
+    ) {
+      return { category: 'network', isRecoverable: true }
+    }
+
+    // Auth errors - 403 is NOT recoverable (permission issue)
+    // 401 could be transient if token refresh is working
+    if (message.includes('403') || message.includes('Forbidden')) {
+      return { category: 'auth_forbidden', isRecoverable: false }
+    }
+    if (message.includes('401') || message.includes('Unauthorized')) {
+      return { category: 'auth_unauthorized', isRecoverable: true }
+    }
+
+    // Validation errors from Zod/tRPC
+    if (message.includes('ZodError') || message.includes('validation')) {
+      return { category: 'validation_error', isRecoverable: false }
+    }
+
+    return { category: 'unknown', isRecoverable: false }
   }
 }
