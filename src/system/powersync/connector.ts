@@ -111,8 +111,17 @@ export class Connector implements PowerSyncBackendConnector {
           extra: {
             recordId: lastOp?.id,
             transactionId: transaction.transactionId,
-            crudCount: transaction.crud.length
-          }
+            crudCount: transaction.crud.length,
+            // Add full operation data for debugging constraint violations
+            opData:
+              errorInfo.category === 'constraint_violation' ? lastOp : undefined
+          },
+          // Group similar errors together
+          fingerprint: [
+            'powersync',
+            errorInfo.category,
+            lastOp?.table ?? 'unknown'
+          ]
         })
       }
 
