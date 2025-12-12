@@ -57,6 +57,13 @@
       "when": 1763739547012,
       "tag": "0007_strong_the_spike",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1765558652168,
+      "tag": "0008_remove_balance_triggers",
+      "breakpoints": true
     }
   ]
 }

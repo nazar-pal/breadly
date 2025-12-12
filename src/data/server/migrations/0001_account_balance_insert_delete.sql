@@ -1,6 +1,22 @@
 -- Custom SQL migration file, put your code below! --
 
 /*
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          ⚠️  DEPRECATED ⚠️                 ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║                                                                             ║
+║  This migration file is DEPRECATED and will be removed in migration 0008.  ║
+║                                                                             ║
+║  All functions and triggers created in this file are deleted in:           ║
+║  → src/data/server/migrations/0008_remove_balance_triggers.sql             ║
+║                                                                             ║
+║  Reason: Balance updates are now handled client-side and synced via        ║
+║          PowerSync to avoid conflicts between client and server updates.   ║
+║                                                                             ║
+║  ⚠️  You do NOT need to read or understand the code below.                  ║
+║                                                                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
 ================================================================================
 MIGRATION: 0001 - Account Balance Insert/Delete Triggers
 ================================================================================
