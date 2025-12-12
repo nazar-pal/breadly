@@ -25,6 +25,7 @@ type TransactionData = Omit<z.input<typeof transactionInsertSchema>, 'userId'>
  *    - Non-transfers don't have a counter account
  * 2. Transaction validates FK constraints and business rules:
  *    - Currency, category, and account references exist
+ *    - Currency matches account currency (prevents server trigger failure)
  *    - Sufficient funds for expenses and transfers (tracked across batch)
  */
 export async function createManyTransactions({
@@ -91,11 +92,15 @@ export async function createManyTransactions({
           : []
       const validCategoryIds = new Set(validCategories.map(c => c.id))
 
-      // Load all referenced accounts with balances (FK validation + balance tracking)
+      // Load all referenced accounts with balances and currencies (FK validation + balance tracking + currency validation)
       const accountsData =
         accountIds.size > 0
           ? await tx
-              .select({ id: accounts.id, balance: accounts.balance })
+              .select({
+                id: accounts.id,
+                balance: accounts.balance,
+                currencyId: accounts.currencyId
+              })
               .from(accounts)
               .where(
                 and(
@@ -105,10 +110,12 @@ export async function createManyTransactions({
               )
           : []
 
-      // Track running balances for each account across all transactions
+      // Track running balances and currencies for each account
       const accountBalances = new Map<string, number>()
+      const accountCurrencies = new Map<string, string | null>()
       for (const acc of accountsData) {
         accountBalances.set(acc.id, acc.balance)
+        accountCurrencies.set(acc.id, acc.currencyId)
       }
 
       // Validate all rows and update running balances
@@ -136,6 +143,29 @@ export async function createManyTransactions({
           !accountBalances.has(row.counterAccountId)
         ) {
           throw new Error(`Row ${i + 1}: Destination account not found`)
+        }
+
+        // Validate currency consistency (prevents server trigger failure)
+        if (row.accountId) {
+          const accountCurrency = accountCurrencies.get(row.accountId)
+          if (accountCurrency && accountCurrency !== row.currencyId) {
+            throw new Error(
+              `Row ${i + 1}: Transaction currency (${row.currencyId}) does not match account currency (${accountCurrency})`
+            )
+          }
+        }
+        if (row.type === 'transfer' && row.counterAccountId) {
+          const counterAccountCurrency = accountCurrencies.get(
+            row.counterAccountId
+          )
+          if (
+            counterAccountCurrency &&
+            counterAccountCurrency !== row.currencyId
+          ) {
+            throw new Error(
+              `Row ${i + 1}: Transfer currency (${row.currencyId}) does not match destination account currency (${counterAccountCurrency})`
+            )
+          }
         }
 
         // Get current running balances

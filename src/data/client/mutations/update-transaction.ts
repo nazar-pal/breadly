@@ -32,6 +32,7 @@ const updateTransactionSchema = transactionUpdateSchema.pick({
  *    - Transaction exists and belongs to user
  *    - Transfer constraints (validated on merged state since Zod can't see existing values)
  *    - Currency, category, and account references exist (if being updated)
+ *    - Currency matches account currency (prevents server trigger failure)
  *    - Sufficient funds for expenses and transfers
  */
 export async function updateTransaction({
@@ -67,6 +68,9 @@ export async function updateTransaction({
         parsedData.counterAccountId !== undefined
           ? parsedData.counterAccountId
           : existingTx.counterAccountId
+
+      // Compute final currency
+      const finalCurrencyId = parsedData.currencyId ?? existingTx.currencyId
 
       // Validate transfer constraints on merged state (Zod can't validate partial updates)
       if (finalType === 'transfer') {
@@ -105,6 +109,13 @@ export async function updateTransaction({
         if (!category) throw new Error('Category not found')
       }
 
+      // Validate account existence and currency consistency
+      // We need to check currency on final accounts if currency or accounts are changing
+      const needsCurrencyValidation =
+        parsedData.currencyId !== undefined ||
+        parsedData.accountId !== undefined ||
+        parsedData.counterAccountId !== undefined
+
       if (parsedData.accountId !== undefined && parsedData.accountId !== null) {
         const account = await tx.query.accounts.findFirst({
           where: and(
@@ -113,6 +124,26 @@ export async function updateTransaction({
           )
         })
         if (!account) throw new Error('Account not found')
+
+        // Validate currency matches
+        if (account.currencyId !== finalCurrencyId) {
+          throw new Error(
+            `Transaction currency (${finalCurrencyId}) does not match account currency (${account.currencyId})`
+          )
+        }
+      } else if (needsCurrencyValidation && finalAccountId) {
+        // Account not being updated but currency might be - validate existing account
+        const account = await tx.query.accounts.findFirst({
+          where: and(
+            eq(accounts.id, finalAccountId),
+            eq(accounts.userId, userId)
+          )
+        })
+        if (account && account.currencyId !== finalCurrencyId) {
+          throw new Error(
+            `Transaction currency (${finalCurrencyId}) does not match account currency (${account.currencyId})`
+          )
+        }
       }
 
       if (
@@ -126,6 +157,33 @@ export async function updateTransaction({
           )
         })
         if (!counterAccount) throw new Error('Counter account not found')
+
+        // Validate currency matches for transfers
+        if (
+          finalType === 'transfer' &&
+          counterAccount.currencyId !== finalCurrencyId
+        ) {
+          throw new Error(
+            `Transfer currency (${finalCurrencyId}) does not match destination account currency (${counterAccount.currencyId})`
+          )
+        }
+      } else if (
+        needsCurrencyValidation &&
+        finalType === 'transfer' &&
+        finalCounterAccountId
+      ) {
+        // Counter account not being updated but currency/type might be - validate existing counter account
+        const counterAccount = await tx.query.accounts.findFirst({
+          where: and(
+            eq(accounts.id, finalCounterAccountId),
+            eq(accounts.userId, userId)
+          )
+        })
+        if (counterAccount && counterAccount.currencyId !== finalCurrencyId) {
+          throw new Error(
+            `Transfer currency (${finalCurrencyId}) does not match destination account currency (${counterAccount.currencyId})`
+          )
+        }
       }
 
       // 3. Reverse old transaction's balance effect

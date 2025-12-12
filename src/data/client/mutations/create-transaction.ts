@@ -93,6 +93,23 @@ export async function createTransaction({
         throw new Error('Insufficient funds')
       }
 
+      // Validate currency consistency (prevents server trigger failure)
+      if (fromAccount && fromAccount.currencyId !== parsedData.currencyId) {
+        throw new Error(
+          `Transaction currency (${parsedData.currencyId}) does not match account currency (${fromAccount.currencyId})`
+        )
+      }
+
+      if (
+        parsedData.type === 'transfer' &&
+        toAccount &&
+        toAccount.currencyId !== parsedData.currencyId
+      ) {
+        throw new Error(
+          `Transfer currency (${parsedData.currencyId}) does not match destination account currency (${toAccount.currencyId})`
+        )
+      }
+
       // Insert transaction
       await tx.insert(transactions).values(parsedData)
 
