@@ -12,21 +12,23 @@ Key Features:
 - Week start day customization for calendar displays
 - Locale/language preference for internationalization
 - Extensible structure for future preference additions
-- Row-level security for data protection
 
 PowerSync Client Adaptations:
 - Additional 'id' field: PowerSync requires primary key to be named 'id'
 - PostgreSQL uses 'user_id' as PK, PowerSync sync rules alias it as 'id'
 - Both 'id' and 'userId' exist in SQLite for proper queries and relationships
 - Enables standard PowerSync conflict resolution and sync patterns
+
+PowerSync Limitations (JSON-based views):
+- CHECK constraints are NOT enforced (validated via Zod instead)
+- Foreign key references are NOT enforced
+- Default values must be handled in application code
 ================================================================================
 */
 
-import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { check, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
-import { currencies } from './table_1_currencies'
 import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 
 // ============================================================================
@@ -37,7 +39,7 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
  * User-specific application preferences and settings
  * Controls UI behavior, localization, and default values
  *
- * Business Rules:
+ * Business Rules (enforced via Zod, not SQLite):
  * - One preference record per user (unique constraint on userId)
  * - Default currency must be a valid currency from the currencies table
  * - First weekday must be between 1-7 (1=Monday, 7=Sunday)
@@ -55,20 +57,15 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
 const columns = {
   id: text().primaryKey(), // PowerSync-required primary key (aliased from 'user_id')
   userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
-  defaultCurrency: isoCurrencyCodeColumn('default_currency').references(
-    () => currencies.code
-  ), // Default currency for new accounts/transactions
-  firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
+  defaultCurrency: isoCurrencyCodeColumn('default_currency'), // Default currency (FK not enforced)
+  firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 7=Sunday)
   locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
 }
 
-const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  // Business rule constraints
-  check(
-    'user_preferences_valid_weekday',
-    sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
-  ) // Valid weekday range
-]
+// No indexes needed for this table (single row per user, accessed by id)
+const extraConfig = (
+  _table: BuildColumns<string, typeof columns, 'sqlite'>
+) => []
 
 export const userPreferences = sqliteTable(
   'user_preferences',
@@ -79,9 +76,16 @@ export const userPreferences = sqliteTable(
 export const getUserPreferencesSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
 
+// ============================================================================
+// ZOD VALIDATION SCHEMAS
+// ============================================================================
+// Business rules are enforced here since PowerSync JSON-based views
+// do not support CHECK constraints.
+
 /**
- * User preference insert schema with CHECK constraint validations.
- * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ * User preference insert schema with business rule validations.
+ * PowerSync's JSON-based views do not enforce constraints,
+ * so Zod is used to validate input data in application code.
  */
 export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
   // First weekday must be 1-7 (Monday-Sunday)

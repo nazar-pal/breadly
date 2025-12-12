@@ -1,5 +1,3 @@
-import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
-
 /*
 ================================================================================
 POWERSYNC SCHEMA - SQLite Database Schema for Local Sync
@@ -13,8 +11,15 @@ Key Features:
 - Full schema export
 - Type definitions for all tables
 
-Note: Since PowerSync views don't enforce database CHECK constraints,
-      Zod schemas are extended with refinements to enforce these rules at runtime.
+PowerSync Limitations (JSON-based views):
+- CHECK constraints are NOT enforced (validated via Zod schemas)
+- Foreign key references are NOT enforced
+- Unique indexes are NOT enforced
+- Multi-column indexes are NOT supported
+- Only single-column indexes work (basic support)
+- Cascade delete behavior is NOT enforced (handled in application code)
+
+Note: Business rules are enforced via Zod schemas at runtime.
 ================================================================================
 */
 
@@ -122,6 +127,10 @@ export const sqliteSchema = {
   transactionAttachmentsRelations
 }
 
+// ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+
 // table_1_currencies
 export type CurrencySelectSQLite = typeof currencies.$inferSelect
 
@@ -150,8 +159,7 @@ export {
 export type BudgetSelectSQLite = typeof budgets.$inferSelect
 export type BudgetInsertSQLite = typeof budgets.$inferInsert
 
-export const budgetInsertSchema = createInsertSchema(budgets)
-export const budgetUpdateSchema = createUpdateSchema(budgets)
+export { budgetInsertSchema, budgetUpdateSchema } from './table_5_budgets'
 
 // table_6_accounts
 export type AccountSelectSQLite = typeof accounts.$inferSelect
@@ -174,8 +182,10 @@ export {
 export type AttachmentSelectSQLite = typeof attachments.$inferSelect
 export type AttachmentInsertSQLite = typeof attachments.$inferInsert
 
-export const attachmentInsertSchema = createInsertSchema(attachments)
-export const attachmentUpdateSchema = createUpdateSchema(attachments)
+export {
+  attachmentInsertSchema,
+  attachmentUpdateSchema
+} from './table_8_attachments'
 
 // table_9_transaction-attachments
 export type TransactionAttachmentSelectSQLite =
@@ -183,9 +193,7 @@ export type TransactionAttachmentSelectSQLite =
 export type TransactionAttachmentInsertSQLite =
   typeof transactionAttachments.$inferInsert
 
-export const transactionAttachmentInsertSchema = createInsertSchema(
-  transactionAttachments
-)
-export const transactionAttachmentUpdateSchema = createUpdateSchema(
-  transactionAttachments
-)
+export {
+  transactionAttachmentInsertSchema,
+  transactionAttachmentUpdateSchema
+} from './table_9_transaction-attachments'

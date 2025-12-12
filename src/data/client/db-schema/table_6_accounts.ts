@@ -9,17 +9,15 @@ Key Features:
 - Multi-tenant account isolation per user
 - Support for saving, payment, and debt account types
 - Multi-currency account support
-- Automatic balance tracking via database triggers
+- Automatic balance tracking via database triggers (implemented outside of the schema)
 - Soft deletion with archive functionality
 ================================================================================
 */
 
-import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { check, index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
-import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -56,21 +54,24 @@ export type AccountType = (typeof ACCOUNT_TYPE)[number]
  * Business Rules:
  * - Each account belongs to a single user (multi-tenant isolation)
  * - Account currency determines transaction currency validation
- * - Balance is automatically updated by database triggers
+ * - Balance is automatically updated by database triggers (handled outside of the schema)
  * - Archived accounts are hidden but data is preserved
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
  */
 const columns = {
+  // Explicitly define the id column for Drizzle type safety.
+  // PowerSync automatically creates an id column, but defining it here
+  // allows Drizzle ORM to understand the column and generate types.
   id: uuidPrimaryKey(),
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   type: text({ enum: ACCOUNT_TYPE }).notNull(), // Account classification ('saving' | 'payment' | 'debt')
   name: nameColumn(), // User-defined account name
   description: descriptionColumn(), // Optional user notes about the account
-  currencyId: isoCurrencyCodeColumn('currency_id')
-    .references(() => currencies.code)
-    .default('USD'), // Account base currency
-  balance: monetaryAmountColumn().default(0), // Current balance (updated by triggers)
+
+  // Currency. The foreign key reference will not be enforced in PowerSync’s default JSON-based views
+  currencyId: isoCurrencyCodeColumn('currency_id').default('USD'),
+  balance: monetaryAmountColumn().default(0), // Current balance
 
   // Type-specific fields for savings accounts
   savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
@@ -84,46 +85,22 @@ const columns = {
   createdAt: createdAtColumn()
 }
 
+// Extra configuration: define only single-column indexes, since PowerSync’s default JSON-based system
+// doesn’t support multi-column or expression indexes. These indexes improve query performance on
+// commonly filtered columns.
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  // Performance indexes for common query patterns
-  index('accounts_user_idx').on(table.userId), // User's accounts lookup
-  index('accounts_user_archived_idx').on(table.userId, table.isArchived), // Active accounts only
-  index('accounts_user_type_idx').on(table.userId, table.type), // Accounts by type
-
-  // Business rule constraints
-  check('accounts_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
-  check(
-    'accounts_positive_target_amount',
-    sql`${table.savingsTargetAmount} IS NULL OR ${table.savingsTargetAmount} > 0`
-  ), // Positive target amounts
-  check(
-    'accounts_positive_debt_initial_amount',
-    sql`${table.debtInitialAmount} IS NULL OR ${table.debtInitialAmount} > 0`
-  ), // Positive debt initial amounts
-
-  // Type-specific field constraints - ensure fields are only used for appropriate account types
-  check(
-    'accounts_savings_fields_only_for_saving',
-    sql`(${table.type} = 'saving') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL)`
-  ), // Savings fields only for saving accounts
-  check(
-    'accounts_debt_fields_only_for_debt',
-    sql`(${table.type} = 'debt') OR (${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
-  ), // Debt fields only for debt accounts
-  check(
-    'accounts_payment_no_type_specific_fields',
-    sql`(${table.type} != 'payment') OR (${table.savingsTargetAmount} IS NULL AND ${table.savingsTargetDate} IS NULL AND ${table.debtInitialAmount} IS NULL AND ${table.debtDueDate} IS NULL)`
-  ) // Payment accounts cannot have type-specific fields
+  index('accounts_user_idx').on(table.userId), // Index for userId lookups
+  index('accounts_type_idx').on(table.type), // Index for filtering by account type
+  index('accounts_is_archived_idx').on(table.isArchived) // Index for archived flag
 ]
 
 export const accounts = sqliteTable('accounts', columns, extraConfig)
-
 export const getAccountsSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
 
 /**
- * Account insert schema with CHECK constraint validations.
- * These constraints are not enforced by PowerSync, so we validate them in Zod.
+ * Account insert schema with validation. Since PowerSync’s JSON-based views do not enforce
+ * constraints, Zod is used to validate input data in your application code.
  */
 export const accountInsertSchema = createInsertSchema(accounts, {
   // Non-empty name after trimming whitespace
