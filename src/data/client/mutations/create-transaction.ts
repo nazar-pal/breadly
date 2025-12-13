@@ -17,13 +17,15 @@ import { z } from 'zod'
  * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints:
  *    - Amount is positive and within limits
- *    - Transaction date is not in the future
  *    - Transfers have a source account (accountId not null)
  *    - Transfers have different source and destination accounts
  *    - Non-transfers don't have a counter account
  * 2. Transaction validates FK constraints and business rules:
  *    - Currency, category, and account references exist
- *    - Sufficient funds for expenses and transfers
+ *    - Category type matches transaction type (expense→expense, income→income)
+ *    - Transfer transactions cannot have a category
+ *
+ * Note: Negative account balances are allowed (no insufficient funds check).
  *
  * @returns Tuple of [error, { id }] - the created transaction ID on success
  */
@@ -47,7 +49,11 @@ export async function createTransaction({
       if (!currency)
         throw new Error(`Currency "${parsedData.currencyId}" not found`)
 
-      // Validate category exists and belongs to user (if provided)
+      // Transfer transactions cannot have a category (server trigger enforces this)
+      if (parsedData.type === 'transfer' && parsedData.categoryId != null)
+        throw new Error('Transfer transactions cannot have a category')
+
+      // Validate category exists, belongs to user, is not archived, and type matches (if provided)
       if (parsedData.categoryId) {
         const category = await tx.query.categories.findFirst({
           where: and(
@@ -56,6 +62,17 @@ export async function createTransaction({
           )
         })
         if (!category) throw new Error('Category not found')
+
+        // Prevent using archived categories in new transactions
+        if (category.isArchived)
+          throw new Error('Cannot use archived category for new transaction')
+
+        // Validate category type matches transaction type (server trigger enforces this)
+        if (category.type !== parsedData.type) {
+          throw new Error(
+            `Cannot use ${category.type} category for ${parsedData.type} transaction`
+          )
+        }
       }
 
       // Load involved accounts if IDs are present
@@ -84,14 +101,14 @@ export async function createTransaction({
       if (parsedData.counterAccountId && !toAccount)
         throw new Error('Destination account not found')
 
-      // Insufficient funds check for expenses and transfers
-      if (
-        (parsedData.type === 'expense' || parsedData.type === 'transfer') &&
-        fromAccount &&
-        fromAccount.balance < parsedData.amount
-      ) {
-        throw new Error('Insufficient funds')
-      }
+      // Prevent using archived accounts in new transactions
+      if (fromAccount?.isArchived)
+        throw new Error('Cannot use archived account for new transaction')
+
+      if (toAccount?.isArchived)
+        throw new Error(
+          'Cannot use archived account as transfer destination for new transaction'
+        )
 
       // Validate currency consistency (prevents server trigger failure)
       if (fromAccount && fromAccount.currencyId !== parsedData.currencyId) {

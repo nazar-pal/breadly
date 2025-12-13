@@ -28,6 +28,8 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -96,29 +98,52 @@ export const getCategoriesSqliteTable = (name: string) =>
 // do not support CHECK constraints or foreign keys.
 
 /**
+ * Maximum category name length (matches varchar(100) server constraint)
+ */
+const MAX_CATEGORY_NAME_LENGTH = 100
+
+/**
+ * Maximum icon name length (matches varchar(50) server constraint)
+ */
+const MAX_ICON_LENGTH = 50
+
+/**
+ * Maximum description length (matches varchar(1000) server constraint)
+ */
+const MAX_DESCRIPTION_LENGTH = 1000
+
+/**
  * Category insert schema with business rule validations.
  * PowerSync's JSON-based views do not enforce constraints,
  * so Zod is used to validate input data in application code.
+ *
+ * Server CHECK constraints replicated:
+ * - categories_name_not_empty: name must be non-empty after trim
+ * - categories_no_self_parent: parentId cannot equal id
  */
 export const categoryInsertSchema = createInsertSchema(categories, {
-  // Non-empty name after trimming whitespace
-  name: schema =>
-    schema.refine(
-      name => name.trim().length > 0,
-      'Category name cannot be empty'
-    )
+  id: s => s.default(randomUUID),
+  name: s => s.trim().min(1).max(MAX_CATEGORY_NAME_LENGTH),
+  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
+  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle'),
+  createdAt: s => s.default(new Date())
 })
-  // Prevent self-referencing parent
-  .refine(data => data.parentId == null || data.parentId !== data.id, {
+  // Prevent self-referencing parent (categories_no_self_parent)
+  .refine(data => data.parentId !== data.id, {
     message: 'Category cannot be its own parent',
     path: ['parentId']
   })
 
+export type CategoryInsertSchemaInput = z.input<typeof categoryInsertSchema>
+export type CategoryInsertSchemaOutput = z.output<typeof categoryInsertSchema>
+
 export const categoryUpdateSchema = createUpdateSchema(categories, {
-  // Non-empty name after trimming whitespace (when updating name)
-  name: schema =>
-    schema.refine(
-      name => name === undefined || name.trim().length > 0,
-      'Category name cannot be empty'
-    )
+  name: s => s.trim().min(1).max(MAX_CATEGORY_NAME_LENGTH),
+  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
+  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle')
 })
+  // Not possible to prevent self-referencing parent (categories_no_self_parent) on the schema level
+  .omit({ createdAt: true, id: true, parentId: true, userId: true, type: true })
+
+export type CategoryUpdateSchemaInput = z.input<typeof categoryUpdateSchema>
+export type CategoryUpdateSchemaOutput = z.output<typeof categoryUpdateSchema>

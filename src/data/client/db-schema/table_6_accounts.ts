@@ -9,8 +9,15 @@ Key Features:
 - Multi-tenant account isolation per user
 - Support for saving, payment, and debt account types
 - Multi-currency account support
-- Automatic balance tracking via database triggers (implemented outside of the schema)
 - Soft deletion with archive functionality
+
+PowerSync Limitations (JSON-based views):
+- CHECK constraints are NOT enforced (validated via Zod instead)
+- Foreign key references are NOT enforced
+- Multi-column indexes are NOT supported
+- Only single-column indexes work (basic support)
+
+Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
@@ -18,6 +25,8 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -27,6 +36,7 @@ import {
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   nameColumn,
+  roundToTwoDecimals,
   uuidPrimaryKey
 } from './utils'
 
@@ -51,118 +61,129 @@ export type AccountType = (typeof ACCOUNT_TYPE)[number]
  * User financial accounts (bank accounts, credit cards, etc.)
  * Core entity for tracking money and balances
  *
- * Business Rules:
+ * Business Rules (enforced via Zod, not SQLite):
  * - Each account belongs to a single user (multi-tenant isolation)
- * - Account currency determines transaction currency validation
- * - Balance is automatically updated by database triggers (handled outside of the schema)
- * - Archived accounts are hidden but data is preserved
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
+ * - Savings target amount must be positive (if provided)
+ * - Debt initial amount must be positive (if provided)
  */
 const columns = {
-  // Explicitly define the id column for Drizzle type safety.
-  // PowerSync automatically creates an id column, but defining it here
-  // allows Drizzle ORM to understand the column and generate types.
+  // Explicitly defined for Drizzle ORM type safety
   id: uuidPrimaryKey(),
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   type: text({ enum: ACCOUNT_TYPE }).notNull(), // Account classification ('saving' | 'payment' | 'debt')
   name: nameColumn(), // User-defined account name
   description: descriptionColumn(), // Optional user notes about the account
 
-  // Currency. The foreign key reference will not be enforced in PowerSync’s default JSON-based views
+  // Currency (FK not enforced in PowerSync)
   currencyId: isoCurrencyCodeColumn('currency_id').default('USD'),
   balance: monetaryAmountColumn().default(0), // Current balance
 
   // Type-specific fields for savings accounts
   savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
-  savingsTargetDate: dateOnlyText('savings_target_date'), // Target date to reach savings goal (YYYY-MM-DD TEXT)
+  savingsTargetDate: dateOnlyText('savings_target_date'), // Target date (YYYY-MM-DD TEXT)
 
-  // Type-specific fields for debt accounts (balance sign represents debt direction - I owe someone or someone owes me)
+  // Type-specific fields for debt accounts
   debtInitialAmount: real('debt_initial_amount'), // Original debt amount (debt only)
-  debtDueDate: dateOnlyText('debt_due_date'), // Due date for debt payment (YYYY-MM-DD TEXT)
+  debtDueDate: dateOnlyText('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
   createdAt: createdAtColumn()
 }
 
-// Extra configuration: define only single-column indexes, since PowerSync’s default JSON-based system
-// doesn’t support multi-column or expression indexes. These indexes improve query performance on
-// commonly filtered columns.
+// Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  index('accounts_user_idx').on(table.userId), // Index for userId lookups
-  index('accounts_type_idx').on(table.type), // Index for filtering by account type
-  index('accounts_is_archived_idx').on(table.isArchived) // Index for archived flag
+  index('accounts_user_idx').on(table.userId),
+  index('accounts_type_idx').on(table.type),
+  index('accounts_is_archived_idx').on(table.isArchived)
 ]
 
 export const accounts = sqliteTable('accounts', columns, extraConfig)
 export const getAccountsSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
 
+// ============================================================================
+// ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+const MAX_ACCOUNT_NAME_LENGTH = 100
+const MAX_DESCRIPTION_LENGTH = 1000
+
 /**
- * Account insert schema with validation. Since PowerSync’s JSON-based views do not enforce
- * constraints, Zod is used to validate input data in your application code.
+ * Account insert schema with business rule validations.
+ *
+ * Server CHECK constraints replicated:
+ * - accounts_name_not_empty: name must be non-empty after trim
+ * - accounts_positive_target_amount: savings target must be positive
+ * - accounts_positive_debt_initial_amount: debt initial amount must be positive
+ * - accounts_savings_fields_only_for_saving: savings fields only for saving accounts
+ * - accounts_debt_fields_only_for_debt: debt fields only for debt accounts
+ * - accounts_payment_no_type_specific_fields: payment accounts cannot have type-specific fields
+ * - NUMERIC(14,2) precision: rounded to 2 decimal places for monetary fields
  */
 export const accountInsertSchema = createInsertSchema(accounts, {
-  // Non-empty name after trimming whitespace
-  name: schema =>
-    schema.refine(
-      name => name.trim().length > 0,
-      'Account name cannot be empty'
-    ),
-  // Currency defaults to USD (mirrors database default for validation)
-  currencyId: schema => schema.default('USD'),
-  // Make type-specific nullable fields optional (undefined -> null transform)
-  savingsTargetAmount: schema =>
-    schema
-      .nullish()
-      .transform(val => val ?? null)
-      .refine(
-        val => val === null || val > 0,
-        'Savings target amount must be positive'
-      ),
-  savingsTargetDate: schema => schema.nullish().transform(val => val ?? null),
-  debtInitialAmount: schema =>
-    schema
-      .nullish()
-      .transform(val => val ?? null)
-      .refine(
-        val => val === null || val > 0,
-        'Debt initial amount must be positive'
-      ),
-  debtDueDate: schema => schema.nullish().transform(val => val ?? null)
+  id: s => s.default(randomUUID),
+  name: s => s.trim().min(1).max(MAX_ACCOUNT_NAME_LENGTH),
+  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
+  currencyId: s => s.trim().length(3).default('USD'),
+  savingsTargetAmount: s =>
+    s.positive().transform(roundToTwoDecimals).optional(),
+  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional(),
+  createdAt: s => s.default(new Date())
 })
   // Savings fields only for saving accounts
   .refine(
     data =>
       data.type === 'saving' ||
       (data.savingsTargetAmount == null && data.savingsTargetDate == null),
-    'Savings fields can only be set for saving accounts'
+    {
+      message: 'Savings fields can only be set for saving accounts',
+      path: ['savingsTargetAmount']
+    }
   )
   // Debt fields only for debt accounts
   .refine(
     data =>
       data.type === 'debt' ||
       (data.debtInitialAmount == null && data.debtDueDate == null),
-    'Debt fields can only be set for debt accounts'
+    {
+      message: 'Debt fields can only be set for debt accounts',
+      path: ['debtInitialAmount']
+    }
+  )
+  // Payment accounts cannot have any type-specific fields
+  .refine(
+    data =>
+      data.type !== 'payment' ||
+      (data.savingsTargetAmount == null &&
+        data.savingsTargetDate == null &&
+        data.debtInitialAmount == null &&
+        data.debtDueDate == null),
+    {
+      message: 'Payment accounts cannot have savings or debt fields',
+      path: ['type']
+    }
   )
 
+export type AccountInsertSchemaInput = z.input<typeof accountInsertSchema>
+export type AccountInsertSchemaOutput = z.output<typeof accountInsertSchema>
+
+/**
+ * Account update schema with business rule validations.
+ *
+ * IMPORTANT: When creating an account update mutation, you MUST also validate:
+ * - Account exists and belongs to user
+ * - Currency change protection: validate_account_currency_change() trigger on server
+ *   prevents changing currency when transactions exist for this account
+ * - If updating currency, check: no transactions with accountId OR counterAccountId = this account
+ */
 export const accountUpdateSchema = createUpdateSchema(accounts, {
-  // Non-empty name after trimming whitespace (when updating name)
-  name: schema =>
-    schema.refine(
-      name => name === undefined || name.trim().length > 0,
-      'Account name cannot be empty'
-    ),
-  // Positive savings target amount (if provided)
-  savingsTargetAmount: schema =>
-    schema.refine(
-      val => val === null || val === undefined || val > 0,
-      'Savings target amount must be positive'
-    ),
-  // Positive debt initial amount (if provided)
-  debtInitialAmount: schema =>
-    schema.refine(
-      val => val === null || val === undefined || val > 0,
-      'Debt initial amount must be positive'
-    )
-})
+  name: s => s.trim().min(1).max(MAX_ACCOUNT_NAME_LENGTH),
+  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH),
+  savingsTargetAmount: s => s.positive().transform(roundToTwoDecimals),
+  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals)
+}).omit({ id: true, userId: true, type: true, createdAt: true })
+
+export type AccountUpdateSchemaInput = z.input<typeof accountUpdateSchema>
+export type AccountUpdateSchemaOutput = z.output<typeof accountUpdateSchema>

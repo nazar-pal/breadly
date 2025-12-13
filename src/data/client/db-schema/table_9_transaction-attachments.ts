@@ -27,6 +27,8 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
@@ -42,7 +44,6 @@ import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
  * - Each transaction-attachment pair can only exist once
  * - Direct user ownership for efficient PowerSync filtering
  * - User_id is denormalized from transaction for PowerSync compatibility
- * - Supports sharing attachments across multiple transactions within user scope
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -55,9 +56,9 @@ const columns = {
 
 // Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  index('transaction_attachments_user_idx').on(table.userId), // User's transaction-attachments
-  index('transaction_attachments_transaction_idx').on(table.transactionId), // Transaction's attachments
-  index('transaction_attachments_attachment_idx').on(table.attachmentId) // Attachment's transactions
+  index('transaction_attachments_user_idx').on(table.userId),
+  index('transaction_attachments_transaction_idx').on(table.transactionId),
+  index('transaction_attachments_attachment_idx').on(table.attachmentId)
 ]
 
 export const transactionAttachments = sqliteTable(
@@ -76,11 +77,34 @@ export const getTransactionAttachmentsSqliteTable = (name: string) =>
 /**
  * Transaction attachment insert schema.
  * Basic validation - uniqueness is enforced in application code.
+ *
+ * IMPORTANT: When creating a transaction-attachment mutation, you MUST also validate:
+ * - Transaction exists and belongs to user (FK validation)
+ * - Attachment exists and belongs to user (FK validation)
+ * - Unique constraint: transaction_attachments_unique (transactionId, attachmentId)
  */
 export const transactionAttachmentInsertSchema = createInsertSchema(
-  transactionAttachments
+  transactionAttachments,
+  {
+    id: s => s.default(randomUUID),
+    createdAt: s => s.default(new Date())
+  }
 )
+
+export type TransactionAttachmentInsertSchemaInput = z.input<
+  typeof transactionAttachmentInsertSchema
+>
+export type TransactionAttachmentInsertSchemaOutput = z.output<
+  typeof transactionAttachmentInsertSchema
+>
 
 export const transactionAttachmentUpdateSchema = createUpdateSchema(
   transactionAttachments
-)
+).omit({ id: true, userId: true, createdAt: true })
+
+export type TransactionAttachmentUpdateSchemaInput = z.input<
+  typeof transactionAttachmentUpdateSchema
+>
+export type TransactionAttachmentUpdateSchemaOutput = z.output<
+  typeof transactionAttachmentUpdateSchema
+>

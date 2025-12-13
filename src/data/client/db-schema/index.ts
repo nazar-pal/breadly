@@ -143,7 +143,11 @@ export type UserPreferenceInsertSQLite = typeof userPreferences.$inferInsert
 
 export {
   userPreferenceInsertSchema,
-  userPreferenceUpdateSchema
+  userPreferenceUpdateSchema,
+  type UserPreferenceInsertSchemaInput,
+  type UserPreferenceInsertSchemaOutput,
+  type UserPreferenceUpdateSchemaInput,
+  type UserPreferenceUpdateSchemaOutput
 } from './table_3_user-preferences'
 
 // table_4_categories
@@ -152,20 +156,38 @@ export type CategoryInsertSQLite = typeof categories.$inferInsert
 
 export {
   categoryInsertSchema,
-  categoryUpdateSchema
+  categoryUpdateSchema,
+  type CategoryInsertSchemaInput,
+  type CategoryInsertSchemaOutput,
+  type CategoryUpdateSchemaInput,
+  type CategoryUpdateSchemaOutput
 } from './table_4_categories'
 
 // table_5_budgets
 export type BudgetSelectSQLite = typeof budgets.$inferSelect
 export type BudgetInsertSQLite = typeof budgets.$inferInsert
 
-export { budgetInsertSchema, budgetUpdateSchema } from './table_5_budgets'
+export {
+  budgetInsertSchema,
+  budgetUpdateSchema,
+  type BudgetInsertSchemaInput,
+  type BudgetInsertSchemaOutput,
+  type BudgetUpdateSchemaInput,
+  type BudgetUpdateSchemaOutput
+} from './table_5_budgets'
 
 // table_6_accounts
 export type AccountSelectSQLite = typeof accounts.$inferSelect
 export type AccountInsertSQLite = typeof accounts.$inferInsert
 
-export { accountInsertSchema, accountUpdateSchema } from './table_6_accounts'
+export {
+  accountInsertSchema,
+  accountUpdateSchema,
+  type AccountInsertSchemaInput,
+  type AccountInsertSchemaOutput,
+  type AccountUpdateSchemaInput,
+  type AccountUpdateSchemaOutput
+} from './table_6_accounts'
 
 // table_7_transactions
 export type TransactionSelectSQLite = typeof transactions.$inferSelect
@@ -175,7 +197,11 @@ export {
   MAX_TRANSACTION_AMOUNT,
   MIN_TRANSACTION_DATE,
   transactionInsertSchema,
-  transactionUpdateSchema
+  transactionUpdateSchema,
+  type TransactionInsertSchemaInput,
+  type TransactionInsertSchemaOutput,
+  type TransactionUpdateSchemaInput,
+  type TransactionUpdateSchemaOutput
 } from './table_7_transactions'
 
 // table_8_attachments
@@ -184,7 +210,11 @@ export type AttachmentInsertSQLite = typeof attachments.$inferInsert
 
 export {
   attachmentInsertSchema,
-  attachmentUpdateSchema
+  attachmentUpdateSchema,
+  type AttachmentInsertSchemaInput,
+  type AttachmentInsertSchemaOutput,
+  type AttachmentUpdateSchemaInput,
+  type AttachmentUpdateSchemaOutput
 } from './table_8_attachments'
 
 // table_9_transaction-attachments
@@ -195,5 +225,9 @@ export type TransactionAttachmentInsertSQLite =
 
 export {
   transactionAttachmentInsertSchema,
-  transactionAttachmentUpdateSchema
+  transactionAttachmentUpdateSchema,
+  type TransactionAttachmentInsertSchemaInput,
+  type TransactionAttachmentInsertSchemaOutput,
+  type TransactionAttachmentUpdateSchemaInput,
+  type TransactionAttachmentUpdateSchemaOutput
 } from './table_9_transaction-attachments'

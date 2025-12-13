@@ -27,11 +27,14 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 import {
   clerkUserIdColumn,
   dateOnlyText,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
+  roundToTwoDecimals,
   uuidPrimaryKey
 } from './utils'
 
@@ -48,8 +51,7 @@ import {
  * - Budgets are tied to specific categories for granular control
  * - Only one budget per category+currency+start date+end date combination
  * - Budget amounts must be positive values
- * - Start dates define when the budget period begins
- * - Budget tracking compares actual spending against these limits
+ * - End date must be after or equal to start date
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -64,8 +66,8 @@ const columns = {
 
 // Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  index('budgets_user_idx').on(table.userId), // User's budgets lookup
-  index('budgets_category_idx').on(table.categoryId) // Category budgets lookup
+  index('budgets_user_idx').on(table.userId),
+  index('budgets_category_idx').on(table.categoryId)
 ]
 
 export const budgets = sqliteTable('budgets', columns, extraConfig)
@@ -76,18 +78,24 @@ export const getBudgetsSqliteTable = (name: string) =>
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
-// Business rules are enforced here since PowerSync JSON-based views
-// do not support CHECK constraints.
 
 /**
  * Budget insert schema with business rule validations.
- * PowerSync's JSON-based views do not enforce constraints,
- * so Zod is used to validate input data in application code.
+ *
+ * Server CHECK constraints replicated:
+ * - budgets_positive_amount: amount > 0
+ * - NUMERIC(14,2) precision: rounded to 2 decimal places
+ *
+ * IMPORTANT: When creating a budget mutation, you MUST also validate:
+ * - Category exists and belongs to user (FK validation)
+ * - Category is not archived (business rule)
+ * - Currency exists (FK validation)
+ * - Unique constraint: budgets_category_start_end_unq (categoryId, currency, startDate, endDate)
  */
 export const budgetInsertSchema = createInsertSchema(budgets, {
-  // Budget amount must be positive
-  amount: schema =>
-    schema.refine(val => val > 0, 'Budget amount must be positive')
+  id: s => s.default(randomUUID),
+  amount: s => s.positive().transform(roundToTwoDecimals),
+  currency: s => s.trim().length(3)
 })
   // End date must be after or equal to start date
   .refine(data => new Date(data.endDate) >= new Date(data.startDate), {
@@ -95,11 +103,27 @@ export const budgetInsertSchema = createInsertSchema(budgets, {
     path: ['endDate']
   })
 
+export type BudgetInsertSchemaInput = z.input<typeof budgetInsertSchema>
+export type BudgetInsertSchemaOutput = z.output<typeof budgetInsertSchema>
+
+/**
+ * Budget update schema with business rule validations.
+ *
+ * Note: Cross-field validation for startDate/endDate cannot be fully validated
+ * at schema level for partial updates since we don't know existing values.
+ * Full validation should happen in the mutation with merged state.
+ */
 export const budgetUpdateSchema = createUpdateSchema(budgets, {
-  // Budget amount must be positive (if provided)
-  amount: schema =>
-    schema.refine(
-      val => val === undefined || val > 0,
-      'Budget amount must be positive'
-    )
+  amount: s => s.positive().transform(roundToTwoDecimals),
+  currency: s => s.trim().length(3)
+}).omit({
+  id: true,
+  userId: true,
+  startDate: true,
+  endDate: true,
+  categoryId: true,
+  currency: true
 })
+
+export type BudgetUpdateSchemaInput = z.input<typeof budgetUpdateSchema>
+export type BudgetUpdateSchemaOutput = z.output<typeof budgetUpdateSchema>

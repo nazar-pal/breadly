@@ -1,7 +1,7 @@
 import { categories, categoryInsertSchema } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 
@@ -10,7 +10,11 @@ import { z } from 'zod'
  *
  * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints (name non-empty)
- * 2. Transaction validates foreign key references and business rules
+ * 2. Transaction validates foreign key references and business rules:
+ *    - Parent category exists and belongs to user (if provided)
+ *    - Category type matches parent type
+ *    - No grandchildren (max 2 levels of nesting)
+ *    - Category name is unique within user+parent scope (server unique constraint)
  */
 export async function createCategory({
   userId,
@@ -44,6 +48,22 @@ export async function createCategory({
         if (parentCategory.parentId != null)
           throw new Error('Cannot nest categories more than one level deep')
       }
+
+      // Validate unique name within user+parent scope (server unique constraint)
+      const duplicateName = await tx.query.categories.findFirst({
+        where: and(
+          eq(categories.userId, userId),
+          parsedData.parentId
+            ? eq(categories.parentId, parsedData.parentId)
+            : isNull(categories.parentId),
+          eq(categories.name, parsedData.name)
+        ),
+        columns: { id: true }
+      })
+      if (duplicateName)
+        throw new Error(
+          'A category with this name already exists at this level'
+        )
 
       await tx.insert(categories).values(parsedData)
 

@@ -64,6 +64,34 @@
       "when": 1765558652168,
       "tag": "0008_remove_balance_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1765628555328,
+      "tag": "0009_category_nesting",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1765628623203,
+      "tag": "0010_transaction_category_type_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1765629816000,
+      "tag": "0011_glossy_toad_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1765630566968,
+      "tag": "0012_category_parent_type_validation",
+      "breakpoints": true
     }
   ]
 }

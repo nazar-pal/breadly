@@ -29,7 +29,8 @@ PowerSync Limitations (JSON-based views):
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
-import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
+import { z } from 'zod'
+import { clerkUserIdColumn } from './utils'
 
 // ============================================================================
 // User preferences table - User-specific application settings
@@ -41,23 +42,18 @@ import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
  *
  * Business Rules (enforced via Zod, not SQLite):
  * - One preference record per user (unique constraint on userId)
- * - Default currency must be a valid currency from the currencies table
  * - First weekday must be between 1-7 (1=Monday, 7=Sunday)
  * - Locale codes follow standard format (e.g., en-US, fr-FR, es-ES)
- * - All preferences have sensible defaults for new users
- * - Preferences persist across user sessions
  *
  * Schema Notes:
  * - PostgreSQL: Primary key is 'user_id' (Clerk user identifier)
  * - SQLite: PowerSync adds 'id' field (aliased from 'user_id' in sync rules)
- * - Both 'id' and 'userId' exist client-side for standard PowerSync operations
- * - Allows proper upsert patterns and relationship queries in SQLite
  */
 
 const columns = {
   id: text().primaryKey(), // PowerSync-required primary key (aliased from 'user_id')
   userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
-  defaultCurrency: isoCurrencyCodeColumn('default_currency'), // Default currency (FK not enforced)
+  defaultCurrency: text('default_currency', { length: 3 }), // Default currency (nullable, FK not enforced)
   firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 7=Sunday)
   locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
 }
@@ -79,28 +75,37 @@ export const getUserPreferencesSqliteTable = (name: string) =>
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
-// Business rules are enforced here since PowerSync JSON-based views
-// do not support CHECK constraints.
+
+const MAX_LOCALE_LENGTH = 20
 
 /**
  * User preference insert schema with business rule validations.
- * PowerSync's JSON-based views do not enforce constraints,
- * so Zod is used to validate input data in application code.
+ *
+ * Server CHECK constraints replicated:
+ * - user_preferences_valid_weekday: firstWeekday between 1 and 7
  */
 export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
-  // First weekday must be 1-7 (Monday-Sunday)
-  firstWeekday: schema =>
-    schema.refine(
-      val => val == null || (val >= 1 && val <= 7),
-      'First weekday must be between 1 (Monday) and 7 (Sunday)'
-    )
+  firstWeekday: s => s.min(1).max(7).default(1),
+  locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH).default('en-US'),
+  defaultCurrency: s => s.length(3).optional()
 })
 
+export type UserPreferenceInsertSchemaInput = z.input<
+  typeof userPreferenceInsertSchema
+>
+export type UserPreferenceInsertSchemaOutput = z.output<
+  typeof userPreferenceInsertSchema
+>
+
 export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences, {
-  // First weekday must be 1-7 (Monday-Sunday)
-  firstWeekday: schema =>
-    schema.refine(
-      val => val === undefined || val == null || (val >= 1 && val <= 7),
-      'First weekday must be between 1 (Monday) and 7 (Sunday)'
-    )
-})
+  firstWeekday: s => s.min(1).max(7),
+  locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH),
+  defaultCurrency: s => s.length(3).optional()
+}).omit({ id: true, userId: true })
+
+export type UserPreferenceUpdateSchemaInput = z.input<
+  typeof userPreferenceUpdateSchema
+>
+export type UserPreferenceUpdateSchemaOutput = z.output<
+  typeof userPreferenceUpdateSchema
+>

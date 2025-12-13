@@ -48,7 +48,7 @@ import {
  * - Budgets are tied to specific categories for granular control
  * - Only one budget per category+period+start date combination
  * - Budget amounts must be positive values
- * - Start dates define when the budget period begins
+ * - End date must be on or after start date
  * - Budget tracking compares actual spending against these limits
  */
 export const budgets = pgTable(
@@ -81,6 +81,10 @@ export const budgets = pgTable(
 
     // Business rule constraints
     check('budgets_positive_amount', sql`${table.amount} > 0`), // Budget amounts must be positive
+    check(
+      'budgets_valid_date_range',
+      sql`${table.endDate} >= ${table.startDate}`
+    ), // End date must be on or after start date
 
     // RLS: Users can only access their own budgets
     crudPolicy({

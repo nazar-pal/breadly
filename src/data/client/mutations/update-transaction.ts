@@ -27,13 +27,15 @@ const updateTransactionSchema = transactionUpdateSchema.pick({
  * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints:
  *    - Amount is positive and within limits (if provided)
- *    - Transaction date is not in the future (if provided)
  * 2. Transaction validates FK constraints and business rules:
  *    - Transaction exists and belongs to user
  *    - Transfer constraints (validated on merged state since Zod can't see existing values)
+ *    - Transfer transactions cannot have a category
+ *    - Category type matches transaction type (expense→expense, income→income)
  *    - Currency, category, and account references exist (if being updated)
  *    - Currency matches account currency (prevents server trigger failure)
- *    - Sufficient funds for expenses and transfers
+ *
+ * Note: Negative account balances are allowed (no insufficient funds check).
  */
 export async function updateTransaction({
   userId,
@@ -96,17 +98,45 @@ export async function updateTransaction({
           throw new Error(`Currency "${parsedData.currencyId}" not found`)
       }
 
-      if (
-        parsedData.categoryId !== undefined &&
-        parsedData.categoryId !== null
-      ) {
-        const category = await tx.query.categories.findFirst({
-          where: and(
-            eq(categories.id, parsedData.categoryId),
-            eq(categories.userId, userId)
-          )
-        })
-        if (!category) throw new Error('Category not found')
+      // Compute final categoryId for type validation
+      const finalCategoryId =
+        parsedData.categoryId !== undefined
+          ? parsedData.categoryId
+          : existingTx.categoryId
+
+      // Transfer transactions cannot have a category (server trigger enforces this)
+      if (finalType === 'transfer' && finalCategoryId != null) {
+        throw new Error('Transfer transactions cannot have a category')
+      }
+
+      // Validate category exists, belongs to user, is not archived, and type matches (if provided or being changed)
+      if (finalCategoryId && finalType !== 'transfer') {
+        // Need to validate category if:
+        // 1. Category is being set/changed, OR
+        // 2. Transaction type is being changed (need to re-validate existing category)
+        const needsCategoryValidation =
+          parsedData.categoryId !== undefined || parsedData.type !== undefined
+
+        if (needsCategoryValidation) {
+          const category = await tx.query.categories.findFirst({
+            where: and(
+              eq(categories.id, finalCategoryId),
+              eq(categories.userId, userId)
+            )
+          })
+          if (!category) throw new Error('Category not found')
+
+          // Prevent using archived categories when setting/changing category
+          if (parsedData.categoryId !== undefined && category.isArchived)
+            throw new Error('Cannot use archived category for transaction')
+
+          // Validate category type matches transaction type (server trigger enforces this)
+          if (category.type !== finalType) {
+            throw new Error(
+              `Cannot use ${category.type} category for ${finalType} transaction`
+            )
+          }
+        }
       }
 
       // Validate account existence and currency consistency
@@ -124,6 +154,10 @@ export async function updateTransaction({
           )
         })
         if (!account) throw new Error('Account not found')
+
+        // Prevent using archived accounts when setting/changing account
+        if (account.isArchived)
+          throw new Error('Cannot use archived account for transaction')
 
         // Validate currency matches
         if (account.currencyId !== finalCurrencyId) {
@@ -157,6 +191,10 @@ export async function updateTransaction({
           )
         })
         if (!counterAccount) throw new Error('Counter account not found')
+
+        // Prevent using archived accounts when setting/changing counter account
+        if (counterAccount.isArchived)
+          throw new Error('Cannot use archived account as transfer destination')
 
         // Validate currency matches for transfers
         if (
@@ -255,14 +293,8 @@ export async function updateTransaction({
           if (finalType === 'income') {
             newBalance += finalAmount
           } else if (finalType === 'expense') {
-            // Check for insufficient funds
-            if (newBalance < finalAmount) throw new Error('Insufficient funds')
-
             newBalance -= finalAmount
           } else if (finalType === 'transfer') {
-            // Check for insufficient funds
-            if (newBalance < finalAmount) throw new Error('Insufficient funds')
-
             newBalance -= finalAmount
           }
 

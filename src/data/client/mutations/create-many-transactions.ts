@@ -15,18 +15,24 @@ type TransactionData = Omit<z.input<typeof transactionInsertSchema>, 'userId'>
 
 /**
  * Creates multiple transactions in a single atomic operation.
+ * Designed for bulk import where historical transactions may reference
+ * now-archived categories and accounts.
  *
- * Validation is performed in two layers (same as createTransaction):
+ * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints:
  *    - Amount is positive and within limits
- *    - Transaction date is not in the future
  *    - Transfers have a source account (accountId not null)
  *    - Transfers have different source and destination accounts
  *    - Non-transfers don't have a counter account
  * 2. Transaction validates FK constraints and business rules:
  *    - Currency, category, and account references exist
+ *    - Transfer transactions cannot have a category
+ *    - Category type matches transaction type (expense→expense, income→income)
  *    - Currency matches account currency (prevents server trigger failure)
- *    - Sufficient funds for expenses and transfers (tracked across batch)
+ *
+ * Note: Unlike createTransaction, archived categories and accounts ARE allowed
+ * since bulk import often includes historical transactions for archived entities.
+ * Negative account balances are allowed (no insufficient funds check).
  */
 export async function createManyTransactions({
   userId,
@@ -77,11 +83,11 @@ export async function createManyTransactions({
         .where(inArray(currencies.code, [...currencyIds]))
       const validCurrencyCodes = new Set(validCurrencies.map(c => c.code))
 
-      // Load all referenced categories (FK validation)
+      // Load all referenced categories with types (FK validation + type matching)
       const validCategories =
         categoryIds.size > 0
           ? await tx
-              .select({ id: categories.id })
+              .select({ id: categories.id, type: categories.type })
               .from(categories)
               .where(
                 and(
@@ -91,6 +97,7 @@ export async function createManyTransactions({
               )
           : []
       const validCategoryIds = new Set(validCategories.map(c => c.id))
+      const categoryTypes = new Map(validCategories.map(c => [c.id, c.type]))
 
       // Load all referenced accounts with balances and currencies (FK validation + balance tracking + currency validation)
       const accountsData =
@@ -129,9 +136,26 @@ export async function createManyTransactions({
           )
         }
 
-        // Validate category exists (if provided)
-        if (row.categoryId && !validCategoryIds.has(row.categoryId)) {
-          throw new Error(`Row ${i + 1}: Category not found`)
+        // Transfer transactions cannot have a category (server trigger enforces this)
+        if (row.type === 'transfer' && row.categoryId != null) {
+          throw new Error(
+            `Row ${i + 1}: Transfer transactions cannot have a category`
+          )
+        }
+
+        // Validate category exists and type matches (if provided)
+        if (row.categoryId) {
+          if (!validCategoryIds.has(row.categoryId)) {
+            throw new Error(`Row ${i + 1}: Category not found`)
+          }
+
+          // Validate category type matches transaction type (server trigger enforces this)
+          const categoryType = categoryTypes.get(row.categoryId)
+          if (categoryType && categoryType !== row.type) {
+            throw new Error(
+              `Row ${i + 1}: Cannot use ${categoryType} category for ${row.type} transaction`
+            )
+          }
         }
 
         // Validate accounts exist
@@ -175,15 +199,6 @@ export async function createManyTransactions({
         const toBalance = row.counterAccountId
           ? accountBalances.get(row.counterAccountId)!
           : null
-
-        // Insufficient funds check for expenses and transfers
-        if (
-          (row.type === 'expense' || row.type === 'transfer') &&
-          fromBalance !== null &&
-          fromBalance < row.amount
-        ) {
-          throw new Error(`Row ${i + 1}: Insufficient funds`)
-        }
 
         // Update running balances (same logic as createTransaction)
         if (row.type === 'income' && row.accountId) {

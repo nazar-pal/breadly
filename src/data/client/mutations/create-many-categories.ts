@@ -1,7 +1,7 @@
 import { categories, categoryInsertSchema } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 
@@ -18,7 +18,10 @@ type CreateManyCategoriesArgs = {
  *
  * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints (name non-empty) for each row
- * 2. Transaction validates parent relationships (existence, type matching, nesting depth)
+ * 2. Transaction validates parent relationships and uniqueness:
+ *    - Parent existence, type matching, nesting depth
+ *    - Category name uniqueness within user+parent scope (server unique constraint)
+ *    - No duplicate names within the batch itself
  *
  * @returns Tuple of [error, { inserted }] - count of inserted categories on success
  */
@@ -41,6 +44,24 @@ export async function createManyCategories({
     const row = parseResult.data
     if (!row.id) row.id = randomUUID()
     parsedRows.push(row)
+  }
+
+  // Check for duplicate names within the batch itself (same name + same parentId)
+  // Note: Uses exact case matching to match server's unique index behavior
+  const batchNameKeys = new Set<string>()
+  for (let i = 0; i < parsedRows.length; i++) {
+    const row = parsedRows[i]
+    // Use parentId || 'ROOT' to handle null parents consistently
+    const nameKey = `${row.parentId ?? 'ROOT'}::${row.name}`
+    if (batchNameKeys.has(nameKey)) {
+      return [
+        new Error(
+          `Row ${i + 1}: Duplicate category name "${row.name}" at the same level within this batch`
+        ),
+        null
+      ]
+    }
+    batchNameKeys.add(nameKey)
   }
 
   const CHUNK_SIZE = 50
@@ -112,6 +133,36 @@ export async function createManyCategories({
           throw new Error(
             `Category "${child.name}" cannot be nested under a subcategory`
           )
+      }
+
+      // Validate unique names against existing categories in database
+      // Build conditions for each unique parentId+name combination
+      const uniqueParentIds = [
+        ...new Set(parsedRows.map(r => r.parentId ?? null))
+      ]
+
+      for (const parentId of uniqueParentIds) {
+        const rowsWithThisParent = parsedRows.filter(
+          r => (r.parentId ?? null) === parentId
+        )
+        const namesAtThisLevel = rowsWithThisParent.map(r => r.name)
+
+        const existingDuplicate = await tx.query.categories.findFirst({
+          where: and(
+            eq(categories.userId, userId),
+            parentId
+              ? eq(categories.parentId, parentId)
+              : isNull(categories.parentId),
+            inArray(categories.name, namesAtThisLevel)
+          ),
+          columns: { name: true }
+        })
+
+        if (existingDuplicate) {
+          throw new Error(
+            `Category name "${existingDuplicate.name}" already exists at this level`
+          )
+        }
       }
 
       const insertBatch = async (

@@ -25,7 +25,6 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, integer, real, sqliteTable } from 'drizzle-orm/sqlite-core'
-import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
@@ -41,8 +40,6 @@ import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
  * - Each currency pair can have only one rate per date (enforced in app)
  * - Exchange rates must be positive values
  * - Base and quote currencies must be different
- * - Supports historical rate lookups for accurate reporting
- * - Rates should be updated regularly for current conversions
  */
 
 const columns = {
@@ -56,43 +53,12 @@ const columns = {
 
 // Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  index('exchange_rates_base_currency_idx').on(table.baseCurrency), // Base currency lookups
-  index('exchange_rates_quote_currency_idx').on(table.quoteCurrency), // Quote currency lookups
-  index('exchange_rates_rate_date_idx').on(table.rateDate) // Date-based lookups
+  index('exchange_rates_base_currency_idx').on(table.baseCurrency),
+  index('exchange_rates_quote_currency_idx').on(table.quoteCurrency),
+  index('exchange_rates_rate_date_idx').on(table.rateDate)
 ]
 
 export const exchangeRates = sqliteTable('exchange_rates', columns, extraConfig)
 
 export const getExchangeRatesSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
-
-// ============================================================================
-// ZOD VALIDATION SCHEMAS
-// ============================================================================
-// Business rules are enforced here since PowerSync JSON-based views
-// do not support CHECK constraints.
-
-/**
- * Exchange rate insert schema with business rule validations.
- * PowerSync's JSON-based views do not enforce constraints,
- * so Zod is used to validate input data in application code.
- */
-export const exchangeRateInsertSchema = createInsertSchema(exchangeRates, {
-  // Exchange rate must be positive
-  rate: schema =>
-    schema.refine(val => val > 0, 'Exchange rate must be positive')
-})
-  // Base and quote currencies must be different
-  .refine(data => data.baseCurrency !== data.quoteCurrency, {
-    message: 'Base and quote currencies must be different',
-    path: ['quoteCurrency']
-  })
-
-export const exchangeRateUpdateSchema = createUpdateSchema(exchangeRates, {
-  // Exchange rate must be positive (if provided)
-  rate: schema =>
-    schema.refine(
-      val => val === undefined || val > 0,
-      'Exchange rate must be positive'
-    )
-})

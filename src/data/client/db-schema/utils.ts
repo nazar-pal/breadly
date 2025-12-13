@@ -1,6 +1,24 @@
 import { customType, integer, real, text } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'expo-crypto'
 
+// ============================================================================
+// ZOD HELPERS
+// ============================================================================
+
+/**
+ * Rounds a number to 2 decimal places.
+ * Matches server's NUMERIC(14,2) precision.
+ * Use with .transform() on amount fields.
+ */
+export const roundToTwoDecimals = (value: number): number => {
+  if (!Number.isFinite(value)) return value
+  return Math.round(value * 100) / 100
+}
+
+// ============================================================================
+// COLUMN DEFINITIONS
+// ============================================================================
+
 // user ID column for PowerSync (no auth.user_id() function in SQLite)
 export const clerkUserIdColumn = () => text('user_id', { length: 50 }).notNull()
 

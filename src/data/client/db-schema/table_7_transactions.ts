@@ -28,12 +28,15 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
   dateOnlyText,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
+  roundToTwoDecimals,
   uuidPrimaryKey
 } from './utils'
 
@@ -117,28 +120,29 @@ export const getTransactionsSqliteTable = (name: string) =>
 // do not support CHECK constraints or foreign keys.
 
 /**
+ * Maximum notes length (matches varchar(1000) server constraint)
+ */
+const MAX_NOTES_LENGTH = 1000
+
+/**
  * Transaction insert schema with business rule validations.
  * PowerSync's JSON-based views do not enforce constraints,
  * so Zod is used to validate input data in application code.
+ *
+ * Server CHECK constraints replicated:
+ * - transactions_positive_amount: amount > 0
+ * - transactions_transfer_different_accounts: transfer source != destination
+ * - transactions_transfer_has_counter_account: transfers must have counter account
+ * - transactions_non_transfer_no_counter_account: non-transfers can't have counter account
+ * - transactions_date_not_future: tx_date <= CURRENT_DATE
+ * - NUMERIC(14,2) precision: rounded to 2 decimal places
  */
 export const transactionInsertSchema = createInsertSchema(transactions, {
-  // Positive transaction amount within database limits
-  amount: schema =>
-    schema
-      .refine(val => val > 0, 'Transaction amount must be positive')
-      .refine(
-        val => val <= MAX_TRANSACTION_AMOUNT,
-        'Transaction amount exceeds maximum allowed value'
-      ),
-  // Transaction date cannot be in the future
-  txDate: schema =>
-    schema.refine(val => {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      const txDay = new Date(val)
-      txDay.setHours(0, 0, 0, 0)
-      return txDay <= today
-    }, 'Transaction date cannot be in the future')
+  id: s => s.default(randomUUID),
+  amount: s =>
+    s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
+  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional(),
+  createdAt: s => s.default(new Date())
 })
   // Transfers must have a source account
   .refine(data => data.type !== 'transfer' || data.accountId != null, {
@@ -162,6 +166,13 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
     path: ['counterAccountId']
   })
 
+export type TransactionInsertSchemaInput = z.input<
+  typeof transactionInsertSchema
+>
+export type TransactionInsertSchemaOutput = z.output<
+  typeof transactionInsertSchema
+>
+
 /**
  * Transaction update schema with business rule validations.
  *
@@ -170,25 +181,14 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
  * existing values. These are validated inside the mutation with the merged state.
  */
 export const transactionUpdateSchema = createUpdateSchema(transactions, {
-  // Positive transaction amount within database limits (if provided)
-  amount: schema =>
-    schema
-      .refine(
-        val => val === undefined || val > 0,
-        'Transaction amount must be positive'
-      )
-      .refine(
-        val => val === undefined || val <= MAX_TRANSACTION_AMOUNT,
-        'Transaction amount exceeds maximum allowed value'
-      ),
-  // Transaction date cannot be in the future (if provided)
-  txDate: schema =>
-    schema.refine(val => {
-      if (val === undefined) return true
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      const txDay = new Date(val)
-      txDay.setHours(0, 0, 0, 0)
-      return txDay <= today
-    }, 'Transaction date cannot be in the future')
-})
+  amount: s =>
+    s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
+  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional()
+}).omit({ id: true, userId: true, createdAt: true })
+
+export type TransactionUpdateSchemaInput = z.input<
+  typeof transactionUpdateSchema
+>
+export type TransactionUpdateSchemaOutput = z.output<
+  typeof transactionUpdateSchema
+>

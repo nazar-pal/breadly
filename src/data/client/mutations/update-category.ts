@@ -1,11 +1,10 @@
 import { categories, categoryUpdateSchema } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull, ne } from 'drizzle-orm'
 import { z } from 'zod'
 
 const updateCategorySchema = categoryUpdateSchema.pick({
-  parentId: true,
   name: true,
   description: true,
   icon: true
@@ -16,7 +15,7 @@ const updateCategorySchema = categoryUpdateSchema.pick({
  *
  * Validation is performed in two layers:
  * 1. Zod schema validates CHECK constraints (name non-empty if provided)
- * 2. Transaction validates existence, ownership, and parent relationships
+ * 2. Transaction validates existence, ownership, and unique name constraint
  */
 export async function updateCategory({
   id,
@@ -39,40 +38,25 @@ export async function updateCategory({
       })
       if (!existingCategory) throw new Error('Category not found')
 
-      // Validate parent relationship if being updated
-      if (parsedData.parentId !== undefined && parsedData.parentId !== null) {
-        // Prevent setting self as parent
-        if (parsedData.parentId === id)
-          throw new Error('Category cannot be its own parent')
-
-        const parentCategory = await tx.query.categories.findFirst({
+      // Validate unique name within user+parent scope (server unique constraint)
+      if (
+        parsedData.name !== undefined &&
+        parsedData.name !== existingCategory.name
+      ) {
+        const duplicateName = await tx.query.categories.findFirst({
           where: and(
-            eq(categories.id, parsedData.parentId),
-            eq(categories.userId, userId)
-          )
-        })
-        if (!parentCategory) throw new Error('Parent category not found')
-
-        // Validate type matches parent (income/expense must match)
-        if (parentCategory.type !== existingCategory.type)
-          throw new Error('Category type must match parent category type')
-
-        // Prevent creating grandchildren (only allow 2 levels of nesting)
-        // Check 1: Target parent must be a root category
-        if (parentCategory.parentId != null)
-          throw new Error('Cannot nest categories more than one level deep')
-
-        // Check 2: Category being moved must not have children (would become grandchildren)
-        const hasChildren = await tx.query.categories.findFirst({
-          where: and(
-            eq(categories.parentId, id),
-            eq(categories.userId, userId)
+            eq(categories.userId, userId),
+            existingCategory.parentId
+              ? eq(categories.parentId, existingCategory.parentId)
+              : isNull(categories.parentId),
+            eq(categories.name, parsedData.name),
+            ne(categories.id, id) // Exclude current category
           ),
           columns: { id: true }
         })
-        if (hasChildren)
+        if (duplicateName)
           throw new Error(
-            'Cannot make a category with subcategories into a subcategory'
+            'A category with this name already exists at this level'
           )
       }
 
