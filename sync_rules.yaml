@@ -49,7 +49,7 @@ bucket_definitions:
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (leave date fields as DATE -> TEXT 'YYYY-MM-DD')
+      # User's budgets (period-based with year/month)
       - |
         SELECT
           id,
@@ -57,8 +57,11 @@ bucket_definitions:
           category_id,
           CAST(amount AS real) AS amount,
           currency,
-          start_date,
-          end_date
+          period,
+          start_year,
+          start_month,
+          is_archived,
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at
         FROM budgets
         WHERE user_id = bucket.user_id
 

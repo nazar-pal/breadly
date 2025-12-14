@@ -114,7 +114,7 @@ export const transactionsRelations = relations(
 
 // Table 8: Attachments - Relationships
 export const attachmentsRelations = relations(attachments, ({ many }) => ({
-  transactions: many(transactions, { relationName: 'transactionAttachments' })
+  transactionAttachments: many(transactionAttachments) // Links to transactions via junction table
 }))
 
 // Table 9: Transaction Attachments - Relationships

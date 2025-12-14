@@ -168,10 +168,12 @@ export type BudgetSelectSQLite = typeof budgets.$inferSelect
 export type BudgetInsertSQLite = typeof budgets.$inferInsert
 
 export {
+  BUDGET_PERIOD,
   budgetInsertSchema,
   budgetUpdateSchema,
   type BudgetInsertSchemaInput,
   type BudgetInsertSchemaOutput,
+  type BudgetPeriod,
   type BudgetUpdateSchemaInput,
   type BudgetUpdateSchemaOutput
 } from './table_5_budgets'

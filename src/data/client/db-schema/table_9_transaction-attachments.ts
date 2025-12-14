@@ -79,8 +79,8 @@ export const getTransactionAttachmentsSqliteTable = (name: string) =>
  * Basic validation - uniqueness is enforced in application code.
  *
  * IMPORTANT: When creating a transaction-attachment mutation, you MUST also validate:
- * - Transaction exists and belongs to user (FK validation)
- * - Attachment exists and belongs to user (FK validation)
+ * - Transaction exists and belongs to user (FK + ownership validation, server trigger enforces)
+ * - Attachment exists and belongs to user (FK + ownership validation, server trigger enforces)
  * - Unique constraint: transaction_attachments_unique (transactionId, attachmentId)
  */
 export const transactionAttachmentInsertSchema = createInsertSchema(

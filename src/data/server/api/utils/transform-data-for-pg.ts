@@ -22,7 +22,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
     categories: ['created_at', 'archived_at'],
-    budgets: ['created_at'],
+    budgets: ['archived_at'],
     accounts: ['created_at'],
     transactions: ['created_at'],
     attachments: ['created_at'],
@@ -32,7 +32,7 @@ export function transformDataForPostgres(data: any, table: string): any {
 
   // Date fields (date only - expect 'YYYY-MM-DD' string or unix ms)
   const dateFields: Record<string, string[]> = {
-    budgets: ['start_date', 'end_date'],
+    budgets: [], // No date fields - uses startYear/startMonth integers
     accounts: ['savings_target_date', 'debt_due_date'],
     transactions: ['tx_date'],
     categories: [],
@@ -44,7 +44,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Boolean columns that come from SQLite as 0/1 integers
   const booleanFields: Record<string, string[]> = {
     categories: ['is_archived'],
-    budgets: ['is_active'], // (future-proof, not present in current schema)
+    budgets: ['is_archived'],
     accounts: ['is_archived'],
     transactions: ['is_recurring'],
     attachments: [],
