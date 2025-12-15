@@ -33,9 +33,11 @@ import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
+  createdAtColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -85,7 +87,9 @@ export const budgets = pgTable(
     startYear: smallint().notNull(), // Year this budget config takes effect (e.g., 2024)
     startMonth: smallint().notNull(), // Month this budget config takes effect (1-12)
     isArchived: isArchivedColumn(), // Soft deletion flag
-    archivedAt: timestamp({ withTimezone: true }) // When the budget was archived
+    archivedAt: timestamp({ withTimezone: true }), // When the budget was archived
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes for common query patterns

@@ -29,7 +29,12 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
-import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  updatedAtColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // Attachments table - File metadata (receipts, voice notes)
@@ -69,7 +74,8 @@ const columns = {
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
   fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-  createdAt: createdAtColumn() // Upload timestamp
+  createdAt: createdAtColumn(), // Upload timestamp
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -106,9 +112,9 @@ export const attachmentInsertSchema = createInsertSchema(attachments, {
   fileName: s => s.trim().min(1).max(MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
-  duration: s => s.positive().optional(),
-  createdAt: s => s.default(new Date())
+  duration: s => s.positive().optional()
 })
+  .omit({ createdAt: true, updatedAt: true })
   // Voice messages require duration
   .refine(data => data.type !== 'voice' || data.duration != null, {
     message: 'Voice messages must include duration',
@@ -126,7 +132,13 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   mime: s => s.trim().min(1).max(MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
   duration: s => s.positive()
-}).omit({ id: true, userId: true, type: true, createdAt: true })
+}).omit({
+  id: true,
+  userId: true,
+  type: true,
+  createdAt: true,
+  updatedAt: true
+})
 
 export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
 export type AttachmentUpdateSchemaOutput = z.output<

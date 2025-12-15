@@ -34,6 +34,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -62,7 +63,8 @@ const columns = {
   endDate: dateOnlyText('end_date'), // Optional: when event ends (YYYY-MM-DD)
   isArchived: isArchivedColumn(), // User marks when done tracking
   archivedAt: integer('archived_at', { mode: 'timestamp_ms' }), // When archived
-  createdAt: createdAtColumn() // Record creation timestamp
+  createdAt: createdAtColumn(), // Record creation timestamp
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -103,9 +105,10 @@ const MAX_DESCRIPTION_LENGTH = 1000
 export const eventInsertSchema = createInsertSchema(events, {
   id: s => s.default(randomUUID),
   name: s => s.trim().min(1).max(MAX_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
-  createdAt: s => s.default(new Date())
+  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional()
 })
+  .omit({ createdAt: true, updatedAt: true })
+
   // End date must be on or after start date (if both provided)
   .refine(
     data => !data.startDate || !data.endDate || data.endDate >= data.startDate,
@@ -132,7 +135,8 @@ export const eventUpdateSchema = createUpdateSchema(events, {
   id: true,
   userId: true,
   createdAt: true,
-  archivedAt: true
+  archivedAt: true,
+  updatedAt: true
 })
 
 export type EventUpdateSchemaInput = z.input<typeof eventUpdateSchema>

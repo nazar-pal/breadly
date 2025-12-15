@@ -24,6 +24,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -55,7 +56,8 @@ export const events = pgTable(
     endDate: date(), // Optional: when event ends (informational)
     isArchived: isArchivedColumn(), // User marks when done tracking
     archivedAt: timestamp({ withTimezone: true }), // When archived
-    createdAt: createdAtColumn() // Record creation timestamp
+    createdAt: createdAtColumn(), // Record creation timestamp
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes

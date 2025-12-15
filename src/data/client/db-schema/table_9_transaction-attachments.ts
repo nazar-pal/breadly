@@ -29,7 +29,12 @@ import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
-import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  updatedAtColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // Transaction attachments table - Many-to-many transaction ↔ attachment links
@@ -51,7 +56,8 @@ const columns = {
   userId: clerkUserIdColumn(), // Denormalized user_id for PowerSync filtering
   transactionId: text('transaction_id').notNull(), // Transaction reference (FK not enforced)
   attachmentId: text('attachment_id').notNull(), // Attachment reference (FK not enforced)
-  createdAt: createdAtColumn() // Link creation timestamp
+  createdAt: createdAtColumn(), // Link creation timestamp
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -86,10 +92,9 @@ export const getTransactionAttachmentsSqliteTable = (name: string) =>
 export const transactionAttachmentInsertSchema = createInsertSchema(
   transactionAttachments,
   {
-    id: s => s.default(randomUUID),
-    createdAt: s => s.default(new Date())
+    id: s => s.default(randomUUID)
   }
-)
+).omit({ createdAt: true, updatedAt: true })
 
 export type TransactionAttachmentInsertSchemaInput = z.input<
   typeof transactionAttachmentInsertSchema
@@ -100,7 +105,7 @@ export type TransactionAttachmentInsertSchemaOutput = z.output<
 
 export const transactionAttachmentUpdateSchema = createUpdateSchema(
   transactionAttachments
-).omit({ id: true, userId: true, createdAt: true })
+).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type TransactionAttachmentUpdateSchemaInput = z.input<
   typeof transactionAttachmentUpdateSchema

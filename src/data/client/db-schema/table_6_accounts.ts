@@ -37,6 +37,7 @@ import {
   monetaryAmountColumn,
   nameColumn,
   roundToTwoDecimals,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -89,7 +90,8 @@ const columns = {
   debtDueDate: dateOnlyText('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
-  createdAt: createdAtColumn()
+  createdAt: createdAtColumn(),
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -129,9 +131,9 @@ export const accountInsertSchema = createInsertSchema(accounts, {
   currencyId: s => s.trim().length(3).default('USD'),
   savingsTargetAmount: s =>
     s.positive().transform(roundToTwoDecimals).optional(),
-  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional(),
-  createdAt: s => s.default(new Date())
+  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional()
 })
+  .omit({ updatedAt: true, createdAt: true })
   // Savings fields only for saving accounts
   .refine(
     data =>
@@ -183,7 +185,13 @@ export const accountUpdateSchema = createUpdateSchema(accounts, {
   description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH),
   savingsTargetAmount: s => s.positive().transform(roundToTwoDecimals),
   debtInitialAmount: s => s.positive().transform(roundToTwoDecimals)
-}).omit({ id: true, userId: true, type: true, createdAt: true })
+}).omit({
+  id: true,
+  userId: true,
+  type: true,
+  createdAt: true,
+  updatedAt: true
+})
 
 export type AccountUpdateSchemaInput = z.input<typeof accountUpdateSchema>
 export type AccountUpdateSchemaOutput = z.output<typeof accountUpdateSchema>

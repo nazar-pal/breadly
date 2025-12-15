@@ -35,6 +35,7 @@ import {
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -88,7 +89,8 @@ export const accounts = pgTable(
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
-    createdAt: createdAtColumn()
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes for common query patterns

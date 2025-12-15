@@ -30,7 +30,12 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
-import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  updatedAtColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // Attachments table - File metadata (receipts, voice notes)
@@ -72,7 +77,8 @@ export const attachments = pgTable(
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
     fileSize: integer().notNull(), // File size in bytes (for storage management)
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-    createdAt: createdAtColumn() // Upload timestamp
+    createdAt: createdAtColumn(), // Upload timestamp
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes for common queries

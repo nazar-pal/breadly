@@ -40,6 +40,11 @@ export const createdAtColumn = () =>
     .notNull()
     .$defaultFn(() => new Date())
 
+export const updatedAtColumn = () =>
+  integer('updated_at', { mode: 'timestamp_ms' })
+    .notNull()
+    .$onUpdateFn(() => new Date())
+
 // soft deletion (archiving) for categories and accounts
 export const isArchivedColumn = () =>
   integer('is_archived', { mode: 'boolean' }).default(false).notNull()

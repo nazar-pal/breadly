@@ -44,54 +44,53 @@ const operationSchema = z.object({
 // -----------------------------------------------------------------------------
 // Centralised configuration for every sync-able table
 // -----------------------------------------------------------------------------
-const withId = (schema: z.ZodObject) => schema.extend({ id: z.string() })
 const tableConfigs = {
   user_preferences: {
     table: userPreferences,
-    insertSchema: withId(userPreferencesInsertSchemaPg),
-    updateSchema: withId(userPreferencesUpdateSchemaPg),
+    insertSchema: userPreferencesInsertSchemaPg,
+    updateSchema: userPreferencesUpdateSchemaPg,
     idColumn: null
   },
   categories: {
     table: categories,
-    insertSchema: withId(categoriesInsertSchemaPg),
-    updateSchema: withId(categoriesUpdateSchemaPg),
+    insertSchema: categoriesInsertSchemaPg,
+    updateSchema: categoriesUpdateSchemaPg,
     idColumn: categories.id
   },
   budgets: {
     table: budgets,
-    insertSchema: withId(budgetsInsertSchemaPg),
-    updateSchema: withId(budgetsUpdateSchemaPg),
+    insertSchema: budgetsInsertSchemaPg,
+    updateSchema: budgetsUpdateSchemaPg,
     idColumn: budgets.id
   },
   accounts: {
     table: accounts,
-    insertSchema: withId(accountsInsertSchemaPg),
-    updateSchema: withId(accountsUpdateSchemaPg),
+    insertSchema: accountsInsertSchemaPg,
+    updateSchema: accountsUpdateSchemaPg,
     idColumn: accounts.id
   },
   events: {
     table: events,
-    insertSchema: withId(eventsInsertSchemaPg),
-    updateSchema: withId(eventsUpdateSchemaPg),
+    insertSchema: eventsInsertSchemaPg,
+    updateSchema: eventsUpdateSchemaPg,
     idColumn: events.id
   },
   transactions: {
     table: transactions,
-    insertSchema: withId(transactionsInsertSchemaPg),
-    updateSchema: withId(transactionsUpdateSchemaPg),
+    insertSchema: transactionsInsertSchemaPg,
+    updateSchema: transactionsUpdateSchemaPg,
     idColumn: transactions.id
   },
   attachments: {
     table: attachments,
-    insertSchema: withId(attachmentsInsertSchemaPg),
-    updateSchema: withId(attachmentsUpdateSchemaPg),
+    insertSchema: attachmentsInsertSchemaPg,
+    updateSchema: attachmentsUpdateSchemaPg,
     idColumn: attachments.id
   },
   transaction_attachments: {
     table: transactionAttachments,
-    insertSchema: withId(transactionAttachmentsInsertSchemaPg),
-    updateSchema: withId(transactionAttachmentsUpdateSchemaPg),
+    insertSchema: transactionAttachmentsInsertSchemaPg,
+    updateSchema: transactionAttachmentsUpdateSchemaPg,
     idColumn: transactionAttachments.id
   }
 } as const
@@ -113,7 +112,9 @@ const insertHelper = async (
   const transformed = transformDataForPostgres(opData, tableName)
   validateRecordUserId(transformed, session, 'insert')
 
-  const validated = cfg.insertSchema.parse(transformed)
+  const validated = cfg.insertSchema
+    .extend({ id: z.string() })
+    .parse(transformed)
   await db
     .insert(cfg.table)
     .values(validated)
@@ -137,7 +138,9 @@ const updateHelper = async (
   const transformed = transformDataForPostgres(opData, tableName)
   const userId = validateRecordUserId(transformed, session, 'update')
 
-  const validated = cfg.updateSchema.parse(transformed)
+  const validated = cfg.updateSchema
+    .extend({ id: z.string() })
+    .parse(transformed)
 
   const whereClause = cfg.idColumn
     ? and(eq(cfg.idColumn, id), eq(cfg.table.userId, userId))

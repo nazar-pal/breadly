@@ -120,6 +120,27 @@
       "when": 1765835526226,
       "tag": "0016_event_ownership_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1765838240770,
+      "tag": "0017_luxuriant_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1765842021428,
+      "tag": "0018_black_warpath",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1765842037128,
+      "tag": "0019_living_cannonball",
+      "breakpoints": true
     }
   ]
 }

@@ -30,7 +30,7 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod'
-import { clerkUserIdColumn } from './utils'
+import { clerkUserIdColumn, createdAtColumn, updatedAtColumn } from './utils'
 
 // ============================================================================
 // User preferences table - User-specific application settings
@@ -55,7 +55,9 @@ const columns = {
   userId: clerkUserIdColumn().notNull(), // Original user_id field for relationships
   defaultCurrency: text('default_currency', { length: 3 }), // Default currency (nullable, FK not enforced)
   firstWeekday: integer('first_weekday').default(1), // Week start day (1=Monday, 7=Sunday)
-  locale: text({ length: 20 }).default('en-US') // Localization/language code (ISO format)
+  locale: text({ length: 20 }).default('en-US'), // Localization/language code (ISO format)
+  createdAt: createdAtColumn(),
+  updatedAt: updatedAtColumn()
 }
 
 // No indexes needed for this table (single row per user, accessed by id)
@@ -88,7 +90,7 @@ export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
   firstWeekday: s => s.min(1).max(7).default(1),
   locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH).default('en-US'),
   defaultCurrency: s => s.length(3).optional()
-})
+}).omit({ createdAt: true, updatedAt: true })
 
 export type UserPreferenceInsertSchemaInput = z.input<
   typeof userPreferenceInsertSchema
@@ -101,7 +103,7 @@ export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences, {
   firstWeekday: s => s.min(1).max(7),
   locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH),
   defaultCurrency: s => s.length(3).optional()
-}).omit({ id: true, userId: true })
+}).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type UserPreferenceUpdateSchemaInput = z.input<
   typeof userPreferenceUpdateSchema

@@ -37,6 +37,7 @@ import {
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   roundToTwoDecimals,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -97,7 +98,8 @@ const columns = {
   currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Transaction currency (FK not enforced)
   txDate: dateOnlyText('tx_date').notNull(), // Transaction date (YYYY-MM-DD TEXT)
   notes: text({ length: 1000 }), // Optional user notes/description
-  createdAt: createdAtColumn() // Record creation timestamp
+  createdAt: createdAtColumn(), // Record creation timestamp
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -143,9 +145,9 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
   id: s => s.default(randomUUID),
   amount: s =>
     s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
-  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional(),
-  createdAt: s => s.default(new Date())
+  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional()
 })
+  .omit({ createdAt: true, updatedAt: true })
   // Transfers must have a source account
   .refine(data => data.type !== 'transfer' || data.accountId != null, {
     message: 'Transfer must have a source account',
@@ -186,7 +188,7 @@ export const transactionUpdateSchema = createUpdateSchema(transactions, {
   amount: s =>
     s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
   notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional()
-}).omit({ id: true, userId: true, createdAt: true })
+}).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type TransactionUpdateSchemaInput = z.input<
   typeof transactionUpdateSchema

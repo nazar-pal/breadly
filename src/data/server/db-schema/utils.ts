@@ -17,8 +17,8 @@ export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
 export const monetaryAmountColumn = () =>
   numeric({ precision: 14, scale: 2 }).notNull()
 
-export const createdAtColumn = () =>
-  timestamp({ withTimezone: true }).defaultNow().notNull()
+export const createdAtColumn = () => timestamp({ withTimezone: true }).notNull()
+export const updatedAtColumn = () => timestamp({ withTimezone: true }).notNull()
 
 // soft deletion (archiving) for categories and accounts
 export const isArchivedColumn = () => boolean().default(false).notNull()

@@ -30,10 +30,12 @@ import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 import {
   clerkUserIdColumn,
+  createdAtColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   roundToTwoDecimals,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -78,7 +80,9 @@ const columns = {
   startYear: integer('start_year').notNull(), // Year this budget config takes effect (e.g., 2024)
   startMonth: integer('start_month').notNull(), // Month this budget config takes effect (1-12)
   isArchived: isArchivedColumn(), // Soft deletion flag
-  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }) // When the budget was archived
+  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }), // When the budget was archived
+  createdAt: createdAtColumn(),
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -132,6 +136,7 @@ export const budgetInsertSchema = createInsertSchema(budgets, {
   startYear: s => s.int().min(MIN_YEAR).max(MAX_YEAR),
   startMonth: s => s.int().min(1).max(12)
 })
+  .omit({ archivedAt: true, createdAt: true, updatedAt: true })
   // Yearly budgets must start in January
   .refine(data => data.period !== 'yearly' || data.startMonth === 1, {
     message: 'Yearly budgets must start in January (month = 1)',
@@ -158,7 +163,9 @@ export const budgetUpdateSchema = createUpdateSchema(budgets, {
   period: true,
   startYear: true,
   startMonth: true,
-  archivedAt: true
+  archivedAt: true,
+  createdAt: true,
+  updatedAt: true
 })
 
 export type BudgetUpdateSchemaInput = z.input<typeof budgetUpdateSchema>

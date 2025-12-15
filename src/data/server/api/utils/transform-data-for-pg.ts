@@ -21,14 +21,14 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Field mappings per table
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
-    categories: ['created_at', 'archived_at'],
-    budgets: ['archived_at'],
-    accounts: ['created_at'],
-    events: ['created_at', 'archived_at'],
-    transactions: ['created_at'],
-    attachments: ['created_at'],
-    transaction_attachments: ['created_at'],
-    user_preferences: []
+    categories: ['created_at', 'updated_at', 'archived_at'],
+    budgets: ['archived_at', 'created_at', 'updated_at'],
+    accounts: ['created_at', 'updated_at'],
+    events: ['created_at', 'updated_at', 'archived_at'],
+    transactions: ['created_at', 'updated_at'],
+    attachments: ['created_at', 'updated_at'],
+    transaction_attachments: ['created_at', 'updated_at'],
+    user_preferences: ['created_at', 'updated_at']
   }
 
   // Date fields (date only - expect 'YYYY-MM-DD' string or unix ms)

@@ -29,15 +29,16 @@ import {
   varchar
 } from 'drizzle-orm/pg-core'
 
+import { events } from './table_10_events'
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import { accounts } from './table_6_accounts'
-import { events } from './table_10_events'
 import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -95,7 +96,8 @@ export const transactions = pgTable(
       .notNull(), // Transaction currency (must match account currency)
     txDate: date().notNull(), // Transaction date (when the transaction occurred)
     notes: varchar({ length: 1000 }), // Optional user notes/description
-    createdAt: createdAtColumn() // Record creation timestamp
+    createdAt: createdAtColumn(), // Record creation timestamp
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes for common query patterns

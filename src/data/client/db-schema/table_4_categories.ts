@@ -36,6 +36,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -75,7 +76,8 @@ const columns = {
   sortOrder: integer('sort_order').notNull().default(1000),
   isArchived: isArchivedColumn(), // Soft deletion flag
   archivedAt: integer('archived_at', { mode: 'timestamp_ms' }),
-  createdAt: createdAtColumn()
+  createdAt: createdAtColumn(),
+  updatedAt: updatedAtColumn()
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views
@@ -125,9 +127,9 @@ export const categoryInsertSchema = createInsertSchema(categories, {
   id: s => s.default(randomUUID),
   name: s => s.trim().min(1).max(MAX_CATEGORY_NAME_LENGTH),
   description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
-  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle'),
-  createdAt: s => s.default(new Date())
+  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle')
 })
+  .omit({ createdAt: true, updatedAt: true })
   // Prevent self-referencing parent (categories_no_self_parent)
   .refine(data => data.parentId !== data.id, {
     message: 'Category cannot be its own parent',
@@ -143,7 +145,14 @@ export const categoryUpdateSchema = createUpdateSchema(categories, {
   icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle')
 })
   // Not possible to prevent self-referencing parent (categories_no_self_parent) on the schema level
-  .omit({ createdAt: true, id: true, parentId: true, userId: true, type: true })
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+    id: true,
+    parentId: true,
+    userId: true,
+    type: true
+  })
 
 export type CategoryUpdateSchemaInput = z.input<typeof categoryUpdateSchema>
 export type CategoryUpdateSchemaOutput = z.output<typeof categoryUpdateSchema>
