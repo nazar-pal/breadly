@@ -99,6 +99,15 @@ export function makeSchema(synced: boolean) {
         localOnly: true,
         viewName: localName(dzSch.transactionAttachments)
       }
-    )
+    ),
+
+    // Table 10: Events
+    events: toPowerSyncTable(dzSch.events, {
+      viewName: syncedName(dzSch.events)
+    }),
+    local_events: toPowerSyncTable(dzSch.events, {
+      localOnly: true,
+      viewName: localName(dzSch.events)
+    })
   })
 }

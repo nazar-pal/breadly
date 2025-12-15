@@ -92,6 +92,7 @@ const columns = {
 
   // Classification and details
   categoryId: text('category_id'), // Optional transaction category (FK not enforced)
+  eventId: text('event_id'), // Optional event for cross-category tracking (FK not enforced)
   amount: monetaryAmountColumn(), // Transaction amount (always positive)
   currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Transaction currency (FK not enforced)
   txDate: dateOnlyText('tx_date').notNull(), // Transaction date (YYYY-MM-DD TEXT)
@@ -105,7 +106,8 @@ const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
   index('transactions_account_idx').on(table.accountId), // Account transactions lookup
   index('transactions_category_idx').on(table.categoryId), // Category transactions lookup
   index('transactions_date_idx').on(table.txDate), // Date range queries
-  index('transactions_counter_account_idx').on(table.counterAccountId) // Transfer lookups
+  index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
+  index('transactions_event_idx').on(table.eventId) // Event transactions lookup
 ]
 
 export const transactions = sqliteTable('transactions', columns, extraConfig)

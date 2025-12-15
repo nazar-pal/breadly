@@ -24,6 +24,7 @@ export function transformDataForPostgres(data: any, table: string): any {
     categories: ['created_at', 'archived_at'],
     budgets: ['archived_at'],
     accounts: ['created_at'],
+    events: ['created_at', 'archived_at'],
     transactions: ['created_at'],
     attachments: ['created_at'],
     transaction_attachments: ['created_at'],
@@ -34,6 +35,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   const dateFields: Record<string, string[]> = {
     budgets: [], // No date fields - uses startYear/startMonth integers
     accounts: ['savings_target_date', 'debt_due_date'],
+    events: ['start_date', 'end_date'],
     transactions: ['tx_date'],
     categories: [],
     attachments: [],
@@ -46,6 +48,7 @@ export function transformDataForPostgres(data: any, table: string): any {
     categories: ['is_archived'],
     budgets: ['is_archived'],
     accounts: ['is_archived'],
+    events: ['is_archived'],
     transactions: ['is_recurring'],
     attachments: [],
     transaction_attachments: [],
@@ -56,6 +59,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   const numericFields: Record<string, string[]> = {
     budgets: ['amount'],
     accounts: ['balance', 'savings_target_amount', 'debt_initial_amount'],
+    events: [],
     transactions: ['amount'],
     attachments: [],
     categories: [],

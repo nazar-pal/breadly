@@ -1,5 +1,7 @@
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import * as relations from './relations'
+import * as events_schema from './table_10_events'
+import { events } from './table_10_events'
 import * as currencies_schema from './table_1_currencies'
 import { currencies } from './table_1_currencies'
 import * as exchangeRates_schema from './table_2_exchange-rates'
@@ -29,6 +31,7 @@ export const schema = {
   ...transactions_schema,
   ...userPreferences_schema,
   ...transactionAttachments_schema,
+  ...events_schema,
   ...relations
 }
 
@@ -38,6 +41,7 @@ export {
   budgets,
   categories,
   currencies,
+  events,
   exchangeRates,
   transactionAttachments,
   transactions,
@@ -97,3 +101,9 @@ export type TransactionAttachmentSelectPg =
   typeof transactionAttachments.$inferSelect
 export type TransactionAttachmentInsertPg =
   typeof transactionAttachments.$inferInsert
+
+// table_10_events
+export const eventsInsertSchemaPg = createInsertSchema(events)
+export const eventsUpdateSchemaPg = createUpdateSchema(events)
+export type EventSelectPg = typeof events.$inferSelect
+export type EventInsertPg = typeof events.$inferInsert

@@ -24,6 +24,7 @@ Note: Business rules are enforced via Zod schemas at runtime.
 */
 
 // Import all SQLite table definitions
+import { events, getEventsSqliteTable } from './table_10_events'
 import { currencies, getCurrenciesSqliteTable } from './table_1_currencies'
 import {
   exchangeRates,
@@ -70,6 +71,7 @@ import {
   budgetsRelations,
   categoriesRelations,
   currenciesRelations,
+  eventsRelations,
   exchangeRatesRelations,
   transactionAttachmentsRelations,
   transactionsRelations,
@@ -85,12 +87,14 @@ export {
   categories,
   CATEGORY_TYPE,
   currencies,
+  events,
   exchangeRates,
   getAccountsSqliteTable,
   getAttachmentsSqliteTable,
   getBudgetsSqliteTable,
   getCategoriesSqliteTable,
   getCurrenciesSqliteTable,
+  getEventsSqliteTable,
   getExchangeRatesSqliteTable,
   getTransactionAttachmentsSqliteTable,
   getTransactionsSqliteTable,
@@ -116,6 +120,7 @@ export const sqliteSchema = {
   transactions,
   attachments,
   transactionAttachments,
+  events,
   currenciesRelations,
   exchangeRatesRelations,
   userPreferencesRelations,
@@ -124,7 +129,8 @@ export const sqliteSchema = {
   accountsRelations,
   transactionsRelations,
   attachmentsRelations,
-  transactionAttachmentsRelations
+  transactionAttachmentsRelations,
+  eventsRelations
 }
 
 // ============================================================================
@@ -233,3 +239,16 @@ export {
   type TransactionAttachmentUpdateSchemaInput,
   type TransactionAttachmentUpdateSchemaOutput
 } from './table_9_transaction-attachments'
+
+// table_10_events
+export type EventSelectSQLite = typeof events.$inferSelect
+export type EventInsertSQLite = typeof events.$inferInsert
+
+export {
+  eventInsertSchema,
+  eventUpdateSchema,
+  type EventInsertSchemaInput,
+  type EventInsertSchemaOutput,
+  type EventUpdateSchemaInput,
+  type EventUpdateSchemaOutput
+} from './table_10_events'

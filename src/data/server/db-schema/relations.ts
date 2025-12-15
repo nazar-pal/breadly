@@ -8,6 +8,7 @@ import { accounts } from './table_6_accounts'
 import { transactions } from './table_7_transactions'
 import { attachments } from './table_8_attachments'
 import { transactionAttachments } from './table_9_transaction-attachments'
+import { events } from './table_10_events'
 
 // Table 1: Currencies - Relationships
 export const currenciesRelations = relations(currencies, ({ many }) => ({
@@ -96,6 +97,10 @@ export const transactionsRelations = relations(
       fields: [transactions.currencyId],
       references: [currencies.code]
     }), // Transaction currency relationship
+    event: one(events, {
+      fields: [transactions.eventId],
+      references: [events.id]
+    }), // Optional event for cross-category tracking
     transactionAttachments: many(transactionAttachments) // Associated attachments (receipts, voice notes)
   })
 )
@@ -119,3 +124,8 @@ export const transactionAttachmentsRelations = relations(
     }) // Attachment referenced by this transaction
   })
 )
+
+// Table 10: Events - Relationships
+export const eventsRelations = relations(events, ({ many }) => ({
+  transactions: many(transactions) // Transactions linked to this event
+}))

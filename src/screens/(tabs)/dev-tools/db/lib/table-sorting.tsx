@@ -12,7 +12,8 @@ const TABLE_SORT_GROUPS: Record<string, string[]> = {
   '6': ['accounts'],
   '7': ['transactions'],
   '8': ['attachments'],
-  '9': ['transaction_attachments', 'transactionAttachments']
+  '9': ['transaction_attachments', 'transactionAttachments'],
+  '10': ['events']
 }
 
 const ALL_GROUP_PATTERNS: string[] = Object.values(TABLE_SORT_GROUPS).flat()

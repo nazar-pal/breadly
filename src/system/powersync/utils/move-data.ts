@@ -3,10 +3,12 @@ import {
   attachments,
   budgets,
   categories,
+  events,
   getAccountsSqliteTable,
   getAttachmentsSqliteTable,
   getBudgetsSqliteTable,
   getCategoriesSqliteTable,
+  getEventsSqliteTable,
   getTransactionAttachmentsSqliteTable,
   getTransactionsSqliteTable,
   getUserPreferencesSqliteTable,
@@ -37,6 +39,7 @@ const inactiveFactories = [
   [categories, getCategoriesSqliteTable],
   [budgets, getBudgetsSqliteTable],
   [accounts, getAccountsSqliteTable],
+  [events, getEventsSqliteTable],
   [transactions, getTransactionsSqliteTable],
   [attachments, getAttachmentsSqliteTable],
   [transactionAttachments, getTransactionAttachmentsSqliteTable]
@@ -97,6 +100,7 @@ export async function moveData(
       categories, // Table 4: Categories
       budgets, // Table 5: Budgets
       accounts, // Table 6: Accounts
+      events, // Table 10: Events (before transactions since transactions reference events)
       transactions, // Table 7: Transactions
       attachments, // Table 8: Attachments
       transactionAttachments // Table 9: Transaction Attachments

@@ -3,6 +3,7 @@ import {
   attachments,
   budgets,
   categories,
+  events,
   transactionAttachments,
   transactions,
   userPreferences
@@ -18,6 +19,7 @@ import { eq } from 'drizzle-orm'
  * - All accounts
  * - All categories
  * - All budgets
+ * - All events
  * - All attachments
  * - All transaction attachments
  * - User preferences
@@ -47,16 +49,19 @@ export async function deleteAllUserData({ userId }: { userId: string }) {
       // 3. Delete transactions
       await tx.delete(transactions).where(eq(transactions.userId, userId))
 
-      // 4. Delete budgets
+      // 4. Delete events
+      await tx.delete(events).where(eq(events.userId, userId))
+
+      // 5. Delete budgets
       await tx.delete(budgets).where(eq(budgets.userId, userId))
 
-      // 5. Delete accounts
+      // 6. Delete accounts
       await tx.delete(accounts).where(eq(accounts.userId, userId))
 
-      // 6. Delete categories
+      // 7. Delete categories
       await tx.delete(categories).where(eq(categories.userId, userId))
 
-      // 7. Delete user preferences
+      // 8. Delete user preferences
       await tx.delete(userPreferences).where(eq(userPreferences.userId, userId))
 
       if (__DEV__) {

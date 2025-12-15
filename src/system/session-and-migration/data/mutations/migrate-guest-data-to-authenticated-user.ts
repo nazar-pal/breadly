@@ -3,6 +3,7 @@ import {
   attachments,
   budgets,
   categories,
+  events,
   transactionAttachments,
   transactions,
   userPreferences
@@ -50,19 +51,25 @@ export async function migrateGuestDataToAuthenticatedUser(
       .set({ userId: authenticatedUserId })
       .where(eq(budgets.userId, guestUserId))
 
-    // 5. Migrate attachments
+    // 5. Migrate events
+    await tx
+      .update(events)
+      .set({ userId: authenticatedUserId })
+      .where(eq(events.userId, guestUserId))
+
+    // 7. Migrate attachments
     await tx
       .update(attachments)
       .set({ userId: authenticatedUserId })
       .where(eq(attachments.userId, guestUserId))
 
-    // 6. Migrate transaction attachments
+    // 8. Migrate transaction attachments
     await tx
       .update(transactionAttachments)
       .set({ userId: authenticatedUserId })
       .where(eq(transactionAttachments.userId, guestUserId))
 
-    // 7. Migrate user preferences (if any exist for guest)
+    // 9. Migrate user preferences (if any exist for guest)
     // Note: userPreferences has both `id` (PowerSync PK) and `userId` fields.
     // We must update BOTH to the authenticated user ID to maintain consistency
     // and avoid sync/relationship issues.

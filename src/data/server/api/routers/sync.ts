@@ -14,6 +14,9 @@ import {
   categories,
   categoriesInsertSchemaPg,
   categoriesUpdateSchemaPg,
+  events,
+  eventsInsertSchemaPg,
+  eventsUpdateSchemaPg,
   transactionAttachments,
   transactionAttachmentsInsertSchemaPg,
   transactionAttachmentsUpdateSchemaPg,
@@ -66,6 +69,12 @@ const tableConfigs = {
     insertSchema: withId(accountsInsertSchemaPg),
     updateSchema: withId(accountsUpdateSchemaPg),
     idColumn: accounts.id
+  },
+  events: {
+    table: events,
+    insertSchema: withId(eventsInsertSchemaPg),
+    updateSchema: withId(eventsUpdateSchemaPg),
+    idColumn: events.id
   },
   transactions: {
     table: transactions,

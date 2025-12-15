@@ -84,6 +84,21 @@ bucket_definitions:
         FROM accounts
         WHERE user_id = bucket.user_id
 
+      # User's events (cross-category spending tracking)
+      - |
+        SELECT
+          id,
+          user_id,
+          name,
+          description,
+          start_date,
+          end_date,
+          is_archived,
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+        FROM events
+        WHERE user_id = bucket.user_id
+
       # User's transactions (leave tx_date as DATE -> TEXT)
       - |
         SELECT
@@ -93,6 +108,7 @@ bucket_definitions:
           account_id,
           counter_account_id,
           category_id,
+          event_id,
           CAST(amount AS real) AS amount,
           currency_id,
           tx_date,

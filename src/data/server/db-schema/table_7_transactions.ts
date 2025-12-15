@@ -32,6 +32,7 @@ import {
 import { currencies } from './table_1_currencies'
 import { categories } from './table_4_categories'
 import { accounts } from './table_6_accounts'
+import { events } from './table_10_events'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -87,6 +88,7 @@ export const transactions = pgTable(
 
     // Classification and details
     categoryId: uuid().references(() => categories.id), // Optional transaction category
+    eventId: uuid().references(() => events.id, { onDelete: 'set null' }), // Optional event for cross-category tracking
     amount: monetaryAmountColumn(), // Transaction amount (always positive)
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
@@ -104,6 +106,7 @@ export const transactions = pgTable(
     index('transactions_user_type_idx').on(table.userId, table.type), // Type-based filtering
     index('transactions_date_idx').on(table.txDate), // Date range queries
     index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
+    index('transactions_event_idx').on(table.eventId), // Event transactions lookup
 
     // Business rule constraints
     check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive
