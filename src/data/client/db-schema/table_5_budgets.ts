@@ -98,7 +98,7 @@ const columns = {
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   categoryId: text('category_id').notNull(), // Category this budget applies to (FK not enforced)
   amount: monetaryAmountColumn(), // Budget limit for this period
-  currency: isoCurrencyCodeColumn('currency').notNull(), // Budget currency (FK not enforced)
+  currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Budget currency (FK not enforced)
   period: text({ enum: BUDGET_PERIOD }).notNull(), // 'monthly' or 'yearly'
 
   // Period identification (timezone-agnostic integers)
@@ -138,7 +138,7 @@ export const getBudgetsSqliteTable = (name: string) =>
  * IMPORTANT - Mutation-Level Validation Required:
  * ─────────────────────────────────────────────────────
  * The following unique constraint cannot be validated at Zod level:
- * - budgets_category_currency_period_unq: (categoryId, currency, budgetYear, budgetMonth)
+ * - budgets_category_currency_period_unq: (categoryId, currencyId, budgetYear, budgetMonth)
  *
  * Mutations MUST check for existing budgets with the same combination before insert.
  *
@@ -149,8 +149,12 @@ export const getBudgetsSqliteTable = (name: string) =>
  */
 export const budgetInsertSchema = createInsertSchema(budgets, {
   id: s => s.default(randomUUID),
-  amount: s => s.positive().transform(roundToTwoDecimals),
-  currency: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
+  amount: s =>
+    s
+      .positive()
+      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .transform(roundToTwoDecimals),
+  currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
   budgetYear: s => s.int().min(VALIDATION.MIN_YEAR).max(VALIDATION.MAX_YEAR),
   budgetMonth: s => s.int().min(1).max(12).optional()
 })
@@ -183,12 +187,16 @@ export type BudgetInsertSchemaOutput = z.output<typeof budgetInsertSchema>
  * To change year, month, category, or currency: delete and create new.
  */
 export const budgetUpdateSchema = createUpdateSchema(budgets, {
-  amount: s => s.positive().transform(roundToTwoDecimals)
+  amount: s =>
+    s
+      .positive()
+      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .transform(roundToTwoDecimals)
 }).omit({
   id: true,
   userId: true,
   categoryId: true,
-  currency: true,
+  currencyId: true,
   period: true,
   budgetYear: true,
   budgetMonth: true,

@@ -145,8 +145,11 @@ export const getTransactionsSqliteTable = (name: string) =>
  * - transactions_transfer_has_counter_account: transfers must have counter account
  * - transactions_non_transfer_no_counter_account: non-transfers can't have counter account
  * - transactions_income_expense_has_category: income/expense must have categoryId
- * - transactions_date_not_future: tx_date <= CURRENT_DATE
  * - NUMERIC(14,2) precision: rounded to 2 decimal places
+ *
+ * Note: Future date check (tx_date <= CURRENT_DATE) was intentionally removed from
+ * server constraints to avoid timezone-related false positives. Future dates may
+ * be valid for scheduled transactions.
  *
  * IMPORTANT - Mutation-Level Validation Required:
  * ─────────────────────────────────────────────────────

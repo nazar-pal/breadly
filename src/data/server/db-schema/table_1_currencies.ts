@@ -14,7 +14,7 @@ Key Features:
 ================================================================================
 */
 
-import { pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { pgTable, varchar } from 'drizzle-orm/pg-core'
 
 // ============================================================================
 // Currencies table - ISO 4217 currency definitions
@@ -29,12 +29,8 @@ import { pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
  * - Currency codes are immutable once created
  * - All monetary amounts in the system reference these currencies
  */
-export const currencies = pgTable(
-  'currencies',
-  {
-    code: varchar({ length: 3 }).primaryKey(), // ISO currency code (USD, EUR)
-    symbol: varchar({ length: 10 }).notNull(), // Display symbol ($, €)
-    name: varchar({ length: 100 }).notNull() // Full name (US Dollar)
-  },
-  table => [uniqueIndex('currencies_code_unq').on(table.code)]
-)
+export const currencies = pgTable('currencies', {
+  code: varchar({ length: 3 }).primaryKey(), // ISO currency code (USD, EUR)
+  symbol: varchar({ length: 10 }).notNull(), // Display symbol ($, €)
+  name: varchar({ length: 100 }).notNull() // Full name (US Dollar)
+})

@@ -24,8 +24,8 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 */
 
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { index, integer, real, sqliteTable } from 'drizzle-orm/sqlite-core'
-import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
+import { index, real, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { dateOnlyText, isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
 // Exchange rates table - Historical currency conversion rates
@@ -52,7 +52,7 @@ const columns = {
   baseCurrency: isoCurrencyCodeColumn('base_currency').notNull(), // Base currency (FK not enforced)
   quoteCurrency: isoCurrencyCodeColumn('quote_currency').notNull(), // Quote currency (FK not enforced)
   rate: real().notNull(), // Exchange rate (base to quote conversion factor)
-  rateDate: integer('rate_date', { mode: 'timestamp_ms' }).notNull() // Date this rate was valid
+  rateDate: dateOnlyText('rate_date').notNull() // Date this rate was valid (YYYY-MM-DD, date-only)
 }
 
 // Only single-column indexes are supported in PowerSync JSON-based views

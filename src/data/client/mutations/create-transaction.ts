@@ -2,6 +2,7 @@ import {
   accounts,
   categories,
   currencies,
+  events,
   transactionInsertSchema,
   transactions
 } from '@/data/client/db-schema'
@@ -73,6 +74,18 @@ export async function createTransaction({
             `Cannot use ${category.type} category for ${parsedData.type} transaction`
           )
         }
+      }
+
+      // Validate event exists and belongs to user (if provided)
+      if (parsedData.eventId) {
+        const event = await tx.query.events.findFirst({
+          where: and(
+            eq(events.id, parsedData.eventId),
+            eq(events.userId, userId)
+          )
+        })
+        if (!event)
+          throw new Error('Event not found or does not belong to user')
       }
 
       // Load involved accounts if IDs are present

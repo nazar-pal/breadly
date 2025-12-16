@@ -183,6 +183,13 @@
       "when": 1765922044903,
       "tag": "0025_gigantic_hemingway",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1765924509629,
+      "tag": "0026_cynical_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }

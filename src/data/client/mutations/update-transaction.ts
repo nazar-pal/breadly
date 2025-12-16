@@ -2,6 +2,7 @@ import {
   accounts,
   categories,
   currencies,
+  events,
   transactionUpdateSchema,
   transactions
 } from '@/data/client/db-schema'
@@ -15,6 +16,7 @@ const updateTransactionSchema = transactionUpdateSchema.pick({
   accountId: true,
   counterAccountId: true,
   categoryId: true,
+  eventId: true,
   amount: true,
   currencyId: true,
   txDate: true,
@@ -98,15 +100,33 @@ export async function updateTransaction({
           throw new Error(`Currency "${parsedData.currencyId}" not found`)
       }
 
-      // Compute final categoryId for type validation
+      // Compute final categoryId and eventId for validation
       const finalCategoryId =
         parsedData.categoryId !== undefined
           ? parsedData.categoryId
           : existingTx.categoryId
+      const finalEventId =
+        parsedData.eventId !== undefined
+          ? parsedData.eventId
+          : existingTx.eventId
 
       // Transfer transactions cannot have a category (server trigger enforces this)
       if (finalType === 'transfer' && finalCategoryId != null) {
         throw new Error('Transfer transactions cannot have a category')
+      }
+
+      // Validate event exists and belongs to user (if provided or being changed)
+      if (finalEventId) {
+        const needsEventValidation =
+          parsedData.eventId !== undefined || parsedData.type !== undefined
+
+        if (needsEventValidation) {
+          const event = await tx.query.events.findFirst({
+            where: and(eq(events.id, finalEventId), eq(events.userId, userId))
+          })
+          if (!event)
+            throw new Error('Event not found or does not belong to user')
+        }
       }
 
       // Validate category exists, belongs to user, is not archived, and type matches (if provided or being changed)

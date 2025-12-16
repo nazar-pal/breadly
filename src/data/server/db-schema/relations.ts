@@ -66,7 +66,7 @@ export const budgetsRelations = relations(budgets, ({ one }) => ({
     references: [categories.id]
   }), // Category this budget tracks
   budgetCurrency: one(currencies, {
-    fields: [budgets.currency],
+    fields: [budgets.currencyId],
     references: [currencies.code]
   })
 }))

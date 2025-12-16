@@ -18,7 +18,8 @@ const updateAccountSchema = accountUpdateSchema.pick({
   savingsTargetDate: true,
   debtInitialAmount: true,
   debtDueDate: true,
-  isArchived: true
+  isArchived: true,
+  archivedAt: true
 })
 
 /**
@@ -55,7 +56,15 @@ export async function updateAccount({
 
       if (!existingAccount) throw new Error('Account not found')
 
-      // 2. Compute final values after update
+      // 2. Auto-populate archivedAt when isArchived changes to true
+      if (
+        parsedData.isArchived === true &&
+        existingAccount.archivedAt == null
+      ) {
+        parsedData.archivedAt = new Date()
+      }
+
+      // 3. Compute final values after update
       const finalType = existingAccount.type
       const finalSavingsTargetAmount =
         parsedData.savingsTargetAmount !== undefined
@@ -74,7 +83,7 @@ export async function updateAccount({
           ? parsedData.debtDueDate
           : existingAccount.debtDueDate
 
-      // 3. Validate currency exists (if being updated)
+      // 4. Validate currency exists (if being updated)
       if (
         parsedData.currencyId !== undefined &&
         parsedData.currencyId !== existingAccount.currencyId
@@ -85,7 +94,7 @@ export async function updateAccount({
         if (!currency)
           throw new Error(`Currency "${parsedData.currencyId}" not found`)
 
-        // 4. Currency change protection: validate_account_currency_change() trigger
+        // 5. Currency change protection: validate_account_currency_change() trigger
         // Cannot change currency when transactions exist for this account
         const hasTransactions = await tx.query.transactions.findFirst({
           where: and(
@@ -105,7 +114,7 @@ export async function updateAccount({
         }
       }
 
-      // 5. Validate type-specific fields on merged state
+      // 6. Validate type-specific fields on merged state
       // Savings fields only for saving accounts
       if (
         finalType !== 'saving' &&
@@ -133,7 +142,7 @@ export async function updateAccount({
         throw new Error('Payment accounts cannot have savings or debt fields')
       }
 
-      // 6. Update the account
+      // 7. Update the account
       await tx
         .update(accounts)
         .set(parsedData)

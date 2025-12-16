@@ -96,7 +96,7 @@ export const budgets = pgTable(
       .references(() => categories.id, { onDelete: 'restrict' })
       .notNull(), // Category this budget applies to
     amount: monetaryAmountColumn(), // Budget limit for this period
-    currency: isoCurrencyCodeColumn()
+    currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Budget currency
     period: budgetPeriod().notNull(), // 'monthly' or 'yearly'
@@ -117,7 +117,12 @@ export const budgets = pgTable(
     // Uses nullsNotDistinct() to ensure NULL budget_month values are treated as equal,
     // preventing duplicate yearly budgets (where budget_month is NULL) for same category/currency/year
     unique('budgets_category_currency_period_unq')
-      .on(table.categoryId, table.currency, table.budgetYear, table.budgetMonth)
+      .on(
+        table.categoryId,
+        table.currencyId,
+        table.budgetYear,
+        table.budgetMonth
+      )
       .nullsNotDistinct(),
 
     // Business rule constraints
