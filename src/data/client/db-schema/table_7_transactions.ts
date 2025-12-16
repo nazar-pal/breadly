@@ -159,6 +159,7 @@ const MAX_NOTES_LENGTH = 1000
  * - transactions_transfer_different_accounts: transfer source != destination
  * - transactions_transfer_has_counter_account: transfers must have counter account
  * - transactions_non_transfer_no_counter_account: non-transfers can't have counter account
+ * - transactions_income_expense_has_category: income/expense must have categoryId
  * - transactions_date_not_future: tx_date <= CURRENT_DATE
  * - NUMERIC(14,2) precision: rounded to 2 decimal places
  */
@@ -189,6 +190,11 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
   .refine(data => data.type === 'transfer' || data.counterAccountId == null, {
     message: 'Only transfers can have a destination account',
     path: ['counterAccountId']
+  })
+  // Income and expense transactions must have a category
+  .refine(data => data.type === 'transfer' || data.categoryId != null, {
+    message: 'Income and expense transactions must have a category',
+    path: ['categoryId']
   })
 
 export type TransactionInsertSchemaInput = z.input<

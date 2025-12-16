@@ -107,10 +107,12 @@ export const transactions = pgTable(
 
     // Account references
     accountId: uuid().references(() => accounts.id, { onDelete: 'cascade' }), // Primary account (source for expense/transfer, destination for income)
-    counterAccountId: uuid().references(() => accounts.id), // Transfer destination account (transfers only)
+    counterAccountId: uuid().references(() => accounts.id, {
+      onDelete: 'cascade'
+    }), // Transfer destination account (transfers only)
 
     // Classification and details
-    categoryId: uuid().references(() => categories.id), // Optional transaction category
+    categoryId: uuid().references(() => categories.id, { onDelete: 'cascade' }), // Required for income/expense transactions, null for transfers
     eventId: uuid().references(() => events.id, { onDelete: 'set null' }), // Optional event for cross-category tracking
     amount: monetaryAmountColumn(), // Transaction amount (always positive)
     currencyId: isoCurrencyCodeColumn()
@@ -150,6 +152,10 @@ export const transactions = pgTable(
       'transactions_non_transfer_no_counter_account',
       sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`
     ), // Non-transfers cannot have counter account
+    check(
+      'transactions_income_expense_has_category',
+      sql`${table.type} = 'transfer' OR ${table.categoryId} IS NOT NULL`
+    ), // Income and expense transactions must have a category
     // NOTE: Removed future-date check to avoid timezone-related false positives
 
     // RLS: Users can only access their own transactions
