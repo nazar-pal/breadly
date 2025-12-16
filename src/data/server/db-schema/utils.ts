@@ -17,6 +17,14 @@ export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
 export const monetaryAmountColumn = () =>
   numeric({ precision: 14, scale: 2 }).notNull()
 
+/**
+ * Timestamp columns for record tracking.
+ *
+ * IMPORTANT: These columns intentionally have NO server-side defaults.
+ * In our offline-first architecture, timestamps represent when data was
+ * created/updated on the client device, not when it was synced to the server.
+ * The client always provides these values during sync operations.
+ */
 export const createdAtColumn = () => timestamp({ withTimezone: true }).notNull()
 export const updatedAtColumn = () => timestamp({ withTimezone: true }).notNull()
 

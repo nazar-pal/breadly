@@ -49,7 +49,7 @@ export function transformDataForPostgres(data: any, table: string): any {
     budgets: ['is_archived'],
     accounts: ['is_archived'],
     events: ['is_archived'],
-    transactions: ['is_recurring'],
+    transactions: [],
     attachments: [],
     transaction_attachments: [],
     user_preferences: []
