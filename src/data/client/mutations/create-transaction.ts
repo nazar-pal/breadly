@@ -147,7 +147,7 @@ export async function createTransaction({
       // Insert transaction
       await tx.insert(transactions).values(parsedData)
 
-      // Update balances locally to mirror server triggers
+      // Update account balances (managed by application, not database triggers)
       if (parsedData.type === 'income') {
         // For income, accountId is optional - update balance only if account is set
         if (fromAccount) {

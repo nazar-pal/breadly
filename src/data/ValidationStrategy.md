@@ -47,23 +47,29 @@ Breadly uses a **4-layer validation architecture** to ensure data integrity acro
 **Purpose:** Replicate server CHECK constraints and provide immediate feedback to users.
 
 **What it validates:**
+
 - Field-level constraints (positive amounts, non-empty strings, valid ranges)
 - Cross-field validations within a single record (e.g., transfer rules, period/month consistency)
 - Type coercion and formatting (rounding decimals, trimming strings)
 
 **Example:**
+
 ```typescript
 export const transactionInsertSchema = createInsertSchema(transactions, {
-  amount: s => s.positive().max(VALIDATION.MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
+  amount: s =>
+    s
+      .positive()
+      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .transform(roundToTwoDecimals)
   // ...
-})
-.refine(data => data.type !== 'transfer' || data.accountId != null, {
+}).refine(data => data.type !== 'transfer' || data.accountId != null, {
   message: 'Transfer must have a source account',
   path: ['accountId']
 })
 ```
 
 **Why this layer exists:**
+
 - PowerSync JSON-based views don't enforce CHECK constraints
 - Provides immediate user feedback before sync
 - Prevents invalid data from entering the local database
@@ -77,6 +83,7 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
 **Purpose:** Validate foreign key relationships, ownership, and cross-table business rules that require database lookups.
 
 **What it validates:**
+
 - Foreign key existence (currency, category, account, event exist)
 - Ownership (entity belongs to the user)
 - Cross-table business rules:
@@ -87,22 +94,29 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
 - Unique constraints (name uniqueness within user+parent scope)
 
 **Example:**
+
 ```typescript
 // Validate category exists, belongs to user, is not archived, and type matches
 if (parsedData.categoryId) {
   const category = await tx.query.categories.findFirst({
-    where: and(eq(categories.id, parsedData.categoryId), eq(categories.userId, userId))
+    where: and(
+      eq(categories.id, parsedData.categoryId),
+      eq(categories.userId, userId)
+    )
   })
   if (!category) throw new Error('Category not found')
   if (category.isArchived)
     throw new Error('Cannot use archived category for new transaction')
   if (category.type !== parsedData.type) {
-    throw new Error(`Cannot use ${category.type} category for ${parsedData.type} transaction`)
+    throw new Error(
+      `Cannot use ${category.type} category for ${parsedData.type} transaction`
+    )
   }
 }
 ```
 
 **Why this layer exists:**
+
 - Zod schemas can't perform database lookups
 - Validates relationships before sync to prevent server rejections
 - Ensures data consistency in offline scenarios
@@ -116,16 +130,19 @@ if (parsedData.categoryId) {
 **Purpose:** Basic type coercion during sync operations.
 
 **What it validates:**
+
 - Basic type checking (strings, numbers, booleans)
 - No custom refinements or complex validations
 
 **Example:**
+
 ```typescript
 export const transactionsInsertSchemaPg = createInsertSchema(transactions)
 // No custom refinements - relies on PostgreSQL for validation
 ```
 
 **Why this layer is minimal:**
+
 - Client already validates before sync
 - PostgreSQL enforces all constraints anyway
 - Duplicating Zod refinements would add complexity without benefit
@@ -135,7 +152,8 @@ export const transactionsInsertSchemaPg = createInsertSchema(transactions)
 
 ## Layer 4: PostgreSQL Constraints + Triggers
 
-**Location:** 
+**Location:**
+
 - Constraints: `src/data/server/db-schema/table_*.ts`
 - Triggers: `src/data/server/migrations/*.sql`
 
@@ -144,18 +162,22 @@ export const transactionsInsertSchemaPg = createInsertSchema(transactions)
 **What it validates:**
 
 ### CHECK Constraints
+
 - Field-level rules (positive amounts, valid ranges, non-empty strings)
 - Cross-field rules within a record (transfer account rules, period/month consistency)
 
 ### Foreign Keys
+
 - Referential integrity (currency, category, account, event exist)
 - Cascade behaviors (RESTRICT, SET NULL, CASCADE)
 
 ### Unique Indexes
+
 - Name uniqueness within user+parent scope
 - Budget uniqueness per category+currency+period
 
 ### Triggers
+
 - Cross-table validations requiring lookups:
   - Account/category/event ownership
   - Currency consistency (transaction matches account)
@@ -164,6 +186,7 @@ export const transactionsInsertSchemaPg = createInsertSchema(transactions)
   - Category nesting limits (max 2 levels)
 
 **Example:**
+
 ```sql
 -- CHECK constraint
 check('transactions_positive_amount', sql`${table.amount} > 0`)
@@ -175,6 +198,7 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 ```
 
 **Why this layer exists:**
+
 - Final authority - prevents invalid data even if client validation is bypassed
 - Enforces multi-tenant security (RLS policies)
 - Handles edge cases and concurrent modifications
@@ -184,18 +208,18 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 
 ## Validation Mapping Reference
 
-| Validation Type | Client Zod | Client Mutation | Server Zod | Server DB |
-|----------------|------------|-----------------|------------|-----------|
-| Positive amount | ✅ | - | - | ✅ CHECK |
-| Transfer rules | ✅ | ✅ (merged state) | - | ✅ CHECK |
-| Category type match | - | ✅ | - | ✅ Trigger |
-| Currency consistency | - | ✅ | - | ✅ Trigger |
-| Name non-empty | ✅ | - | - | ✅ CHECK |
-| Unique names | - | ✅ | - | ✅ UNIQUE |
-| FK existence | - | ✅ | - | ✅ FK |
-| Ownership | - | ✅ | - | ✅ Trigger + RLS |
-| Archived entity check | - | ✅ | - | - |
-| Nesting limits | - | ✅ | - | ✅ Trigger |
+| Validation Type       | Client Zod | Client Mutation   | Server Zod | Server DB        |
+| --------------------- | ---------- | ----------------- | ---------- | ---------------- |
+| Positive amount       | ✅         | -                 | -          | ✅ CHECK         |
+| Transfer rules        | ✅         | ✅ (merged state) | -          | ✅ CHECK         |
+| Category type match   | -          | ✅                | -          | ✅ Trigger       |
+| Currency consistency  | -          | ✅                | -          | ✅ Trigger       |
+| Name non-empty        | ✅         | -                 | -          | ✅ CHECK         |
+| Unique names          | -          | ✅                | -          | ✅ UNIQUE        |
+| FK existence          | -          | ✅                | -          | ✅ FK            |
+| Ownership             | -          | ✅                | -          | ✅ Trigger + RLS |
+| Archived entity check | -          | ✅                | -          | -                |
+| Nesting limits        | -          | ✅                | -          | ✅ Trigger       |
 
 ---
 
@@ -232,6 +256,7 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 **Scenario:** Prevent transactions with future dates beyond 1 year.
 
 1. **Client Zod** (`table_7_transactions.ts`):
+
    ```typescript
    .refine(data => {
      const maxDate = new Date()
@@ -251,8 +276,10 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 
 4. **PostgreSQL** (`table_7_transactions.ts`):
    ```typescript
-   check('transactions_max_future_date', 
-     sql`${table.txDate} <= (CURRENT_DATE + INTERVAL '1 year')`)
+   check(
+     'transactions_max_future_date',
+     sql`${table.txDate} <= (CURRENT_DATE + INTERVAL '1 year')`
+   )
    ```
 
 ---
@@ -289,5 +316,4 @@ When testing validations:
 ## Related Documentation
 
 - [DatabaseDesignGuidelines.md](./DatabaseDesignGuidelines.md) - PowerSync-specific design considerations
-- [TRIGGERS.md](./TRIGGERS.md) - Server trigger documentation (if exists)
-
+- [TRIGGERS.md](./TRIGGERS.md) - Server trigger documentation

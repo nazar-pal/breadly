@@ -1,3 +1,4 @@
+import { VALIDATION } from '@/data/const'
 import { customType, integer, real, text } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'expo-crypto'
 
@@ -50,8 +51,10 @@ export const isArchivedColumn = () =>
   integer('is_archived', { mode: 'boolean' }).default(false).notNull()
 
 // required name and optional description columns (categories and accounts)
-export const nameColumn = () => text({ length: 100 }).notNull()
-export const descriptionColumn = () => text({ length: 1000 })
+export const nameColumn = () =>
+  text({ length: VALIDATION.MAX_NAME_LENGTH }).notNull()
+export const descriptionColumn = () =>
+  text({ length: VALIDATION.MAX_DESCRIPTION_LENGTH })
 
 // Date-only TEXT column that maps to a Date in app code while storing 'YYYY-MM-DD'
 export const dateOnlyText = customType<{

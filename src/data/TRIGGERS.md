@@ -302,15 +302,18 @@ When multiple triggers fire on the same operation, they execute in the following
 
 All triggers have corresponding client-side validation in Zod schemas and mutation functions:
 
-1. **Zod Schemas:** Replicate CHECK constraints and basic business rules
-2. **Mutation Functions:** Validate foreign key references and ownership before database operations
-3. **Server Triggers:** Final safety net that catches edge cases and prevents data corruption
+1. **Client Zod Schemas:** Replicate CHECK constraints and basic business rules
+2. **Client Mutations:** Validate foreign key references and ownership before database operations
+3. **Server Zod Schemas:** Basic type coercion during sync (minimal)
+4. **PostgreSQL Triggers:** Final safety net that catches edge cases and prevents data corruption
 
-This three-layer approach ensures:
+This multi-layer approach ensures:
 
 - Fast client-side feedback (Zod validation)
 - Proactive error prevention (mutation validation)
-- Data integrity guarantee (server triggers)
+- Data integrity guarantee (server constraints and triggers)
+
+For detailed documentation of the validation architecture, see [ValidationStrategy.md](./ValidationStrategy.md).
 
 ---
 
