@@ -126,6 +126,10 @@ export async function updateTransaction({
           })
           if (!event)
             throw new Error('Event not found or does not belong to user')
+
+          // Prevent using archived events when setting/changing event
+          if (parsedData.eventId !== undefined && event.isArchived)
+            throw new Error('Cannot use archived event for transaction')
         }
       }
 

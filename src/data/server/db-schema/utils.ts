@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { boolean, numeric, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import { VALIDATION } from '@/data/const'
 
 // user ID with default clerk authentication (neon RLS)
 export const clerkUserIdColumn = () =>
@@ -8,8 +9,10 @@ export const clerkUserIdColumn = () =>
     .notNull()
 
 // ISO 4217 currency code column (3-character codes like USD, EUR)
-export const isoCurrencyCodeColumn = () => varchar({ length: 3 }).notNull()
-export const isoCurrencyCodeColumnNullable = () => varchar({ length: 3 })
+export const isoCurrencyCodeColumn = () =>
+  varchar({ length: VALIDATION.CURRENCY_CODE_LENGTH }).notNull()
+export const isoCurrencyCodeColumnNullable = () =>
+  varchar({ length: VALIDATION.CURRENCY_CODE_LENGTH })
 
 export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
 
@@ -33,5 +36,7 @@ export const updatedAtColumn = () => timestamp({ withTimezone: true }).notNull()
 export const isArchivedColumn = () => boolean().default(false).notNull()
 
 // required name and optional description columns (categories and accounts)
-export const nameColumn = () => varchar({ length: 100 }).notNull()
-export const descriptionColumn = () => varchar({ length: 1000 })
+export const nameColumn = () =>
+  varchar({ length: VALIDATION.MAX_NAME_LENGTH }).notNull()
+export const descriptionColumn = () =>
+  varchar({ length: VALIDATION.MAX_DESCRIPTION_LENGTH })

@@ -86,6 +86,10 @@ export async function createTransaction({
         })
         if (!event)
           throw new Error('Event not found or does not belong to user')
+
+        // Prevent using archived events in new transactions
+        if (event.isArchived)
+          throw new Error('Cannot use archived event for new transaction')
       }
 
       // Load involved accounts if IDs are present
