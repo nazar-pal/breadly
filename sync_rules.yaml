@@ -83,6 +83,7 @@ bucket_definitions:
           CAST(debt_initial_amount AS real) AS debt_initial_amount,
           debt_due_date,
           is_archived,
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
           CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM accounts
@@ -123,17 +124,19 @@ bucket_definitions:
         FROM transactions
         WHERE user_id = bucket.user_id
 
-      # User's attachments (convert created_at)
+      # User's attachments (convert timestamps)
       - |
         SELECT
           id,
           user_id,
           type,
+          status,
           bucket_path,
           mime,
           file_name,
           CAST(file_size AS integer) AS file_size,
           duration,
+          CAST(unixepoch(uploaded_at) * 1000 AS integer) AS uploaded_at,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
           CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM attachments

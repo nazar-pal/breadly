@@ -48,6 +48,15 @@ import {
 export const ATTACHMENT_TYPE = ['receipt', 'voice'] as const
 export type AttachmentType = (typeof ATTACHMENT_TYPE)[number]
 
+/**
+ * Attachment upload status for tracking file upload lifecycle
+ * - pending: Record created, upload not yet started or in progress
+ * - ready: File successfully uploaded and available in cloud storage
+ * - failed: Upload failed (should be cleaned up by background job)
+ */
+export const ATTACHMENT_STATUS = ['pending', 'ready', 'failed'] as const
+export type AttachmentStatus = (typeof ATTACHMENT_STATUS)[number]
+
 // ============================================================================
 // ATTACHMENTS TABLE
 // ============================================================================
@@ -69,12 +78,14 @@ const columns = {
   id: uuidPrimaryKey(),
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   type: text({ enum: ATTACHMENT_TYPE }).notNull(), // Attachment type ('receipt' | 'voice')
+  status: text({ enum: ATTACHMENT_STATUS }).default('pending').notNull(), // Upload lifecycle status
   bucketPath: text('bucket_path').notNull(), // Cloud storage path (S3, etc.)
   mime: text({ length: 150 }).notNull(), // File MIME type
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
   fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-  createdAt: createdAtColumn(), // Upload timestamp
+  uploadedAt: integer('uploaded_at', { mode: 'timestamp_ms' }), // When upload completed successfully
+  createdAt: createdAtColumn(), // Record creation timestamp
   updatedAt: updatedAtColumn()
 }
 
@@ -82,6 +93,7 @@ const columns = {
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
   index('attachments_user_idx').on(table.userId),
   index('attachments_type_idx').on(table.type),
+  index('attachments_status_idx').on(table.status),
   index('attachments_created_at_idx').on(table.createdAt)
 ]
 
@@ -105,6 +117,7 @@ const MAX_MIME_LENGTH = 150
  * - attachments_file_size_positive: file size must be positive
  * - attachments_duration_positive: duration must be positive (if set)
  * - attachments_voice_has_duration: voice messages must have duration
+ * - attachments_ready_has_uploaded_at: ready attachments must have uploaded_at
  */
 export const attachmentInsertSchema = createInsertSchema(attachments, {
   id: s => s.default(randomUUID),
@@ -119,6 +132,11 @@ export const attachmentInsertSchema = createInsertSchema(attachments, {
   .refine(data => data.type !== 'voice' || data.duration != null, {
     message: 'Voice messages must include duration',
     path: ['duration']
+  })
+  // Ready attachments must have uploadedAt timestamp
+  .refine(data => data.status !== 'ready' || data.uploadedAt != null, {
+    message: 'Ready attachments must have uploadedAt timestamp',
+    path: ['uploadedAt']
   })
 
 export type AttachmentInsertSchemaInput = z.input<typeof attachmentInsertSchema>
@@ -139,6 +157,8 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   createdAt: true,
   updatedAt: true
 })
+// Note: Cross-field validation for status='ready' requiring uploadedAt cannot be
+// fully validated at schema level for partial updates. Validate in mutation with merged state.
 
 export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
 export type AttachmentUpdateSchemaOutput = z.output<

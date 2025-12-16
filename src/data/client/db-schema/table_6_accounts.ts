@@ -22,7 +22,13 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 */
 
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { index, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import {
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text
+} from 'drizzle-orm/sqlite-core'
 
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
@@ -90,6 +96,7 @@ const columns = {
   debtDueDate: dateOnlyText('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
+  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }), // When the account was archived
   createdAt: createdAtColumn(),
   updatedAt: updatedAtColumn()
 }
@@ -133,7 +140,7 @@ export const accountInsertSchema = createInsertSchema(accounts, {
     s.positive().transform(roundToTwoDecimals).optional(),
   debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional()
 })
-  .omit({ updatedAt: true, createdAt: true })
+  .omit({ updatedAt: true, createdAt: true, archivedAt: true })
   // Savings fields only for saving accounts
   .refine(
     data =>

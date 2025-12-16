@@ -27,6 +27,7 @@ import {
   pgEnum,
   pgTable,
   text,
+  timestamp,
   varchar
 } from 'drizzle-orm/pg-core'
 
@@ -47,6 +48,18 @@ import {
  * - voice: Voice message recordings (audio files, voice notes)
  */
 export const attachmentType = pgEnum('attachment_type', ['receipt', 'voice'])
+
+/**
+ * Attachment upload status for tracking file upload lifecycle
+ * - pending: Record created, upload not yet started or in progress
+ * - ready: File successfully uploaded and available in cloud storage
+ * - failed: Upload failed (should be cleaned up by background job)
+ */
+export const attachmentStatus = pgEnum('attachment_status', [
+  'pending',
+  'ready',
+  'failed'
+])
 
 // ============================================================================
 // ATTACHMENTS TABLE
@@ -72,19 +85,23 @@ export const attachments = pgTable(
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     type: attachmentType().notNull(), // receipt or voice message type
+    status: attachmentStatus().default('pending').notNull(), // Upload lifecycle status
     bucketPath: text().notNull(), // Cloud storage path (S3, etc.) - unlimited length for complex paths
     mime: varchar({ length: 150 }).notNull(), // File MIME type - supports complex MIME types
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
     fileSize: integer().notNull(), // File size in bytes (for storage management)
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-    createdAt: createdAtColumn(), // Upload timestamp
+    uploadedAt: timestamp({ withTimezone: true }), // When upload completed successfully
+    createdAt: createdAtColumn(), // Record creation timestamp
     updatedAt: updatedAtColumn()
   },
   table => [
     // Performance indexes for common queries
     index('attachments_user_idx').on(table.userId), // User's attachments lookup
     index('attachments_type_idx').on(table.type), // Filter by attachment type
+    index('attachments_status_idx').on(table.status), // Filter by upload status
     index('attachments_user_type_idx').on(table.userId, table.type), // User's attachments by type
+    index('attachments_user_status_idx').on(table.userId, table.status), // User's attachments by status
     index('attachments_created_at_idx').on(table.createdAt), // Sort by upload date
 
     // Business rule constraints
@@ -104,6 +121,10 @@ export const attachments = pgTable(
       'attachments_voice_has_duration',
       sql`${table.type} != 'voice' OR ${table.duration} IS NOT NULL`
     ), // Voice messages require duration
+    check(
+      'attachments_ready_has_uploaded_at',
+      sql`${table.status} != 'ready' OR ${table.uploadedAt} IS NOT NULL`
+    ), // Ready attachments must have uploaded_at timestamp
 
     // RLS: Users can only access their own attachments
     crudPolicy({

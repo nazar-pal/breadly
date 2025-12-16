@@ -23,7 +23,8 @@ import {
   index,
   numeric,
   pgEnum,
-  pgTable
+  pgTable,
+  timestamp
 } from 'drizzle-orm/pg-core'
 
 import { currencies } from './table_1_currencies'
@@ -89,6 +90,7 @@ export const accounts = pgTable(
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
+    archivedAt: timestamp({ withTimezone: true }), // When the account was archived
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn()
   },

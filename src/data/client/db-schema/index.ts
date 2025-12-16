@@ -53,8 +53,9 @@ import {
   TRANSACTION_TYPE,
   transactions
 } from './table_7_transactions'
-import type { AttachmentType } from './table_8_attachments'
+import type { AttachmentStatus, AttachmentType } from './table_8_attachments'
 import {
+  ATTACHMENT_STATUS,
   ATTACHMENT_TYPE,
   attachments,
   getAttachmentsSqliteTable
@@ -81,6 +82,7 @@ import {
 export {
   ACCOUNT_TYPE,
   accounts,
+  ATTACHMENT_STATUS,
   ATTACHMENT_TYPE,
   attachments,
   budgets,
@@ -104,6 +106,7 @@ export {
   transactions,
   userPreferences,
   type AccountType,
+  type AttachmentStatus,
   type AttachmentType,
   type CategoryType,
   type TransactionType

@@ -23,10 +23,10 @@ export function transformDataForPostgres(data: any, table: string): any {
   const timestampFields: Record<string, string[]> = {
     categories: ['created_at', 'updated_at', 'archived_at'],
     budgets: ['archived_at', 'created_at', 'updated_at'],
-    accounts: ['created_at', 'updated_at'],
+    accounts: ['created_at', 'updated_at', 'archived_at'],
     events: ['created_at', 'updated_at', 'archived_at'],
     transactions: ['created_at', 'updated_at'],
-    attachments: ['created_at', 'updated_at'],
+    attachments: ['created_at', 'updated_at', 'uploaded_at'],
     transaction_attachments: ['created_at', 'updated_at'],
     user_preferences: ['created_at', 'updated_at']
   }
