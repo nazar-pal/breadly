@@ -50,7 +50,7 @@ bucket_definitions:
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (period-based with year/month)
+      # User's budgets (one row per period - simple and explicit)
       - |
         SELECT
           id,
@@ -59,10 +59,8 @@ bucket_definitions:
           CAST(amount AS real) AS amount,
           currency,
           period,
-          start_year,
-          start_month,
-          is_archived,
-          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
+          budget_year,
+          budget_month,
           CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
           CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM budgets

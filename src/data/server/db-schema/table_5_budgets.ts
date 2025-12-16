@@ -1,18 +1,16 @@
 /*
 ================================================================================
-BUDGETS SCHEMA - Recurring Spending Limits
+BUDGETS SCHEMA - Category Spending Limits
 ================================================================================
-Purpose: Manages user budget tracking for categories, allowing users to set
-         recurring spending limits per category with monthly or yearly periods.
+Purpose: Manages user budget tracking for categories. Each budget row represents
+         a spending limit for ONE specific period (month or year).
 
 Key Features:
-- Category-based budget tracking
-- Monthly and yearly budget periods
-- Year + month based period identification (no date ambiguity)
-- User-specific budgets with multi-tenant isolation
-- Only one active budget per category+currency
-- Unique budget constraints per category+currency+period
-- Integration with transaction categorization for spending analysis
+- One row = one budget for one period (simple and explicit)
+- Monthly budgets: year + month identifies the period
+- Yearly budgets: year only (month is NULL)
+- Client creates new budget rows for each period (can be automated)
+- Timezone-agnostic (integers only, no timestamps for business logic)
 - Row-level security for data protection
 ================================================================================
 */
@@ -25,7 +23,6 @@ import {
   pgEnum,
   pgTable,
   smallint,
-  timestamp,
   uniqueIndex,
   uuid
 } from 'drizzle-orm/pg-core'
@@ -34,7 +31,6 @@ import { categories } from './table_4_categories'
 import {
   clerkUserIdColumn,
   createdAtColumn,
-  isArchivedColumn,
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   updatedAtColumn,
@@ -46,30 +42,50 @@ import {
 // ============================================================================
 
 /**
- * Budget recurrence periods
- * - monthly: Budget resets each calendar month
- * - yearly: Budget resets each calendar year
+ * Budget period types
+ * - monthly: Budget for a specific month (budget_month required)
+ * - yearly: Budget for a whole year (budget_month must be NULL)
  */
 export const budgetPeriod = pgEnum('budget_period', ['monthly', 'yearly'])
 
 // ============================================================================
-// Budgets table - Category-based spending limits
+// Budgets table - Category spending limits per period
 // ============================================================================
 
 /**
  * Budget tracking for categories
- * Allows users to set recurring spending limits per category
+ * Each row is a budget for ONE specific period (month or year)
+ *
+ * DESIGN PHILOSOPHY:
+ * ─────────────────────────────────────────────────────
+ * Simple and explicit: one row = one budget for one period.
+ * No complex validity ranges or archiving semantics.
+ *
+ * PERIOD IDENTIFICATION:
+ *   - Monthly: budget_year + budget_month (e.g., 2024 + 3 = March 2024)
+ *   - Yearly: budget_year only, budget_month = NULL (e.g., 2024 = all of 2024)
+ *
+ * QUERY EXAMPLES:
+ *   Find monthly budget for Food in March 2024:
+ *     WHERE category_id = X AND budget_year = 2024 AND budget_month = 3
+ *
+ *   Find yearly budget for Food in 2024:
+ *     WHERE category_id = X AND budget_year = 2024 AND budget_month IS NULL
+ *
+ * WORKFLOW:
+ *   1. User sets $500 monthly budget for "Food" in Jan 2024
+ *   2. Client creates: {budget_year: 2024, budget_month: 1, amount: 500}
+ *   3. When February starts, client can auto-create February budget
+ *      (copy from previous month or use a template)
+ *   4. User can adjust individual months as needed
  *
  * Business Rules:
  * - Each budget belongs to a specific user (multi-tenant isolation)
- * - Budgets are tied to specific categories for granular control
- * - Only one active budget per category+currency at any time
+ * - One budget per category + currency + year + month combination
+ * - Monthly budgets: budget_month must be 1-12
+ * - Yearly budgets: budget_month must be NULL
  * - Budget amounts must be positive values
- * - startMonth must be 1-12, startYear must be 1970-2100
- * - Yearly budgets must have startMonth = 1 (January)
- * - Budget periods are calendar-based (no custom anchoring)
- * - Archived budgets are hidden but preserve historical data
- * - When changing budget amount: archive old, create new with new startYear/startMonth
+ * - budget_year must be 1970-2100
  */
 export const budgets = pgTable(
   'budgets',
@@ -79,51 +95,49 @@ export const budgets = pgTable(
     categoryId: uuid()
       .references(() => categories.id, { onDelete: 'cascade' })
       .notNull(), // Category this budget applies to
-    amount: monetaryAmountColumn(), // Budget limit amount per period
+    amount: monetaryAmountColumn(), // Budget limit for this period
     currency: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Budget currency
     period: budgetPeriod().notNull(), // 'monthly' or 'yearly'
-    startYear: smallint().notNull(), // Year this budget config takes effect (e.g., 2024)
-    startMonth: smallint().notNull(), // Month this budget config takes effect (1-12)
-    isArchived: isArchivedColumn(), // Soft deletion flag
-    archivedAt: timestamp({ withTimezone: true }), // When the budget was archived
+
+    // Period identification (timezone-agnostic integers)
+    budgetYear: smallint('budget_year').notNull(), // The year (e.g., 2024)
+    budgetMonth: smallint('budget_month'), // The month 1-12 (NULL for yearly budgets)
+
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes for common query patterns
-    index('budgets_user_idx').on(table.userId), // User's budgets lookup
-    index('budgets_category_idx').on(table.categoryId), // Category budgets lookup
-    index('budgets_user_archived_idx').on(table.userId, table.isArchived), // Active budgets only
+    // Performance indexes
+    index('budgets_user_idx').on(table.userId),
+    index('budgets_category_idx').on(table.categoryId),
+    index('budgets_year_month_idx').on(table.budgetYear, table.budgetMonth),
 
-    // Only ONE active budget per category+currency at any time
-    uniqueIndex('budgets_category_currency_active_unq')
-      .on(table.categoryId, table.currency)
-      .where(sql`${table.isArchived} = false`),
-
-    // No duplicate periods for same category+currency (even archived)
+    // One budget per category + currency + period
     uniqueIndex('budgets_category_currency_period_unq').on(
       table.categoryId,
       table.currency,
-      table.startYear,
-      table.startMonth
+      table.budgetYear,
+      table.budgetMonth
     ),
 
     // Business rule constraints
-    check('budgets_positive_amount', sql`${table.amount} > 0`), // Budget amounts must be positive
-    check(
-      'budgets_valid_month',
-      sql`${table.startMonth} >= 1 AND ${table.startMonth} <= 12`
-    ), // Month must be 1-12
+    check('budgets_positive_amount', sql`${table.amount} > 0`),
     check(
       'budgets_valid_year',
-      sql`${table.startYear} >= 1970 AND ${table.startYear} <= 2100`
-    ), // Year must be reasonable
+      sql`${table.budgetYear} >= 1970 AND ${table.budgetYear} <= 2100`
+    ),
+
+    // Monthly budgets must have month 1-12, yearly budgets must have NULL month
     check(
-      'budgets_yearly_starts_january',
-      sql`${table.period} != 'yearly' OR ${table.startMonth} = 1`
-    ), // Yearly budgets must start in January
+      'budgets_monthly_has_month',
+      sql`${table.period} != 'monthly' OR (${table.budgetMonth} >= 1 AND ${table.budgetMonth} <= 12)`
+    ),
+    check(
+      'budgets_yearly_no_month',
+      sql`${table.period} != 'yearly' OR ${table.budgetMonth} IS NULL`
+    ),
 
     // RLS: Users can only access their own budgets
     crudPolicy({
