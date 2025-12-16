@@ -25,6 +25,7 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
@@ -63,6 +64,13 @@ export type CategoryType = (typeof CATEGORY_TYPE)[number]
  * - Self-referencing parent relationships are prevented
  * - Archived categories are hidden but preserve historical data
  * - Category types: 'expense' or 'income'
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives a category, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -100,21 +108,6 @@ export const getCategoriesSqliteTable = (name: string) =>
 // do not support CHECK constraints or foreign keys.
 
 /**
- * Maximum category name length (matches varchar(100) server constraint)
- */
-const MAX_CATEGORY_NAME_LENGTH = 100
-
-/**
- * Maximum icon name length (matches varchar(50) server constraint)
- */
-const MAX_ICON_LENGTH = 50
-
-/**
- * Maximum description length (matches varchar(1000) server constraint)
- */
-const MAX_DESCRIPTION_LENGTH = 1000
-
-/**
  * Category insert schema with business rule validations.
  * PowerSync's JSON-based views do not enforce constraints,
  * so Zod is used to validate input data in application code.
@@ -125,9 +118,10 @@ const MAX_DESCRIPTION_LENGTH = 1000
  */
 export const categoryInsertSchema = createInsertSchema(categories, {
   id: s => s.default(randomUUID),
-  name: s => s.trim().min(1).max(MAX_CATEGORY_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
-  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle')
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s =>
+    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
+  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle')
 })
   .omit({ createdAt: true, updatedAt: true })
   // Prevent self-referencing parent (categories_no_self_parent)
@@ -140,9 +134,10 @@ export type CategoryInsertSchemaInput = z.input<typeof categoryInsertSchema>
 export type CategoryInsertSchemaOutput = z.output<typeof categoryInsertSchema>
 
 export const categoryUpdateSchema = createUpdateSchema(categories, {
-  name: s => s.trim().min(1).max(MAX_CATEGORY_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
-  icon: s => s.trim().min(1).max(MAX_ICON_LENGTH).default('circle')
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s =>
+    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
+  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle')
 })
   // Not possible to prevent self-referencing parent (categories_no_self_parent) on the schema level
   .omit({

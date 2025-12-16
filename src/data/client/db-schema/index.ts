@@ -205,8 +205,6 @@ export type TransactionSelectSQLite = typeof transactions.$inferSelect
 export type TransactionInsertSQLite = typeof transactions.$inferInsert
 
 export {
-  MAX_TRANSACTION_AMOUNT,
-  MIN_TRANSACTION_DATE,
   transactionInsertSchema,
   transactionUpdateSchema,
   type TransactionInsertSchemaInput,

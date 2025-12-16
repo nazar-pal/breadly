@@ -27,6 +27,7 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+import { VALIDATION } from '@/data/const'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
@@ -40,17 +41,6 @@ import {
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
-
-/**
- * Maximum transaction amount (matches NUMERIC(14,2) database constraint)
- * Used for validation in Zod schemas
- */
-export const MAX_TRANSACTION_AMOUNT = 999_999_999_999.99
-
-/**
- * Minimum allowed transaction date (reasonable lower bound)
- */
-export const MIN_TRANSACTION_DATE = new Date('1970-01-01')
 
 // ============================================================================
 // TRANSACTION TYPE DEFINITIONS
@@ -145,11 +135,6 @@ export const getTransactionsSqliteTable = (name: string) =>
 // do not support CHECK constraints or foreign keys.
 
 /**
- * Maximum notes length (matches varchar(1000) server constraint)
- */
-const MAX_NOTES_LENGTH = 1000
-
-/**
  * Transaction insert schema with business rule validations.
  * PowerSync's JSON-based views do not enforce constraints,
  * so Zod is used to validate input data in application code.
@@ -192,8 +177,12 @@ const MAX_NOTES_LENGTH = 1000
 export const transactionInsertSchema = createInsertSchema(transactions, {
   id: s => s.default(randomUUID),
   amount: s =>
-    s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
-  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional()
+    s
+      .positive()
+      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .transform(roundToTwoDecimals),
+  currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
+  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
 })
   .omit({ createdAt: true, updatedAt: true })
   // Transfers must have a source account
@@ -239,8 +228,12 @@ export type TransactionInsertSchemaOutput = z.output<
  */
 export const transactionUpdateSchema = createUpdateSchema(transactions, {
   amount: s =>
-    s.positive().max(MAX_TRANSACTION_AMOUNT).transform(roundToTwoDecimals),
-  notes: s => s.trim().min(1).max(MAX_NOTES_LENGTH).optional()
+    s
+      .positive()
+      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .transform(roundToTwoDecimals),
+  currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
+  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
 }).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type TransactionUpdateSchemaInput = z.input<

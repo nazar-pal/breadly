@@ -23,7 +23,7 @@ import { currencies } from './table_1_currencies'
 import {
   clerkUserIdColumn,
   createdAtColumn,
-  isoCurrencyCodeColumn,
+  isoCurrencyCodeColumnNullable,
   updatedAtColumn
 } from './utils'
 
@@ -47,7 +47,9 @@ export const userPreferences = pgTable(
   'user_preferences',
   {
     userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
-    defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
+    defaultCurrency: isoCurrencyCodeColumnNullable().references(
+      () => currencies.code
+    ), // Default currency for new accounts/transactions
     firstWeekday: smallint().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
     locale: varchar({ length: 20 }).default('en-US'), // Localization/language code (ISO format)
     createdAt: createdAtColumn(),

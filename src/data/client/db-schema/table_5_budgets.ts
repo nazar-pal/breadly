@@ -24,6 +24,7 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
@@ -125,16 +126,6 @@ export const getBudgetsSqliteTable = (name: string) =>
 // ============================================================================
 
 /**
- * Minimum valid year for budgets
- */
-const MIN_YEAR = 1970
-
-/**
- * Maximum valid year for budgets
- */
-const MAX_YEAR = 2100
-
-/**
  * Budget insert schema with business rule validations.
  *
  * Server CHECK constraints replicated:
@@ -144,17 +135,23 @@ const MAX_YEAR = 2100
  * - budgets_yearly_no_month: yearly budgets have NULL month
  * - NUMERIC(14,2) precision: rounded to 2 decimal places
  *
- * IMPORTANT: When creating a budget mutation, you MUST also validate:
+ * IMPORTANT - Mutation-Level Validation Required:
+ * ─────────────────────────────────────────────────────
+ * The following unique constraint cannot be validated at Zod level:
+ * - budgets_category_currency_period_unq: (categoryId, currency, budgetYear, budgetMonth)
+ *
+ * Mutations MUST check for existing budgets with the same combination before insert.
+ *
+ * Additional mutation-level validations required:
  * - Category exists and belongs to user (FK + ownership validation)
  * - Category is of type 'expense' (server trigger enforces this)
  * - Currency exists (FK validation)
- * - Unique constraint: budgets_category_currency_period_unq
  */
 export const budgetInsertSchema = createInsertSchema(budgets, {
   id: s => s.default(randomUUID),
   amount: s => s.positive().transform(roundToTwoDecimals),
-  currency: s => s.trim().length(3),
-  budgetYear: s => s.int().min(MIN_YEAR).max(MAX_YEAR),
+  currency: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
+  budgetYear: s => s.int().min(VALIDATION.MIN_YEAR).max(VALIDATION.MAX_YEAR),
   budgetMonth: s => s.int().min(1).max(12).optional()
 })
   .omit({ createdAt: true, updatedAt: true })

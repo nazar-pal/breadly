@@ -1,4 +1,5 @@
 import { relations } from 'drizzle-orm'
+import { events } from './table_10_events'
 import { currencies } from './table_1_currencies'
 import { exchangeRates } from './table_2_exchange-rates'
 import { userPreferences } from './table_3_user-preferences'
@@ -8,13 +9,13 @@ import { accounts } from './table_6_accounts'
 import { transactions } from './table_7_transactions'
 import { attachments } from './table_8_attachments'
 import { transactionAttachments } from './table_9_transaction-attachments'
-import { events } from './table_10_events'
 
 // Table 1: Currencies - Relationships
 export const currenciesRelations = relations(currencies, ({ many }) => ({
   accounts: many(accounts),
   transactions: many(transactions),
   userPreferences: many(userPreferences),
+  budgets: many(budgets, { relationName: 'budgetCurrency' }),
   baseExchangeRates: many(exchangeRates, { relationName: 'baseRates' }),
   quoteExchangeRates: many(exchangeRates, { relationName: 'quoteRates' })
 }))
@@ -63,7 +64,11 @@ export const budgetsRelations = relations(budgets, ({ one }) => ({
   category: one(categories, {
     fields: [budgets.categoryId],
     references: [categories.id]
-  }) // Category this budget tracks
+  }), // Category this budget tracks
+  budgetCurrency: one(currencies, {
+    fields: [budgets.currency],
+    references: [currencies.code]
+  })
 }))
 
 // Table 6: Accounts - Relationships

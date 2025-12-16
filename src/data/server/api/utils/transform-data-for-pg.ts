@@ -46,7 +46,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Boolean columns that come from SQLite as 0/1 integers
   const booleanFields: Record<string, string[]> = {
     categories: ['is_archived'],
-    budgets: ['is_archived'],
+    budgets: [],
     accounts: ['is_archived'],
     events: ['is_archived'],
     transactions: [],

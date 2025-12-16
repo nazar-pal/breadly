@@ -29,6 +29,7 @@ import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
+import { VALIDATION } from '@/data/const'
 import {
   clerkUserIdColumn,
   createdAtColumn,
@@ -106,9 +107,6 @@ export const getAttachmentsSqliteTable = (name: string) =>
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
 
-const MAX_FILE_NAME_LENGTH = 500
-const MAX_MIME_LENGTH = 150
-
 /**
  * Attachment insert schema with business rule validations.
  *
@@ -122,8 +120,8 @@ const MAX_MIME_LENGTH = 150
 export const attachmentInsertSchema = createInsertSchema(attachments, {
   id: s => s.default(randomUUID),
   bucketPath: s => s.trim().min(1),
-  fileName: s => s.trim().min(1).max(MAX_FILE_NAME_LENGTH),
-  mime: s => s.trim().min(1).max(MAX_MIME_LENGTH),
+  fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
+  mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
   duration: s => s.positive().optional()
 })
@@ -146,8 +144,8 @@ export type AttachmentInsertSchemaOutput = z.output<
 
 export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   bucketPath: s => s.trim().min(1),
-  fileName: s => s.trim().min(1).max(MAX_FILE_NAME_LENGTH),
-  mime: s => s.trim().min(1).max(MAX_MIME_LENGTH),
+  fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
+  mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
   duration: s => s.positive()
 }).omit({

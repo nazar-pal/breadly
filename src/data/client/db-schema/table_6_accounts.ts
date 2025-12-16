@@ -30,6 +30,7 @@ import {
   text
 } from 'drizzle-orm/sqlite-core'
 
+import { VALIDATION } from '@/data/const'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
@@ -74,6 +75,13 @@ export type AccountType = (typeof ACCOUNT_TYPE)[number]
  * - Type-specific fields are optional and depend on account type
  * - Savings target amount must be positive (if provided)
  * - Debt initial amount must be positive (if provided)
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives an account, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -116,9 +124,6 @@ export const getAccountsSqliteTable = (name: string) =>
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
 
-const MAX_ACCOUNT_NAME_LENGTH = 100
-const MAX_DESCRIPTION_LENGTH = 1000
-
 /**
  * Account insert schema with business rule validations.
  *
@@ -133,9 +138,11 @@ const MAX_DESCRIPTION_LENGTH = 1000
  */
 export const accountInsertSchema = createInsertSchema(accounts, {
   id: s => s.default(randomUUID),
-  name: s => s.trim().min(1).max(MAX_ACCOUNT_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional(),
-  currencyId: s => s.trim().length(3).default('USD'),
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s =>
+    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
+  currencyId: s =>
+    s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH).default('USD'),
   savingsTargetAmount: s =>
     s.positive().transform(roundToTwoDecimals).optional(),
   debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional()
@@ -188,8 +195,8 @@ export type AccountInsertSchemaOutput = z.output<typeof accountInsertSchema>
  * - If updating currency, check: no transactions with accountId OR counterAccountId = this account
  */
 export const accountUpdateSchema = createUpdateSchema(accounts, {
-  name: s => s.trim().min(1).max(MAX_ACCOUNT_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH),
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH),
   savingsTargetAmount: s => s.positive().transform(roundToTwoDecimals),
   debtInitialAmount: s => s.positive().transform(roundToTwoDecimals)
 }).omit({

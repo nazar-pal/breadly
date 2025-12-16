@@ -40,6 +40,10 @@ import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
  * - Each currency pair can have only one rate per date (enforced in app)
  * - Exchange rates must be positive values
  * - Base and quote currencies must be different
+ *
+ * Unique Constraint (server-enforced):
+ * - exchange_rates_base_quote_date_unq: (baseCurrency, quoteCurrency, rateDate)
+ * Note: Exchange rates are read-only from client (synced from server global bucket).
  */
 
 const columns = {

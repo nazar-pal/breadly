@@ -22,6 +22,7 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { index, integer, sqliteTable } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
@@ -62,6 +63,13 @@ import {
  * - Dates are informational only - transactions can be linked anytime
  * - If both dates exist, endDate must be >= startDate
  * - User manually archives when done tracking
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives an event, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
  */
 const columns = {
   id: uuidPrimaryKey(),
@@ -93,16 +101,6 @@ export const getEventsSqliteTable = (name: string) =>
 // ============================================================================
 
 /**
- * Maximum name length (matches varchar(100) server constraint)
- */
-const MAX_NAME_LENGTH = 100
-
-/**
- * Maximum description length (matches varchar(1000) server constraint)
- */
-const MAX_DESCRIPTION_LENGTH = 1000
-
-/**
  * Event insert schema with business rule validations.
  *
  * Server CHECK constraints replicated:
@@ -113,8 +111,9 @@ const MAX_DESCRIPTION_LENGTH = 1000
  */
 export const eventInsertSchema = createInsertSchema(events, {
   id: s => s.default(randomUUID),
-  name: s => s.trim().min(1).max(MAX_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH).optional()
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s =>
+    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional()
 })
   .omit({ createdAt: true, updatedAt: true })
 
@@ -138,8 +137,8 @@ export type EventInsertSchemaOutput = z.output<typeof eventInsertSchema>
  * Full validation should happen in the mutation with merged state.
  */
 export const eventUpdateSchema = createUpdateSchema(events, {
-  name: s => s.trim().min(1).max(MAX_NAME_LENGTH),
-  description: s => s.trim().min(1).max(MAX_DESCRIPTION_LENGTH)
+  name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
+  description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH)
 }).omit({
   id: true,
   userId: true,

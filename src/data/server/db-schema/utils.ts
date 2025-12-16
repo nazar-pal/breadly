@@ -9,6 +9,7 @@ export const clerkUserIdColumn = () =>
 
 // ISO 4217 currency code column (3-character codes like USD, EUR)
 export const isoCurrencyCodeColumn = () => varchar({ length: 3 }).notNull()
+export const isoCurrencyCodeColumnNullable = () => varchar({ length: 3 })
 
 export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
 

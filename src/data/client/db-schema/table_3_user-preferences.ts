@@ -26,6 +26,7 @@ PowerSync Limitations (JSON-based views):
 ================================================================================
 */
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
@@ -78,8 +79,6 @@ export const getUserPreferencesSqliteTable = (name: string) =>
 // ZOD VALIDATION SCHEMAS
 // ============================================================================
 
-const MAX_LOCALE_LENGTH = 20
-
 /**
  * User preference insert schema with business rule validations.
  *
@@ -87,9 +86,11 @@ const MAX_LOCALE_LENGTH = 20
  * - user_preferences_valid_weekday: firstWeekday between 1 and 7
  */
 export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
-  firstWeekday: s => s.min(1).max(7).default(1),
-  locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH).default('en-US'),
-  defaultCurrency: s => s.length(3).optional()
+  firstWeekday: s =>
+    s.min(VALIDATION.MIN_WEEKDAY).max(VALIDATION.MAX_WEEKDAY).default(1),
+  locale: s =>
+    s.trim().min(1).max(VALIDATION.MAX_LOCALE_LENGTH).default('en-US'),
+  defaultCurrency: s => s.length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
 }).omit({ createdAt: true, updatedAt: true })
 
 export type UserPreferenceInsertSchemaInput = z.input<
@@ -100,9 +101,9 @@ export type UserPreferenceInsertSchemaOutput = z.output<
 >
 
 export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences, {
-  firstWeekday: s => s.min(1).max(7),
-  locale: s => s.trim().min(1).max(MAX_LOCALE_LENGTH),
-  defaultCurrency: s => s.length(3).optional()
+  firstWeekday: s => s.min(VALIDATION.MIN_WEEKDAY).max(VALIDATION.MAX_WEEKDAY),
+  locale: s => s.trim().min(1).max(VALIDATION.MAX_LOCALE_LENGTH),
+  defaultCurrency: s => s.length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
 }).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type UserPreferenceUpdateSchemaInput = z.input<
