@@ -4,16 +4,18 @@ TRANSACTIONS SCHEMA - Core Financial Records Management
 ================================================================================
 Purpose: Manages all financial transactions (income, expenses, transfers) in the
          Breadly system. Central entity tracking all money movements with support
-         for multi-currency operations and automatic balance updates.
+         for multi-currency operations.
 
 Key Features:
 - Income, expense, and transfer transaction types
 - Multi-currency transaction support with validation
 - Account-to-account transfers with dual-account tracking
 - Category-based transaction classification
-- Automatic account balance updates via database triggers
 - Comprehensive business rule validation
 - Multi-tenant isolation with row-level security
+
+Note: Account balances are managed manually by the application - there are no
+      database triggers that automatically update account balances.
 ================================================================================
 */
 
@@ -66,15 +68,35 @@ export const txType = pgEnum('transaction_type', [
  * Financial transactions (income, expenses, transfers)
  * Central entity tracking all money movements in the system
  *
+ * ACCOUNT LINKING DESIGN:
+ * ─────────────────────────────────────────────────────
+ * The accountId field is intentionally nullable for income/expense transactions.
+ * Users have two options when creating a transaction:
+ *
+ *   Option 1: Link to an account
+ *     - Set accountId to reference an existing account
+ *     - currencyId MUST match the account's currency (enforced by trigger)
+ *     - Application must manually update the account's balance
+ *
+ *   Option 2: Specify currency only (no account)
+ *     - Leave accountId as NULL
+ *     - Set currencyId to the desired transaction currency
+ *     - Transaction is recorded but doesn't affect any account balance
+ *     - Useful for tracking expenses/income without managing account balances
+ *
+ * TRANSFER TRANSACTIONS:
+ *   - MUST have both accountId (source) AND counterAccountId (destination)
+ *   - Both accounts must belong to the same user
+ *   - Both accounts must use the same currency as the transaction
+ *
  * Business Rules:
  * - All transactions belong to a specific user (multi-tenant isolation)
- * - Transaction currency must match the account's currency
+ * - If accountId is provided, transaction currency must match account's currency
  * - Transfer transactions require both accountId and counterAccountId
  * - Transfer accounts must be different and belong to the same user
  * - Non-transfer transactions must not have a counterAccountId
  * - Transaction amounts must be positive (direction determined by type)
- * - Transaction dates cannot be in the future
- * - Account balances are automatically updated by database triggers
+ * - Account balances must be manually updated by the application (no auto-triggers)
  */
 export const transactions = pgTable(
   'transactions',
@@ -93,7 +115,7 @@ export const transactions = pgTable(
     amount: monetaryAmountColumn(), // Transaction amount (always positive)
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
-      .notNull(), // Transaction currency (must match account currency)
+      .notNull(), // Transaction currency (must match account currency if accountId is set)
     txDate: date().notNull(), // Transaction date (when the transaction occurred)
     notes: varchar({ length: 1000 }), // Optional user notes/description
     createdAt: createdAtColumn(), // Record creation timestamp
@@ -117,9 +139,13 @@ export const transactions = pgTable(
       sql`${table.type} != 'transfer' OR ${table.accountId} != ${table.counterAccountId}`
     ), // Transfer accounts must be different
     check(
+      'transactions_transfer_has_account',
+      sql`${table.type} != 'transfer' OR ${table.accountId} IS NOT NULL`
+    ), // Transfers must have source account
+    check(
       'transactions_transfer_has_counter_account',
       sql`${table.type} != 'transfer' OR ${table.counterAccountId} IS NOT NULL`
-    ), // Transfers must have counter account
+    ), // Transfers must have destination account
     check(
       'transactions_non_transfer_no_counter_account',
       sql`${table.type} = 'transfer' OR ${table.counterAccountId} IS NULL`

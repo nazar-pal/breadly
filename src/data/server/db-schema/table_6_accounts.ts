@@ -9,9 +9,11 @@ Key Features:
 - Multi-tenant account isolation per user
 - Support for saving, payment, and debt account types
 - Multi-currency account support
-- Automatic balance tracking via database triggers
 - Soft deletion with archive functionality
 - Row-level security for data protection
+
+Note: Account balances are managed manually by the application - there are no
+      database triggers that automatically update account balances.
 ================================================================================
 */
 
@@ -63,7 +65,7 @@ export const accountType = pgEnum('account_type', ['saving', 'payment', 'debt'])
  * Business Rules:
  * - Each account belongs to a single user (multi-tenant isolation)
  * - Account currency determines transaction currency validation
- * - Balance is automatically updated by database triggers
+ * - Balance must be manually updated by the application (no auto-triggers)
  * - Archived accounts are hidden but data is preserved
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
@@ -79,7 +81,7 @@ export const accounts = pgTable(
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .default('USD'), // Account base currency
-    balance: monetaryAmountColumn().default('0'), // Current balance (updated by triggers)
+    balance: monetaryAmountColumn().default('0'), // Current balance (manually updated by application)
 
     // Type-specific fields for savings accounts
     savingsTargetAmount: numeric({ precision: 14, scale: 2 }), // Target savings goal (savings only)

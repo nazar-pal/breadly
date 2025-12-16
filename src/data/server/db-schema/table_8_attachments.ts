@@ -109,10 +109,7 @@ export const attachments = pgTable(
       'attachments_bucket_path_not_empty',
       sql`length(trim(${table.bucketPath})) > 0`
     ), // Valid bucket paths
-    check(
-      'attachments_file_size_positive',
-      sql`${table.fileSize} IS NULL OR ${table.fileSize} > 0`
-    ), // Positive file sizes
+    check('attachments_file_size_positive', sql`${table.fileSize} > 0`), // Positive file sizes (fileSize is required/NOT NULL)
     check(
       'attachments_duration_positive',
       sql`${table.duration} IS NULL OR ${table.duration} > 0`

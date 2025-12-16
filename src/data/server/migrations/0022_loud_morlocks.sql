@@ -1,0 +1,3 @@
+ALTER TABLE "attachments" DROP CONSTRAINT "attachments_file_size_positive";--> statement-breakpoint
+ALTER TABLE "attachments" ADD CONSTRAINT "attachments_file_size_positive" CHECK ("attachments"."file_size" > 0);--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_transfer_has_account" CHECK ("transactions"."type" != 'transfer' OR "transactions"."account_id" IS NOT NULL);

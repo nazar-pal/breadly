@@ -73,13 +73,34 @@ export type TransactionType = (typeof TRANSACTION_TYPE)[number]
  * Financial transactions (income, expenses, transfers)
  * Central entity tracking all money movements in the system
  *
+ * ACCOUNT LINKING DESIGN:
+ * ─────────────────────────────────────────────────────
+ * The accountId field is intentionally nullable for income/expense transactions.
+ * Users have two options when creating a transaction:
+ *
+ *   Option 1: Link to an account
+ *     - Set accountId to reference an existing account
+ *     - currencyId MUST match the account's currency (enforced by server trigger)
+ *     - Application must manually update the account's balance
+ *
+ *   Option 2: Specify currency only (no account)
+ *     - Leave accountId as NULL
+ *     - Set currencyId to the desired transaction currency
+ *     - Transaction is recorded but doesn't affect any account balance
+ *     - Useful for tracking expenses/income without managing account balances
+ *
+ * TRANSFER TRANSACTIONS:
+ *   - MUST have both accountId (source) AND counterAccountId (destination)
+ *   - Both accounts must belong to the same user
+ *   - Both accounts must use the same currency as the transaction
+ *
  * Business Rules (enforced via Zod, not SQLite):
  * - All transactions belong to a specific user (multi-tenant isolation)
+ * - If accountId is provided, transaction currency must match account's currency
  * - Transfer transactions require both accountId and counterAccountId
  * - Transfer accounts must be different and belong to the same user
  * - Non-transfer transactions must not have a counterAccountId
  * - Transaction amounts must be positive (direction determined by type)
- * - Transaction dates cannot be in the future
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -95,7 +116,7 @@ const columns = {
   categoryId: text('category_id'), // Optional transaction category (FK not enforced)
   eventId: text('event_id'), // Optional event for cross-category tracking (FK not enforced)
   amount: monetaryAmountColumn(), // Transaction amount (always positive)
-  currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Transaction currency (FK not enforced)
+  currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Transaction currency (must match account currency if accountId is set)
   txDate: dateOnlyText('tx_date').notNull(), // Transaction date (YYYY-MM-DD TEXT)
   notes: text({ length: 1000 }), // Optional user notes/description
   createdAt: createdAtColumn(), // Record creation timestamp

@@ -46,6 +46,15 @@ import {
  * Events for tracking spending across categories
  * Examples: Vacation, Wedding, Home Renovation, Business Trip
  *
+ * DESIGN NOTE - NO EVENT BUDGETS:
+ * ─────────────────────────────────────────────────────
+ * Events intentionally do NOT have budget fields (budgetAmount, budgetCurrency).
+ * This is by design because:
+ * - Events group transactions across multiple categories and potentially multiple currencies
+ * - Managing event-level budgets with multi-currency transactions adds significant complexity
+ * - Total event spending can be calculated dynamically from linked transactions
+ * - Users who need budget tracking should use the per-category budgets table instead
+ *
  * Business Rules (enforced via Zod/application, not SQLite):
  * - Each event belongs to a specific user (multi-tenant isolation)
  * - Events group transactions across ALL categories

@@ -69,7 +69,7 @@ export type AttachmentStatus = (typeof ATTACHMENT_STATUS)[number]
  * Business Rules (enforced via Zod, not SQLite):
  * - Attachments belong to specific users (multi-tenant isolation)
  * - Bucket paths must be non-empty for cloud storage integration
- * - File sizes must be positive values
+ * - File sizes are required and must be positive values (NOT NULL, > 0)
  * - Voice messages must include duration metadata
  * - Attachment types: 'receipt' | 'voice'
  */
