@@ -169,6 +169,13 @@
       "when": 1765894197453,
       "tag": "0023_damp_lord_hawal",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1765919659695,
+      "tag": "0024_zippy_sleeper",
+      "breakpoints": true
     }
   ]
 }

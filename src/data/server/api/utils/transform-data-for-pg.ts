@@ -129,22 +129,5 @@ export function transformDataForPostgres(data: any, table: string): any {
     }
   }
 
-  // ---------------------------------------------------------------------
-  // 4) Enum sanitisation (already existed – kept intact)
-  // ---------------------------------------------------------------------
-  if (table === 'categories' && transformed.type) {
-    const validTypes = ['expense', 'income']
-    if (!validTypes.includes(transformed.type)) {
-      transformed.type = 'expense'
-    }
-  }
-
-  if (table === 'transactions' && transformed.type) {
-    const validTypes = ['expense', 'income', 'transfer']
-    if (!validTypes.includes(transformed.type)) {
-      transformed.type = 'expense'
-    }
-  }
-
   return transformed
 }

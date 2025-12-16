@@ -106,13 +106,15 @@ export const transactions = pgTable(
     type: txType().notNull(), // Transaction type (expense/income/transfer)
 
     // Account references
-    accountId: uuid().references(() => accounts.id, { onDelete: 'cascade' }), // Primary account (source for expense/transfer, destination for income)
+    accountId: uuid().references(() => accounts.id, { onDelete: 'restrict' }), // Primary account (source for expense/transfer, destination for income)
     counterAccountId: uuid().references(() => accounts.id, {
-      onDelete: 'cascade'
+      onDelete: 'restrict'
     }), // Transfer destination account (transfers only)
 
     // Classification and details
-    categoryId: uuid().references(() => categories.id, { onDelete: 'cascade' }), // Required for income/expense transactions, null for transfers
+    categoryId: uuid().references(() => categories.id, {
+      onDelete: 'restrict'
+    }), // Required for income/expense transactions, null for transfers
     eventId: uuid().references(() => events.id, { onDelete: 'set null' }), // Optional event for cross-category tracking
     amount: monetaryAmountColumn(), // Transaction amount (always positive)
     currencyId: isoCurrencyCodeColumn()
@@ -124,15 +126,12 @@ export const transactions = pgTable(
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes for common query patterns
-    index('transactions_user_idx').on(table.userId), // User's transactions lookup
-    index('transactions_account_idx').on(table.accountId), // Account transactions lookup
-    index('transactions_category_idx').on(table.categoryId), // Category transactions lookup
-    index('transactions_user_date_idx').on(table.userId, table.txDate), // Date-based queries
-    index('transactions_user_type_idx').on(table.userId, table.type), // Type-based filtering
-    index('transactions_date_idx').on(table.txDate), // Date range queries
-    index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
-    index('transactions_event_idx').on(table.eventId), // Event transactions lookup
+    // Essential indexes (server-side operations only)
+    index('transactions_user_idx').on(table.userId), // PowerSync sync queries
+    index('transactions_account_idx').on(table.accountId), // FK ON DELETE RESTRICT lookups
+    index('transactions_counter_account_idx').on(table.counterAccountId), // FK ON DELETE RESTRICT lookups
+    index('transactions_category_idx').on(table.categoryId), // FK ON DELETE RESTRICT lookups
+    index('transactions_event_idx').on(table.eventId), // FK ON DELETE SET NULL lookups
 
     // Business rule constraints
     check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive

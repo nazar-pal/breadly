@@ -69,6 +69,18 @@ export const accountType = pgEnum('account_type', ['saving', 'payment', 'debt'])
  * - Archived accounts are hidden but data is preserved
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives an account, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
+ *
+ * Account Names:
+ * ─────────────────────────────────────────────────────
+ * Duplicate account names per user are intentionally allowed. Users may have
+ * multiple accounts with the same name (e.g., "Savings Account" at different banks).
  */
 export const accounts = pgTable(
   'accounts',
@@ -97,10 +109,8 @@ export const accounts = pgTable(
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes for common query patterns
-    index('accounts_user_idx').on(table.userId), // User's accounts lookup
-    index('accounts_user_archived_idx').on(table.userId, table.isArchived), // Active accounts only
-    index('accounts_user_type_idx').on(table.userId, table.type), // Accounts by type
+    // Essential indexes (server-side operations only)
+    index('accounts_user_idx').on(table.userId), // PowerSync sync queries
 
     // Business rule constraints
     check('accounts_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names

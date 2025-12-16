@@ -162,6 +162,32 @@ const MAX_NOTES_LENGTH = 1000
  * - transactions_income_expense_has_category: income/expense must have categoryId
  * - transactions_date_not_future: tx_date <= CURRENT_DATE
  * - NUMERIC(14,2) precision: rounded to 2 decimal places
+ *
+ * IMPORTANT - Mutation-Level Validation Required:
+ * ─────────────────────────────────────────────────────
+ * The following validation cannot be performed at the Zod schema level because
+ * it requires database lookups:
+ *
+ * - Category type must match transaction type:
+ *   - Expense transactions can only use expense categories
+ *   - Income transactions can only use income categories
+ *   - Transfer transactions cannot have a categoryId (already validated above)
+ *
+ * This validation MUST be performed in the mutation before inserting/updating
+ * a transaction. The server enforces this via trigger (validate_transaction_category_type),
+ * but the client should validate proactively to prevent sync errors.
+ *
+ * Example validation in mutation:
+ * ```typescript
+ * if (type !== 'transfer' && categoryId) {
+ *   const category = await db.query.categories.findFirst({
+ *     where: eq(categories.id, categoryId)
+ *   });
+ *   if (category && category.type !== type) {
+ *     throw new Error(`Transaction type (${type}) must match category type (${category.type})`);
+ *   }
+ * }
+ * ```
  */
 export const transactionInsertSchema = createInsertSchema(transactions, {
   id: s => s.default(randomUUID),

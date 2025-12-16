@@ -96,13 +96,8 @@ export const attachments = pgTable(
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes for common queries
-    index('attachments_user_idx').on(table.userId), // User's attachments lookup
-    index('attachments_type_idx').on(table.type), // Filter by attachment type
-    index('attachments_status_idx').on(table.status), // Filter by upload status
-    index('attachments_user_type_idx').on(table.userId, table.type), // User's attachments by type
-    index('attachments_user_status_idx').on(table.userId, table.status), // User's attachments by status
-    index('attachments_created_at_idx').on(table.createdAt), // Sort by upload date
+    // Essential indexes (server-side operations only)
+    index('attachments_user_idx').on(table.userId), // PowerSync sync queries
 
     // Business rule constraints
     check(

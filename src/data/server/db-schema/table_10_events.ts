@@ -53,6 +53,13 @@ import {
  * - If both dates exist, endDate must be >= startDate
  * - User manually archives when done tracking (isArchived = true)
  * - Deleting an event sets eventId to NULL on linked transactions
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives an event, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
  */
 export const events = pgTable(
   'events',
@@ -69,16 +76,15 @@ export const events = pgTable(
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes
-    index('events_user_idx').on(table.userId), // User's events lookup
-    index('events_user_archived_idx').on(table.userId, table.isArchived), // Active events
-    index('events_start_date_idx').on(table.startDate), // Date-based queries
+    // Essential indexes (server-side operations only)
+    index('events_user_idx').on(table.userId), // PowerSync sync queries
 
-    // Date range validation (if both provided, end >= start)
+    // Business rule constraints
+    check('events_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
     check(
       'events_valid_date_range',
       sql`${table.startDate} IS NULL OR ${table.endDate} IS NULL OR ${table.endDate} >= ${table.startDate}`
-    ),
+    ), // Date range validation (if both provided, end >= start)
 
     // RLS: Users can only access their own events
     crudPolicy({

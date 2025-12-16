@@ -23,7 +23,7 @@ import {
   pgEnum,
   pgTable,
   smallint,
-  uniqueIndex,
+  unique,
   uuid
 } from 'drizzle-orm/pg-core'
 import { currencies } from './table_1_currencies'
@@ -93,7 +93,7 @@ export const budgets = pgTable(
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
     categoryId: uuid()
-      .references(() => categories.id, { onDelete: 'cascade' })
+      .references(() => categories.id, { onDelete: 'restrict' })
       .notNull(), // Category this budget applies to
     amount: monetaryAmountColumn(), // Budget limit for this period
     currency: isoCurrencyCodeColumn()
@@ -109,18 +109,16 @@ export const budgets = pgTable(
     updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes
-    index('budgets_user_idx').on(table.userId),
-    index('budgets_category_idx').on(table.categoryId),
-    index('budgets_year_month_idx').on(table.budgetYear, table.budgetMonth),
+    // Essential indexes (server-side operations only)
+    index('budgets_user_idx').on(table.userId), // PowerSync sync queries
+    index('budgets_category_idx').on(table.categoryId), // FK ON DELETE RESTRICT lookups
 
     // One budget per category + currency + period
-    uniqueIndex('budgets_category_currency_period_unq').on(
-      table.categoryId,
-      table.currency,
-      table.budgetYear,
-      table.budgetMonth
-    ),
+    // Uses nullsNotDistinct() to ensure NULL budget_month values are treated as equal,
+    // preventing duplicate yearly budgets (where budget_month is NULL) for same category/currency/year
+    unique('budgets_category_currency_period_unq')
+      .on(table.categoryId, table.currency, table.budgetYear, table.budgetMonth)
+      .nullsNotDistinct(),
 
     // Business rule constraints
     check('budgets_positive_amount', sql`${table.amount} > 0`),
