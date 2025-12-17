@@ -15,8 +15,9 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md}\"",
     "expo:fix-deps": "npx expo install --fix",
     "expo:doctor": "npx expo-doctor",
-    "drizzle:generate": "drizzle-kit generate",
-    "drizzle:migrate": "drizzle-kit migrate"
+    "dg": "dotenv -e .env -e .env.local -- drizzle-kit generate",
+    "dm": "dotenv -e .env -e .env.local -- drizzle-kit migrate",
+    "dgc": "dotenv -e .env -e .env.local -- sh -c 'drizzle-kit generate --custom --name=\"$1\"' _"
   },
   "dependencies": {
     "@clerk/backend": "^2.27.0",
@@ -120,6 +121,7 @@
     "@babel/core": "^7.28.5",
     "@types/papaparse": "^5.5.1",
     "@types/react": "~19.1.17",
+    "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.1",
     "eslint-config-expo": "^10.0.0",
