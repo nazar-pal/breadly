@@ -14,7 +14,7 @@ export const env = createEnv({
     CLERK_JWT_KEY: z.string().min(1),
 
     // Neon DB owner connection string
-    DATABASE_URL: z.string().min(1),
+    DATABASE_OWNER_URL: z.string().min(1),
     // Neon DB "authenticated" role connection string
     DATABASE_AUTHENTICATED_URL: z.string().min(1),
 
@@ -61,7 +61,7 @@ export const env = createEnv({
     CLERK_JWT_KEY: process.env.CLERK_JWT_KEY,
 
     // Neon DB owner connection string
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_OWNER_URL: process.env.DATABASE_OWNER_URL,
     // Neon DB "authenticated" role connection string
     DATABASE_AUTHENTICATED_URL: process.env.DATABASE_AUTHENTICATED_URL,
 
