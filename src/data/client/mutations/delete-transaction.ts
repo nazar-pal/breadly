@@ -34,6 +34,9 @@ export async function deleteTransaction({
       if (!existingTx) throw new Error('Transaction not found')
 
       // 2. Reverse balance changes for primary account
+      // Note: Balance precision is maintained by the server's NUMERIC(14,2) type
+      // which rounds to 2 decimal places on storage. Client-side floating-point
+      // arithmetic may have minor precision drift, but this is corrected on sync.
       if (existingTx.accountId) {
         const account = await tx.query.accounts.findFirst({
           where: and(

@@ -61,6 +61,10 @@ export const userPreferences = pgTable(
       'user_preferences_valid_weekday',
       sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
     ), // Valid weekday range
+    check(
+      'user_preferences_valid_locale',
+      sql`${table.locale} IS NULL OR length(${table.locale}) >= 2`
+    ), // Locale must be at least 2 characters (e.g., 'en')
 
     // RLS: Users can only access their own preferences
     crudPolicy({

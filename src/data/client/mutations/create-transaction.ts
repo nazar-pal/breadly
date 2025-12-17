@@ -148,6 +148,9 @@ export async function createTransaction({
       await tx.insert(transactions).values(parsedData)
 
       // Update account balances (managed by application, not database triggers)
+      // Note: Balance precision is maintained by the server's NUMERIC(14,2) type
+      // which rounds to 2 decimal places on storage. Client-side floating-point
+      // arithmetic may have minor precision drift, but this is corrected on sync.
       if (parsedData.type === 'income') {
         // For income, accountId is optional - update balance only if account is set
         if (fromAccount) {

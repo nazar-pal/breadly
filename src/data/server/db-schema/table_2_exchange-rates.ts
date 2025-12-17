@@ -73,6 +73,7 @@ export const exchangeRates = pgTable(
 
     // Performance indexes for currency conversion lookups
     index('exchange_rates_base_currency_idx').on(table.baseCurrency), // Base currency lookups
-    index('exchange_rates_quote_currency_idx').on(table.quoteCurrency) // Quote currency lookups
+    index('exchange_rates_quote_currency_idx').on(table.quoteCurrency), // Quote currency lookups
+    index('exchange_rates_rate_date_idx').on(table.rateDate) // Date range queries
   ]
 )

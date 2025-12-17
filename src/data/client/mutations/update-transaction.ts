@@ -249,6 +249,9 @@ export async function updateTransaction({
       }
 
       // 3. Reverse old transaction's balance effect
+      // Note: Balance precision is maintained by the server's NUMERIC(14,2) type
+      // which rounds to 2 decimal places on storage. Client-side floating-point
+      // arithmetic may have minor precision drift, but this is corrected on sync.
       if (existingTx.accountId) {
         const oldAccount = await tx.query.accounts.findFirst({
           where: and(

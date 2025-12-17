@@ -1,0 +1,3 @@
+CREATE INDEX "exchange_rates_rate_date_idx" ON "exchange_rates" USING btree ("rate_date");--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_transfer_no_category" CHECK ("transactions"."type" != 'transfer' OR "transactions"."category_id" IS NULL);--> statement-breakpoint
+ALTER TABLE "user_preferences" ADD CONSTRAINT "user_preferences_valid_locale" CHECK ("user_preferences"."locale" IS NULL OR length("user_preferences"."locale") >= 2);

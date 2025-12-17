@@ -54,7 +54,7 @@ import {
  * - income: Money received into an account (salary, freelance, gifts)
  * - transfer: Money moved between user's accounts (internal transfers)
  */
-export const txType = pgEnum('transaction_type', [
+export const transactionType = pgEnum('transaction_type', [
   'expense',
   'income',
   'transfer'
@@ -103,7 +103,7 @@ export const transactions = pgTable(
   {
     id: uuidPrimaryKey(),
     userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-    type: txType().notNull(), // Transaction type (expense/income/transfer)
+    type: transactionType().notNull(), // Transaction type (expense/income/transfer)
 
     // Account references
     accountId: uuid().references(() => accounts.id, { onDelete: 'restrict' }), // Primary account (source for expense/transfer, destination for income)
@@ -155,6 +155,10 @@ export const transactions = pgTable(
       'transactions_income_expense_has_category',
       sql`${table.type} = 'transfer' OR ${table.categoryId} IS NOT NULL`
     ), // Income and expense transactions must have a category
+    check(
+      'transactions_transfer_no_category',
+      sql`${table.type} != 'transfer' OR ${table.categoryId} IS NULL`
+    ), // Transfer transactions cannot have a category
     // NOTE: Removed future-date check to avoid timezone-related false positives
 
     // RLS: Users can only access their own transactions
