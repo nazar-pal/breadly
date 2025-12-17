@@ -2,8 +2,8 @@ import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
 // Load environment variables from .env.local for local development (uncomment this before using drizzle-kit)
-import { config } from 'dotenv'
-config({ path: '.env.local' })
+// import { config } from 'dotenv'
+// config({ path: '.env.local' })
 
 export const env = createEnv({
   clientPrefix: 'EXPO_PUBLIC_',
