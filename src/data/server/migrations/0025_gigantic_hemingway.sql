@@ -1,1 +1,0 @@
-ALTER TABLE "user_preferences" ALTER COLUMN "default_currency" DROP NOT NULL;

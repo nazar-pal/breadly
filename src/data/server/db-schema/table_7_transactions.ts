@@ -132,6 +132,8 @@ export const transactions = pgTable(
     index('transactions_counter_account_idx').on(table.counterAccountId), // FK ON DELETE RESTRICT lookups
     index('transactions_category_idx').on(table.categoryId), // FK ON DELETE RESTRICT lookups
     index('transactions_event_idx').on(table.eventId), // FK ON DELETE SET NULL lookups
+    index('transactions_date_idx').on(table.txDate), // Date range queries
+    index('transactions_type_idx').on(table.type), // Filter by transaction type
 
     // Business rule constraints
     check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive

@@ -1,1 +1,0 @@
-ALTER TABLE "transactions" DROP CONSTRAINT "transactions_date_not_future";

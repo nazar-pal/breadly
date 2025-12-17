@@ -104,6 +104,11 @@ export const attachments = pgTable(
       'attachments_bucket_path_not_empty',
       sql`length(trim(${table.bucketPath})) > 0`
     ), // Valid bucket paths
+    check('attachments_mime_not_empty', sql`length(trim(${table.mime})) > 0`), // Valid MIME types
+    check(
+      'attachments_file_name_not_empty',
+      sql`length(trim(${table.fileName})) > 0`
+    ), // Valid file names
     check('attachments_file_size_positive', sql`${table.fileSize} > 0`), // Positive file sizes (fileSize is required/NOT NULL)
     check(
       'attachments_duration_positive',

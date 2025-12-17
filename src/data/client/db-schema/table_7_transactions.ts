@@ -145,6 +145,7 @@ export const getTransactionsSqliteTable = (name: string) =>
  * - transactions_transfer_has_counter_account: transfers must have counter account
  * - transactions_non_transfer_no_counter_account: non-transfers can't have counter account
  * - transactions_income_expense_has_category: income/expense must have categoryId
+ * - transactions_transfer_no_category: transfers cannot have categoryId
  * - NUMERIC(14,2) precision: rounded to 2 decimal places
  *
  * Note: Future date check (tx_date <= CURRENT_DATE) was intentionally removed from
@@ -212,6 +213,11 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
   // Income and expense transactions must have a category
   .refine(data => data.type === 'transfer' || data.categoryId != null, {
     message: 'Income and expense transactions must have a category',
+    path: ['categoryId']
+  })
+  // Transfer transactions cannot have a category
+  .refine(data => data.type !== 'transfer' || data.categoryId == null, {
+    message: 'Transfer transactions cannot have a category',
     path: ['categoryId']
   })
 

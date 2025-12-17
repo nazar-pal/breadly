@@ -1,1 +1,0 @@
-ALTER TABLE "budgets" ADD CONSTRAINT "budgets_valid_date_range" CHECK ("budgets"."end_date" >= "budgets"."start_date");

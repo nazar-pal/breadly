@@ -225,18 +225,18 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 
 ## Archived Entity Validation
 
-The validation preventing use of archived entities (categories, accounts, events) 
-in new transactions is **intentionally client-only**. The server does not enforce 
+The validation preventing use of archived entities (categories, accounts, events)
+in new transactions is **intentionally client-only**. The server does not enforce
 this rule because:
 
-1. **Historical validity**: Transactions referencing entities that were later 
+1. **Historical validity**: Transactions referencing entities that were later
    archived remain valid and should not be rejected
-2. **UX concern**: This is primarily a user experience enhancement, not a data 
+2. **UX concern**: This is primarily a user experience enhancement, not a data
    integrity requirement
-3. **Flexibility**: Server enforcement would complicate legitimate data patterns 
+3. **Flexibility**: Server enforcement would complicate legitimate data patterns
    like bulk imports or migrations
 
-The client mutations check `isArchived` before allowing new transactions to 
+The client mutations check `isArchived` before allowing new transactions to
 reference categories, accounts, or events.
 
 ---
