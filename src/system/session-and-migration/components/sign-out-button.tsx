@@ -21,7 +21,7 @@ export function SignOutButton() {
     guestId: existingGuestId,
     setGuestId
   } = useSessionPersistentStore()
-  const powerSyncDb = usePowerSync()
+  const powersync = usePowerSync()
 
   const handleSignOut = async () => {
     try {
@@ -29,7 +29,7 @@ export function SignOutButton() {
       let currenciesSnapshot: (typeof sqliteSchema.currencies.$inferSelect)[] =
         []
       try {
-        const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+        const db = wrapPowerSyncWithDrizzle(powersync, {
           schema: sqliteSchema
         })
         currenciesSnapshot = await db.select().from(sqliteSchema.currencies)
@@ -39,16 +39,16 @@ export function SignOutButton() {
 
       // Step 1: Sign out from Clerk
       await signOut()
-      await powerSyncDb.disconnectAndClear({
+      await powersync.disconnectAndClear({
         clearLocal: existingGuestId === null
       })
       resetSessionPersistentStore()
-      await switchToLocalSchema(powerSyncDb)
+      await switchToLocalSchema(powersync)
 
       // Restore latest currencies into local-only table if we had a snapshot
       if (currenciesSnapshot.length > 0) {
         try {
-          const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+          const db = wrapPowerSyncWithDrizzle(powersync, {
             schema: sqliteSchema
           })
           await db.transaction(async tx => {

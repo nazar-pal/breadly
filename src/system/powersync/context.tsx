@@ -15,7 +15,7 @@ import {
 } from '@powersync/react-native'
 import React from 'react'
 import { Connector } from './connector'
-import { powerSyncDb as db } from './system'
+import { powersync as powerSyncDatabase } from './system'
 import { switchToLocalSchema, switchToSyncedSchema } from './utils'
 
 export function PowerSyncContextProvider({
@@ -23,7 +23,7 @@ export function PowerSyncContextProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [powerSyncDb] = React.useState(db)
+  const [powersync] = React.useState(powerSyncDatabase)
   const [connector] = React.useState(new Connector())
 
   const { userId, isGuest } = useUserSession()
@@ -52,10 +52,7 @@ export function PowerSyncContextProvider({
         return // this should not be possible
       }
 
-      await switchToLocalSchema(
-        powerSyncDb,
-        syncEnabled ? { userId } : undefined
-      )
+      await switchToLocalSchema(powersync, syncEnabled ? { userId } : undefined)
 
       if (needToSeedDefaultDataForGuestUser) {
         const { success } = await seedDefaultDataForGuestUser(userId)
@@ -78,16 +75,16 @@ export function PowerSyncContextProvider({
         removeGuestId()
       } else {
         if (syncEnabled) {
-          await switchToSyncedSchema(powerSyncDb, userId)
+          await switchToSyncedSchema(powersync, userId)
         } else {
-          await switchToLocalSchema(powerSyncDb, { userId })
+          await switchToLocalSchema(powersync, { userId })
         }
       }
     }
 
     const initialize = async () => {
       try {
-        await powerSyncDb.init()
+        await powersync.init()
 
         setIsMigrating(true)
 
@@ -99,7 +96,7 @@ export function PowerSyncContextProvider({
 
         // Connect only when authenticated and sync is enabled
         if (!isGuest && syncEnabled) {
-          powerSyncDb.connect(connector)
+          powersync.connect(connector)
         }
       } catch (error) {
         console.error(
@@ -114,7 +111,7 @@ export function PowerSyncContextProvider({
     initialize()
   }, [
     connector,
-    powerSyncDb,
+    powersync,
     syncEnabled,
     userId,
     isGuest,
@@ -139,7 +136,7 @@ export function PowerSyncContextProvider({
   }
 
   return (
-    <PowerSyncContext.Provider value={powerSyncDb}>
+    <PowerSyncContext.Provider value={powersync}>
       {children}
     </PowerSyncContext.Provider>
   )

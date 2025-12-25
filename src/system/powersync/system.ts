@@ -8,20 +8,13 @@ import { makeSchema } from './utils'
 export const dbName = 'powersync_v102.db'
 const { syncEnabled } = sessionPersistentStore.getState()
 
-// Create the factory
-const opSqlite = new OPSqliteOpenFactory({
-  dbFilename: dbName
-})
+const opSqlite = new OPSqliteOpenFactory({ dbFilename: dbName })
 
-export const powerSyncDb = new PowerSyncDatabase({
-  // The schema you defined in the previous step
+export const powersync = new PowerSyncDatabase({
   schema: makeSchema(syncEnabled),
-  // For other options see,
-  // https://powersync-ja.github.io/powersync-js/web-sdk/globals#powersyncopenfactoryoptions
   database: opSqlite
 })
 
-// This is the DB you will use in queries
-export const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+export const db = wrapPowerSyncWithDrizzle(powersync, {
   schema: sqliteSchema
 })
