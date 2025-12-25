@@ -23,12 +23,12 @@ export default function PrivacyPolicyScreen(): React.ReactElement {
       </Head>
 
       <ScrollView
-        className="flex-1 bg-muted/20"
+        className="bg-muted/20 flex-1"
         contentInsetAdjustmentBehavior="automatic"
       >
         <View className="mx-auto w-full max-w-4xl space-y-8 px-5 py-10">
-          <View className="rounded-3xl border border-border/60 bg-card/80 p-6 shadow-sm shadow-black/5">
-            <Text variant="h1" className="text-balance text-center">
+          <View className="border-border/60 bg-card/80 rounded-3xl border p-6 shadow-sm shadow-black/5">
+            <Text variant="h1" className="text-center text-balance">
               {APP_NAME} – Privacy Policy
             </Text>
             <Text variant="muted" className="mt-4 text-center text-base">
@@ -37,13 +37,13 @@ export default function PrivacyPolicyScreen(): React.ReactElement {
             <View className="mt-6 flex-row flex-wrap items-center justify-center gap-4">
               <Text
                 variant="small"
-                className="text-center text-muted-foreground"
+                className="text-muted-foreground text-center"
               >
                 Controller: {DEVELOPER_NAME}
               </Text>
               <Text
                 variant="small"
-                className="text-center text-muted-foreground"
+                className="text-muted-foreground text-center"
               >
                 Contact: {SUPPORT_EMAIL}
               </Text>
@@ -56,8 +56,8 @@ export default function PrivacyPolicyScreen(): React.ReactElement {
             ))}
           </View>
 
-          <View className="border-t border-border/70 pt-4">
-            <Text variant="small" className="text-center text-muted-foreground">
+          <View className="border-border/70 border-t pt-4">
+            <Text variant="small" className="text-muted-foreground text-center">
               © {new Date().getFullYear()} {DEVELOPER_NAME}.
               {Platform.OS === 'web'
                 ? ' This page is accessible as a public web URL for Google Play.'

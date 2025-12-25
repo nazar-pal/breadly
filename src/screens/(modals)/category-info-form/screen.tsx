@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native'
 import { CategoryDetailsForm } from './components/category-details-form'
 
 export default function CategoryDetailsFormModal() {
-  const { categoryId, parentId } = useCategoryFormModalState()
+  const { categoryId, parentId, type } = useCategoryFormModalState()
   const { closeCategoryFormModal } = useCategoryFormModalActions()
 
   return (
@@ -22,6 +22,7 @@ export default function CategoryDetailsFormModal() {
         onClose={closeCategoryFormModal}
         parentId={parentId}
         categoryId={categoryId ?? undefined}
+        type={type}
       />
     </ScrollView>
   )

@@ -11,6 +11,7 @@ Note: Relations work identically for both PostgreSQL and SQLite in Drizzle,
 */
 
 import { relations } from 'drizzle-orm'
+import { events } from './table_10_events'
 import { currencies } from './table_1_currencies'
 import { exchangeRates } from './table_2_exchange-rates'
 import { userPreferences } from './table_3_user-preferences'
@@ -26,6 +27,7 @@ export const currenciesRelations = relations(currencies, ({ many }) => ({
   accounts: many(accounts),
   transactions: many(transactions),
   userPreferences: many(userPreferences),
+  budgets: many(budgets, { relationName: 'budgetCurrency' }),
   baseExchangeRates: many(exchangeRates, { relationName: 'baseRates' }),
   quoteExchangeRates: many(exchangeRates, { relationName: 'quoteRates' })
 }))
@@ -74,7 +76,11 @@ export const budgetsRelations = relations(budgets, ({ one }) => ({
   category: one(categories, {
     fields: [budgets.categoryId],
     references: [categories.id]
-  }) // Category this budget tracks
+  }), // Category this budget tracks
+  budgetCurrency: one(currencies, {
+    fields: [budgets.currencyId],
+    references: [currencies.code]
+  })
 }))
 
 // Table 6: Accounts - Relationships
@@ -108,13 +114,17 @@ export const transactionsRelations = relations(
       fields: [transactions.currencyId],
       references: [currencies.code]
     }), // Transaction currency relationship
+    event: one(events, {
+      fields: [transactions.eventId],
+      references: [events.id]
+    }), // Optional event for cross-category tracking
     transactionAttachments: many(transactionAttachments) // Associated attachments (receipts, voice notes)
   })
 )
 
 // Table 8: Attachments - Relationships
 export const attachmentsRelations = relations(attachments, ({ many }) => ({
-  transactions: many(transactions, { relationName: 'transactionAttachments' })
+  transactionAttachments: many(transactionAttachments) // Links to transactions via junction table
 }))
 
 // Table 9: Transaction Attachments - Relationships
@@ -131,3 +141,8 @@ export const transactionAttachmentsRelations = relations(
     }) // Attachment referenced by this transaction
   })
 )
+
+// Table 10: Events - Relationships
+export const eventsRelations = relations(events, ({ many }) => ({
+  transactions: many(transactions) // Transactions linked to this event
+}))

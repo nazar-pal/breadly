@@ -26,7 +26,7 @@ import {
   pgEnum,
   pgTable,
   timestamp,
-  uniqueIndex,
+  unique,
   uuid,
   varchar
 } from 'drizzle-orm/pg-core'
@@ -36,6 +36,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -61,6 +62,13 @@ export const categoryType = pgEnum('category_type', ['expense', 'income'])
  * - Self-referencing parent relationships are prevented
  * - Categories cannot be deleted if they have child categories
  * - Archived categories are hidden but preserve historical data
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives a category, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
  */
 export const categories = pgTable(
   'categories',
@@ -75,7 +83,8 @@ export const categories = pgTable(
     sortOrder: integer('sort_order').notNull().default(1000),
     isArchived: isArchivedColumn(), // Soft deletion flag
     archivedAt: timestamp({ withTimezone: true }),
-    createdAt: createdAtColumn()
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Self-referencing foreign key for hierarchy
@@ -83,21 +92,18 @@ export const categories = pgTable(
       columns: [table.parentId],
       foreignColumns: [table.id],
       name: 'categories_parent_id_fk'
-    }).onDelete('cascade'), // Cascade deletion to prevent orphaned categories
+    }).onDelete('restrict'), // Prevent deletion of parent category if it has children
 
-    // Performance indexes for common query patterns
-    index('categories_user_idx').on(table.userId), // User's categories lookup
-    index('categories_parent_idx').on(table.parentId), // Child categories lookup
-    index('categories_user_archived_idx').on(table.userId, table.isArchived), // Active categories only
-    index('categories_user_type_idx').on(table.userId, table.type), // Categories by type
+    // Essential indexes (server-side operations only)
+    index('categories_user_idx').on(table.userId), // PowerSync sync queries
+    index('categories_parent_idx').on(table.parentId), // FK ON DELETE RESTRICT lookups
 
-    // Unique constraint: same name per user+parent (null parent duplicates allowed)
-    uniqueIndex('categories_user_parent_name_unq').on(
-      table.userId,
-      table.parentId,
-      table.name
-    ),
-
+    // Unique constraint: same name per user+parent
+    // Uses nullsNotDistinct() to ensure NULL parent_id values are treated as equal,
+    // preventing duplicate root category names per user
+    unique('categories_user_parent_name_unq')
+      .on(table.userId, table.parentId, table.name)
+      .nullsNotDistinct(),
     // Business rule constraints
     check('categories_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
     check(

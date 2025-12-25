@@ -1,4 +1,4 @@
-import { Icon, IconName } from '@/components/ui/icon-by-name'
+import { Icon, IconName } from '@/components/ui/lucide-icon-by-name'
 import { cn } from '@/lib/utils'
 import {
   createMaterialTopTabNavigator,
@@ -8,7 +8,7 @@ import {
 import { ParamListBase, TabNavigationState } from '@react-navigation/native'
 import { withLayoutContext } from 'expo-router'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native'
 
 const { Navigator } = createMaterialTopTabNavigator()
 const TopTabs = withLayoutContext<
@@ -21,7 +21,7 @@ const TopTabs = withLayoutContext<
 export default function DevOnlyLayout() {
   if (!__DEV__) return null
   return (
-    <SafeAreaView className="flex-1 ">
+    <View className="pt-safe flex-1">
       <TopTabs
         screenOptions={{
           tabBarItemStyle: { flexDirection: 'row' },
@@ -65,7 +65,7 @@ export default function DevOnlyLayout() {
           }}
         />
       </TopTabs>
-    </SafeAreaView>
+    </View>
   )
 }
 

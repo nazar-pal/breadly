@@ -19,7 +19,7 @@ export function PreviewRow({ row, error }: PreviewRowProps) {
   return (
     <View
       className={cn(
-        'rounded-md border bg-card p-3',
+        'bg-card rounded-md border p-3',
         hasError ? 'border-destructive bg-destructive/5' : 'border-border'
       )}
     >
@@ -31,7 +31,7 @@ export function PreviewRow({ row, error }: PreviewRowProps) {
                 <Text className={cn('text-sm', hasError && 'text-destructive')}>
                   {row.parentCategoryName}
                 </Text>
-                <Text className="text-xs text-muted-foreground">→</Text>
+                <Text className="text-muted-foreground text-xs">→</Text>
               </>
             )}
             <Text
@@ -44,7 +44,7 @@ export function PreviewRow({ row, error }: PreviewRowProps) {
             </Text>
           </View>
 
-          <Text className="text-xs text-muted-foreground">
+          <Text className="text-muted-foreground text-xs">
             {format(row.createdAt, 'PP')}
           </Text>
         </View>
@@ -61,9 +61,9 @@ export function PreviewRow({ row, error }: PreviewRowProps) {
       </View>
 
       {hasError && (
-        <View className="mt-2 flex-row items-start gap-2 rounded-md bg-destructive/10 p-2">
-          <AlertTriangle size={14} className="mt-0.5 text-destructive" />
-          <Text className="flex-1 text-xs text-destructive">
+        <View className="bg-destructive/10 mt-2 flex-row items-start gap-2 rounded-md p-2">
+          <AlertTriangle size={14} className="text-destructive mt-0.5" />
+          <Text className="text-destructive flex-1 text-xs">
             {error.message}
           </Text>
         </View>

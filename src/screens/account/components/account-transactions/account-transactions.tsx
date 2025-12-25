@@ -19,7 +19,7 @@ export function AccountTransactions({ accountId }: { accountId: string }) {
 
   return (
     <View className="mt-8">
-      <Text className="text-xl font-semibold text-foreground">
+      <Text className="text-foreground text-xl font-semibold">
         Recent Transactions
       </Text>
 
@@ -28,7 +28,7 @@ export function AccountTransactions({ accountId }: { accountId: string }) {
           <TransactionItem key={tx.id} transaction={tx} />
         ))}
         {transactions.length === 0 && !isLoading && (
-          <Text className="text-center text-sm text-muted-foreground">
+          <Text className="text-muted-foreground text-center text-sm">
             No recent activity for this account
           </Text>
         )}

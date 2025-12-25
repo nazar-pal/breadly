@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { getCurrency } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -11,16 +11,15 @@ export function SelectionTriggerContentCurrency({
   currencyCode: string | null
   render: 'name' | 'icon'
 }) {
-  const { data } = useDrizzleQuery(
-    getCurrency({ currencyCode: currencyCode ?? '' })
-  )
-  const currency = data?.length > 0 ? data[0] : null
+  const {
+    data: [currency]
+  } = useDrizzleQuery(currencyCode ? getCurrency({ currencyCode }) : undefined)
 
   const currencyName = currency?.name ?? 'unknown'
 
   if (render === 'name') {
     return (
-      <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+      <Text className="text-foreground text-sm font-semibold" numberOfLines={1}>
         {currencyCode ? currencyName : 'Select account or currency'}
       </Text>
     )

@@ -34,7 +34,7 @@ export function AccountCardDebt({ account, ...rest }: Props) {
             {progressLabel ? (
               <View className="mb-1 flex-row items-center justify-between">
                 <Text
-                  className="text-xs text-muted-foreground"
+                  className="text-muted-foreground text-xs"
                   numberOfLines={1}
                 >
                   {progressLabel}
@@ -43,7 +43,7 @@ export function AccountCardDebt({ account, ...rest }: Props) {
                   className={
                     isReceivable
                       ? 'text-xs font-semibold text-emerald-600'
-                      : 'text-xs font-semibold text-account-debt'
+                      : 'text-account-debt text-xs font-semibold'
                   }
                 >
                   {progress.toFixed(0)}%

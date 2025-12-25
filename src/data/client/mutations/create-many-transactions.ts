@@ -1,298 +1,242 @@
-import { categories, currencies, transactions } from '@/data/client/db-schema'
+import {
+  accounts,
+  categories,
+  currencies,
+  transactionInsertSchema,
+  transactions
+} from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils'
 import { db } from '@/system/powersync/system'
-import { startOfDay } from 'date-fns'
-import { eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
 
-type TransactionImportRow = {
-  createdAt: Date
-  amount: number
-  categoryName: string
-  parentCategoryName?: string
-  currency: string
-  type: 'expense' | 'income'
-}
-
-type CreateManyTransactionsArgs = {
-  rows: TransactionImportRow[]
-  userId: string
-}
-
-type CategoryInfo = {
-  id: string
-  name: string
-  type: 'expense' | 'income'
-  parentId: string | null
-  parentName?: string
-  isArchived: boolean
-  archivedAt: Date | null
-}
+type TransactionData = Omit<z.input<typeof transactionInsertSchema>, 'userId'>
 
 /**
- * Maximum transaction amount (matches NUMERIC(14,2) database constraint)
+ * Creates multiple transactions in a single atomic operation.
+ * Designed for bulk import where historical transactions may reference
+ * now-archived categories and accounts.
+ *
+ * Validation is performed in two layers:
+ * 1. Zod schema validates CHECK constraints:
+ *    - Amount is positive and within limits
+ *    - Transfers have a source account (accountId not null)
+ *    - Transfers have different source and destination accounts
+ *    - Non-transfers don't have a counter account
+ * 2. Transaction validates FK constraints and business rules:
+ *    - Currency, category, and account references exist
+ *    - Transfer transactions cannot have a category
+ *    - Category type matches transaction type (expense→expense, income→income)
+ *    - Currency matches account currency (prevents server trigger failure)
+ *
+ * Note: Unlike createTransaction, archived categories and accounts ARE allowed
+ * since bulk import often includes historical transactions for archived entities.
+ * Negative account balances are allowed (no insufficient funds check).
  */
-const MAX_AMOUNT = 999_999_999_999.99
-
-/**
- * Minimum allowed transaction date (reasonable lower bound)
- */
-const MIN_DATE = new Date('1970-01-01')
-
 export async function createManyTransactions({
-  rows,
-  userId
-}: CreateManyTransactionsArgs) {
+  userId,
+  data
+}: {
+  userId: string
+  data: TransactionData[]
+}) {
+  if (data.length === 0) {
+    return [new Error('No transactions to create'), null]
+  }
+
+  // Parse all rows upfront with Zod schema (same as createTransaction)
+  const parsedRows: z.infer<typeof transactionInsertSchema>[] = []
+  for (let i = 0; i < data.length; i++) {
+    const parseResult = transactionInsertSchema.safeParse({
+      ...data[i],
+      userId
+    })
+    if (!parseResult.success) {
+      const firstIssue = parseResult.error.issues[0]
+      return [new Error(`Row ${i + 1}: ${firstIssue.message}`), null]
+    }
+    // Ensure ID is present (Zod doesn't apply Drizzle's $defaultFn)
+    const row = parseResult.data
+    if (!row.id) row.id = randomUUID()
+    parsedRows.push(row)
+  }
+
   const [error, result] = await asyncTryCatch(
     db.transaction(async tx => {
-      // 1. Validate rows array is not empty
-      if (rows.length === 0) {
-        throw new Error('No transactions to import.')
+      // Collect all unique IDs we need to validate
+      const currencyIds = new Set<string>()
+      const categoryIds = new Set<string>()
+      const accountIds = new Set<string>()
+
+      for (const row of parsedRows) {
+        currencyIds.add(row.currencyId)
+        if (row.categoryId) categoryIds.add(row.categoryId)
+        if (row.accountId) accountIds.add(row.accountId)
+        if (row.counterAccountId) accountIds.add(row.counterAccountId)
       }
 
-      // 2. Load all valid currency codes from database
-      const allCurrencies = await tx
+      // Load all referenced currencies (FK validation)
+      const validCurrencies = await tx
         .select({ code: currencies.code })
         .from(currencies)
-      const validCurrencyCodes = new Set(allCurrencies.map(c => c.code))
+        .where(inArray(currencies.code, [...currencyIds]))
+      const validCurrencyCodes = new Set(validCurrencies.map(c => c.code))
 
-      // 3. Load all existing categories for user (including archived)
-      // Note: Imported transactions are not tied to accounts (accountId = null)
-      const allCategories = await tx
-        .select({
-          id: categories.id,
-          name: categories.name,
-          type: categories.type,
-          parentId: categories.parentId,
-          isArchived: categories.isArchived,
-          archivedAt: categories.archivedAt
-        })
-        .from(categories)
-        .where(eq(categories.userId, userId))
-
-      // Build lookup maps
-      // Key: "parentName|categoryName|type" or "categoryName|type" for root
-      const categoryMap = new Map<string, CategoryInfo>()
-      const rootCategoryByNameAndType = new Map<string, CategoryInfo>()
-
-      // First pass: build id -> category map for parent lookups
-      const idToCategoryInfo = new Map<string, CategoryInfo>()
-      for (const cat of allCategories) {
-        idToCategoryInfo.set(cat.id, {
-          id: cat.id,
-          name: cat.name,
-          type: cat.type,
-          parentId: cat.parentId,
-          isArchived: cat.isArchived,
-          archivedAt: cat.archivedAt
-        })
-      }
-
-      // Second pass: build lookup map with parent names
-      for (const cat of allCategories) {
-        const parentInfo = cat.parentId
-          ? idToCategoryInfo.get(cat.parentId)
-          : undefined
-        const parentName = parentInfo?.name
-
-        const key = parentName
-          ? `${parentName.toLowerCase()}|${cat.name.toLowerCase()}|${cat.type}`
-          : `${cat.name.toLowerCase()}|${cat.type}`
-
-        const categoryInfo: CategoryInfo = {
-          id: cat.id,
-          name: cat.name,
-          type: cat.type,
-          parentId: cat.parentId,
-          parentName,
-          isArchived: cat.isArchived,
-          archivedAt: cat.archivedAt
-        }
-
-        categoryMap.set(key, categoryInfo)
-
-        // Track root categories for parent lookup
-        if (!cat.parentId) {
-          rootCategoryByNameAndType.set(
-            `${cat.name.toLowerCase()}|${cat.type}`,
-            categoryInfo
-          )
-        }
-      }
-
-      /**
-       * Resolves and validates category for a transaction row.
-       * Throws descriptive errors for any validation failures.
-       *
-       * Validates:
-       * 1. Category exists (required)
-       * 2. Parent category exists (if specified)
-       * 3. Transaction type matches category type
-       * 4. Parent archived date constraint
-       * 5. Category archived date constraint
-       */
-      const resolveCategoryId = (
-        name: string,
-        type: 'expense' | 'income',
-        parentName: string | undefined,
-        txDate: Date,
-        rowIndex: number
-      ): string => {
-        const txDateStart = startOfDay(txDate)
-        const categoryPath = parentName ? `${parentName} → ${name}` : name
-
-        // Validate parent category if specified
-        if (parentName) {
-          const parentKey = `${parentName.toLowerCase()}|${type}`
-          const parent = rootCategoryByNameAndType.get(parentKey)
-
-          if (!parent) {
-            // Check if parent exists with wrong type
-            const wrongType = type === 'expense' ? 'income' : 'expense'
-            const wrongTypeParent = rootCategoryByNameAndType.get(
-              `${parentName.toLowerCase()}|${wrongType}`
-            )
-
-            if (wrongTypeParent) {
-              throw new Error(
-                `Row ${rowIndex + 1}: Parent category "${parentName}" exists but is "${wrongType}", not "${type}".`
+      // Load all referenced categories with types (FK validation + type matching)
+      const validCategories =
+        categoryIds.size > 0
+          ? await tx
+              .select({ id: categories.id, type: categories.type })
+              .from(categories)
+              .where(
+                and(
+                  eq(categories.userId, userId),
+                  inArray(categories.id, [...categoryIds])
+                )
               )
-            }
+          : []
+      const validCategoryIds = new Set(validCategories.map(c => c.id))
+      const categoryTypes = new Map(validCategories.map(c => [c.id, c.type]))
 
-            // Check if the "parent" is actually a subcategory (has a parent itself)
-            const isSubcategory = Array.from(idToCategoryInfo.values()).find(
-              c =>
-                c.name.toLowerCase() === parentName.toLowerCase() &&
-                c.type === type &&
-                c.parentId !== null
-            )
-
-            if (isSubcategory) {
-              throw new Error(
-                `Row ${rowIndex + 1}: "${parentName}" is a subcategory and cannot be used as a parent category.`
+      // Load all referenced accounts with balances and currencies (FK validation + balance tracking + currency validation)
+      const accountsData =
+        accountIds.size > 0
+          ? await tx
+              .select({
+                id: accounts.id,
+                balance: accounts.balance,
+                currencyId: accounts.currencyId
+              })
+              .from(accounts)
+              .where(
+                and(
+                  eq(accounts.userId, userId),
+                  inArray(accounts.id, [...accountIds])
+                )
               )
-            }
+          : []
 
-            throw new Error(
-              `Row ${rowIndex + 1}: Parent category "${parentName}" (${type}) does not exist.`
-            )
-          }
+      // Track running balances and currencies for each account
+      const accountBalances = new Map<string, number>()
+      const accountCurrencies = new Map<string, string | null>()
+      for (const acc of accountsData) {
+        accountBalances.set(acc.id, acc.balance)
+        accountCurrencies.set(acc.id, acc.currencyId)
+      }
 
-          // Check parent archived constraint
-          if (parent.isArchived && parent.archivedAt) {
-            const parentArchivedDate = startOfDay(parent.archivedAt)
-            if (txDateStart > parentArchivedDate) {
-              throw new Error(
-                `Row ${rowIndex + 1}: Parent category "${parentName}" was archived. Transaction date must be on or before the archive date.`
-              )
-            }
-          }
-        }
+      // Validate all rows and update running balances
+      for (let i = 0; i < parsedRows.length; i++) {
+        const row = parsedRows[i]
 
-        // Validate category exists
-        const key = parentName
-          ? `${parentName.toLowerCase()}|${name.toLowerCase()}|${type}`
-          : `${name.toLowerCase()}|${type}`
-
-        const category = categoryMap.get(key)
-
-        if (!category) {
-          // Check if category exists with wrong type
-          const wrongType = type === 'expense' ? 'income' : 'expense'
-          const wrongTypeKey = parentName
-            ? `${parentName.toLowerCase()}|${name.toLowerCase()}|${wrongType}`
-            : `${name.toLowerCase()}|${wrongType}`
-          const wrongTypeCategory = categoryMap.get(wrongTypeKey)
-
-          if (wrongTypeCategory) {
-            throw new Error(
-              `Row ${rowIndex + 1}: Category "${categoryPath}" exists but is "${wrongType}", not "${type}".`
-            )
-          }
+        // Validate currency exists
+        if (!validCurrencyCodes.has(row.currencyId)) {
           throw new Error(
-            `Row ${rowIndex + 1}: Category "${categoryPath}" (${type}) does not exist.`
+            `Row ${i + 1}: Currency "${row.currencyId}" not found`
           )
         }
 
-        // Check category archived constraint
-        if (category.isArchived && category.archivedAt) {
-          const archivedDateStart = startOfDay(category.archivedAt)
-          if (txDateStart > archivedDateStart) {
+        // Transfer transactions cannot have a category (server trigger enforces this)
+        if (row.type === 'transfer' && row.categoryId != null) {
+          throw new Error(
+            `Row ${i + 1}: Transfer transactions cannot have a category`
+          )
+        }
+
+        // Validate category exists and type matches (if provided)
+        if (row.categoryId) {
+          if (!validCategoryIds.has(row.categoryId)) {
+            throw new Error(`Row ${i + 1}: Category not found`)
+          }
+
+          // Validate category type matches transaction type (server trigger enforces this)
+          const categoryType = categoryTypes.get(row.categoryId)
+          if (categoryType && categoryType !== row.type) {
             throw new Error(
-              `Row ${rowIndex + 1}: Category "${categoryPath}" was archived. Transaction date must be on or before the archive date.`
+              `Row ${i + 1}: Cannot use ${categoryType} category for ${row.type} transaction`
             )
           }
         }
 
-        return category.id
+        // Validate accounts exist
+        if (row.accountId && !accountBalances.has(row.accountId)) {
+          throw new Error(`Row ${i + 1}: Account not found`)
+        }
+        if (
+          row.counterAccountId &&
+          !accountBalances.has(row.counterAccountId)
+        ) {
+          throw new Error(`Row ${i + 1}: Destination account not found`)
+        }
+
+        // Validate currency consistency (prevents server trigger failure)
+        if (row.accountId) {
+          const accountCurrency = accountCurrencies.get(row.accountId)
+          if (accountCurrency && accountCurrency !== row.currencyId) {
+            throw new Error(
+              `Row ${i + 1}: Transaction currency (${row.currencyId}) does not match account currency (${accountCurrency})`
+            )
+          }
+        }
+        if (row.type === 'transfer' && row.counterAccountId) {
+          const counterAccountCurrency = accountCurrencies.get(
+            row.counterAccountId
+          )
+          if (
+            counterAccountCurrency &&
+            counterAccountCurrency !== row.currencyId
+          ) {
+            throw new Error(
+              `Row ${i + 1}: Transfer currency (${row.currencyId}) does not match destination account currency (${counterAccountCurrency})`
+            )
+          }
+        }
+
+        // Get current running balances
+        const fromBalance = row.accountId
+          ? accountBalances.get(row.accountId)!
+          : null
+        const toBalance = row.counterAccountId
+          ? accountBalances.get(row.counterAccountId)!
+          : null
+
+        // Update running balances (same logic as createTransaction)
+        if (row.type === 'income' && row.accountId) {
+          // For income, accountId is optional - update balance only if account is set
+          accountBalances.set(row.accountId, fromBalance! + row.amount)
+        } else if (row.type === 'expense' && row.accountId) {
+          // For expense, accountId is optional - update balance only if account is set
+          accountBalances.set(row.accountId, fromBalance! - row.amount)
+        } else if (row.type === 'transfer') {
+          // For transfers, Zod schema guarantees both accountId and counterAccountId exist
+          accountBalances.set(row.accountId!, fromBalance! - row.amount)
+          accountBalances.set(row.counterAccountId!, toBalance! + row.amount)
+        }
       }
 
-      // 4. Pre-validate all rows before any inserts
-      const validatedRows: {
-        row: TransactionImportRow
-        categoryId: string
-      }[] = []
-
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i]
-
-        // Validate currency exists in database
-        if (!validCurrencyCodes.has(row.currency)) {
-          throw new Error(
-            `Row ${i + 1}: Currency "${row.currency}" is not available.`
-          )
-        }
-
-        // Validate amount
-        if (row.amount <= 0) {
-          throw new Error(`Row ${i + 1}: Amount must be greater than 0.`)
-        }
-        if (row.amount > MAX_AMOUNT) {
-          throw new Error(`Row ${i + 1}: Amount exceeds maximum allowed value.`)
-        }
-
-        // Validate date is not in future and not too far in the past
-        if (row.createdAt < MIN_DATE) {
-          throw new Error(
-            `Row ${i + 1}: Transaction date is too far in the past.`
-          )
-        }
-        if (startOfDay(row.createdAt) > startOfDay(new Date())) {
-          throw new Error(
-            `Row ${i + 1}: Transaction date cannot be in the future.`
-          )
-        }
-
-        // Validate and resolve category
-        const categoryId = resolveCategoryId(
-          row.categoryName,
-          row.type,
-          row.parentCategoryName,
-          row.createdAt,
-          i
-        )
-
-        validatedRows.push({ row, categoryId })
+      // Insert all transactions in chunks to avoid SQLite variable limit
+      const CHUNK_SIZE = 50
+      for (let i = 0; i < parsedRows.length; i += CHUNK_SIZE) {
+        const chunk = parsedRows.slice(i, i + CHUNK_SIZE)
+        await tx.insert(transactions).values(chunk)
       }
 
-      // 5. Insert all validated transactions (no account - imported transactions are account-agnostic)
-      for (const { row, categoryId } of validatedRows) {
-        await tx.insert(transactions).values({
-          id: randomUUID(),
-          userId,
-          accountId: null,
-          type: row.type,
-          amount: row.amount,
-          currencyId: row.currency,
-          categoryId,
-          txDate: row.createdAt,
-          createdAt: new Date()
-        })
+      // Update all affected account balances
+      for (const [accountId, newBalance] of accountBalances) {
+        const originalBalance = accountsData.find(
+          a => a.id === accountId
+        )?.balance
+        if (originalBalance !== newBalance) {
+          await tx
+            .update(accounts)
+            .set({ balance: newBalance })
+            .where(eq(accounts.id, accountId))
+        }
       }
 
-      return { inserted: validatedRows.length }
+      return { inserted: parsedRows.length }
     })
   )
 
-  return [error, result] as const
+  return [error, result]
 }

@@ -3,6 +3,7 @@ import {
   attachments,
   budgets,
   categories,
+  events,
   transactions
 } from '@/data/client/db-schema'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -14,6 +15,7 @@ export type GuestDataStats = {
   accounts: number
   transactions: number
   budgets: number
+  events: number
   attachments: number
   total: number
   hasData: boolean
@@ -59,6 +61,14 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
     .from(budgets)
     .where(eq(budgets.userId, userId))
 
+  // Query for events count
+  const eventsQuery = db
+    .select({
+      count: count()
+    })
+    .from(events)
+    .where(eq(events.userId, userId))
+
   // Query for attachments count
   const attachmentsQuery = db
     .select({
@@ -71,6 +81,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
   const accountsResult = useDrizzleQuery(accountsQuery)
   const transactionsResult = useDrizzleQuery(transactionsQuery)
   const budgetsResult = useDrizzleQuery(budgetsQuery)
+  const eventsResult = useDrizzleQuery(eventsQuery)
   const attachmentsResult = useDrizzleQuery(attachmentsQuery)
 
   const isLoading =
@@ -78,6 +89,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
     accountsResult.isLoading ||
     transactionsResult.isLoading ||
     budgetsResult.isLoading ||
+    eventsResult.isLoading ||
     attachmentsResult.isLoading
 
   // Process the data to calculate stats
@@ -86,6 +98,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
     accounts: 0,
     transactions: 0,
     budgets: 0,
+    events: 0,
     attachments: 0,
     total: 0,
     hasData: false
@@ -96,6 +109,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
     const accountsCount = accountsResult.data?.[0]?.count || 0
     const transactionsCount = transactionsResult.data?.[0]?.count || 0
     const budgetsCount = budgetsResult.data?.[0]?.count || 0
+    const eventsCount = eventsResult.data?.[0]?.count || 0
     const attachmentsCount = attachmentsResult.data?.[0]?.count || 0
 
     const total =
@@ -103,6 +117,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
       accountsCount +
       transactionsCount +
       budgetsCount +
+      eventsCount +
       attachmentsCount
 
     stats = {
@@ -110,6 +125,7 @@ export function useGetGuestDataStats({ userId }: { userId: string }) {
       accounts: accountsCount,
       transactions: transactionsCount,
       budgets: budgetsCount,
+      events: eventsCount,
       attachments: attachmentsCount,
       total,
       hasData: total > 0

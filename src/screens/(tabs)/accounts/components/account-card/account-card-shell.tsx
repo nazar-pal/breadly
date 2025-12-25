@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '@/components/ui/icon-by-name'
+import { Icon, type IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -38,7 +38,7 @@ export function AccountCardShell({
   return (
     <Pressable
       className={cn(
-        'mb-3 w-full rounded-xl border-l-[4px] bg-card p-3 shadow-sm shadow-slate-500/40 active:bg-muted/30',
+        'bg-card active:bg-muted/30 mb-3 w-full rounded-xl border-l-[4px] p-3 shadow-sm shadow-slate-500/40',
         theme.container,
         account.isArchived ? 'border-border bg-muted/20' : ''
       )}
@@ -64,7 +64,7 @@ export function AccountCardShell({
         <View className="min-w-0 flex-1">
           <Text
             className={cn(
-              'mb-px text-base font-semibold text-foreground',
+              'text-foreground mb-px text-base font-semibold',
               account.isArchived ? 'text-muted-foreground' : ''
             )}
             numberOfLines={1}
@@ -72,17 +72,17 @@ export function AccountCardShell({
             {account.name}
           </Text>
           <View className="flex-row items-center gap-2">
-            <Text className="text-xs capitalize text-muted-foreground">
+            <Text className="text-muted-foreground text-xs capitalize">
               {account.type.charAt(0).toUpperCase() + account.type.slice(1)}
             </Text>
-            <View className="rounded-full bg-secondary px-2 py-0.5">
-              <Text className="text-[10px] font-medium text-muted-foreground">
+            <View className="bg-secondary rounded-full px-2 py-0.5">
+              <Text className="text-muted-foreground text-[10px] font-medium">
                 {account.currencyId || 'USD'}
               </Text>
             </View>
             {account.isArchived ? (
-              <View className="rounded-full bg-border px-2 py-0.5">
-                <Text className="text-[10px] font-medium text-muted-foreground">
+              <View className="bg-border rounded-full px-2 py-0.5">
+                <Text className="text-muted-foreground text-[10px] font-medium">
                   Archived
                 </Text>
               </View>
@@ -105,7 +105,7 @@ export function AccountCardShell({
 
       {account.description ? (
         <View className="mb-2">
-          <Text className="text-sm text-muted-foreground" numberOfLines={2}>
+          <Text className="text-muted-foreground text-sm" numberOfLines={2}>
             {account.description}
           </Text>
         </View>

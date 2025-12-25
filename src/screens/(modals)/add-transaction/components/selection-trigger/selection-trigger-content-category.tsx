@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -16,10 +16,11 @@ export function SelectionTriggerContentCategory({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useDrizzleQuery(
+  const {
+    data: [category]
+  } = useDrizzleQuery(
     getCategory({ userId, categoryId: slot.categoryId ?? '' })
   )
-  const category = data.length > 0 ? data[0] : null
 
   const categoryName = category?.parent?.name ?? category?.name ?? 'unknown'
   const categoryIcon = category?.parent?.icon ?? category?.icon ?? 'Unknown'
@@ -28,7 +29,7 @@ export function SelectionTriggerContentCategory({
     return (
       <Text
         className={cn(
-          'text-sm font-semibold text-foreground',
+          'text-foreground text-sm font-semibold',
           slot.type === 'income' && slot.direction === 'to' && 'text-income',
           slot.type === 'expense' && slot.direction === 'to' && 'text-expense'
         )}

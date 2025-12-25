@@ -16,7 +16,7 @@ export function SelectionTriggerLabel({ slot }: { slot: SelectionSlot }) {
   const label = slot.direction === 'from' ? fromLabel : toLabel
 
   return (
-    <Text className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <Text className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
       {label}
     </Text>
   )

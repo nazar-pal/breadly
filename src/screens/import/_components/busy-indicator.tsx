@@ -26,13 +26,13 @@ export function BusyIndicator({ status, progress, fileName, onCancel }: Props) {
       <View className="items-center gap-1">
         <Text className="text-sm font-medium">{statusLabel}</Text>
         {status === 'parsing' && progress !== null ? (
-          <Text className="text-xs text-muted-foreground">
+          <Text className="text-muted-foreground text-xs">
             {Math.round(progress * 100)}%
           </Text>
         ) : null}
       </View>
       {fileName ? (
-        <Text className="text-xs text-muted-foreground" numberOfLines={1}>
+        <Text className="text-muted-foreground text-xs" numberOfLines={1}>
           {fileName}
         </Text>
       ) : null}

@@ -80,7 +80,7 @@ export function TabsCategoriesNetBalance() {
 
   return (
     <View className="flex-1">
-      <Text className="mb-0.5 text-xs text-muted-foreground">Net Balance</Text>
+      <Text className="text-muted-foreground mb-0.5 text-xs">Net Balance</Text>
       <Text numberOfLines={1} className="text-2xl font-bold">
         {renderNetPieces()}
       </Text>

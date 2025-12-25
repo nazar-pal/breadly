@@ -17,7 +17,7 @@ export function AccountHeaderBadge({
     <View
       className={cn('rounded-full px-2 py-0.5', backgroundClass, className)}
     >
-      <Text className="text-[11px] font-medium text-muted-foreground">
+      <Text className="text-muted-foreground text-[11px] font-medium">
         {children}
       </Text>
     </View>

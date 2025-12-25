@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { getAccount } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -14,16 +14,15 @@ export function SelectionTriggerContentAccount({
 }) {
   const { userId } = useUserSession()
 
-  const { data } = useDrizzleQuery(
-    getAccount({ userId, accountId: accountId ?? '' })
-  )
-  const account = data.length > 0 ? data[0] : null
+  const {
+    data: [account]
+  } = useDrizzleQuery(getAccount({ userId, accountId: accountId ?? '' }))
 
   const accountName = account?.name ?? 'unknown'
 
   if (render === 'name') {
     return (
-      <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+      <Text className="text-foreground text-sm font-semibold" numberOfLines={1}>
         {accountId ? accountName : 'Select account'}
       </Text>
     )

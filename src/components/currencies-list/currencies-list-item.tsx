@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
 import { cn } from '@/lib/utils'
@@ -29,16 +29,16 @@ export function CurrenciesListItem({
     >
       <View className="flex-1">
         <View className="flex-row items-center gap-3">
-          <View className="min-w-[44px] items-center rounded-lg bg-muted p-2">
-            <Text className="text-lg font-bold text-popover-foreground">
+          <View className="bg-muted min-w-[44px] items-center rounded-lg p-2">
+            <Text className="text-popover-foreground text-lg font-bold">
               {currency.symbol}
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-base font-semibold text-popover-foreground">
+            <Text className="text-popover-foreground text-base font-semibold">
               {currency.name}
             </Text>
-            <Text className="text-sm text-muted-foreground">
+            <Text className="text-muted-foreground text-sm">
               {currency.code}
             </Text>
           </View>

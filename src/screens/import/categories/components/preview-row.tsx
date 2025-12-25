@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
@@ -16,7 +16,7 @@ export function PreviewRow({ row, parentName }: PreviewRowProps) {
     <View
       style={{ marginLeft: row.parentId ? 12 : 0 }}
       className={cn(
-        row.parentId && 'border-l border-dashed border-border/60 pl-3'
+        row.parentId && 'border-border/60 border-l border-dashed pl-3'
       )}
     >
       <View
@@ -29,7 +29,7 @@ export function PreviewRow({ row, parentName }: PreviewRowProps) {
       >
         <View
           className={cn(
-            'absolute right-2 top-2 z-10 rounded px-1.5 py-0.5',
+            'absolute top-2 right-2 z-10 rounded px-1.5 py-0.5',
             row.type === 'income' ? 'bg-green-500/10' : 'bg-red-500/10'
           )}
         >
@@ -59,15 +59,15 @@ export function PreviewRow({ row, parentName }: PreviewRowProps) {
           </View>
           <View className="flex-row flex-wrap items-center gap-x-3 gap-y-1">
             {parentName && (
-              <Text className="text-xs text-muted-foreground">
+              <Text className="text-muted-foreground text-xs">
                 Parent: {parentName}
               </Text>
             )}
-            <Text className="text-xs text-muted-foreground">
+            <Text className="text-muted-foreground text-xs">
               Created: {format(row.createdAt, 'yyyy-MM-dd')}
             </Text>
             {row.archivedAt && (
-              <Text className="text-xs text-muted-foreground">
+              <Text className="text-muted-foreground text-xs">
                 Archived: {format(row.archivedAt, 'yyyy-MM-dd')}
               </Text>
             )}

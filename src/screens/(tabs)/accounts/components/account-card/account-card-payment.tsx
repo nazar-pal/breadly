@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { GetAccountsResultItem } from '@/data/client/queries/get-accounts'
 import React from 'react'
 import { Pressable } from 'react-native'
@@ -27,7 +27,7 @@ export function AccountCardPayment({ account, ...rest }: Props) {
           <Icon
             name="TrendingDown"
             size={12}
-            className="mr-0.5 text-account-debt"
+            className="text-account-debt mr-0.5"
           />
         ) : null
       }

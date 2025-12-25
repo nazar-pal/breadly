@@ -53,7 +53,7 @@ export const exchangeRates = pgTable(
     quoteCurrency: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Quote currency (e.g., EUR in USD/EUR)
-    rate: numeric().notNull(), // Exchange rate (base to quote conversion factor)
+    rate: numeric({ precision: 20, scale: 10 }).notNull(), // Exchange rate (base to quote conversion factor)
     rateDate: date().notNull() // Date this rate was valid (for historical tracking)
   },
   table => [
@@ -73,6 +73,7 @@ export const exchangeRates = pgTable(
 
     // Performance indexes for currency conversion lookups
     index('exchange_rates_base_currency_idx').on(table.baseCurrency), // Base currency lookups
-    index('exchange_rates_quote_currency_idx').on(table.quoteCurrency) // Quote currency lookups
+    index('exchange_rates_quote_currency_idx').on(table.quoteCurrency), // Quote currency lookups
+    index('exchange_rates_rate_date_idx').on(table.rateDate) // Date range queries
   ]
 )

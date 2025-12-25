@@ -7,8 +7,7 @@ export async function submitExpenseIncomeAccount(
   args: WorkflowMap['expense-income:account'],
   inputs: CalculatorInputs
 ): Promise<void> {
-  const accounts = await getAccount({ userId, accountId: args.accountId })
-  const account = accounts.length > 0 ? accounts[0] : null
+  const account = await getAccount({ userId, accountId: args.accountId })
   if (!account) throw new Error('Account not found')
 
   const [err] = await createTransaction({

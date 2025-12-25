@@ -46,11 +46,11 @@ export function CategoryCardExtended({
       delayLongPress={500}
     >
       {/* Category Name - Top Section */}
-      <View className="mb-1.5 ">
+      <View className="mb-1.5">
         <Text
           numberOfLines={2}
           ellipsizeMode="tail"
-          className="text-base font-semibold leading-5 text-foreground"
+          className="text-foreground text-base leading-5 font-semibold"
         >
           {category.name}
         </Text>
@@ -66,7 +66,7 @@ export function CategoryCardExtended({
               displayTotals.map(t => (
                 <View
                   key={t.currencyId}
-                  className="rounded-full bg-secondary px-2 py-0.5"
+                  className="bg-secondary rounded-full px-2 py-0.5"
                 >
                   <Text
                     className={`text-xs font-semibold ${
@@ -81,8 +81,8 @@ export function CategoryCardExtended({
               ))}
 
             {displayTotals.length === 0 && (
-              <View className="rounded-full bg-secondary px-2 py-0.5">
-                <Text className="text-xs font-semibold text-muted-foreground">
+              <View className="bg-secondary rounded-full px-2 py-0.5">
+                <Text className="text-muted-foreground text-xs font-semibold">
                   0
                 </Text>
               </View>

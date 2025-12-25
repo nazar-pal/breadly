@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import { Text } from '@/components/ui/text'
+import { useCalculator } from '@/lib/hooks/use-calculator'
+import { format } from 'date-fns'
+import { useState } from 'react'
+import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
 import { CalculatorKeypad } from './calculator-keypad'
 import { CommentModal } from './modal-comment'
@@ -10,68 +14,70 @@ interface Props {
 }
 
 export function Calculator({ isDisabled, handleSubmit }: Props) {
+  // Calculator logic
+  const calculator = useCalculator()
+
+  // Transaction metadata
   const [comment, setComment] = useState('')
-  const [showCommentModal, setShowCommentModal] = useState(false)
-  const [showDateModal, setShowDateModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-  const [currentInput, setCurrentInput] = useState('0')
-  const [expression, setExpression] = useState<string[]>([])
+  // Modal visibility
+  const [showCommentModal, setShowCommentModal] = useState(false)
+  const [showDateModal, setShowDateModal] = useState(false)
 
-  const numericCurrentValue = parseFloat(currentInput)
+  // Derived state
+  const numericValue = parseFloat(calculator.currentInput)
+  const isSaveDisabled =
+    calculator.shouldShowEquals ||
+    isDisabled ||
+    !Number.isFinite(numericValue) ||
+    numericValue <= 0
 
-  const shouldShowEquals = (() => {
-    if (expression.length === 0) {
-      return false
+  const handleSave = () => {
+    if (!isSaveDisabled) {
+      handleSubmit(numericValue, comment, selectedDate)
     }
-
-    const lastToken = expression[expression.length - 1]
-    const hasOperator = /[+\-*/]/.test(lastToken)
-
-    return hasOperator || expression.length >= 2
-  })()
-
-  const isSaveDisabled = (() => {
-    if (shouldShowEquals) {
-      return true
-    }
-
-    if (isDisabled) {
-      return true
-    }
-
-    if (Number.isNaN(numericCurrentValue)) {
-      return true
-    }
-
-    return numericCurrentValue <= 0
-  })()
+  }
 
   return (
     <>
-      <CalculatorDisplay
-        comment={comment}
-        expression={expression}
-        currentInput={currentInput}
-        selectedDate={selectedDate}
-      />
+      <CalculatorDisplay displayValue={calculator.displayValue} />
+
+      {/* Fixed height comment area - prevents layout shift */}
+      <View className="h-8 items-center justify-center px-4">
+        {comment ? (
+          <Text
+            className="text-muted-foreground text-center text-sm italic"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {`"${comment}"`}
+          </Text>
+        ) : null}
+      </View>
 
       <CalculatorKeypad
-        currentInput={currentInput}
-        setCurrentInput={setCurrentInput}
-        expression={expression}
-        setExpression={setExpression}
-        onSubmit={() => {
-          if (!isSaveDisabled) {
-            handleSubmit(parseFloat(currentInput), comment, selectedDate)
-          }
-        }}
-        showSubmit={shouldShowEquals}
-        submitDisabled={isSaveDisabled}
+        onPressNumber={calculator.pressNumber}
+        onPressOperation={calculator.pressOperation}
+        onPressEquals={calculator.pressEquals}
+        onPressBackspace={calculator.pressBackspace}
+        onClear={calculator.clear}
+        onPressDecimal={calculator.pressDecimal}
+        onToggleSign={calculator.toggleSign}
         onPressComment={() => setShowCommentModal(true)}
         onPressDate={() => setShowDateModal(true)}
+        onSubmit={handleSave}
+        showEquals={calculator.shouldShowEquals}
+        submitDisabled={isSaveDisabled}
         hasComment={Boolean(comment)}
       />
+
+      {/* Transaction date - extends into safe area with small padding */}
+      <View className="mt-3 items-center">
+        <Text className="text-muted-foreground text-sm">
+          {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+        </Text>
+      </View>
 
       <CommentModal
         visible={showCommentModal}
@@ -83,7 +89,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
       <DateModal
         visible={showDateModal}
         selectedDate={selectedDate}
-        onSelectDate={d => setSelectedDate(d)}
+        onSelectDate={setSelectedDate}
         onClose={() => setShowDateModal(false)}
       />
     </>

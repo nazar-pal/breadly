@@ -1,13 +1,16 @@
+import { currencies } from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { eq } from 'drizzle-orm'
-import { currencies } from '../db-schema'
 
-export function getCurrency({ currencyCode }: { currencyCode: string }) {
-  return db.query.currencies.findMany({
-    where: eq(currencies.code, currencyCode),
-    limit: 1
+interface Params {
+  currencyCode: string
+}
+
+export function getCurrency({ currencyCode }: Params) {
+  return db.query.currencies.findFirst({
+    where: eq(currencies.code, currencyCode)
   })
 }
 
 export type GetCurrencyResult = Awaited<ReturnType<typeof getCurrency>>
-export type GetCurrencyResultItem = GetCurrencyResult[number]
+export type GetCurrencyResultItem = Exclude<GetCurrencyResult, undefined>

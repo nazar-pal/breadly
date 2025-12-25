@@ -23,7 +23,7 @@ export function SubcategoriesItem({
       className={cn(
         'px-2.5 py-1',
         isSelected ? 'bg-primary' : 'border-foreground/15 bg-background/70',
-        variant === 'muted-dashed' && 'border-dashed border-muted-foreground/50'
+        variant === 'muted-dashed' && 'border-muted-foreground/50 border-dashed'
       )}
     >
       <Pressable onPress={onPress}>

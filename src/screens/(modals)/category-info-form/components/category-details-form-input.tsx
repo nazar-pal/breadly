@@ -33,14 +33,14 @@ export function CategoryInput<T extends FieldValues>({
       }) => (
         <View>
           <Input
-            className="native:h-[80px] mb-5 rounded-xl border-none bg-muted/60 px-4 py-3 text-base"
+            className="native:h-[80px] bg-muted/60 mb-5 rounded-xl border-none px-4 py-3 text-base"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
             placeholder={placeholder}
             multiline
             textAlignVertical="top"
-            placeholderClassName="text-muted-foreground"
+            placeholderTextColorClassName="text-muted-foreground"
           />
           {error && (
             <Text className="mt-1 text-sm text-red-500">{error.message}</Text>

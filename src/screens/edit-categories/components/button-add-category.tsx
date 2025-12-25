@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategoryType } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import { cn } from '@/lib/utils'
@@ -19,13 +19,13 @@ export function ButtonAddCategory({ className, type }: Props) {
   return (
     <Pressable
       className={cn(
-        'mt-4 flex flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/50 p-3',
+        'border-border mb-safe-offset-4 bg-muted/50 mt-4 flex flex-row items-center justify-center gap-2 rounded-2xl border border-dashed p-3',
         className
       )}
       onPress={handleAddCategory}
     >
       <Icon name="Plus" className="text-muted-foreground" />
-      <Text className="text-sm font-medium text-foreground">Add Category</Text>
+      <Text className="text-foreground text-sm font-medium">Add Category</Text>
     </Pressable>
   )
 }

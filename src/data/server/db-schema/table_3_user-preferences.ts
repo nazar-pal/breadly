@@ -20,7 +20,12 @@ import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { check, pgTable, smallint, varchar } from 'drizzle-orm/pg-core'
 import { currencies } from './table_1_currencies'
-import { clerkUserIdColumn, isoCurrencyCodeColumn } from './utils'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  isoCurrencyCodeColumnNullable,
+  updatedAtColumn
+} from './utils'
 
 // ============================================================================
 // User preferences table - User-specific application settings
@@ -42,9 +47,13 @@ export const userPreferences = pgTable(
   'user_preferences',
   {
     userId: clerkUserIdColumn().primaryKey(), // Clerk user ID (one record per user)
-    defaultCurrency: isoCurrencyCodeColumn().references(() => currencies.code), // Default currency for new accounts/transactions
+    defaultCurrency: isoCurrencyCodeColumnNullable().references(
+      () => currencies.code
+    ), // Default currency for new accounts/transactions
     firstWeekday: smallint().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
-    locale: varchar({ length: 20 }).default('en-US') // Localization/language code (ISO format)
+    locale: varchar({ length: 20 }).default('en-US'), // Localization/language code (ISO format)
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Business rule constraints
@@ -52,6 +61,10 @@ export const userPreferences = pgTable(
       'user_preferences_valid_weekday',
       sql`${table.firstWeekday} >= 1 AND ${table.firstWeekday} <= 7`
     ), // Valid weekday range
+    check(
+      'user_preferences_valid_locale',
+      sql`${table.locale} IS NULL OR length(${table.locale}) >= 2`
+    ), // Locale must be at least 2 characters (e.g., 'en')
 
     // RLS: Users can only access their own preferences
     crudPolicy({

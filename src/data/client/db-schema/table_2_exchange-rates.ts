@@ -11,22 +11,21 @@ Key Features:
 - Base-to-quote currency pair relationships
 - Date-specific rate validation
 - Automatic currency conversion support
-- Business rule enforcement for rate integrity
+
+PowerSync Limitations (JSON-based views):
+- CHECK constraints are NOT enforced (validated via Zod instead)
+- Foreign key references are NOT enforced
+- Unique indexes are NOT enforced (uniqueness handled in application)
+- Multi-column indexes are NOT supported
+- Only single-column indexes work (basic support)
+
+Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
-import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import {
-  check,
-  index,
-  integer,
-  real,
-  sqliteTable,
-  uniqueIndex
-} from 'drizzle-orm/sqlite-core'
-import { currencies } from './table_1_currencies'
-import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
+import { index, real, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { dateOnlyText, isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
 
 // ============================================================================
 // Exchange rates table - Historical currency conversion rates
@@ -36,45 +35,31 @@ import { isoCurrencyCodeColumn, uuidPrimaryKey } from './utils'
  * Exchange rates between currencies
  * Supports historical exchange rate tracking for accurate conversions
  *
- * Business Rules:
+ * Business Rules (enforced via Zod, not SQLite):
  * - Exchange rates are stored as base-to-quote currency pairs
- * - Each currency pair can have only one rate per date
+ * - Each currency pair can have only one rate per date (enforced in app)
  * - Exchange rates must be positive values
  * - Base and quote currencies must be different
- * - Supports historical rate lookups for accurate reporting
- * - Rates should be updated regularly for current conversions
+ *
+ * Unique Constraint (server-enforced):
+ * - exchange_rates_base_quote_date_unq: (baseCurrency, quoteCurrency, rateDate)
+ * Note: Exchange rates are read-only from client (synced from server global bucket).
  */
 
 const columns = {
+  // Explicitly defined for Drizzle ORM type safety
   id: uuidPrimaryKey(),
-  baseCurrency: isoCurrencyCodeColumn('base_currency')
-    .references(() => currencies.code)
-    .notNull(), // Base currency (e.g., USD in USD/EUR)
-  quoteCurrency: isoCurrencyCodeColumn('quote_currency')
-    .references(() => currencies.code)
-    .notNull(), // Quote currency (e.g., EUR in USD/EUR)
+  baseCurrency: isoCurrencyCodeColumn('base_currency').notNull(), // Base currency (FK not enforced)
+  quoteCurrency: isoCurrencyCodeColumn('quote_currency').notNull(), // Quote currency (FK not enforced)
   rate: real().notNull(), // Exchange rate (base to quote conversion factor)
-  rateDate: integer('rate_date', { mode: 'timestamp_ms' }).notNull() // Date this rate was valid (for historical tracking)
+  rateDate: dateOnlyText('rate_date').notNull() // Date this rate was valid (YYYY-MM-DD, date-only)
 }
 
+// Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  // One rate per currency pair per date
-  uniqueIndex('exchange_rates_base_quote_date_unq').on(
-    table.baseCurrency,
-    table.quoteCurrency,
-    table.rateDate
-  ),
-
-  // Business rule constraints
-  check('exchange_rates_positive_rate', sql`${table.rate} > 0`), // Rates must be positive
-  check(
-    'exchange_rates_different_currencies',
-    sql`${table.baseCurrency} != ${table.quoteCurrency}`
-  ), // Base and quote must be different
-
-  // Performance indexes for currency conversion lookups
-  index('exchange_rates_base_currency_idx').on(table.baseCurrency), // Base currency lookups
-  index('exchange_rates_quote_currency_idx').on(table.quoteCurrency) // Quote currency lookups
+  index('exchange_rates_base_currency_idx').on(table.baseCurrency),
+  index('exchange_rates_quote_currency_idx').on(table.quoteCurrency),
+  index('exchange_rates_rate_date_idx').on(table.rateDate)
 ]
 
 export const exchangeRates = sqliteTable('exchange_rates', columns, extraConfig)

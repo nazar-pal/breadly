@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { reorderCategories } from '@/data/client/mutations'
 import {
@@ -83,18 +83,18 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
   }
 
   return (
-    <View className="rounded-2xl border border-border bg-card p-6">
+    <View className="border-border bg-card rounded-2xl border p-6">
       {/* Section Header */}
       <View className="mb-6 flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
-          <View className="rounded-lg bg-muted/50 p-2">
+          <View className="bg-muted/50 rounded-lg p-2">
             <Icon name="Layers2" size={20} className="text-muted-foreground" />
           </View>
           <View>
-            <Text className="text-lg font-bold text-foreground">
+            <Text className="text-foreground text-lg font-bold">
               Subcategories
             </Text>
-            <Text className="text-sm text-muted-foreground">
+            <Text className="text-muted-foreground text-sm">
               Optional • {existingSubcategories.length} added
             </Text>
           </View>
@@ -108,7 +108,7 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
               type: category.type
             })
           }
-          className="flex-row items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 active:scale-95"
+          className="border-primary/30 bg-primary/10 flex-row items-center gap-2 rounded-xl border px-4 py-3 active:scale-95"
         >
           <Icon
             name="Plus"
@@ -116,7 +116,7 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
             className="text-primary"
             strokeWidth={2.5}
           />
-          <Text className="text-sm font-semibold text-primary">Add New</Text>
+          <Text className="text-primary text-sm font-semibold">Add New</Text>
         </Pressable>
       </View>
 
@@ -132,18 +132,18 @@ export function SubCategories({ category }: SubcategoriesInfoProps) {
           scrollEnabled={false} // Disable scrolling since we're in a parent ScrollView
         />
       ) : (
-        <View className="items-center rounded-2xl border border-dashed border-muted-foreground/30 bg-muted/20 p-8">
-          <View className="mb-4 rounded-full bg-muted/50 p-4">
+        <View className="border-muted-foreground/30 bg-muted/20 items-center rounded-2xl border border-dashed p-8">
+          <View className="bg-muted/50 mb-4 rounded-full p-4">
             <Icon
               name="FolderOpen"
               size={32}
               className="text-muted-foreground/70"
             />
           </View>
-          <Text className="mb-2 text-center text-base font-medium text-foreground">
+          <Text className="text-foreground mb-2 text-center text-base font-medium">
             No subcategories yet
           </Text>
-          <Text className="text-center text-sm leading-relaxed text-muted-foreground">
+          <Text className="text-muted-foreground text-center text-sm leading-relaxed">
             Create subcategories to better organize your transactions and get
             more detailed insights.
           </Text>

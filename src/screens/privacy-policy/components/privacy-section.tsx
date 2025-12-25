@@ -13,10 +13,10 @@ export function PrivacySection({ section }: Props) {
   const { id, title, content, subsections } = section
 
   return (
-    <View className="rounded-3xl border border-border/60 bg-background/95 p-5 shadow-sm shadow-black/5">
+    <View className="border-border/60 bg-background/95 rounded-3xl border p-5 shadow-sm shadow-black/5">
       <Text
         variant="h2"
-        className="border-none pb-0 text-2xl font-semibold tracking-tight text-foreground"
+        className="text-foreground border-none pb-0 text-2xl font-semibold tracking-tight"
       >
         {title}
       </Text>
@@ -33,7 +33,7 @@ export function PrivacySection({ section }: Props) {
       ) : content ? (
         <FormattedText
           content={content}
-          className="mt-3 text-muted-foreground"
+          className="text-muted-foreground mt-3"
         />
       ) : null}
     </View>

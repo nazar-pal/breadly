@@ -13,14 +13,14 @@ export function SubcategoriesListData({
 }) {
   const { userId } = useUserSession()
 
-  const { data: categoriesData } = useDrizzleQuery(
+  const {
+    data: [selectedCategory]
+  } = useDrizzleQuery(
     getCategory({
       userId,
       categoryId: selectedCategoryId
     })
   )
-
-  const selectedCategory = categoriesData.length > 0 ? categoriesData[0] : null
 
   if (!selectedCategory) return null
 

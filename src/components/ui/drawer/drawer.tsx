@@ -59,7 +59,8 @@ interface CustomModalProps {
 
 // Combine custom props with all native Modal props
 export interface Props
-  extends CustomModalProps,
+  extends
+    CustomModalProps,
     Omit<RNModalProps, 'visible' | 'children' | 'onRequestClose'> {}
 
 export function Drawer({
@@ -138,7 +139,7 @@ export function Drawer({
             animationDuration={animationDuration}
             translateY={translateY}
             opacity={opacity}
-            className={cn('rounded-t-3xl bg-popover', className)}
+            className={cn('bg-popover rounded-t-3xl', className)}
             height={height}
           >
             {/* Drag Indicator */}
@@ -146,7 +147,7 @@ export function Drawer({
               <View className="items-center py-3">
                 <View
                   className={cn(
-                    'h-1 w-10 rounded-full bg-popover-foreground',
+                    'bg-popover-foreground h-1 w-10 rounded-full',
                     dragIndicatorClassName
                   )}
                   accessibilityLabel="Drag to dismiss"
@@ -161,7 +162,7 @@ export function Drawer({
                 {typeof title === 'string' ? (
                   <Text
                     className={cn(
-                      'text-center text-base font-semibold text-popover-foreground',
+                      'text-popover-foreground text-center text-base font-semibold',
                       titleClassName
                     )}
                   >

@@ -121,7 +121,7 @@ function FormDescription({
   return (
     <Text
       nativeID={formDescriptionId}
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
   )
@@ -143,7 +143,7 @@ function FormMessage({
   return (
     <Text
       nativeID={formMessageId}
-      className={cn('text-sm text-destructive', className)}
+      className={cn('text-destructive text-sm', className)}
       {...props}
     >
       {body}

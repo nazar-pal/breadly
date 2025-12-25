@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import {
   canNavigateBackward,
   canNavigateForward,
@@ -21,11 +21,11 @@ export function Header() {
   }
 
   return (
-    <View className="min-h-[60px] flex-row items-center border-b border-border/80 bg-popover  py-4">
+    <View className="border-border/80 bg-popover min-h-[60px] flex-row items-center border-b py-4">
       {canNavigateBackward(dateRange) && navigatePrevious && (
         <Pressable
           onPress={navigatePrevious}
-          className="rounded-xl border border-input bg-background p-2 active:opacity-90"
+          className="border-input bg-background rounded-xl border p-2 active:opacity-90"
         >
           <Icon
             name="ChevronLeft"
@@ -36,11 +36,11 @@ export function Header() {
       )}
 
       <View className="mx-4 flex-1 items-center">
-        <Text className="text-center text-lg font-semibold text-foreground">
+        <Text className="text-foreground text-center text-lg font-semibold">
           Date Range
         </Text>
         {formattedRange && (
-          <Text className="mt-0.5 text-center text-[11px] text-muted-foreground">
+          <Text className="text-muted-foreground mt-0.5 text-center text-[11px]">
             {formattedRange}
           </Text>
         )}
@@ -49,7 +49,7 @@ export function Header() {
       {canNavigateForward(dateRange) && handleNavigateNext && (
         <Pressable
           onPress={handleNavigateNext}
-          className="rounded-xl border border-input bg-background p-2 active:opacity-90"
+          className="border-input bg-background rounded-xl border p-2 active:opacity-90"
         >
           <Icon
             name="ChevronRight"

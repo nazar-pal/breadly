@@ -1,6 +1,6 @@
 {
-  "id": "ef1fb171-f7c2-4212-aef3-b37a567dd16a",
-  "prevId": "68e39c78-1712-4086-8137-a9a990542f46",
+  "id": "90f99415-ff95-4e26-ae82-1742bffa695d",
+  "prevId": "b5075039-ff91-46a6-917a-833145f09c16",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -73,12 +73,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "debt_is_owed_to_me": {
-          "name": "debt_is_owed_to_me",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
         "debt_due_date": {
           "name": "debt_due_date",
           "type": "date",
@@ -92,12 +86,23 @@
           "notNull": true,
           "default": false
         },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -106,48 +111,6 @@
           "columns": [
             {
               "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "accounts_user_archived_idx": {
-          "name": "accounts_user_archived_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "is_archived",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "accounts_user_type_idx": {
-          "name": "accounts_user_type_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "type",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -234,11 +197,11 @@
         },
         "accounts_debt_fields_only_for_debt": {
           "name": "accounts_debt_fields_only_for_debt",
-          "value": "(\"accounts\".\"type\" = 'debt') OR (\"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_is_owed_to_me\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
+          "value": "(\"accounts\".\"type\" = 'debt') OR (\"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
         },
         "accounts_payment_no_type_specific_fields": {
           "name": "accounts_payment_no_type_specific_fields",
-          "value": "(\"accounts\".\"type\" != 'payment') OR (\"accounts\".\"savings_target_amount\" IS NULL AND \"accounts\".\"savings_target_date\" IS NULL AND \"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_is_owed_to_me\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
+          "value": "(\"accounts\".\"type\" != 'payment') OR (\"accounts\".\"savings_target_amount\" IS NULL AND \"accounts\".\"savings_target_date\" IS NULL AND \"accounts\".\"debt_initial_amount\" IS NULL AND \"accounts\".\"debt_due_date\" IS NULL)"
         }
       },
       "isRLSEnabled": false
@@ -267,6 +230,14 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "attachment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
         },
         "bucket_path": {
           "name": "bucket_path",
@@ -298,12 +269,23 @@
           "primaryKey": false,
           "notNull": false
         },
+        "uploaded_at": {
+          "name": "uploaded_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -312,57 +294,6 @@
           "columns": [
             {
               "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "attachments_type_idx": {
-          "name": "attachments_type_idx",
-          "columns": [
-            {
-              "expression": "type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "attachments_user_type_idx": {
-          "name": "attachments_user_type_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "attachments_created_at_idx": {
-          "name": "attachments_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -421,9 +352,17 @@
           "name": "attachments_bucket_path_not_empty",
           "value": "length(trim(\"attachments\".\"bucket_path\")) > 0"
         },
+        "attachments_mime_not_empty": {
+          "name": "attachments_mime_not_empty",
+          "value": "length(trim(\"attachments\".\"mime\")) > 0"
+        },
+        "attachments_file_name_not_empty": {
+          "name": "attachments_file_name_not_empty",
+          "value": "length(trim(\"attachments\".\"file_name\")) > 0"
+        },
         "attachments_file_size_positive": {
           "name": "attachments_file_size_positive",
-          "value": "\"attachments\".\"file_size\" IS NULL OR \"attachments\".\"file_size\" > 0"
+          "value": "\"attachments\".\"file_size\" > 0"
         },
         "attachments_duration_positive": {
           "name": "attachments_duration_positive",
@@ -432,6 +371,10 @@
         "attachments_voice_has_duration": {
           "name": "attachments_voice_has_duration",
           "value": "\"attachments\".\"type\" != 'voice' OR \"attachments\".\"duration\" IS NOT NULL"
+        },
+        "attachments_ready_has_uploaded_at": {
+          "name": "attachments_ready_has_uploaded_at",
+          "value": "\"attachments\".\"status\" != 'ready' OR \"attachments\".\"uploaded_at\" IS NOT NULL"
         }
       },
       "isRLSEnabled": false
@@ -466,21 +409,40 @@
           "primaryKey": false,
           "notNull": true
         },
-        "currency": {
-          "name": "currency",
+        "currency_id": {
+          "name": "currency_id",
           "type": "varchar(3)",
           "primaryKey": false,
           "notNull": true
         },
-        "start_date": {
-          "name": "start_date",
-          "type": "date",
+        "period": {
+          "name": "period",
+          "type": "budget_period",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "end_date": {
-          "name": "end_date",
-          "type": "date",
+        "budget_year": {
+          "name": "budget_year",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "budget_month": {
+          "name": "budget_month",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         }
@@ -515,39 +477,6 @@
           "with": {},
           "method": "btree",
           "concurrently": false
-        },
-        "budgets_category_start_end_unq": {
-          "name": "budgets_category_start_end_unq",
-          "columns": [
-            {
-              "expression": "category_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "currency",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "start_date",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "end_date",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
         }
       },
       "foreignKeys": {
@@ -562,13 +491,13 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "restrict"
         },
-        "budgets_currency_currencies_code_fk": {
-          "name": "budgets_currency_currencies_code_fk",
+        "budgets_currency_id_currencies_code_fk": {
+          "name": "budgets_currency_id_currencies_code_fk",
           "tableFrom": "budgets",
           "columnsFrom": [
-            "currency"
+            "currency_id"
           ],
           "tableTo": "currencies",
           "columnsTo": [
@@ -579,7 +508,18 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "budgets_category_currency_period_unq": {
+          "name": "budgets_category_currency_period_unq",
+          "columns": [
+            "category_id",
+            "currency_id",
+            "budget_year",
+            "budget_month"
+          ],
+          "nullsNotDistinct": true
+        }
+      },
       "policies": {
         "crud-authenticated-policy-select": {
           "name": "crud-authenticated-policy-select",
@@ -623,6 +563,18 @@
         "budgets_positive_amount": {
           "name": "budgets_positive_amount",
           "value": "\"budgets\".\"amount\" > 0"
+        },
+        "budgets_valid_year": {
+          "name": "budgets_valid_year",
+          "value": "\"budgets\".\"budget_year\" >= 1970 AND \"budgets\".\"budget_year\" <= 2100"
+        },
+        "budgets_monthly_has_month": {
+          "name": "budgets_monthly_has_month",
+          "value": "\"budgets\".\"period\" != 'monthly' OR (\"budgets\".\"budget_month\" >= 1 AND \"budgets\".\"budget_month\" <= 12)"
+        },
+        "budgets_yearly_no_month": {
+          "name": "budgets_yearly_no_month",
+          "value": "\"budgets\".\"period\" != 'yearly' OR \"budgets\".\"budget_month\" IS NULL"
         }
       },
       "isRLSEnabled": false
@@ -691,12 +643,23 @@
           "notNull": true,
           "default": false
         },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -729,75 +692,6 @@
           "with": {},
           "method": "btree",
           "concurrently": false
-        },
-        "categories_user_archived_idx": {
-          "name": "categories_user_archived_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "is_archived",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "categories_user_type_idx": {
-          "name": "categories_user_type_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "categories_user_parent_name_unq": {
-          "name": "categories_user_parent_name_unq",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "name",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
         }
       },
       "foreignKeys": {
@@ -812,11 +706,21 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "restrict"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "categories_user_parent_name_unq": {
+          "name": "categories_user_parent_name_unq",
+          "columns": [
+            "user_id",
+            "parent_id",
+            "name"
+          ],
+          "nullsNotDistinct": true
+        }
+      },
       "policies": {
         "crud-authenticated-policy-select": {
           "name": "crud-authenticated-policy-select",
@@ -896,7 +800,159 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "currencies_code_format": {
+          "name": "currencies_code_format",
+          "value": "\"currencies\".\"code\" ~ '^[A-Z]{3}$'"
+        },
+        "currencies_symbol_not_empty": {
+          "name": "currencies_symbol_not_empty",
+          "value": "length(trim(\"currencies\".\"symbol\")) > 0"
+        },
+        "currencies_name_not_empty": {
+          "name": "currencies_name_not_empty",
+          "value": "length(trim(\"currencies\".\"name\")) > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.events": {
+      "name": "events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(auth.user_id())"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_archived": {
+          "name": "is_archived",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "events_user_idx": {
+          "name": "events_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "crud-authenticated-policy-select": {
+          "name": "crud-authenticated-policy-select",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"events\".\"user_id\")"
+        },
+        "crud-authenticated-policy-insert": {
+          "name": "crud-authenticated-policy-insert",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "authenticated"
+          ],
+          "withCheck": "(select auth.user_id() = \"events\".\"user_id\")"
+        },
+        "crud-authenticated-policy-update": {
+          "name": "crud-authenticated-policy-update",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"events\".\"user_id\")",
+          "withCheck": "(select auth.user_id() = \"events\".\"user_id\")"
+        },
+        "crud-authenticated-policy-delete": {
+          "name": "crud-authenticated-policy-delete",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.user_id() = \"events\".\"user_id\")"
+        }
+      },
+      "checkConstraints": {
+        "events_name_not_empty": {
+          "name": "events_name_not_empty",
+          "value": "length(trim(\"events\".\"name\")) > 0"
+        },
+        "events_valid_date_range": {
+          "name": "events_valid_date_range",
+          "value": "\"events\".\"start_date\" IS NULL OR \"events\".\"end_date\" IS NULL OR \"events\".\"end_date\" >= \"events\".\"start_date\""
+        }
+      },
       "isRLSEnabled": false
     },
     "public.exchange_rates": {
@@ -924,7 +980,7 @@
         },
         "rate": {
           "name": "rate",
-          "type": "numeric",
+          "type": "numeric(20, 10)",
           "primaryKey": false,
           "notNull": true
         },
@@ -983,6 +1039,21 @@
           "columns": [
             {
               "expression": "quote_currency",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
+        "exchange_rates_rate_date_idx": {
+          "name": "exchange_rates_rate_date_idx",
+          "columns": [
+            {
+              "expression": "rate_date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1071,8 +1142,13 @@
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -1258,6 +1334,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "amount": {
           "name": "amount",
           "type": "numeric(14, 2)",
@@ -1286,8 +1368,13 @@
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -1321,6 +1408,21 @@
           "method": "btree",
           "concurrently": false
         },
+        "transactions_counter_account_idx": {
+          "name": "transactions_counter_account_idx",
+          "columns": [
+            {
+              "expression": "counter_account_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        },
         "transactions_category_idx": {
           "name": "transactions_category_idx",
           "columns": [
@@ -1336,38 +1438,11 @@
           "method": "btree",
           "concurrently": false
         },
-        "transactions_user_date_idx": {
-          "name": "transactions_user_date_idx",
+        "transactions_event_idx": {
+          "name": "transactions_event_idx",
           "columns": [
             {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "tx_date",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "with": {},
-          "method": "btree",
-          "concurrently": false
-        },
-        "transactions_user_type_idx": {
-          "name": "transactions_user_type_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "type",
+              "expression": "event_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1393,11 +1468,11 @@
           "method": "btree",
           "concurrently": false
         },
-        "transactions_counter_account_idx": {
-          "name": "transactions_counter_account_idx",
+        "transactions_type_idx": {
+          "name": "transactions_type_idx",
           "columns": [
             {
-              "expression": "counter_account_id",
+              "expression": "type",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1421,7 +1496,7 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "restrict"
         },
         "transactions_counter_account_id_accounts_id_fk": {
           "name": "transactions_counter_account_id_accounts_id_fk",
@@ -1434,7 +1509,7 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict"
         },
         "transactions_category_id_categories_id_fk": {
           "name": "transactions_category_id_categories_id_fk",
@@ -1447,7 +1522,20 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict"
+        },
+        "transactions_event_id_events_id_fk": {
+          "name": "transactions_event_id_events_id_fk",
+          "tableFrom": "transactions",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "tableTo": "events",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "set null"
         },
         "transactions_currency_id_currencies_code_fk": {
           "name": "transactions_currency_id_currencies_code_fk",
@@ -1513,6 +1601,10 @@
           "name": "transactions_transfer_different_accounts",
           "value": "\"transactions\".\"type\" != 'transfer' OR \"transactions\".\"account_id\" != \"transactions\".\"counter_account_id\""
         },
+        "transactions_transfer_has_account": {
+          "name": "transactions_transfer_has_account",
+          "value": "\"transactions\".\"type\" != 'transfer' OR \"transactions\".\"account_id\" IS NOT NULL"
+        },
         "transactions_transfer_has_counter_account": {
           "name": "transactions_transfer_has_counter_account",
           "value": "\"transactions\".\"type\" != 'transfer' OR \"transactions\".\"counter_account_id\" IS NOT NULL"
@@ -1521,9 +1613,13 @@
           "name": "transactions_non_transfer_no_counter_account",
           "value": "\"transactions\".\"type\" = 'transfer' OR \"transactions\".\"counter_account_id\" IS NULL"
         },
-        "transactions_date_not_future": {
-          "name": "transactions_date_not_future",
-          "value": "\"transactions\".\"tx_date\" <= CURRENT_DATE"
+        "transactions_income_expense_has_category": {
+          "name": "transactions_income_expense_has_category",
+          "value": "\"transactions\".\"type\" = 'transfer' OR \"transactions\".\"category_id\" IS NOT NULL"
+        },
+        "transactions_transfer_no_category": {
+          "name": "transactions_transfer_no_category",
+          "value": "\"transactions\".\"type\" != 'transfer' OR \"transactions\".\"category_id\" IS NULL"
         }
       },
       "isRLSEnabled": false
@@ -1543,7 +1639,7 @@
           "name": "default_currency",
           "type": "varchar(3)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "first_weekday": {
           "name": "first_weekday",
@@ -1558,6 +1654,18 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'en-US'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -1621,6 +1729,10 @@
         "user_preferences_valid_weekday": {
           "name": "user_preferences_valid_weekday",
           "value": "\"user_preferences\".\"first_weekday\" >= 1 AND \"user_preferences\".\"first_weekday\" <= 7"
+        },
+        "user_preferences_valid_locale": {
+          "name": "user_preferences_valid_locale",
+          "value": "\"user_preferences\".\"locale\" IS NULL OR length(\"user_preferences\".\"locale\") >= 2"
         }
       },
       "isRLSEnabled": false
@@ -1633,6 +1745,14 @@
       "values": [
         "expense",
         "income"
+      ]
+    },
+    "public.budget_period": {
+      "name": "budget_period",
+      "schema": "public",
+      "values": [
+        "monthly",
+        "yearly"
       ]
     },
     "public.account_type": {
@@ -1651,6 +1771,15 @@
         "expense",
         "income",
         "transfer"
+      ]
+    },
+    "public.attachment_status": {
+      "name": "attachment_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "ready",
+        "failed"
       ]
     },
     "public.attachment_type": {

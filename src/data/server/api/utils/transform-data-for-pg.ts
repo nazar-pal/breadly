@@ -21,19 +21,21 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Field mappings per table
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
-    categories: ['created_at', 'archived_at'],
-    budgets: ['created_at'],
-    accounts: ['created_at'],
-    transactions: ['created_at'],
-    attachments: ['created_at'],
-    transaction_attachments: ['created_at'],
-    user_preferences: []
+    categories: ['created_at', 'updated_at', 'archived_at'],
+    budgets: ['created_at', 'updated_at'],
+    accounts: ['created_at', 'updated_at', 'archived_at'],
+    events: ['created_at', 'updated_at', 'archived_at'],
+    transactions: ['created_at', 'updated_at'],
+    attachments: ['created_at', 'updated_at', 'uploaded_at'],
+    transaction_attachments: ['created_at', 'updated_at'],
+    user_preferences: ['created_at', 'updated_at']
   }
 
   // Date fields (date only - expect 'YYYY-MM-DD' string or unix ms)
   const dateFields: Record<string, string[]> = {
-    budgets: ['start_date', 'end_date'],
+    budgets: [], // No date fields - uses startYear/startMonth integers
     accounts: ['savings_target_date', 'debt_due_date'],
+    events: ['start_date', 'end_date'],
     transactions: ['tx_date'],
     categories: [],
     attachments: [],
@@ -44,9 +46,10 @@ export function transformDataForPostgres(data: any, table: string): any {
   // Boolean columns that come from SQLite as 0/1 integers
   const booleanFields: Record<string, string[]> = {
     categories: ['is_archived'],
-    budgets: ['is_active'], // (future-proof, not present in current schema)
+    budgets: [],
     accounts: ['is_archived'],
-    transactions: ['is_recurring'],
+    events: ['is_archived'],
+    transactions: [],
     attachments: [],
     transaction_attachments: [],
     user_preferences: []
@@ -56,6 +59,7 @@ export function transformDataForPostgres(data: any, table: string): any {
   const numericFields: Record<string, string[]> = {
     budgets: ['amount'],
     accounts: ['balance', 'savings_target_amount', 'debt_initial_amount'],
+    events: [],
     transactions: ['amount'],
     attachments: [],
     categories: [],
@@ -122,23 +126,6 @@ export function transformDataForPostgres(data: any, table: string): any {
       if (typeof v === 'number' && !Number.isNaN(v)) {
         transformed[camelKey] = v.toString()
       }
-    }
-  }
-
-  // ---------------------------------------------------------------------
-  // 4) Enum sanitisation (already existed – kept intact)
-  // ---------------------------------------------------------------------
-  if (table === 'categories' && transformed.type) {
-    const validTypes = ['expense', 'income']
-    if (!validTypes.includes(transformed.type)) {
-      transformed.type = 'expense'
-    }
-  }
-
-  if (table === 'transactions' && transformed.type) {
-    const validTypes = ['expense', 'income', 'transfer']
-    if (!validTypes.includes(transformed.type)) {
-      transformed.type = 'expense'
     }
   }
 

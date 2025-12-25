@@ -9,9 +9,11 @@ Key Features:
 - Multi-tenant account isolation per user
 - Support for saving, payment, and debt account types
 - Multi-currency account support
-- Automatic balance tracking via database triggers
 - Soft deletion with archive functionality
 - Row-level security for data protection
+
+Note: Account balances are managed manually by the application - there are no
+      database triggers that automatically update account balances.
 ================================================================================
 */
 
@@ -23,7 +25,8 @@ import {
   index,
   numeric,
   pgEnum,
-  pgTable
+  pgTable,
+  timestamp
 } from 'drizzle-orm/pg-core'
 
 import { currencies } from './table_1_currencies'
@@ -35,6 +38,7 @@ import {
   isoCurrencyCodeColumn,
   monetaryAmountColumn,
   nameColumn,
+  updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
 
@@ -61,10 +65,22 @@ export const accountType = pgEnum('account_type', ['saving', 'payment', 'debt'])
  * Business Rules:
  * - Each account belongs to a single user (multi-tenant isolation)
  * - Account currency determines transaction currency validation
- * - Balance is automatically updated by database triggers
+ * - Balance must be manually updated by the application (no auto-triggers)
  * - Archived accounts are hidden but data is preserved
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
+ *
+ * Archive Columns Design:
+ * ─────────────────────────────────────────────────────
+ * `is_archived` and `archived_at` are intentionally independent columns.
+ * When a user unarchives an account, performs no operations, then re-archives it,
+ * the original `archived_at` timestamp is preserved. This is intentional behavior
+ * to maintain historical archive timestamps.
+ *
+ * Account Names:
+ * ─────────────────────────────────────────────────────
+ * Duplicate account names per user are intentionally allowed. Users may have
+ * multiple accounts with the same name (e.g., "Savings Account" at different banks).
  */
 export const accounts = pgTable(
   'accounts',
@@ -77,7 +93,7 @@ export const accounts = pgTable(
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .default('USD'), // Account base currency
-    balance: monetaryAmountColumn().default('0'), // Current balance (updated by triggers)
+    balance: monetaryAmountColumn().default('0'), // Current balance (manually updated by application)
 
     // Type-specific fields for savings accounts
     savingsTargetAmount: numeric({ precision: 14, scale: 2 }), // Target savings goal (savings only)
@@ -88,13 +104,13 @@ export const accounts = pgTable(
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
-    createdAt: createdAtColumn()
+    archivedAt: timestamp({ withTimezone: true }), // When the account was archived
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn()
   },
   table => [
-    // Performance indexes for common query patterns
-    index('accounts_user_idx').on(table.userId), // User's accounts lookup
-    index('accounts_user_archived_idx').on(table.userId, table.isArchived), // Active accounts only
-    index('accounts_user_type_idx').on(table.userId, table.type), // Accounts by type
+    // Essential indexes (server-side operations only)
+    index('accounts_user_idx').on(table.userId), // PowerSync sync queries
 
     // Business rule constraints
     check('accounts_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names

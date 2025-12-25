@@ -62,12 +62,12 @@ export default function WebLandingPage() {
       </Head>
 
       <ScrollView className="flex-1">
-        <View className="bg-gradient-to-b from-background to-accent/40">
+        <View className="from-background to-accent/40 bg-gradient-to-b">
           <View className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
             <View className="flex flex-col items-center gap-5 text-center">
               <Text variant="h1">{APP_NAME}</Text>
               <Text variant="lead">{TAGLINE}</Text>
-              <Text variant="p" className="max-w-2xl text-muted-foreground">
+              <Text variant="p" className="text-muted-foreground max-w-2xl">
                 {DESCRIPTION}
               </Text>
 
@@ -89,18 +89,18 @@ export default function WebLandingPage() {
               </View>
 
               <View className="mt-3 flex flex-row flex-wrap items-center justify-center gap-2">
-                <View className="rounded-full border border-border px-3 py-1">
-                  <Text className="text-xs text-muted-foreground">
+                <View className="border-border rounded-full border px-3 py-1">
+                  <Text className="text-muted-foreground text-xs">
                     No ads. No tracking.
                   </Text>
                 </View>
-                <View className="rounded-full border border-border px-3 py-1">
-                  <Text className="text-xs text-muted-foreground">
+                <View className="border-border rounded-full border px-3 py-1">
+                  <Text className="text-muted-foreground text-xs">
                     Offline‑first
                   </Text>
                 </View>
-                <View className="rounded-full border border-border px-3 py-1">
-                  <Text className="text-xs text-muted-foreground">
+                <View className="border-border rounded-full border px-3 py-1">
+                  <Text className="text-muted-foreground text-xs">
                     Secure optional sync
                   </Text>
                 </View>
@@ -134,9 +134,9 @@ export default function WebLandingPage() {
           </View>
         </View>
 
-        <View className="border-t border-border">
+        <View className="border-border border-t">
           <View className="mx-auto max-w-5xl px-6 py-8">
-            <Text variant="small" className="text-center text-muted-foreground">
+            <Text variant="small" className="text-muted-foreground text-center">
               © {new Date().getFullYear()} Breadly. All rights reserved.
             </Text>
           </View>

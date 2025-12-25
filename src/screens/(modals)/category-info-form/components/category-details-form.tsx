@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
+import { CategoryType } from '@/data/client/db-schema'
 import { createCategory, updateCategory } from '@/data/client/mutations'
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
@@ -19,9 +20,15 @@ interface Props {
   onClose: () => void
   parentId: string | null
   categoryId?: string
+  type: CategoryType
 }
 
-export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
+export function CategoryDetailsForm({
+  onClose,
+  categoryId,
+  parentId,
+  type
+}: Props) {
   const isEditMode = Boolean(categoryId)
   const isSubCategory = Boolean(parentId)
 
@@ -29,9 +36,11 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
 
   const { userId } = useUserSession()
 
-  const categoryData = useDrizzleQuery(
-    getCategory({ userId, categoryId: categoryId ?? '' })
-  ).data?.[0]
+  const {
+    data: [categoryData]
+  } = useDrizzleQuery(
+    categoryId ? getCategory({ userId, categoryId }) : undefined
+  )
 
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { name: '', description: '' }
@@ -62,7 +71,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
     } else {
       const [error] = await createCategory({
         userId,
-        data: { name, description, parentId, type: 'expense' }
+        data: { name, description, parentId, type }
       })
       if (error) {
         setSubmitError('Something went wrong. Please try again.')
@@ -84,7 +93,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
     <>
       {/* Category Name */}
       <View>
-        <Text className="mb-3 text-center text-lg font-bold text-foreground">
+        <Text className="text-foreground mb-3 text-center text-lg font-bold">
           {isSubCategory ? 'Subcategory Name' : 'Category Name'}
         </Text>
 
@@ -106,7 +115,7 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
 
       {/* Category Name */}
       <View>
-        <Text className="mb-3 text-center text-lg font-bold text-foreground">
+        <Text className="text-foreground mb-3 text-center text-lg font-bold">
           {isSubCategory ? 'Subcategory Description' : 'Category Description'}
         </Text>
 
@@ -137,14 +146,14 @@ export function CategoryDetailsForm({ onClose, categoryId, parentId }: Props) {
         </Button>
         <Button
           onPress={handleSubmit(onSubmit)}
-          className="flex-1 flex-row items-center justify-center rounded-lg bg-primary py-2"
+          className="bg-primary flex-1 flex-row items-center justify-center rounded-lg py-2"
         >
           <Icon
             name="Check"
             size={16}
-            className="mr-1 text-primary-foreground"
+            className="text-primary-foreground mr-1"
           />
-          <Text className="text-base text-primary-foreground">Save</Text>
+          <Text className="text-primary-foreground text-base">Save</Text>
         </Button>
       </View>
     </>

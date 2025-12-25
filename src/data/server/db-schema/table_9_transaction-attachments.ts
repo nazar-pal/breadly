@@ -22,7 +22,12 @@ import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import { index, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core'
 import { transactions } from './table_7_transactions'
 import { attachments } from './table_8_attachments'
-import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  updatedAtColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // Transaction attachments table - Many-to-many transaction ↔ attachment links
@@ -51,7 +56,8 @@ export const transactionAttachments = pgTable(
     attachmentId: uuid()
       .references(() => attachments.id, { onDelete: 'cascade' })
       .notNull(), // Attachment being referenced
-    createdAt: createdAtColumn() // Link creation timestamp
+    createdAt: createdAtColumn(), // Link creation timestamp
+    updatedAt: updatedAtColumn()
   },
   table => [
     // Unique constraint ensures each transaction-attachment pair exists only once

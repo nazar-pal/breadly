@@ -13,22 +13,29 @@ Key Features:
 - File metadata tracking (size, MIME type, duration)
 - User-specific attachment isolation for multi-tenant security
 - Many-to-many transaction relationships within user scope
-- Comprehensive file validation rules
-- Optimized for file retrieval and management
+
+PowerSync Limitations (JSON-based views):
+- CHECK constraints are NOT enforced (validated via Zod instead)
+- Multi-column indexes are NOT supported
+- Only single-column indexes work (basic support)
+
+Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
-import {
-  check,
-  index,
-  integer,
-  sqliteTable,
-  text
-} from 'drizzle-orm/sqlite-core'
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-import { sql } from 'drizzle-orm'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
+import { z } from 'zod'
+import { VALIDATION } from '@/data/const'
+import {
+  clerkUserIdColumn,
+  createdAtColumn,
+  updatedAtColumn,
+  uuidPrimaryKey
+} from './utils'
 
 // ============================================================================
 // Attachments table - File metadata (receipts, voice notes)
@@ -42,6 +49,15 @@ import { clerkUserIdColumn, createdAtColumn, uuidPrimaryKey } from './utils'
 export const ATTACHMENT_TYPE = ['receipt', 'voice'] as const
 export type AttachmentType = (typeof ATTACHMENT_TYPE)[number]
 
+/**
+ * Attachment upload status for tracking file upload lifecycle
+ * - pending: Record created, upload not yet started or in progress
+ * - ready: File successfully uploaded and available in cloud storage
+ * - failed: Upload failed (should be cleaned up by background job)
+ */
+export const ATTACHMENT_STATUS = ['pending', 'ready', 'failed'] as const
+export type AttachmentStatus = (typeof ATTACHMENT_STATUS)[number]
+
 // ============================================================================
 // ATTACHMENTS TABLE
 // ============================================================================
@@ -51,55 +67,98 @@ export type AttachmentType = (typeof ATTACHMENT_TYPE)[number]
  * Supports receipts (photos/PDFs) and voice messages (audio)
  * User-specific attachments with many-to-many transaction relationships
  *
- * Business Rules:
+ * Business Rules (enforced via Zod, not SQLite):
  * - Attachments belong to specific users (multi-tenant isolation)
- * - Attachments can be referenced by multiple transactions within user scope
  * - Bucket paths must be non-empty for cloud storage integration
- * - File sizes must be positive values (when specified)
+ * - File sizes are required and must be positive values (NOT NULL, > 0)
  * - Voice messages must include duration metadata
- * - Receipt attachments may optionally include duration (for video receipts)
- * - MIME types help determine file handling and preview capabilities
  * - Attachment types: 'receipt' | 'voice'
  */
 const columns = {
+  // Explicitly defined for Drizzle ORM type safety
   id: uuidPrimaryKey(),
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
-  type: text({ enum: ATTACHMENT_TYPE }).notNull(), // attachment type ('receipt' | 'voice')
+  type: text({ enum: ATTACHMENT_TYPE }).notNull(), // Attachment type ('receipt' | 'voice')
+  status: text({ enum: ATTACHMENT_STATUS }).default('pending').notNull(), // Upload lifecycle status
   bucketPath: text('bucket_path').notNull(), // Cloud storage path (S3, etc.)
   mime: text({ length: 150 }).notNull(), // File MIME type
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
   fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-  createdAt: createdAtColumn() // Upload timestamp
+  uploadedAt: integer('uploaded_at', { mode: 'timestamp_ms' }), // When upload completed successfully
+  createdAt: createdAtColumn(), // Record creation timestamp
+  updatedAt: updatedAtColumn()
 }
 
+// Only single-column indexes are supported in PowerSync JSON-based views
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
-  // Performance indexes for common queries
-  index('attachments_user_idx').on(table.userId), // User's attachments lookup
-  index('attachments_type_idx').on(table.type), // Filter by attachment type
-  index('attachments_user_type_idx').on(table.userId, table.type), // User's attachments by type
-  index('attachments_created_at_idx').on(table.createdAt), // Sort by upload date
-
-  // Business rule constraints
-  check(
-    'attachments_bucket_path_not_empty',
-    sql`length(trim(${table.bucketPath})) > 0`
-  ), // Valid bucket paths
-  check(
-    'attachments_file_size_positive',
-    sql`${table.fileSize} IS NULL OR ${table.fileSize} > 0`
-  ), // Positive file sizes
-  check(
-    'attachments_duration_positive',
-    sql`${table.duration} IS NULL OR ${table.duration} > 0`
-  ), // Positive durations
-  check(
-    'attachments_voice_has_duration',
-    sql`${table.type} != 'voice' OR ${table.duration} IS NOT NULL`
-  ) // Voice messages require duration
+  index('attachments_user_idx').on(table.userId),
+  index('attachments_type_idx').on(table.type),
+  index('attachments_status_idx').on(table.status),
+  index('attachments_created_at_idx').on(table.createdAt)
 ]
 
 export const attachments = sqliteTable('attachments', columns, extraConfig)
 
 export const getAttachmentsSqliteTable = (name: string) =>
   sqliteTable(name, columns, extraConfig)
+
+// ============================================================================
+// ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+/**
+ * Attachment insert schema with business rule validations.
+ *
+ * Server CHECK constraints replicated:
+ * - attachments_bucket_path_not_empty: bucket path must be non-empty
+ * - attachments_file_size_positive: file size must be positive
+ * - attachments_duration_positive: duration must be positive (if set)
+ * - attachments_voice_has_duration: voice messages must have duration
+ * - attachments_ready_has_uploaded_at: ready attachments must have uploaded_at
+ */
+export const attachmentInsertSchema = createInsertSchema(attachments, {
+  id: s => s.default(randomUUID),
+  bucketPath: s => s.trim().min(1),
+  fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
+  mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
+  fileSize: s => s.positive(),
+  duration: s => s.positive().optional()
+})
+  .omit({ createdAt: true, updatedAt: true })
+  // Voice messages require duration
+  .refine(data => data.type !== 'voice' || data.duration != null, {
+    message: 'Voice messages must include duration',
+    path: ['duration']
+  })
+  // Ready attachments must have uploadedAt timestamp
+  .refine(data => data.status !== 'ready' || data.uploadedAt != null, {
+    message: 'Ready attachments must have uploadedAt timestamp',
+    path: ['uploadedAt']
+  })
+
+export type AttachmentInsertSchemaInput = z.input<typeof attachmentInsertSchema>
+export type AttachmentInsertSchemaOutput = z.output<
+  typeof attachmentInsertSchema
+>
+
+export const attachmentUpdateSchema = createUpdateSchema(attachments, {
+  bucketPath: s => s.trim().min(1),
+  fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
+  mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
+  fileSize: s => s.positive(),
+  duration: s => s.positive()
+}).omit({
+  id: true,
+  userId: true,
+  type: true,
+  createdAt: true,
+  updatedAt: true
+})
+// Note: Cross-field validation for status='ready' requiring uploadedAt cannot be
+// fully validated at schema level for partial updates. Validate in mutation with merged state.
+
+export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
+export type AttachmentUpdateSchemaOutput = z.output<
+  typeof attachmentUpdateSchema
+>

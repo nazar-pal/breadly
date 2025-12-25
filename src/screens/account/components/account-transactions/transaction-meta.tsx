@@ -1,11 +1,11 @@
 import { Badge } from '@/components/ui/badge'
 import { Text } from '@/components/ui/text'
-import { GetAccountTransactionsItem } from '@/data/client/queries'
+import { GetAccountTransactionsResultItem } from '@/data/client/queries'
 import React from 'react'
 import { View } from 'react-native'
 
 interface TransactionMetaProps {
-  transaction: GetAccountTransactionsItem
+  transaction: GetAccountTransactionsResultItem
 }
 
 export function TransactionMeta({ transaction }: TransactionMetaProps) {
@@ -35,7 +35,7 @@ export function TransactionMeta({ transaction }: TransactionMetaProps) {
 
       {hasNotes ? (
         <Text
-          className="mt-1 pr-4 text-xs text-muted-foreground"
+          className="text-muted-foreground mt-1 pr-4 text-xs"
           numberOfLines={1}
         >
           {transaction.notes}

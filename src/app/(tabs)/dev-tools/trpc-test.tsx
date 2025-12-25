@@ -1,5 +1,8 @@
-import TrpcTestDev from '@/screens/(tabs)/dev-tools/trpc-test'
+export default function TrpcTestScreen() {
+  if (!__DEV__) return null
 
-export default function Test() {
+  // Dynamic require ensures this code is tree-shaken in production
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const TrpcTestDev = require('@/screens/(tabs)/dev-tools/trpc-test').default
   return <TrpcTestDev />
 }

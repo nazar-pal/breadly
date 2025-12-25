@@ -47,9 +47,9 @@ export function SelectionItem({
     >
       <View className="min-w-0 flex-1 flex-row items-center">
         {leftElement ? (
-          <View className="mr-3 rounded-lg bg-primary/10 p-2">
+          <View className="bg-primary/10 mr-3 rounded-lg p-2">
             {isTextLeftElement ? (
-              <Text className="text-sm font-semibold text-primary">
+              <Text className="text-primary text-sm font-semibold">
                 {leftElement}
               </Text>
             ) : (
@@ -61,7 +61,7 @@ export function SelectionItem({
           {isTextTitle ? (
             <>
               <Text
-                className="text-base font-medium text-foreground"
+                className="text-foreground text-base font-medium"
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
@@ -69,7 +69,7 @@ export function SelectionItem({
               </Text>
               {subtitle && (
                 <Text
-                  className="text-sm text-muted-foreground"
+                  className="text-muted-foreground text-sm"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
@@ -84,7 +84,7 @@ export function SelectionItem({
       </View>
       {rightElement ? (
         isTextRightElement ? (
-          <Text className="text-sm text-muted-foreground">{rightElement}</Text>
+          <Text className="text-muted-foreground text-sm">{rightElement}</Text>
         ) : (
           rightElement
         )

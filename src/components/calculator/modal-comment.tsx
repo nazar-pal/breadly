@@ -31,15 +31,15 @@ export function CommentModal({
         <DialogHeader>
           <DialogTitle>Add Comment</DialogTitle>
         </DialogHeader>
-        <View className="p-6 pt-0 ">
+        <View className="p-6 pt-0">
           <Input
-            className="native:h-[80px] rounded-xl border-none bg-muted/60 px-4 py-3 text-base"
+            className="native:h-[80px] bg-muted/60 rounded-xl border-none px-4 py-3 text-base"
             value={comment}
             onChangeText={onChangeComment}
             placeholder="Type your comment..."
             multiline
             textAlignVertical="top"
-            placeholderClassName="text-muted-foreground"
+            placeholderTextColorClassName="text-muted-foreground"
           />
         </View>
         <DialogFooter>

@@ -15,7 +15,7 @@ export function EmptyState({ onPress, type }: ImportEmptyStateProps) {
   return (
     <View className="flex-1 items-center justify-center px-8">
       <View className="items-center gap-5">
-        <View className="h-20 w-20 items-center justify-center rounded-2xl bg-primary/10">
+        <View className="bg-primary/10 h-20 w-20 items-center justify-center rounded-2xl">
           <FileUp size={36} className="text-primary" strokeWidth={1.5} />
         </View>
 
@@ -23,7 +23,7 @@ export function EmptyState({ onPress, type }: ImportEmptyStateProps) {
           <Text className="text-center text-lg font-semibold">
             {isTransactions ? 'Import Transactions' : 'Import Categories'}
           </Text>
-          <Text className="max-w-[260px] text-center text-sm text-muted-foreground">
+          <Text className="text-muted-foreground max-w-[260px] text-center text-sm">
             {isTransactions
               ? 'Add transactions from a CSV file'
               : 'Add categories from a CSV file'}

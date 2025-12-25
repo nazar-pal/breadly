@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'
@@ -187,10 +187,10 @@ export function CategoryDetailsHeader({
       <View className="ml-auto flex-row gap-2">
         <Pressable
           onPress={handleEdit}
-          className=" flex-row items-center gap-2 rounded-lg border border-border bg-card px-3 py-2"
+          className="border-border bg-card flex-row items-center gap-2 rounded-lg border px-3 py-2"
         >
           <Icon name="Pencil" size={16} className="text-primary" />
-          <Text className="text-sm font-medium text-primary">Edit</Text>
+          <Text className="text-primary text-sm font-medium">Edit</Text>
         </Pressable>
 
         {!isDependencyCheckLoading && (

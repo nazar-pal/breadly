@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon'
+import { Icon } from '@/components/ui/lucide-icon'
 import { NativeOnlyAnimatedView } from '@/components/ui/native-only-animated-view'
 import { TextClassContext } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
@@ -33,7 +33,7 @@ function SelectValue({
     <SelectPrimitive.Value
       ref={ref}
       className={cn(
-        'line-clamp-1 flex flex-row items-center gap-2 text-sm text-foreground',
+        'text-foreground line-clamp-1 flex flex-row items-center gap-2 text-sm',
         !value && 'text-muted-foreground',
         className
       )}
@@ -57,9 +57,9 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex h-10 flex-row items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 shadow-sm shadow-black/5 dark:bg-input/30 dark:active:bg-input/50 sm:h-9',
+        'border-input bg-background dark:bg-input/30 dark:active:bg-input/50 flex h-10 flex-row items-center justify-between gap-2 rounded-md border px-3 py-2 shadow-sm shadow-black/5 sm:h-9',
         Platform.select({
-          web: 'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive w-fit whitespace-nowrap text-sm outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed dark:hover:bg-input/50 [&_svg]:pointer-events-none [&_svg]:shrink-0'
+          web: 'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus-visible:border-ring focus-visible:ring-ring/50 dark:hover:bg-input/50 w-fit text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0'
         }),
         props.disabled && 'opacity-50',
         size === 'sm' && 'h-8 py-2 sm:py-1.5',
@@ -71,7 +71,7 @@ function SelectTrigger({
       <Icon
         as={ChevronDown}
         aria-hidden={true}
-        className="size-4 text-muted-foreground"
+        className="text-muted-foreground size-4"
       />
     </SelectPrimitive.Trigger>
   )
@@ -105,10 +105,10 @@ function SelectContent({
             >
               <SelectPrimitive.Content
                 className={cn(
-                  'relative z-50 min-w-[8rem] rounded-md border border-border bg-popover shadow-md shadow-black/5',
+                  'border-border bg-popover relative z-50 min-w-[8rem] rounded-md border shadow-md shadow-black/5',
                   Platform.select({
                     web: cn(
-                      'origin-(--radix-select-content-transform-origin) max-h-52 overflow-y-auto overflow-x-hidden animate-in fade-in-0 zoom-in-95',
+                      'animate-in fade-in-0 zoom-in-95 max-h-52 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto',
                       props.side === 'bottom' && 'slide-in-from-top-2',
                       props.side === 'top' && 'slide-in-from-bottom-2'
                     ),
@@ -158,7 +158,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       className={cn(
-        'px-2 py-2 text-xs text-muted-foreground sm:py-1.5',
+        'text-muted-foreground px-2 py-2 text-xs sm:py-1.5',
         className
       )}
       {...props}
@@ -174,9 +174,9 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        'group relative flex w-full flex-row items-center gap-2 rounded-sm py-2 pl-2 pr-8 active:bg-accent sm:py-1.5',
+        'group active:bg-accent relative flex w-full flex-row items-center gap-2 rounded-sm py-2 pr-8 pl-2 sm:py-1.5',
         Platform.select({
-          web: '*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 cursor-default outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none [&_svg]:pointer-events-none'
+          web: 'focus:bg-accent focus:text-accent-foreground cursor-default outline-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2'
         }),
         props.disabled && 'opacity-50',
         className
@@ -185,10 +185,10 @@ function SelectItem({
     >
       <View className="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Icon as={Check} className="size-4 shrink-0 text-muted-foreground" />
+          <Icon as={Check} className="text-muted-foreground size-4 shrink-0" />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className="select-none text-sm text-foreground group-active:text-accent-foreground" />
+      <SelectPrimitive.ItemText className="text-foreground group-active:text-accent-foreground text-sm select-none" />
     </SelectPrimitive.Item>
   )
 }
@@ -201,7 +201,7 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       className={cn(
-        '-mx-1 my-1 h-px bg-border',
+        'bg-border -mx-1 my-1 h-px',
         Platform.select({ web: 'pointer-events-none' }),
         className
       )}

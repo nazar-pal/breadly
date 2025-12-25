@@ -1,17 +1,22 @@
+import { categories, categoryUpdateSchema } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
-import { and, eq } from 'drizzle-orm'
-import { createUpdateSchema } from 'drizzle-zod'
+import { and, eq, isNull, ne } from 'drizzle-orm'
 import { z } from 'zod'
-import { categories } from '../db-schema'
 
-const categoryUpdateSchema = createUpdateSchema(categories).pick({
-  parentId: true,
+const updateCategorySchema = categoryUpdateSchema.pick({
   name: true,
   description: true,
   icon: true
 })
 
+/**
+ * Updates an existing category.
+ *
+ * Validation is performed in two layers:
+ * 1. Zod schema validates CHECK constraints (name non-empty if provided)
+ * 2. Transaction validates existence, ownership, and unique name constraint
+ */
 export async function updateCategory({
   id,
   userId,
@@ -19,15 +24,49 @@ export async function updateCategory({
 }: {
   id: string
   userId: string
-  data: z.input<typeof categoryUpdateSchema>
+  data: z.input<typeof updateCategorySchema>
 }) {
-  const parsedData = categoryUpdateSchema.parse(data)
+  // Zod schema handles CHECK constraint validations:
+  // - Name is non-empty after trimming (if provided)
+  const parsedData = updateCategorySchema.parse(data)
 
   const [error, result] = await asyncTryCatch(
-    db
-      .update(categories)
-      .set(parsedData)
-      .where(and(eq(categories.id, id), eq(categories.userId, userId)))
+    db.transaction(async tx => {
+      // Verify category exists and belongs to user
+      const existingCategory = await tx.query.categories.findFirst({
+        where: and(eq(categories.id, id), eq(categories.userId, userId))
+      })
+      if (!existingCategory) throw new Error('Category not found')
+
+      // Validate unique name within user+parent scope (server unique constraint)
+      if (
+        parsedData.name !== undefined &&
+        parsedData.name !== existingCategory.name
+      ) {
+        const duplicateName = await tx.query.categories.findFirst({
+          where: and(
+            eq(categories.userId, userId),
+            existingCategory.parentId
+              ? eq(categories.parentId, existingCategory.parentId)
+              : isNull(categories.parentId),
+            eq(categories.name, parsedData.name),
+            ne(categories.id, id) // Exclude current category
+          ),
+          columns: { id: true }
+        })
+        if (duplicateName)
+          throw new Error(
+            'A category with this name already exists at this level'
+          )
+      }
+
+      await tx
+        .update(categories)
+        .set(parsedData)
+        .where(and(eq(categories.id, id), eq(categories.userId, userId)))
+
+      return true
+    })
   )
 
   return [error, result]

@@ -1,4 +1,4 @@
-import { Icon, IconName } from '@/components/ui/icon-by-name'
+import { Icon, IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { AccountType } from '@/data/client/db-schema'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
@@ -61,7 +61,7 @@ export function AccountHeader({ account }: { account: GetAccountResultItem }) {
           />
         </View>
         <View>
-          <Text className="text-2xl font-bold text-foreground">
+          <Text className="text-foreground text-2xl font-bold">
             {account.name}
           </Text>
           <View className="mt-1 flex-row items-center gap-2">

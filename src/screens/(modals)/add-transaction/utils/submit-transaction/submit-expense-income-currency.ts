@@ -7,8 +7,7 @@ export async function submitExpenseIncomeCurrency(
   args: WorkflowMap['expense-income:currency'],
   inputs: CalculatorInputs
 ): Promise<void> {
-  const currencies = await getCurrency({ currencyCode: args.currencyCode })
-  const currency = currencies.length > 0 ? currencies[0] : null
+  const currency = await getCurrency({ currencyCode: args.currencyCode })
   if (!currency) throw new Error('Currency not found')
 
   const [err] = await createTransaction({

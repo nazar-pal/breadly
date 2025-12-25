@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { Pressable, View } from 'react-native'
@@ -23,14 +23,14 @@ export function SelectionTrigger({ onPress, className, direction }: Props) {
       className={cn(
         'flex-1 flex-row items-center justify-between',
         'rounded-xl border px-3.5 py-3',
-        'border-input bg-card/90 shadow-md shadow-black/10 active:bg-muted/60 dark:bg-card/40 dark:active:bg-card/60',
+        'border-input bg-card/90 active:bg-muted/60 dark:bg-card/40 dark:active:bg-card/60 shadow-md shadow-black/10',
         className
       )}
       onPress={onPress}
       accessibilityRole="button"
     >
       <View className="flex-1 flex-row items-center">
-        <View className="mr-3 rounded-lg bg-primary/10 p-2">
+        <View className="bg-primary/10 mr-3 rounded-lg p-2">
           <SelectionTriggerContent render="icon" slot={slot} />
         </View>
         <View className="flex-1">
@@ -41,7 +41,7 @@ export function SelectionTrigger({ onPress, className, direction }: Props) {
       <Icon
         name="ChevronDown"
         size={14}
-        className="ml-1 text-muted-foreground"
+        className="text-muted-foreground ml-1"
       />
     </Pressable>
   )

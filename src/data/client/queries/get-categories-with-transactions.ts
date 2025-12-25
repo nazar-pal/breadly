@@ -1,6 +1,10 @@
+import {
+  categories,
+  CATEGORY_TYPE,
+  transactions
+} from '@/data/client/db-schema'
 import { db } from '@/system/powersync/system'
 import { and, asc, eq, gte, isNull, lte } from 'drizzle-orm'
-import { categories, CATEGORY_TYPE, transactions } from '../db-schema'
 
 interface Params {
   userId: string
@@ -27,9 +31,9 @@ interface Params {
  * Transactions are always filtered by user, type, and optional date range.
  *
  * @example
- * getCategories({ userId, type: 'expense' }) // All categories
- * getCategories({ userId, type: 'expense', parentId: null }) // Parent categories only
- * getCategories({ userId, type: 'expense', parentId: 'parent-id' }) // Subcategories of parent
+ * getCategoriesWithTransactions({ userId, type: 'expense' }) // All categories
+ * getCategoriesWithTransactions({ userId, type: 'expense', parentId: null }) // Parent categories only
+ * getCategoriesWithTransactions({ userId, type: 'expense', parentId: 'parent-id' }) // Subcategories of parent
  */
 export function getCategoriesWithTransactions({
   userId,
@@ -40,39 +44,38 @@ export function getCategoriesWithTransactions({
   isArchived,
   includeSubcategoriesWithTransactions
 }: Params) {
-  // Build the where conditions based on parentId parameter
+  // parentId: undefined = all, null = root only, string = children of parent
   const parentCondition =
     parentId === undefined
-      ? undefined // No parent filter - get all categories
+      ? undefined
       : parentId === null
-        ? isNull(categories.parentId) // Get only parent categories
-        : eq(categories.parentId, parentId) // Get subcategories of specific parent
+        ? isNull(categories.parentId)
+        : eq(categories.parentId, parentId)
 
-  // Always include transactions filtered by user/type/date range
-  const baseTransactionsWhere = and(
+  const transactionsWhere = and(
     eq(transactions.userId, userId),
     eq(transactions.type, type),
-    transactionsFrom ? gte(transactions.txDate, transactionsFrom) : undefined,
-    transactionsTo ? lte(transactions.txDate, transactionsTo) : undefined
+    ...(transactionsFrom ? [gte(transactions.txDate, transactionsFrom)] : []),
+    ...(transactionsTo ? [lte(transactions.txDate, transactionsTo)] : [])
   )
 
   return db.query.categories.findMany({
     where: and(
       eq(categories.userId, userId),
       eq(categories.type, type),
-      parentCondition,
-      isArchived === undefined
-        ? undefined
-        : eq(categories.isArchived, isArchived)
+      ...(parentCondition ? [parentCondition] : []),
+      ...(isArchived !== undefined
+        ? [eq(categories.isArchived, isArchived)]
+        : [])
     ),
     with: {
       transactions: {
-        where: baseTransactionsWhere
+        where: transactionsWhere
       },
       ...(includeSubcategoriesWithTransactions
         ? {
             subcategories: {
-              with: { transactions: { where: baseTransactionsWhere } }
+              with: { transactions: { where: transactionsWhere } }
             }
           }
         : {})

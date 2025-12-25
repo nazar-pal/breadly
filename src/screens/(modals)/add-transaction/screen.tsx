@@ -1,8 +1,11 @@
 import { Calculator } from '@/components/calculator'
+import { SafeAreaView } from '@/components/ui/safe-area-view'
+import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animation-store'
 import { useUserSession } from '@/system/session-and-migration'
 import * as Sentry from '@sentry/react-native'
 import React, { useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Platform, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ParamsSelection } from './components/params-selection'
 import { useTransactionParamsActions, useTransactionParamsState } from './store'
 import {
@@ -46,12 +49,28 @@ export default function AddTransaction() {
       return
     }
 
+    // Mark that a transaction was just created - any category whose
+    // total changes within the next 2 seconds will animate
+    categoryTotalAnimationStore.getState().markTransactionCreated()
+
     closeTransactionBottomSheet()
   }
 
+  const insets = useSafeAreaInsets()
+
+  // TODO: Find a better way to handle this in a cross-platform way
+  const Container = Platform.OS === 'ios' ? SafeAreaView : View
+
   return (
-    <SafeAreaView
-      edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
+    <Container
+      style={{
+        paddingBottom:
+          Platform.OS === 'ios'
+            ? insets.bottom >= 12
+              ? 0
+              : 12 - insets.bottom
+            : Math.max(12, insets.bottom)
+      }}
       className="bg-popover p-4"
     >
       <ParamsSelection />
@@ -60,6 +79,6 @@ export default function AddTransaction() {
         isDisabled={!Boolean(determineSubmitWorkflow(params))}
         handleSubmit={handleSubmit}
       />
-    </SafeAreaView>
+    </Container>
   )
 }

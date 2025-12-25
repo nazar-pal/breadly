@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategoryType } from '@/data/client/db-schema'
 import React from 'react'
 import { SettingsDropdownLinkItem } from './settings-dropdown-link-item'

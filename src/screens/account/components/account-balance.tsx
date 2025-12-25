@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -9,15 +9,15 @@ import { View } from 'react-native'
 export function AccountBalance({ account }: { account: GetAccountResultItem }) {
   const { balance, type, description, currency } = account
   return (
-    <Card className="mb-4 border-0 bg-card/50 shadow-none">
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
       <CardContent className="py-6">
-        <Text className="mb-2 text-sm text-muted-foreground">
+        <Text className="text-muted-foreground mb-2 text-sm">
           Current Balance
         </Text>
         <View className="flex-row items-center gap-2">
           <Text
             className={cn(
-              'text-[40px] font-extrabold leading-none tracking-tight'
+              'text-[40px] leading-none font-extrabold tracking-tight'
             )}
           >
             {balance < 0 && type === 'payment' ? '-' : ''}
@@ -34,7 +34,7 @@ export function AccountBalance({ account }: { account: GetAccountResultItem }) {
           )}
         </View>
         {description && (
-          <Text className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          <Text className="text-muted-foreground mt-4 text-sm leading-relaxed">
             {description}
           </Text>
         )}

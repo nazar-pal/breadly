@@ -17,10 +17,10 @@ export function AccountProgress({
   if (!progress) return null
 
   return (
-    <Card className="mb-4 border-0 bg-card/50 shadow-none">
+    <Card className="bg-card/50 mb-4 border-0 shadow-none">
       <CardContent className="py-5">
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-base font-medium text-foreground">
+          <Text className="text-foreground text-base font-medium">
             {account.type === 'saving'
               ? 'Savings Progress'
               : 'Repayment Progress'}
@@ -34,7 +34,7 @@ export function AccountProgress({
             {progress.toFixed(1)}%
           </Text>
         </View>
-        <View className="h-2 overflow-hidden rounded-full bg-secondary">
+        <View className="bg-secondary h-2 overflow-hidden rounded-full">
           <View
             className={cn(
               'h-full',
@@ -46,7 +46,7 @@ export function AccountProgress({
           />
         </View>
         {label ? (
-          <Text className="mt-2 text-xs text-muted-foreground">{label}</Text>
+          <Text className="text-muted-foreground mt-2 text-xs">{label}</Text>
         ) : null}
       </CardContent>
     </Card>

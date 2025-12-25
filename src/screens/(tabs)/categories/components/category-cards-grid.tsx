@@ -12,6 +12,7 @@ import React from 'react'
 import { ScrollView, useWindowDimensions, View } from 'react-native'
 import { ButtonAddCategory } from './button-add-category'
 import { CategoryCard } from './category-card'
+import { useArchivedCategoriesExpanded } from './lib/use-archived-categories-expanded'
 import {
   useGetCategoriesWithAmounts,
   type CategoryWithAmounts
@@ -85,7 +86,7 @@ function CategoryGridSection({
                   style={{ height: cardHeightPx }}
                 >
                   <ButtonAddCategory
-                    className={`rounded-xl border border-dashed border-border bg-muted/50 p-3 shadow-sm ${cardHeightClass}`}
+                    className={`border-border bg-muted/50 rounded-xl border border-dashed p-3 shadow-sm ${cardHeightClass}`}
                     type={type}
                   />
                 </View>
@@ -107,7 +108,7 @@ function CategoryGridSection({
                   }}
                   onLongPress={() => onLongPress(category.id)}
                   className={cn(
-                    'rounded-xl border border-border  bg-card p-3 shadow-sm',
+                    'border-border bg-card rounded-xl border p-3 shadow-sm',
                     cardHeightClass,
                     isArchived && 'border-dashed shadow-none'
                   )}
@@ -130,9 +131,12 @@ function CategoryGridSection({
 // Public component
 // -----------------------------------------------------------------------------
 
+const ARCHIVED_ACCORDION_VALUE = 'archived-categories'
+
 export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
   const { dateRange } = useCategoriesDateRangeState()
   const { width } = useWindowDimensions()
+  const { isExpanded, setExpanded } = useArchivedCategoriesExpanded()
 
   const categories = useGetCategoriesWithAmounts({
     transactionsFrom: dateRange.start,
@@ -154,6 +158,12 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
   const minCardWidth = 152
   const numColumns = Math.max(2, Math.floor(availableWidth / minCardWidth))
 
+  const accordionValue = isExpanded ? [ARCHIVED_ACCORDION_VALUE] : []
+
+  const handleValueChange = (value: string[]) => {
+    setExpanded(value.includes(ARCHIVED_ACCORDION_VALUE))
+  }
+
   return (
     <ScrollView className="flex-1" contentContainerClassName="p-4 pb-2">
       {/* Active categories */}
@@ -168,10 +178,17 @@ export function CategoryCardsGrid({ type, onPress, onLongPress }: Props) {
 
       {/* Archived categories */}
       {categoriesArchived.length > 0 && (
-        <Accordion type="multiple" collapsible>
-          <AccordionItem value="archived-categories" className="border-b-0">
+        <Accordion
+          type="multiple"
+          value={accordionValue}
+          onValueChange={handleValueChange}
+        >
+          <AccordionItem
+            value={ARCHIVED_ACCORDION_VALUE}
+            className="border-b-0"
+          >
             <AccordionTrigger>
-              <Text className="text-sm font-medium text-muted-foreground">
+              <Text className="text-muted-foreground text-sm font-medium">
                 Archived Categories ({categoriesArchived.length})
               </Text>
             </AccordionTrigger>

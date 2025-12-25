@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import {
   DateRangeMode,
   useCategoriesDateRangeActions,
@@ -6,7 +6,7 @@ import {
 } from '@/lib/storage/categories-date-range-store'
 import { router } from 'expo-router'
 import React from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 
 const MODE_OPTIONS: {
   mode: DateRangeMode
@@ -41,38 +41,36 @@ export function ModeSelection() {
   }
 
   return (
-    <ScrollView className="flex-grow pt-3" showsVerticalScrollIndicator={false}>
-      <View className="flex-row flex-wrap justify-between">
-        {MODE_OPTIONS.map(option => (
-          <Pressable
-            key={option.mode}
-            className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 active:opacity-90 ${
-              dateRange.mode === option.mode
-                ? 'border-primary/40 bg-primary/5'
-                : 'border-input bg-background'
-            }`}
-            onPress={() => handleModeSelect(option.mode)}
-          >
-            <View className="flex-1">
-              <Text
-                className={`mb-0.5 text-[15px] font-semibold ${
-                  dateRange.mode === option.mode
-                    ? 'text-primary'
-                    : 'text-foreground'
-                }`}
-              >
-                {option.label}
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                {option.description}
-              </Text>
-            </View>
-            {dateRange.mode === option.mode && (
-              <Icon name="Check" size={16} className="text-primary" />
-            )}
-          </Pressable>
-        ))}
-      </View>
-    </ScrollView>
+    <View className="flex-row flex-wrap justify-between">
+      {MODE_OPTIONS.map(option => (
+        <Pressable
+          key={option.mode}
+          className={`my-1 w-[48%] flex-row items-center rounded-2xl border px-3 py-3 active:opacity-90 ${
+            dateRange.mode === option.mode
+              ? 'border-primary/40 bg-primary/5'
+              : 'border-input bg-background'
+          }`}
+          onPress={() => handleModeSelect(option.mode)}
+        >
+          <View className="flex-1">
+            <Text
+              className={`mb-0.5 text-[15px] font-semibold ${
+                dateRange.mode === option.mode
+                  ? 'text-primary'
+                  : 'text-foreground'
+              }`}
+            >
+              {option.label}
+            </Text>
+            <Text className="text-muted-foreground text-xs">
+              {option.description}
+            </Text>
+          </View>
+          {dateRange.mode === option.mode && (
+            <Icon name="Check" size={16} className="text-primary" />
+          )}
+        </Pressable>
+      ))}
+    </View>
   )
 }

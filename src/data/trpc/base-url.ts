@@ -22,6 +22,7 @@ export const getBaseUrl = () => {
    * - Web: Uses localhost for best performance and reliability
    * - Mobile: Uses actual IP address since localhost refers to the device itself
    */
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Platform } = require('react-native')
 
   if (Platform.OS === 'web') {

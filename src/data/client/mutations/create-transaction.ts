@@ -1,25 +1,99 @@
-import { accounts, transactions } from '@/data/client/db-schema'
+import {
+  accounts,
+  categories,
+  currencies,
+  events,
+  transactionInsertSchema,
+  transactions
+} from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { db } from '@/system/powersync/system'
 import { and, eq } from 'drizzle-orm'
-import { createInsertSchema } from 'drizzle-zod'
+import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 
-const transactionInsertSchema = createInsertSchema(transactions)
-
+/**
+ * Creates a new transaction.
+ *
+ * Validation is performed in two layers:
+ * 1. Zod schema validates CHECK constraints:
+ *    - Amount is positive and within limits
+ *    - Transfers have a source account (accountId not null)
+ *    - Transfers have different source and destination accounts
+ *    - Non-transfers don't have a counter account
+ * 2. Transaction validates FK constraints and business rules:
+ *    - Currency, category, and account references exist
+ *    - Category type matches transaction type (expense→expense, income→income)
+ *    - Transfer transactions cannot have a category
+ *
+ * Note: Negative account balances are allowed (no insufficient funds check).
+ *
+ * @returns Tuple of [error, { id }] - the created transaction ID on success
+ */
 export async function createTransaction({
   userId,
   data
 }: {
   userId: string
-  data: Omit<z.input<typeof transactionInsertSchema>, 'userId'>
+  data: Omit<z.input<typeof transactionInsertSchema>, 'userId' | 'id'>
 }) {
-  const parsedData = transactionInsertSchema.parse({ ...data, userId })
+  const id = randomUUID()
+  const parsedData = transactionInsertSchema.parse({ ...data, userId, id })
 
   // Perform validation and balance updates atomically
   const [error, result] = await asyncTryCatch(
     db.transaction(async tx => {
-      // Load involved accounts (if any)
+      // Validate currency exists (FK constraint not enforced by PowerSync)
+      const currency = await tx.query.currencies.findFirst({
+        where: eq(currencies.code, parsedData.currencyId)
+      })
+      if (!currency)
+        throw new Error(`Currency "${parsedData.currencyId}" not found`)
+
+      // Transfer transactions cannot have a category (server trigger enforces this)
+      if (parsedData.type === 'transfer' && parsedData.categoryId != null)
+        throw new Error('Transfer transactions cannot have a category')
+
+      // Validate category exists, belongs to user, is not archived, and type matches (if provided)
+      if (parsedData.categoryId) {
+        const category = await tx.query.categories.findFirst({
+          where: and(
+            eq(categories.id, parsedData.categoryId),
+            eq(categories.userId, userId)
+          )
+        })
+        if (!category) throw new Error('Category not found')
+
+        // Prevent using archived categories in new transactions
+        if (category.isArchived)
+          throw new Error('Cannot use archived category for new transaction')
+
+        // Validate category type matches transaction type (server trigger enforces this)
+        if (category.type !== parsedData.type) {
+          throw new Error(
+            `Cannot use ${category.type} category for ${parsedData.type} transaction`
+          )
+        }
+      }
+
+      // Validate event exists and belongs to user (if provided)
+      if (parsedData.eventId) {
+        const event = await tx.query.events.findFirst({
+          where: and(
+            eq(events.id, parsedData.eventId),
+            eq(events.userId, userId)
+          )
+        })
+        if (!event)
+          throw new Error('Event not found or does not belong to user')
+
+        // Prevent using archived events in new transactions
+        if (event.isArchived)
+          throw new Error('Cannot use archived event for new transaction')
+      }
+
+      // Load involved accounts if IDs are present
+      // (Zod schema guarantees both IDs exist for transfers, and counterAccountId is null for non-transfers)
       const fromAccount = parsedData.accountId
         ? await tx.query.accounts.findFirst({
             where: and(
@@ -29,38 +103,56 @@ export async function createTransaction({
           })
         : null
 
-      const toAccount =
-        parsedData.type === 'transfer' && parsedData.counterAccountId
-          ? await tx.query.accounts.findFirst({
-              where: and(
-                eq(accounts.id, parsedData.counterAccountId),
-                eq(accounts.userId, userId)
-              )
-            })
-          : null
+      const toAccount = parsedData.counterAccountId
+        ? await tx.query.accounts.findFirst({
+            where: and(
+              eq(accounts.id, parsedData.counterAccountId),
+              eq(accounts.userId, userId)
+            )
+          })
+        : null
 
-      // Basic existence checks for referenced accounts
-      if (parsedData.type === 'transfer') {
-        if (!fromAccount) throw new Error('From account not found')
-        if (!toAccount) throw new Error('To account not found')
-      } else if (parsedData.accountId && !fromAccount) {
+      // Validate account existence (FK constraint not enforced by PowerSync)
+      if (parsedData.accountId && !fromAccount)
         throw new Error('Account not found')
+      if (parsedData.counterAccountId && !toAccount)
+        throw new Error('Destination account not found')
+
+      // Prevent using archived accounts in new transactions
+      if (fromAccount?.isArchived)
+        throw new Error('Cannot use archived account for new transaction')
+
+      if (toAccount?.isArchived)
+        throw new Error(
+          'Cannot use archived account as transfer destination for new transaction'
+        )
+
+      // Validate currency consistency (prevents server trigger failure)
+      if (fromAccount && fromAccount.currencyId !== parsedData.currencyId) {
+        throw new Error(
+          `Transaction currency (${parsedData.currencyId}) does not match account currency (${fromAccount.currencyId})`
+        )
       }
 
-      // Insufficient funds check for expenses and transfers
       if (
-        (parsedData.type === 'expense' || parsedData.type === 'transfer') &&
-        fromAccount &&
-        fromAccount.balance < parsedData.amount
+        parsedData.type === 'transfer' &&
+        toAccount &&
+        toAccount.currencyId !== parsedData.currencyId
       ) {
-        throw new Error('Insufficient funds')
+        throw new Error(
+          `Transfer currency (${parsedData.currencyId}) does not match destination account currency (${toAccount.currencyId})`
+        )
       }
 
       // Insert transaction
       await tx.insert(transactions).values(parsedData)
 
-      // Update balances locally to mirror server triggers
+      // Update account balances (managed by application, not database triggers)
+      // Note: Balance precision is maintained by the server's NUMERIC(14,2) type
+      // which rounds to 2 decimal places on storage. Client-side floating-point
+      // arithmetic may have minor precision drift, but this is corrected on sync.
       if (parsedData.type === 'income') {
+        // For income, accountId is optional - update balance only if account is set
         if (fromAccount) {
           await tx
             .update(accounts)
@@ -68,6 +160,7 @@ export async function createTransaction({
             .where(eq(accounts.id, fromAccount.id))
         }
       } else if (parsedData.type === 'expense') {
+        // For expense, accountId is optional - update balance only if account is set
         if (fromAccount) {
           await tx
             .update(accounts)
@@ -75,22 +168,24 @@ export async function createTransaction({
             .where(eq(accounts.id, fromAccount.id))
         }
       } else if (parsedData.type === 'transfer') {
-        if (fromAccount && toAccount) {
-          // Debit source account
-          await tx
-            .update(accounts)
-            .set({ balance: fromAccount.balance - parsedData.amount })
-            .where(eq(accounts.id, fromAccount.id))
+        // For transfers, Zod schema guarantees both accountId and counterAccountId exist,
+        // and FK validation above guarantees fromAccount and toAccount exist
+        // Debit source account
+        if (!fromAccount || !toAccount)
+          throw new Error('Invalid transaction data') // This should never happen
+        await tx
+          .update(accounts)
+          .set({ balance: fromAccount.balance - parsedData.amount })
+          .where(eq(accounts.id, fromAccount.id))
 
-          // Credit destination account
-          await tx
-            .update(accounts)
-            .set({ balance: toAccount.balance + parsedData.amount })
-            .where(eq(accounts.id, toAccount.id))
-        }
+        // Credit destination account
+        await tx
+          .update(accounts)
+          .set({ balance: toAccount.balance + parsedData.amount })
+          .where(eq(accounts.id, toAccount.id))
       }
 
-      return true
+      return { id }
     })
   )
 

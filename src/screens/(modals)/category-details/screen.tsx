@@ -7,8 +7,7 @@ import { useDrizzleQuery } from '@/lib/hooks'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
-import { ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { ScrollView, View } from 'react-native'
 import { CategoryDetailsHeader } from './components/category-details-header'
 import { CategoryInfoCard } from './components/category-info-card'
 import { DetailsInfoSection } from './components/details-info-section'
@@ -22,10 +21,10 @@ interface Props {
 export default function CategoryDetailsModal({ categoryId }: Props) {
   const { userId } = useUserSession()
 
-  const { data: categories } = useDrizzleQuery(
-    getCategory({ userId, categoryId })
-  )
-  const categoryData = categories.length > 0 ? categories[0] : null
+  const {
+    data: [categoryData]
+  } = useDrizzleQuery(getCategory({ userId, categoryId }))
+
   const type = categoryData?.type || 'expense'
 
   const { data: totals } = useDrizzleQuery(
@@ -57,10 +56,7 @@ export default function CategoryDetailsModal({ categoryId }: Props) {
   if (!categoryData) return null
 
   return (
-    <SafeAreaView
-      edges={{ bottom: 'maximum', left: 'off', right: 'off', top: 'off' }}
-      className="flex-1 bg-popover p-4"
-    >
+    <View className="bg-popover flex-1 p-4 pb-0">
       <CategoryDetailsHeader
         categoryData={categoryData}
         userId={userId}
@@ -73,7 +69,11 @@ export default function CategoryDetailsModal({ categoryId }: Props) {
         onClose={() => router.back()}
       />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-safe-or-4"
+        showsVerticalScrollIndicator={false}
+      >
         <CategoryInfoCard
           categoryData={categoryData}
           totalsByCurrency={totalsByCurrency}
@@ -89,6 +89,6 @@ export default function CategoryDetailsModal({ categoryId }: Props) {
           totalsByCurrency={totalsByCurrency}
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }

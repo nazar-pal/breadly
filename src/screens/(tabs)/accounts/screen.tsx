@@ -6,7 +6,6 @@ import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AccountCard } from './components/account-card'
 import { AddAccountButton } from './components/add-account-button'
 import { useAccountSettingsState } from './lib/account-settings-store'
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export default function TabsAccountsScreen({ accountType }: Props) {
-  const insets = useSafeAreaInsets()
   const { userId } = useUserSession()
 
   const { openAccountModalForCreate, openAccountModalForEdit } =
@@ -34,12 +32,9 @@ export default function TabsAccountsScreen({ accountType }: Props) {
 
   return (
     <ScrollView
-      className="my-4 flex-1 bg-background"
+      className="bg-background my-4 flex-1"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[
-        { paddingHorizontal: 16, paddingTop: 8 },
-        { paddingBottom: insets.bottom + 20 }
-      ]}
+      contentContainerClassName="px-4 pt-2 pb-safe-offset-5"
     >
       {accounts.map(account => (
         <AccountCard

@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategorySelectSQLite } from '@/data/client/db-schema'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import React from 'react'
@@ -26,7 +26,7 @@ export function RootCategory({ category }: CategoryFormProps) {
       <View className="mb-4 flex-row">
         <View className={`rounded-full px-3 py-1 ${categoryTypeBg}`}>
           <Text
-            className={`text-xs font-semibold uppercase tracking-wide ${categoryTypeColor}`}
+            className={`text-xs font-semibold tracking-wide uppercase ${categoryTypeColor}`}
           >
             {category.type}
           </Text>
@@ -39,10 +39,10 @@ export function RootCategory({ category }: CategoryFormProps) {
           <CategoryCardIcon name={category.icon} type={category.type} />
         </View>
         <View className="flex-1">
-          <Text className="mb-2 text-xl font-bold text-foreground">
+          <Text className="text-foreground mb-2 text-xl font-bold">
             {category.name}
           </Text>
-          <Text className="text-base leading-relaxed text-muted-foreground">
+          <Text className="text-muted-foreground text-base leading-relaxed">
             {category.description || 'No description provided'}
           </Text>
         </View>

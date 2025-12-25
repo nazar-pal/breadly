@@ -86,14 +86,14 @@ export function BaseFields({
                 <FormControl>
                   <>
                     <Pressable
-                      className="flex h-10 flex-row items-center rounded-md border border-input bg-background px-3 py-1 text-base shadow-sm shadow-black/5 dark:bg-input/30"
+                      className="border-input bg-background dark:bg-input/30 flex h-10 flex-row items-center rounded-md border px-3 py-1 text-base shadow-sm shadow-black/5"
                       onPress={() => setOpenPicker('currency')}
                     >
                       <Text
                         className={
                           field.value
-                            ? 'text-base text-foreground'
-                            : 'text-base text-muted-foreground'
+                            ? 'text-foreground text-base'
+                            : 'text-muted-foreground text-base'
                         }
                       >
                         {field.value?.toString() || 'Currency'}

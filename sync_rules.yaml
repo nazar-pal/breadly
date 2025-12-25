@@ -22,7 +22,7 @@ bucket_definitions:
           base_currency,
           quote_currency,
           CAST(rate AS real) AS rate,
-          CAST(unixepoch(rate_date) * 1000 AS integer) AS rate_date
+          rate_date
         FROM exchange_rates
 
   # User-specific data
@@ -30,7 +30,17 @@ bucket_definitions:
     parameters: SELECT request.user_id() as user_id
     data:
       # User preferences
-      - SELECT user_id as id, user_id, default_currency, first_weekday, locale FROM user_preferences WHERE user_id = bucket.user_id
+      - |
+        SELECT
+          user_id as id,
+          user_id,
+          default_currency,
+          first_weekday,
+          locale,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+        FROM user_preferences
+        WHERE user_id = bucket.user_id
 
       # User's categories (convert created_at and archived_at)
       - |
@@ -45,20 +55,24 @@ bucket_definitions:
           sort_order,
           is_archived,
           CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (leave date fields as DATE -> TEXT 'YYYY-MM-DD')
+      # User's budgets (one row per period - simple and explicit)
       - |
         SELECT
           id,
           user_id,
           category_id,
           CAST(amount AS real) AS amount,
-          currency,
-          start_date,
-          end_date
+          currency_id,
+          period,
+          budget_year,
+          budget_month,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM budgets
         WHERE user_id = bucket.user_id
 
@@ -77,8 +91,26 @@ bucket_definitions:
           CAST(debt_initial_amount AS real) AS debt_initial_amount,
           debt_due_date,
           is_archived,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM accounts
+        WHERE user_id = bucket.user_id
+
+      # User's events (cross-category spending tracking)
+      - |
+        SELECT
+          id,
+          user_id,
+          name,
+          description,
+          start_date,
+          end_date,
+          is_archived,
+          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+        FROM events
         WHERE user_id = bucket.user_id
 
       # User's transactions (leave tx_date as DATE -> TEXT)
@@ -90,26 +122,31 @@ bucket_definitions:
           account_id,
           counter_account_id,
           category_id,
+          event_id,
           CAST(amount AS real) AS amount,
           currency_id,
           tx_date,
           notes,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM transactions
         WHERE user_id = bucket.user_id
 
-      # User's attachments (convert created_at)
+      # User's attachments (convert timestamps)
       - |
         SELECT
           id,
           user_id,
           type,
+          status,
           bucket_path,
           mime,
           file_name,
           CAST(file_size AS integer) AS file_size,
           duration,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+          CAST(unixepoch(uploaded_at) * 1000 AS integer) AS uploaded_at,
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM attachments
         WHERE user_id = bucket.user_id
 
@@ -120,6 +157,7 @@ bucket_definitions:
           user_id,
           transaction_id,
           attachment_id,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at
+          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
+          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
         FROM transaction_attachments
         WHERE user_id = bucket.user_id

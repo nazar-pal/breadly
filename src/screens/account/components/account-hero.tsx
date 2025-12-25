@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -50,7 +50,7 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
             <View className="min-w-0 flex-1 pr-3">
               <Text
                 numberOfLines={1}
-                className="text-2xl font-bold text-foreground"
+                className="text-foreground text-2xl font-bold"
               >
                 {account.name}
               </Text>
@@ -79,7 +79,7 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
 
           <View className="flex-row items-end justify-between">
             <View className="flex-row items-center gap-2">
-              <Text className="text-4xl font-extrabold leading-none tracking-tight text-foreground">
+              <Text className="text-foreground text-4xl leading-none font-extrabold tracking-tight">
                 {account.type === 'payment' && account.balance < 0 ? '-' : ''}
                 {formatCurrency(account.balance, currencyCode)}
               </Text>
@@ -112,12 +112,12 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
           </View>
 
           {account.description ? (
-            <Text className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <Text className="text-muted-foreground mt-3 text-sm leading-relaxed">
               {account.description}
             </Text>
           ) : null}
 
-          <View className="mt-4 h-[1px] bg-border/50" />
+          <View className="bg-border/50 mt-4 h-[1px]" />
 
           <View className="mt-4 flex-row flex-wrap items-center gap-x-6 gap-y-2">
             {account.createdAt ? (
@@ -164,8 +164,8 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row items-center">
-      <Text className="text-xs text-muted-foreground">{label}</Text>
-      <Text className={cn('ml-2 text-xs font-medium text-foreground')}>
+      <Text className="text-muted-foreground text-xs">{label}</Text>
+      <Text className={cn('text-foreground ml-2 text-xs font-medium')}>
         {value}
       </Text>
     </View>

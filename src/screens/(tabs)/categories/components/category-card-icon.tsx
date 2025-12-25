@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/icon-by-name'
+import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { CategoryType } from '@/data/client/db-schema'
 import { View } from 'react-native'
 
@@ -12,7 +12,7 @@ export function CategoryCardIcon({
   size?: number
 }) {
   return (
-    <View className="items-center justify-center rounded-lg bg-muted/70 dark:bg-muted/50">
+    <View className="bg-muted/70 dark:bg-muted/50 items-center justify-center rounded-lg">
       <Icon
         name={name || 'House'}
         size={size}

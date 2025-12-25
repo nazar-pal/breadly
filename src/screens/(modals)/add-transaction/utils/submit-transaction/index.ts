@@ -1,10 +1,16 @@
+import { lastParamsStore } from '@/lib/storage/last-transaction-params-store'
 import { asyncTryCatch } from '@/lib/utils/index'
 import { transactionParamsStore } from '../../store'
 import { determineSubmitWorkflow } from './determine-submit-workflow'
 import { submitExpenseIncomeAccount } from './submit-expense-income-account'
 import { submitExpenseIncomeCurrency } from './submit-expense-income-currency'
 import { submitTransfer } from './submit-transfer'
-import { CalculatorInputs, Submitters, WorkflowMap } from './types'
+import {
+  CalculatorInputs,
+  Submitters,
+  SubmitWorkflow,
+  WorkflowMap
+} from './types'
 
 export { determineSubmitWorkflow }
 
@@ -26,6 +32,8 @@ export async function submitTransaction(
   const workflow = determineSubmitWorkflow(params)
   if (!workflow) return [new Error('Invalid transaction parameters'), null]
 
+  memorizeLastParams(workflow)
+
   // Generic dispatcher keyed by workflow kind
   function dispatch<K extends keyof WorkflowMap>(
     kind: K,
@@ -35,4 +43,17 @@ export async function submitTransaction(
   }
 
   return await asyncTryCatch(dispatch(workflow.kind, workflow.args))
+}
+
+function memorizeLastParams(workflow: SubmitWorkflow) {
+  if (workflow.kind === 'transfer') return
+  const setLastParams = lastParamsStore.getState().setLastParams
+
+  if (workflow.kind === 'expense-income:account') {
+    const { accountId: id, type } = workflow.args
+    setLastParams(type, { id, from: 'account' })
+  } else if (workflow.kind === 'expense-income:currency') {
+    const { currencyCode: id, type } = workflow.args
+    setLastParams(type, { id, from: 'currency' })
+  }
 }

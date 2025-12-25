@@ -108,27 +108,24 @@ export function GoogleOAuthButton() {
 
   return (
     <>
-      <Text variant="large" className="mb-4">
-        Sign in to save your data
-      </Text>
-
       <Button
-        variant="outline"
         onPress={handleSignInWithGoogle}
-        className="mb-4 h-11 flex-row items-center justify-center gap-3 rounded-lg border-border/60 bg-card shadow-sm active:scale-[0.98] active:bg-accent"
+        className="h-12 flex-row items-center justify-center gap-3 rounded-xl bg-white shadow-sm active:scale-[0.98]"
       >
         <Image
           source={require('@/assets/icons/google-icon.png')}
           className="h-5 w-5"
           resizeMode="contain"
         />
-        <Text>Continue with Google</Text>
+        <Text className="font-semibold text-gray-800">
+          Continue with Google
+        </Text>
       </Button>
 
       {/* Error Message */}
       {errorMessage && (
-        <View className="mt-4 rounded-lg bg-destructive/10 p-3">
-          <Text className="text-sm text-destructive">{errorMessage}</Text>
+        <View className="mt-4 rounded-lg bg-red-500/20 p-3">
+          <Text className="text-sm text-white">{errorMessage}</Text>
         </View>
       )}
     </>
