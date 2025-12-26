@@ -3,6 +3,7 @@ import { Text } from '@/components/ui/text'
 import { getUserPreferences } from '@/data/client/queries'
 import { DEFAULT_CURRENCY } from '@/lib/constants'
 import { useDrizzleQuery } from '@/lib/hooks'
+import { getCurrencyInfo } from '@/lib/utils/'
 import { useUserSession } from '@/system/session-and-migration'
 import { router } from 'expo-router'
 import React from 'react'
@@ -16,6 +17,7 @@ export function CurrencyPreference() {
 
   // Get current currency with fallback to default
   const currentCurrency = userPreferences?.defaultCurrency || DEFAULT_CURRENCY
+  const currencyInfo = getCurrencyInfo(currentCurrency.code)
 
   return (
     <Pressable
@@ -28,7 +30,7 @@ export function CurrencyPreference() {
       <View className="flex-1">
         <Text className="font-medium">Default Currency</Text>
         <Text className="text-muted-foreground text-sm">
-          {currentCurrency.name} ({currentCurrency.symbol})
+          {currencyInfo?.currency} ({currencyInfo?.symbol})
         </Text>
       </View>
       <Icon name="ChevronRight" size={18} className="text-muted-foreground" />

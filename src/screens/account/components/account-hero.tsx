@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, getCurrencyInfo } from '@/lib/utils'
 import { openTransferBottomSheet } from '@/screens/(modals)/add-transaction'
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
@@ -16,7 +16,8 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
   // Positive balance = someone owes you (receivable)
   // Negative balance = you owe someone (payable)
   const isReceivable = isDebt && account.balance > 0
-  const currencyCode = account.currency?.code ?? account.currencyId ?? 'USD'
+  const currencyCode = account.currency.code
+  const currencyLabel = getCurrencyInfo(currencyCode)?.currency
 
   const handleOpenTransfer = () =>
     openTransferBottomSheet({
@@ -64,9 +65,7 @@ export function AccountHero({ account }: { account: GetAccountResultItem }) {
                         : 'Payable'
                       : 'Payment Account'}
                 </AccountHeaderBadge>
-                <AccountHeaderBadge>
-                  {account.currency?.name ?? currencyCode}
-                </AccountHeaderBadge>
+                <AccountHeaderBadge>{currencyLabel}</AccountHeaderBadge>
                 {account.isArchived ? (
                   <AccountHeaderBadge variant="border">
                     Archived

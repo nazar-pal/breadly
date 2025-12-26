@@ -8,7 +8,7 @@ Purpose: Manages supported currencies and exchange rates for the Breadly
 
 Key Features:
 - ISO 4217 currency code support (USD, EUR, etc.)
-- Currency symbols and display names
+- Currency metadata (symbols, names) provided by currency-codes and currency-symbol-map at runtime
 - Historical exchange rate tracking
 - Automatic currency conversion support
 
@@ -54,7 +54,8 @@ import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 /**
  * Supported currencies in the system
- * Contains currency codes (USD, EUR, etc.), symbols, and display names
+ * Contains currency codes (USD, EUR, etc.) only
+ * Currency symbols and names are provided by currency-codes and currency-symbol-map at runtime
  *
  * Business Rules:
  * - Uses ISO 4217 standard currency codes
@@ -71,9 +72,7 @@ import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 const columns = {
   id: text().primaryKey(), // PowerSync-required primary key (aliased from 'code')
-  code: text({ length: 3 }).notNull(), // Original ISO currency code (USD, EUR)
-  symbol: text({ length: 10 }).notNull(), // Display symbol ($, €)
-  name: text({ length: 100 }).notNull() // Full name (US Dollar)
+  code: text({ length: 3 }).notNull() // Original ISO currency code (USD, EUR)
 }
 
 export const currencies = sqliteTable('currencies', columns)

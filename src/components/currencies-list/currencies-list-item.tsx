@@ -1,7 +1,7 @@
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { type CurrencySelectSQLite } from '@/data/client/db-schema'
-import { cn } from '@/lib/utils'
+import { cn, getCurrencyInfo } from '@/lib/utils'
 import React from 'react'
 import { Pressable, PressableProps, View } from 'react-native'
 
@@ -16,6 +16,8 @@ export function CurrenciesListItem({
   className,
   ...rest
 }: Props) {
+  const currencyInfo = getCurrencyInfo(currency.code)
+
   return (
     <Pressable
       className={cn(
@@ -31,12 +33,12 @@ export function CurrenciesListItem({
         <View className="flex-row items-center gap-3">
           <View className="bg-muted min-w-[44px] items-center rounded-lg p-2">
             <Text className="text-popover-foreground text-lg font-bold">
-              {currency.symbol}
+              {currencyInfo?.symbol}
             </Text>
           </View>
           <View className="flex-1">
             <Text className="text-popover-foreground text-base font-semibold">
-              {currency.name}
+              {currencyInfo?.currency}
             </Text>
             <Text className="text-muted-foreground text-sm">
               {currency.code}

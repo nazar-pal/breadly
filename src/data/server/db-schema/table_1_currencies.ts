@@ -8,7 +8,7 @@ Purpose: Manages supported currencies and exchange rates for the Breadly
 
 Key Features:
 - ISO 4217 currency code support (USD, EUR, etc.)
-- Currency symbols and display names
+- Currency metadata (symbols, names) provided by currency-codes and currency-symbol-map at runtime
 - Historical exchange rate tracking
 - Automatic currency conversion support
 ================================================================================
@@ -23,7 +23,8 @@ import { check, pgTable, varchar } from 'drizzle-orm/pg-core'
 
 /**
  * Supported currencies in the system
- * Contains currency codes (USD, EUR, etc.), symbols, and display names
+ * Contains currency codes (USD, EUR, etc.) only
+ * Currency symbols and names are provided by currency-codes and currency-symbol-map at runtime
  *
  * Business Rules:
  * - Uses ISO 4217 standard currency codes
@@ -34,17 +35,10 @@ import { check, pgTable, varchar } from 'drizzle-orm/pg-core'
 export const currencies = pgTable(
   'currencies',
   {
-    code: varchar({ length: 3 }).primaryKey(), // ISO currency code (USD, EUR)
-    symbol: varchar({ length: 10 }).notNull(), // Display symbol ($, €)
-    name: varchar({ length: 100 }).notNull() // Full name (US Dollar)
+    code: varchar({ length: 3 }).primaryKey() // ISO currency code (USD, EUR)
   },
   table => [
     // Business rule constraints
-    check('currencies_code_format', sql`${table.code} ~ '^[A-Z]{3}$'`), // Currency codes must be exactly 3 uppercase letters
-    check(
-      'currencies_symbol_not_empty',
-      sql`length(trim(${table.symbol})) > 0`
-    ), // Symbol must be non-empty
-    check('currencies_name_not_empty', sql`length(trim(${table.name})) > 0`) // Name must be non-empty
+    check('currencies_code_format', sql`${table.code} ~ '^[A-Z]{3}$'`) // Currency codes must be exactly 3 uppercase letters
   ]
 )

@@ -15,7 +15,7 @@ bucket_definitions:
   # Global data accessible to all authenticated users
   global:
     data:
-      - SELECT code as id, code, symbol, name FROM currencies
+      - SELECT code as id, code FROM currencies
       - |
         SELECT
           id,
