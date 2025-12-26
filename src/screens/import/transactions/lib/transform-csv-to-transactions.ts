@@ -1,4 +1,5 @@
 import { categories } from '@/data/client/db-schema'
+import { toSmallestUnit } from '@/lib/utils/currency-info'
 import { db } from '@/system/powersync/system'
 import { eq } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
@@ -6,7 +7,11 @@ import type { CsvArr } from './csv-arr-schema'
 
 /**
  * Transforms validated CSV rows into transaction insert data.
- * Resolves category names to IDs.
+ * Resolves category names to IDs and converts amounts from base units to smallest unit.
+ *
+ * IMPORTANT: CSV amounts are expected in BASE UNITS (e.g., 10.50 USD, not 1050 cents).
+ * Amounts are already rounded to currency precision by the CSV schema validation.
+ * This function converts them to smallest units for database storage.
  */
 export async function transformCsvRowsToTransactions(
   rows: CsvArr,
@@ -40,7 +45,7 @@ export async function transformCsvRowsToTransactions(
       accountId: null,
       counterAccountId: null,
       categoryId: categoryMap.get(key)!,
-      amount: row.amount,
+      amount: toSmallestUnit(row.amount, row.currency),
       currencyId: row.currency,
       txDate: row.createdAt,
       notes: null,

@@ -55,22 +55,9 @@ export function transformDataForPostgres(data: any, table: string): any {
     user_preferences: []
   }
 
-  // Decimal / numeric columns that come from SQLite as numbers but must be strings for Postgres numeric columns
-  const numericFields: Record<string, string[]> = {
-    budgets: ['amount'],
-    accounts: ['balance', 'savings_target_amount', 'debt_initial_amount'],
-    events: [],
-    transactions: ['amount'],
-    attachments: [],
-    categories: [],
-    transaction_attachments: [],
-    user_preferences: []
-  }
-
   const timestampFieldsForTable = timestampFields[table] || []
   const dateFieldsForTable = dateFields[table] || []
   const booleanFieldsForTable = booleanFields[table] || []
-  const numericFieldsForTable = numericFields[table] || []
 
   // ---------------------------------------------------------------------
   // 1) Convert snake_case → camelCase and handle timestamps/dates immediately
@@ -114,18 +101,6 @@ export function transformDataForPostgres(data: any, table: string): any {
       const v = transformed[camelKey]
       if (typeof v === 'number') transformed[camelKey] = v === 1
       else if (typeof v === 'string') transformed[camelKey] = v === '1'
-    }
-  }
-
-  // ---------------------------------------------------------------------
-  // 3) Numeric conversion (number → string for numeric columns)
-  // ---------------------------------------------------------------------
-  for (const camelKey of numericFieldsForTable.map(snakeToCamel)) {
-    if (camelKey in transformed) {
-      const v = transformed[camelKey]
-      if (typeof v === 'number' && !Number.isNaN(v)) {
-        transformed[camelKey] = v.toString()
-      }
     }
   }
 

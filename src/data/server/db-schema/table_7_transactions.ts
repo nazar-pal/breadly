@@ -22,6 +22,7 @@ Note: Account balances are managed manually by the application - there are no
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
+  bigint,
   check,
   date,
   index,
@@ -39,7 +40,6 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -116,7 +116,7 @@ export const transactions = pgTable(
       onDelete: 'restrict'
     }), // Required for income/expense transactions, null for transfers
     eventId: uuid().references(() => events.id, { onDelete: 'set null' }), // Optional event for cross-category tracking
-    amount: monetaryAmountColumn(), // Transaction amount (always positive)
+    amount: bigint({ mode: 'number' }).notNull(), // Transaction amount (always positive)
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Transaction currency (must match account currency if accountId is set)

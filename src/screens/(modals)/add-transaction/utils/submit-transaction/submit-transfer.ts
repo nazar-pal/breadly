@@ -1,5 +1,6 @@
 import { createTransaction } from '@/data/client/mutations'
 import { getAccount } from '@/data/client/queries'
+import { toSmallestUnit } from '@/lib/utils/currency-info'
 import { CalculatorInputs, WorkflowMap } from './types'
 
 export async function submitTransfer(
@@ -23,7 +24,7 @@ export async function submitTransfer(
       counterAccountId: toAccount.id,
       type: 'transfer',
       currencyId: fromAccount.currencyId,
-      amount: inputs.amount,
+      amount: toSmallestUnit(inputs.amount, fromAccount.currencyId),
       txDate: inputs.txDate ?? new Date(),
       notes: inputs.comment || undefined
     }

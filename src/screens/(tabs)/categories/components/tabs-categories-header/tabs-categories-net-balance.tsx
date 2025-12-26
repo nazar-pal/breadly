@@ -2,7 +2,7 @@ import { Text } from '@/components/ui/text'
 import { sumTransactions } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoriesDateRangeState } from '@/lib/storage/categories-date-range-store'
-import { formatCurrencyWithSign } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { useUserSession } from '@/system/session-and-migration'
 import { View } from 'react-native'
 
@@ -64,7 +64,7 @@ export function TabsCategoriesNetBalance() {
           key={`${n.currencyId}-${idx}`}
           className={n.amount < 0 ? 'text-destructive' : 'text-primary'}
         >
-          {formatCurrencyWithSign(n.amount, n.currencyId)}
+          {formatCurrency(n.amount, n.currencyId)}
         </Text>
       )
       return idx === 0

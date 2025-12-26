@@ -34,8 +34,6 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
-  roundToTwoDecimals,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -89,7 +87,7 @@ export type BudgetPeriod = (typeof BUDGET_PERIOD)[number]
  * - One budget per category + currency + year + month combination
  * - Monthly budgets: budget_month must be 1-12
  * - Yearly budgets: budget_month must be NULL
- * - Budget amounts must be positive values
+ * - Budget amounts must be positive integers (in smallest currency unit)
  * - budget_year must be 1970-2100
  */
 const columns = {
@@ -97,7 +95,7 @@ const columns = {
   id: uuidPrimaryKey(),
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   categoryId: text('category_id').notNull(), // Category this budget applies to (FK not enforced)
-  amount: monetaryAmountColumn(), // Budget limit for this period
+  amount: integer().notNull(), // Budget limit for this period
   currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Budget currency (FK not enforced)
   period: text({ enum: BUDGET_PERIOD }).notNull(), // 'monthly' or 'yearly'
 
@@ -133,7 +131,7 @@ export const getBudgetsSqliteTable = (name: string) =>
  * - budgets_valid_year: budget_year >= 1970 AND budget_year <= 2100
  * - budgets_monthly_has_month: monthly budgets have month 1-12
  * - budgets_yearly_no_month: yearly budgets have NULL month
- * - NUMERIC(14,2) precision: rounded to 2 decimal places
+ * - Amount stored as integer in smallest currency unit
  *
  * IMPORTANT - Mutation-Level Validation Required:
  * ─────────────────────────────────────────────────────
@@ -149,11 +147,7 @@ export const getBudgetsSqliteTable = (name: string) =>
  */
 export const budgetInsertSchema = createInsertSchema(budgets, {
   id: s => s.default(randomUUID),
-  amount: s =>
-    s
-      .positive()
-      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
-      .transform(roundToTwoDecimals),
+  amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
   currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
   budgetYear: s => s.int().min(VALIDATION.MIN_YEAR).max(VALIDATION.MAX_YEAR),
   budgetMonth: s => s.int().min(1).max(12).optional()
@@ -187,11 +181,7 @@ export type BudgetInsertSchemaOutput = z.output<typeof budgetInsertSchema>
  * To change year, month, category, or currency: delete and create new.
  */
 export const budgetUpdateSchema = createUpdateSchema(budgets, {
-  amount: s =>
-    s
-      .positive()
-      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
-      .transform(roundToTwoDecimals)
+  amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT)
 }).omit({
   id: true,
   userId: true,

@@ -20,10 +20,10 @@ Note: Account balances are managed manually by the application - there are no
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
+  bigint,
   check,
   date,
   index,
-  numeric,
   pgEnum,
   pgTable,
   timestamp
@@ -36,7 +36,6 @@ import {
   descriptionColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
   nameColumn,
   updatedAtColumn,
   uuidPrimaryKey
@@ -93,14 +92,14 @@ export const accounts = pgTable(
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .default('USD'), // Account base currency
-    balance: monetaryAmountColumn().default('0'), // Current balance (manually updated by application)
+    balance: bigint({ mode: 'number' }).notNull().default(0), // Current balance (manually updated by application)
 
     // Type-specific fields for savings accounts
-    savingsTargetAmount: numeric({ precision: 14, scale: 2 }), // Target savings goal (savings only)
+    savingsTargetAmount: bigint({ mode: 'number' }), // Target savings goal in smallest currency unit (savings only)
     savingsTargetDate: date(), // Target date to reach savings goal (savings only)
 
     // Type-specific fields for debt accounts  (balance sign represents debt direction - I owe someone or someone owes me)
-    debtInitialAmount: numeric({ precision: 14, scale: 2 }), // Original debt amount (debt only)
+    debtInitialAmount: bigint({ mode: 'number' }), // Original debt amount in smallest currency unit (debt only)
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag

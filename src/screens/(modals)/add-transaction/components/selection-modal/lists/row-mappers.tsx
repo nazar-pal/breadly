@@ -5,8 +5,7 @@ import type {
   CategorySelectSQLite,
   CurrencySelectSQLite
 } from '@/data/client/db-schema'
-import { getCurrencyInfo } from '@/lib/utils/'
-import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
+import { formatCurrency, getCurrencyInfo } from '@/lib/utils/'
 import React from 'react'
 import type { SelectableRowProps } from '../types'
 
@@ -28,7 +27,7 @@ export function mapAccountToSelectableRow(
     onPress: () => onSelect(account.id),
     leftElement: currencyInfo?.symbol,
     title: account.name,
-    rightElement: formatCurrencyWithSign(account.balance, account.currency.code)
+    rightElement: formatCurrency(account.balance, account.currency.code)
   }
 }
 

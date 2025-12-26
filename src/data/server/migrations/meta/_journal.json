@@ -71,6 +71,13 @@
       "when": 1766772864388,
       "tag": "0009_slippery_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1766787722789,
+      "tag": "0010_outstanding_gateway",
+      "breakpoints": true
     }
   ]
 }

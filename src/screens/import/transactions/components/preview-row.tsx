@@ -56,7 +56,10 @@ export function PreviewRow({ row, error }: PreviewRowProps) {
           )}
         >
           {isExpense ? '-' : '+'}
-          {formatCurrency(row.amount, row.currency)}
+          {formatCurrency(row.amount, row.currency, {
+            unit: 'base',
+            showTrailingZeros: true
+          })}
         </Text>
       </View>
 

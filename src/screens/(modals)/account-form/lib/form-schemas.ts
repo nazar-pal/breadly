@@ -7,27 +7,35 @@ import { z } from 'zod'
 // ============================================================================
 // BASE SCHEMA DEFINITIONS
 // ============================================================================
+// Form schemas accept display amounts (floats), conversion to smallest unit
+// happens in form submission handler before data reaches the mutation/db schema
+
 // Create Fields Schema
 const commonCreateFieldsSchema = accountInsertSchema
   .pick({
     name: true,
     description: true,
     currencyId: true,
-    balance: true,
     isArchived: true
   })
   .extend({
     // Force explicit currency selection in the form (no implicit default)
-    currencyId: z.string().min(1, 'Currency is required')
+    currencyId: z.string().min(1, 'Currency is required'),
+    // Form accepts display amounts (floats), converted to integers on submit
+    balance: z.number().optional()
   })
 
 // Update Fields Schema
-const commonUpdateFieldsSchema = accountUpdateSchema.pick({
-  name: true,
-  description: true,
-  balance: true,
-  isArchived: true
-})
+const commonUpdateFieldsSchema = accountUpdateSchema
+  .pick({
+    name: true,
+    description: true,
+    isArchived: true
+  })
+  .extend({
+    // Form accepts display amounts (floats), converted to integers on submit
+    balance: z.number().optional()
+  })
 
 // ============================================================================
 // PAYMENT ACCOUNT SCHEMAS
@@ -49,7 +57,8 @@ type UpdatePaymentAccountFormValues = z.infer<
 // ============================================================================
 // Create Saving Account Form Schema
 const createSavingAccountFormSchema = commonCreateFieldsSchema.extend({
-  savingsTargetAmount: accountInsertSchema.shape.savingsTargetAmount,
+  // Form accepts display amounts (floats), converted to integers on submit
+  savingsTargetAmount: z.number().positive().optional(),
   savingsTargetDate: accountInsertSchema.shape.savingsTargetDate
 })
 type CreateSavingAccountFormValues = z.infer<
@@ -58,7 +67,8 @@ type CreateSavingAccountFormValues = z.infer<
 
 // Update Saving Account Form Schema
 const updateSavingAccountFormSchema = commonUpdateFieldsSchema.extend({
-  savingsTargetAmount: accountUpdateSchema.shape.savingsTargetAmount,
+  // Form accepts display amounts (floats), converted to integers on submit
+  savingsTargetAmount: z.number().positive().optional(),
   savingsTargetDate: accountUpdateSchema.shape.savingsTargetDate
 })
 type UpdateSavingAccountFormValues = z.infer<
@@ -72,7 +82,8 @@ type UpdateSavingAccountFormValues = z.infer<
 // Note: debtIsOwedToMe is a local UI field used to control balance sign,
 // it is NOT saved to the database
 const createDebtAccountFormSchema = commonCreateFieldsSchema.extend({
-  debtInitialAmount: accountInsertSchema.shape.debtInitialAmount,
+  // Form accepts display amounts (floats), converted to integers on submit
+  debtInitialAmount: z.number().positive().optional(),
   debtIsOwedToMe: z.boolean().optional(), // Local UI field, not saved to DB
   debtDueDate: accountInsertSchema.shape.debtDueDate
 })
@@ -82,7 +93,8 @@ type CreateDebtAccountFormValues = z.infer<typeof createDebtAccountFormSchema>
 // Note: debtIsOwedToMe is a local UI field used to control balance sign,
 // it is NOT saved to the database
 const updateDebtAccountFormSchema = commonUpdateFieldsSchema.extend({
-  debtInitialAmount: accountUpdateSchema.shape.debtInitialAmount,
+  // Form accepts display amounts (floats), converted to integers on submit
+  debtInitialAmount: z.number().positive().optional(),
   debtIsOwedToMe: z.boolean().optional(), // Local UI field, not saved to DB
   debtDueDate: accountUpdateSchema.shape.debtDueDate
 })
@@ -103,6 +115,16 @@ export type UpdateAccountData =
   | UpdateDebtAccountFormValues
 
 export type AccountFormData = CreateAccountData | UpdateAccountData
+
+/**
+ * Type guard to distinguish create vs update form data
+ * CreateAccountData has required currencyId, UpdateAccountData does not
+ */
+export function isCreateAccountData(
+  data: AccountFormData
+): data is CreateAccountData {
+  return 'currencyId' in data && typeof data.currencyId === 'string'
+}
 
 // ============================================================================
 // FORM SCHEMAS OBJECT
