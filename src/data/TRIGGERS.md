@@ -19,15 +19,15 @@ The Breadly database uses PostgreSQL triggers to enforce business rules that can
 
 All custom migrations are organized by target table:
 
-| Migration File                              | Description                                                     |
-| ------------------------------------------- | --------------------------------------------------------------- |
-| `0001_triggers-categories.sql`              | Category table triggers (nesting, parent type)                  |
-| `0002_triggers-budgets.sql`                 | Budget table triggers (category validation)                     |
-| `0003_triggers-accounts.sql`                | Account table triggers (currency change protection)             |
-| `0004_triggers-transactions.sql`            | Transaction table triggers (ownership, currency, category type) |
-| `0005_triggers-transaction-attachments.sql` | Transaction-attachment triggers (ownership)                     |
-| `0006_seed-currencies.sql`                  | Currency seed data                                              |
-| `0007_seed-exchange-rates.sql`              | Exchange rate seed data                                         |
+| Migration File                                     | Description                                                     |
+| -------------------------------------------------- | --------------------------------------------------------------- |
+| `0001_custom-triggers-categories.sql`              | Category table triggers (nesting, parent type)                  |
+| `0002_custom-triggers-budgets.sql`                 | Budget table triggers (category validation)                     |
+| `0003_custom-triggers-accounts.sql`                | Account table triggers (currency change protection)             |
+| `0004_custom-triggers-transactions.sql`            | Transaction table triggers (ownership, currency, category type) |
+| `0005_custom-triggers-transaction-attachments.sql` | Transaction-attachment triggers (ownership)                     |
+| `0006_custom-seed-currencies.sql`                  | Currency seed data                                              |
+| `0007_custom-seed-exchange-rates.sql`              | Exchange rate seed data                                         |
 
 ---
 
@@ -58,7 +58,7 @@ All custom migrations are organized by target table:
 
 ### 1. Category Table Triggers (Migration 0001)
 
-All triggers on the `categories` table are consolidated in `0001_triggers-categories.sql`.
+All triggers on the `categories` table are consolidated in `0001_custom-triggers-categories.sql`.
 
 #### 1.1 Category Nesting Constraint
 
@@ -126,7 +126,7 @@ Client mutations should check for existing transactions and budgets before allow
 
 ### 2. Budget Table Triggers (Migration 0002)
 
-All triggers on the `budgets` table are in `0002_triggers-budgets.sql`.
+All triggers on the `budgets` table are in `0002_custom-triggers-budgets.sql`.
 
 #### 2.1 Budget Category Validation
 
@@ -151,7 +151,7 @@ Client mutations validate category ownership and expense type before creating/up
 
 ### 3. Account Table Triggers (Migration 0003)
 
-All triggers on the `accounts` table are in `0003_triggers-accounts.sql`.
+All triggers on the `accounts` table are in `0003_custom-triggers-accounts.sql`.
 
 #### 3.1 Account Currency Change Protection
 
@@ -176,7 +176,7 @@ Client mutations check for existing transactions before allowing currency change
 
 ### 4. Transaction Table Triggers (Migration 0004)
 
-All triggers on the `transactions` table are consolidated in `0004_triggers-transactions.sql`.
+All triggers on the `transactions` table are consolidated in `0004_custom-triggers-transactions.sql`.
 
 #### 4.1 Account Ownership Validation
 
@@ -286,7 +286,7 @@ Client mutations validate category type matching before inserting/updating trans
 
 ### 5. Transaction-Attachment Table Triggers (Migration 0005)
 
-All triggers on the `transaction_attachments` table are in `0005_triggers-transaction-attachments.sql`.
+All triggers on the `transaction_attachments` table are in `0005_custom-triggers-transaction-attachments.sql`.
 
 #### 5.1 Transaction-Attachment Ownership
 
