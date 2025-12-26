@@ -4,7 +4,7 @@ import { asc } from 'drizzle-orm'
 
 export function getCurrencies() {
   return db.query.currencies.findMany({
-    orderBy: [asc(currencies.name)]
+    orderBy: [asc(currencies.code)]
   })
 }
 

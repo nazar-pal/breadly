@@ -1,6 +1,7 @@
 export { cn } from './cn'
+export { getAllCurrencies, getCurrencyInfo } from './currency-info'
 export { formatBytes } from './format-bytes'
-export { formatCurrency, formatCurrencyWithSign } from './format-currency'
+export { formatCurrency, type FormatCurrencyOptions } from './format-currency'
 export { getAccountProgress } from './get-account-progress'
 export * from './string-case'
 export { asyncTryCatch, tryCatch } from './try-catch'

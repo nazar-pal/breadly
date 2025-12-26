@@ -1,3 +1,4 @@
+import { Text } from '@/components/ui/text'
 import React from 'react'
 import {
   ImportInstructionsDialog as BaseDialog,
@@ -22,8 +23,17 @@ const CONFIG: ImportInstructionsConfig = {
     },
     {
       label: 'amount',
-      description:
-        'Transaction amount. Must be a positive number (automatically rounded to 2 decimal places).'
+      description: (
+        <>
+          Transaction amount in{' '}
+          <Text className="font-semibold">base units</Text> (display units).
+          Must be a positive number (automatically rounded to the
+          currency&apos;s precision, e.g., 2 decimals for USD, 0 for JPY, 3 for
+          KWD). Examples: <Code>10.50</Code> for USD, <Code>1000</Code> for JPY,{' '}
+          <Code>10.500</Code> for KWD. The import will convert to smallest units
+          internally.
+        </>
+      )
     },
     {
       label: 'type',

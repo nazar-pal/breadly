@@ -115,13 +115,11 @@ const insertHelper = async (
   const validated = cfg.insertSchema
     .extend({ id: z.string() })
     .parse(transformed)
-  await db
-    .insert(cfg.table)
-    .values(validated)
-    .onConflictDoUpdate({
-      target: cfg.idColumn ?? cfg.table.userId,
-      set: validated
-    })
+
+  // Use onConflictDoNothing for idempotent inserts as recommended by PowerSync.
+  // If the record already exists (same ID), skip the insert silently.
+  // This handles sync replays where the same INSERT operation may be sent multiple times.
+  await db.insert(cfg.table).values(validated).onConflictDoNothing()
 }
 
 const updateHelper = async (

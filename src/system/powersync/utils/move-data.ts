@@ -78,18 +78,18 @@ function inactive<T extends InactiveTableInput>(
  * 1. Copies all data for the specified user from inactive tables to active tables
  * 2. Deletes the data from the inactive tables (cleanup)
  *
- * @param powerSyncDb - PowerSync database instance
+ * @param powersync - PowerSync database instance
  * @param userId - ID of the user whose data should be moved
  * @param moveFrom - Source inactive table prefix ('inactive_local' or 'inactive_synced')
  * @param deleteInactiveTables - Whether to delete the inactive tables after copying the data
  */
 export async function moveData(
-  powerSyncDb: AbstractPowerSyncDatabase,
+  powersync: AbstractPowerSyncDatabase,
   userId: string,
   moveFrom: 'inactive_local' | 'inactive_synced',
   deleteInactiveTables: boolean = true
 ) {
-  const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+  const db = wrapPowerSyncWithDrizzle(powersync, {
     schema: sqliteSchema
   })
 

@@ -59,7 +59,7 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
   amount: s =>
     s
       .positive()
-      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
+      .max(VALIDATION.MAX_MONETARY_AMOUNT)
       .transform(roundToTwoDecimals)
   // ...
 }).refine(data => data.type !== 'transfer' || data.accountId != null, {

@@ -10,9 +10,9 @@ import { getTableName } from 'drizzle-orm'
  * exist in the current schema, this will no-op.
  */
 export async function copySyncedCurrenciesToLocal(
-  powerSyncDb: AbstractPowerSyncDatabase
+  powersync: AbstractPowerSyncDatabase
 ) {
-  const db = wrapPowerSyncWithDrizzle(powerSyncDb, { schema: sqliteSchema })
+  const db = wrapPowerSyncWithDrizzle(powersync, { schema: sqliteSchema })
 
   const baseName = getTableName(sqliteSchema.currencies)
   const inactiveSyncedName = `inactive_synced_${baseName}`

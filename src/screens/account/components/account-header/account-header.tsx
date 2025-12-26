@@ -2,7 +2,7 @@ import { Icon, IconName } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
 import { AccountType } from '@/data/client/db-schema'
 import { GetAccountResultItem } from '@/data/client/queries/get-account'
-import { cn } from '@/lib/utils'
+import { cn, getCurrencyInfo } from '@/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 import { DetailsHeaderActions } from './account-header-actions'
@@ -43,7 +43,7 @@ export function AccountHeader({ account }: { account: GetAccountResultItem }) {
   // Negative balance = you owe someone (payable)
   const isReceivable = isDebt && account.balance > 0
 
-  const currencyLabel = account.currency?.name ?? account.currencyId ?? 'USD'
+  const currencyLabel = getCurrencyInfo(account.currency.code)?.currency
 
   return (
     <View className="mb-6 flex-row items-center justify-between">

@@ -18,6 +18,7 @@ Key Features:
 import { sql } from 'drizzle-orm'
 import { authenticatedRole, authUid, crudPolicy } from 'drizzle-orm/neon'
 import {
+  bigint,
   check,
   index,
   pgEnum,
@@ -32,7 +33,6 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -84,7 +84,7 @@ export const budgetPeriod = pgEnum('budget_period', ['monthly', 'yearly'])
  * - One budget per category + currency + year + month combination
  * - Monthly budgets: budget_month must be 1-12
  * - Yearly budgets: budget_month must be NULL
- * - Budget amounts must be positive values
+ * - Budget amounts must be positive integers (in smallest currency unit)
  * - budget_year must be 1970-2100
  */
 export const budgets = pgTable(
@@ -95,7 +95,7 @@ export const budgets = pgTable(
     categoryId: uuid()
       .references(() => categories.id, { onDelete: 'restrict' })
       .notNull(), // Category this budget applies to
-    amount: monetaryAmountColumn(), // Budget limit for this period
+    amount: bigint({ mode: 'number' }).notNull(), // Budget limit for this period
     currencyId: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Budget currency

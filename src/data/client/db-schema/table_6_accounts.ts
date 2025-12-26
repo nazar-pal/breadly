@@ -22,13 +22,7 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 */
 
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import {
-  index,
-  integer,
-  real,
-  sqliteTable,
-  text
-} from 'drizzle-orm/sqlite-core'
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { VALIDATION } from '@/data/const'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
@@ -41,9 +35,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
   nameColumn,
-  roundToTwoDecimals,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -73,8 +65,8 @@ export type AccountType = (typeof ACCOUNT_TYPE)[number]
  * - Each account belongs to a single user (multi-tenant isolation)
  * - Account names must be non-empty after trimming whitespace
  * - Type-specific fields are optional and depend on account type
- * - Savings target amount must be positive (if provided)
- * - Debt initial amount must be positive (if provided)
+ * - Savings target amount must be positive integer (if provided)
+ * - Debt initial amount must be positive integer (if provided)
  *
  * Archive Columns Design:
  * ─────────────────────────────────────────────────────
@@ -93,14 +85,14 @@ const columns = {
 
   // Currency (FK not enforced in PowerSync)
   currencyId: isoCurrencyCodeColumn('currency_id').default('USD'),
-  balance: monetaryAmountColumn().default(0), // Current balance
+  balance: integer().notNull().default(0), // Current balance
 
   // Type-specific fields for savings accounts
-  savingsTargetAmount: real('savings_target_amount'), // Target savings goal (savings only)
+  savingsTargetAmount: integer('savings_target_amount'), // Target savings goal in smallest currency unit (savings only)
   savingsTargetDate: dateOnlyText('savings_target_date'), // Target date (YYYY-MM-DD TEXT)
 
   // Type-specific fields for debt accounts
-  debtInitialAmount: real('debt_initial_amount'), // Original debt amount (debt only)
+  debtInitialAmount: integer('debt_initial_amount'), // Original debt amount in smallest currency unit (debt only)
   debtDueDate: dateOnlyText('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
@@ -134,7 +126,7 @@ export const getAccountsSqliteTable = (name: string) =>
  * - accounts_savings_fields_only_for_saving: savings fields only for saving accounts
  * - accounts_debt_fields_only_for_debt: debt fields only for debt accounts
  * - accounts_payment_no_type_specific_fields: payment accounts cannot have type-specific fields
- * - NUMERIC(14,2) precision: rounded to 2 decimal places for monetary fields
+ * - Amounts stored as integers in smallest currency unit
  */
 export const accountInsertSchema = createInsertSchema(accounts, {
   id: s => s.default(randomUUID),
@@ -144,8 +136,9 @@ export const accountInsertSchema = createInsertSchema(accounts, {
   currencyId: s =>
     s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH).default('USD'),
   savingsTargetAmount: s =>
-    s.positive().transform(roundToTwoDecimals).optional(),
-  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals).optional()
+    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT).optional(),
+  debtInitialAmount: s =>
+    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT).optional()
 })
   .omit({ updatedAt: true, createdAt: true, archivedAt: true })
   // Savings fields only for saving accounts
@@ -197,8 +190,9 @@ export type AccountInsertSchemaOutput = z.output<typeof accountInsertSchema>
 export const accountUpdateSchema = createUpdateSchema(accounts, {
   name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
   description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH),
-  savingsTargetAmount: s => s.positive().transform(roundToTwoDecimals),
-  debtInitialAmount: s => s.positive().transform(roundToTwoDecimals)
+  savingsTargetAmount: s =>
+    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
+  debtInitialAmount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT)
 }).omit({
   id: true,
   userId: true,

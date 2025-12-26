@@ -5,9 +5,7 @@
 # 1) Date/timestamp columns → `CAST(unixepoch(col) * 1000 AS integer)`
 #    PowerSync helper returns seconds; multiplying by 1000 converts to milliseconds,
 #    and casting to integer ensures 64-bit integer ms for `{ mode: 'timestamp_ms' }` columns.
-# 2) Monetary `numeric` columns → `CAST(... AS real)`
-#    Postgres `numeric` maps to TEXT by default; we cast to REAL so amounts arrive
-#    as 8-byte floats, aligning with SQLite `REAL` columns defined in the client.
+# 2) Monetary columns are stored as bigint (smallest currency unit) - no conversion needed.
 # Keep comments minimal; adjust only when new date or numeric fields are added.
 # ---------------------------------------------------------------------------------
 
@@ -15,13 +13,13 @@ bucket_definitions:
   # Global data accessible to all authenticated users
   global:
     data:
-      - SELECT code as id, code, symbol, name FROM currencies
+      - SELECT code as id, code FROM currencies
       - |
         SELECT
           id,
           base_currency,
           quote_currency,
-          CAST(rate AS real) AS rate,
+          rate,
           rate_date
         FROM exchange_rates
 
@@ -66,7 +64,7 @@ bucket_definitions:
           id,
           user_id,
           category_id,
-          CAST(amount AS real) AS amount,
+          amount,
           currency_id,
           period,
           budget_year,
@@ -85,10 +83,10 @@ bucket_definitions:
           name,
           description,
           currency_id,
-          CAST(balance AS real) AS balance,
-          CAST(savings_target_amount AS real) AS savings_target_amount,
+          balance,
+          savings_target_amount,
           savings_target_date,
-          CAST(debt_initial_amount AS real) AS debt_initial_amount,
+          debt_initial_amount,
           debt_due_date,
           is_archived,
           CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
@@ -123,7 +121,7 @@ bucket_definitions:
           counter_account_id,
           category_id,
           event_id,
-          CAST(amount AS real) AS amount,
+          amount,
           currency_id,
           tx_date,
           notes,

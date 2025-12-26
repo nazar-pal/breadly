@@ -5,14 +5,13 @@ import type {
   CategorySelectSQLite,
   CurrencySelectSQLite
 } from '@/data/client/db-schema'
-import { formatCurrencyWithSign } from '@/lib/utils/format-currency'
+import { formatCurrency, getCurrencyInfo } from '@/lib/utils/'
 import React from 'react'
 import type { SelectableRowProps } from '../types'
 
 type AccountWithCurrency = AccountSelectSQLite & {
   currency: {
     code: CurrencySelectSQLite['code']
-    symbol: CurrencySelectSQLite['symbol']
   }
 }
 
@@ -21,13 +20,14 @@ export function mapAccountToSelectableRow(
   selectedAccountId: string | null | undefined,
   onSelect: (accountId: string) => void
 ): SelectableRowProps {
+  const currencyInfo = getCurrencyInfo(account.currency.code)
   return {
     itemKey: account.id,
     selected: account.id === selectedAccountId,
     onPress: () => onSelect(account.id),
-    leftElement: account.currency.symbol,
+    leftElement: currencyInfo?.symbol,
     title: account.name,
-    rightElement: formatCurrencyWithSign(account.balance, account.currency.code)
+    rightElement: formatCurrency(account.balance, account.currency.code)
   }
 }
 
@@ -36,13 +36,14 @@ export function mapCurrencyToSelectableRow(
   selectedCurrencyCode: string | null | undefined,
   onSelect: (currencyCode: string) => void
 ): SelectableRowProps {
+  const currencyInfo = getCurrencyInfo(currency.code)
   return {
     itemKey: currency.code,
     selected: currency.code === selectedCurrencyCode,
     onPress: () => onSelect(currency.code),
-    leftElement: currency.symbol,
+    leftElement: currencyInfo?.symbol,
     title: currency.code,
-    subtitle: currency.name
+    subtitle: currencyInfo?.currency
   }
 }
 

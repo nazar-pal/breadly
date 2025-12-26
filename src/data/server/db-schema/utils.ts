@@ -1,6 +1,6 @@
-import { sql } from 'drizzle-orm'
-import { boolean, numeric, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 import { VALIDATION } from '@/data/const'
+import { sql } from 'drizzle-orm'
+import { boolean, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 
 // user ID with default clerk authentication (neon RLS)
 export const clerkUserIdColumn = () =>
@@ -15,11 +15,6 @@ export const isoCurrencyCodeColumnNullable = () =>
   varchar({ length: VALIDATION.CURRENCY_CODE_LENGTH })
 
 export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
-
-// numeric column with 14 digits total, 2 decimal places
-// suitable for currency amounts up to 999,999,999,999.99
-export const monetaryAmountColumn = () =>
-  numeric({ precision: 14, scale: 2 }).notNull()
 
 /**
  * Timestamp columns for record tracking.

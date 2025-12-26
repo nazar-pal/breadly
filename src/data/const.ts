@@ -22,7 +22,11 @@ export const VALIDATION = {
   CURRENCY_CODE_LENGTH: 3,
 
   // Monetary
-  MAX_TRANSACTION_AMOUNT: 999_999_999_999.99,
+  // Maximum monetary amount in smallest currency unit
+  // Limited by JavaScript's Number.MAX_SAFE_INTEGER (2^53 - 1)
+  // For 4-decimal currencies: ~900 billion in display units
+  // For 2-decimal currencies: ~90 trillion in display units
+  MAX_MONETARY_AMOUNT: Number.MAX_SAFE_INTEGER,
 
   // Date ranges
   MIN_YEAR: 1970,

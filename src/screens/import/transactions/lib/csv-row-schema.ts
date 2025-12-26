@@ -1,5 +1,6 @@
 import { DEFAULT_CURRENCIES } from '@/lib/constants'
 import { isoDateToDate, stringToNumber } from '@/lib/utils'
+import { getCurrencyInfo } from '@/lib/utils/currency-info'
 import { startOfDay } from 'date-fns'
 import { z } from 'zod'
 
@@ -12,8 +13,14 @@ export const CURRENCY_CODES = DEFAULT_CURRENCIES.map(c => c.code) as [
 export const TRANSACTION_TYPES = ['expense', 'income'] as const
 
 /**
- * Maximum transaction amount (matches NUMERIC(14,2) database constraint)
- * 14 total digits with 2 decimal places = 999,999,999,999.99
+ * Maximum transaction amount for CSV input validation
+ *
+ * IMPORTANT: CSV amounts must be provided in BASE UNITS (display units).
+ * For example: 10.50 for USD (not 1050 cents), 1000 for JPY, 10.500 for KWD.
+ * Amounts are automatically rounded to the currency's precision (e.g., 2 decimals for USD,
+ * 0 for JPY, 3 for KWD) during validation, then converted to smallest units internally.
+ *
+ * This limit provides a reasonable upper bound for CSV input validation.
  */
 const MAX_AMOUNT = 999_999_999_999.99
 
@@ -23,10 +30,22 @@ const MAX_AMOUNT = 999_999_999_999.99
 const MIN_DATE = new Date('1970-01-01')
 
 /**
- * Rounds a number to 2 decimal places (standard currency precision)
+ * Rounds an amount to the precision dictated by the currency's decimal places
+ * @param amount - Amount in base units
+ * @param currencyCode - ISO 4217 currency code
+ * @returns Amount rounded to currency precision (e.g., 2 decimals for USD, 0 for JPY, 3 for KWD)
+ * @throws Error if currency is not supported
  */
-function roundToTwoDecimals(value: number): number {
-  return Math.round(value * 100) / 100
+function roundToCurrencyPrecision(
+  amount: number,
+  currencyCode: string
+): number {
+  const info = getCurrencyInfo(currencyCode)
+  if (!info) {
+    throw new Error(`Unsupported currency: ${currencyCode}`)
+  }
+  const multiplier = Math.pow(10, info.digits)
+  return Math.round(amount * multiplier) / multiplier
 }
 
 export const csvRowSchema = z
@@ -44,12 +63,12 @@ export const csvRowSchema = z
         'Transaction date cannot be in the future'
       ),
 
-    // Amount: required, positive, max value, auto-rounded to 2 decimals
+    // Amount: required, positive, max value
+    // Note: Rounding to currency precision happens in the final transform after currency is known
     amount: trimStr
       .min(1, 'Amount is required')
       .pipe(stringToNumber)
       .pipe(z.number().positive('Amount must be greater than 0'))
-      .transform(roundToTwoDecimals)
       .pipe(
         z
           .number()
@@ -71,7 +90,10 @@ export const csvRowSchema = z
     // Currency: must be a supported currency code
     currency: trimStr.toUpperCase().pipe(z.enum(CURRENCY_CODES))
   })
-  .transform(({ date, category, ...rest }) => {
+  .transform(({ date, category, amount, currency, ...rest }) => {
+    // Round amount based on currency precision (e.g., 2 decimals for USD, 0 for JPY, 3 for KWD)
+    const roundedAmount = roundToCurrencyPrecision(amount, currency)
+
     // Parse category string: "Parent => Child" or just "Category"
     const parts = category.split('=>').map(s => s.trim())
 
@@ -80,6 +102,8 @@ export const csvRowSchema = z
       // Will be caught by the refine below
       return {
         ...rest,
+        amount: roundedAmount,
+        currency,
         createdAt: date,
         categoryName: category, // Keep full string for error message
         parentCategoryName: undefined,
@@ -92,6 +116,8 @@ export const csvRowSchema = z
 
     return {
       ...rest,
+      amount: roundedAmount,
+      currency,
       createdAt: date,
       categoryName,
       parentCategoryName,

@@ -1,20 +1,6 @@
 import { VALIDATION } from '@/data/const'
-import { customType, integer, real, text } from 'drizzle-orm/sqlite-core'
+import { customType, integer, text } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'expo-crypto'
-
-// ============================================================================
-// ZOD HELPERS
-// ============================================================================
-
-/**
- * Rounds a number to 2 decimal places.
- * Matches server's NUMERIC(14,2) precision.
- * Use with .transform() on amount fields.
- */
-export const roundToTwoDecimals = (value: number): number => {
-  if (!Number.isFinite(value)) return value
-  return Math.round(value * 100) / 100
-}
 
 // ============================================================================
 // COLUMN DEFINITIONS
@@ -30,11 +16,6 @@ export const isoCurrencyCodeColumn = (columnName?: string) =>
     : text({ length: 3 }).notNull()
 
 export const uuidPrimaryKey = () => text().$defaultFn(randomUUID).primaryKey()
-
-// real number for currency amounts (SQLite uses REAL for decimal numbers)
-// Note: SQLite doesn't have precise decimal types, consider storing as integers (cents)
-export const monetaryAmountColumn = (columnName?: string) =>
-  columnName ? real(columnName).notNull() : real().notNull()
 
 export const createdAtColumn = () =>
   integer('created_at', { mode: 'timestamp_ms' })

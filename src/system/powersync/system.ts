@@ -1,26 +1,20 @@
 import { sqliteSchema } from '@/data/client/db-schema'
 import { sessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
 import { wrapPowerSyncWithDrizzle } from '@powersync/drizzle-driver'
+import { OPSqliteOpenFactory } from '@powersync/op-sqlite' // Add this import
 import { PowerSyncDatabase } from '@powersync/react-native'
 import { makeSchema } from './utils'
 
 export const dbName = 'powersync_v102.db'
 const { syncEnabled } = sessionPersistentStore.getState()
 
-export const powerSyncDb = new PowerSyncDatabase({
-  // The schema you defined in the previous step
+const opSqlite = new OPSqliteOpenFactory({ dbFilename: dbName })
+
+export const powersync = new PowerSyncDatabase({
   schema: makeSchema(syncEnabled),
-  // For other options see,
-  // https://powersync-ja.github.io/powersync-js/web-sdk/globals#powersyncopenfactoryoptions
-  database: {
-    // Filename for the SQLite database — it's important to only instantiate one instance per file.
-    // For other database options see,
-    // https://powersync-ja.github.io/powersync-js/web-sdk/globals#sqlopenoptions
-    dbFilename: dbName
-  }
+  database: opSqlite
 })
 
-// This is the DB you will use in queries
-export const db = wrapPowerSyncWithDrizzle(powerSyncDb, {
+export const db = wrapPowerSyncWithDrizzle(powersync, {
   schema: sqliteSchema
 })

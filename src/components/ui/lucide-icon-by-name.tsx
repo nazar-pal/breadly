@@ -1,7 +1,8 @@
 import { StringWithAutocompleteOptions } from '@/lib/types'
 import { StringCase } from '@/lib/utils'
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
-import { icons } from 'lucide-react-native'
+// eslint-disable-next-line no-restricted-imports
+import * as icons from 'lucide-react-native/icons'
 import { Icon as UiIcon } from './lucide-icon'
 
 type LucideIconName = keyof typeof icons

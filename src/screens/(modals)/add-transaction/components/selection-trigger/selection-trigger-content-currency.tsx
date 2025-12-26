@@ -1,7 +1,6 @@
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
-import { getCurrency } from '@/data/client/queries'
-import { useDrizzleQuery } from '@/lib/hooks'
+import { getCurrencyInfo } from '@/lib/utils/'
 import React from 'react'
 
 export function SelectionTriggerContentCurrency({
@@ -11,11 +10,9 @@ export function SelectionTriggerContentCurrency({
   currencyCode: string | null
   render: 'name' | 'icon'
 }) {
-  const {
-    data: [currency]
-  } = useDrizzleQuery(currencyCode ? getCurrency({ currencyCode }) : undefined)
-
-  const currencyName = currency?.name ?? 'unknown'
+  const currencyName = currencyCode
+    ? getCurrencyInfo(currencyCode)?.currency
+    : 'unknown'
 
   if (render === 'name') {
     return (

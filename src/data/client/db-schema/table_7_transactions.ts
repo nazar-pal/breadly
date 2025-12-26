@@ -24,10 +24,9 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 ================================================================================
 */
 
-import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { index, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-
 import { VALIDATION } from '@/data/const'
+import type { BuildColumns } from 'drizzle-orm/column-builder'
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
@@ -36,8 +35,6 @@ import {
   createdAtColumn,
   dateOnlyText,
   isoCurrencyCodeColumn,
-  monetaryAmountColumn,
-  roundToTwoDecimals,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -90,7 +87,7 @@ export type TransactionType = (typeof TRANSACTION_TYPE)[number]
  * - Transfer transactions require both accountId and counterAccountId
  * - Transfer accounts must be different and belong to the same user
  * - Non-transfer transactions must not have a counterAccountId
- * - Transaction amounts must be positive (direction determined by type)
+ * - Transaction amounts must be positive integers in smallest currency unit
  */
 const columns = {
   // Explicitly defined for Drizzle ORM type safety
@@ -105,7 +102,7 @@ const columns = {
   // Classification and details
   categoryId: text('category_id'), // Optional transaction category (FK not enforced)
   eventId: text('event_id'), // Optional event for cross-category tracking (FK not enforced)
-  amount: monetaryAmountColumn(), // Transaction amount (always positive)
+  amount: integer().notNull(), // Transaction amount (always positive)
   currencyId: isoCurrencyCodeColumn('currency_id').notNull(), // Transaction currency (must match account currency if accountId is set)
   txDate: dateOnlyText('tx_date').notNull(), // Transaction date (YYYY-MM-DD TEXT)
   notes: text({ length: 1000 }), // Optional user notes/description
@@ -146,7 +143,7 @@ export const getTransactionsSqliteTable = (name: string) =>
  * - transactions_non_transfer_no_counter_account: non-transfers can't have counter account
  * - transactions_income_expense_has_category: income/expense must have categoryId
  * - transactions_transfer_no_category: transfers cannot have categoryId
- * - NUMERIC(14,2) precision: rounded to 2 decimal places
+ * - Amount stored as integer in smallest currency unit
  *
  * Note: Future date check (tx_date <= CURRENT_DATE) was intentionally removed from
  * server constraints to avoid timezone-related false positives. Future dates may
@@ -180,11 +177,7 @@ export const getTransactionsSqliteTable = (name: string) =>
  */
 export const transactionInsertSchema = createInsertSchema(transactions, {
   id: s => s.default(randomUUID),
-  amount: s =>
-    s
-      .positive()
-      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
-      .transform(roundToTwoDecimals),
+  amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
   currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
   notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
 })
@@ -236,11 +229,7 @@ export type TransactionInsertSchemaOutput = z.output<
  * existing values. These are validated inside the mutation with the merged state.
  */
 export const transactionUpdateSchema = createUpdateSchema(transactions, {
-  amount: s =>
-    s
-      .positive()
-      .max(VALIDATION.MAX_TRANSACTION_AMOUNT)
-      .transform(roundToTwoDecimals),
+  amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
   currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
   notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
 }).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
