@@ -21,7 +21,7 @@ bucket_definitions:
           id,
           base_currency,
           quote_currency,
-          CAST(rate AS real) AS rate,
+          rate,
           rate_date
         FROM exchange_rates
 

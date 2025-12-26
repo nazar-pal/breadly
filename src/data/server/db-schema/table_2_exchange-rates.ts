@@ -19,8 +19,8 @@ import { sql } from 'drizzle-orm'
 import {
   check,
   date,
+  doublePrecision,
   index,
-  numeric,
   pgTable,
   uniqueIndex
 } from 'drizzle-orm/pg-core'
@@ -53,7 +53,7 @@ export const exchangeRates = pgTable(
     quoteCurrency: isoCurrencyCodeColumn()
       .references(() => currencies.code)
       .notNull(), // Quote currency (e.g., EUR in USD/EUR)
-    rate: numeric({ precision: 20, scale: 10 }).notNull(), // Exchange rate (base to quote conversion factor)
+    rate: doublePrecision().notNull(), // Exchange rate (base to quote conversion factor)
     rateDate: date().notNull() // Date this rate was valid (for historical tracking)
   },
   table => [
