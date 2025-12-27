@@ -113,14 +113,23 @@ export const accounts = pgTable(
 
     // Business rule constraints
     check('accounts_name_not_empty', sql`length(trim(${table.name})) > 0`), // Non-empty names
+    check('accounts_max_balance', sql`${table.balance} <= 9007199254740991`), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
     check(
       'accounts_positive_target_amount',
       sql`${table.savingsTargetAmount} IS NULL OR ${table.savingsTargetAmount} > 0`
     ), // Positive target amounts
     check(
+      'accounts_max_target_amount',
+      sql`${table.savingsTargetAmount} IS NULL OR ${table.savingsTargetAmount} <= 9007199254740991`
+    ), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
+    check(
       'accounts_positive_debt_initial_amount',
       sql`${table.debtInitialAmount} IS NULL OR ${table.debtInitialAmount} > 0`
     ), // Positive debt initial amounts
+    check(
+      'accounts_max_debt_initial_amount',
+      sql`${table.debtInitialAmount} IS NULL OR ${table.debtInitialAmount} <= 9007199254740991`
+    ), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
 
     // Type-specific field constraints - ensure fields are only used for appropriate account types
     check(

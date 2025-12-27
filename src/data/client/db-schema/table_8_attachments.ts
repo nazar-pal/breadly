@@ -123,7 +123,7 @@ export const attachmentInsertSchema = createInsertSchema(attachments, {
   bucketPath: s => s.trim().min(1),
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
-  fileSize: s => s.positive(),
+  fileSize: s => s.positive().max(2_147_483_647), // Max PostgreSQL integer (2^31 - 1)
   duration: s => s.positive().optional(),
   // Custom types need explicit Zod type override
   uploadedAt: z.date().nullable().optional()
@@ -149,19 +149,32 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   bucketPath: s => s.trim().min(1),
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
-  fileSize: s => s.positive(),
+  fileSize: s => s.positive().max(2_147_483_647), // Max PostgreSQL integer (2^31 - 1)
   duration: s => s.positive(),
   // Custom types need explicit Zod type override
   uploadedAt: z.date().nullable().optional()
-}).omit({
-  id: true,
-  userId: true,
-  type: true,
-  createdAt: true,
-  updatedAt: true
 })
-// Note: Cross-field validation for status='ready' requiring uploadedAt cannot be
-// fully validated at schema level for partial updates. Validate in mutation with merged state.
+  .omit({
+    id: true,
+    userId: true,
+    type: true,
+    createdAt: true,
+    updatedAt: true
+  })
+  // Ready attachments must have uploadedAt timestamp (when both fields are present)
+  // Note: For partial updates where only status is changed, mutations must validate
+  // merged state to ensure uploadedAt is set when status becomes 'ready'
+  .refine(
+    data =>
+      data.status === undefined ||
+      data.uploadedAt !== undefined ||
+      data.status !== 'ready' ||
+      data.uploadedAt != null,
+    {
+      message: 'Ready attachments must have uploadedAt timestamp',
+      path: ['uploadedAt']
+    }
+  )
 
 export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
 export type AttachmentUpdateSchemaOutput = z.output<

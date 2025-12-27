@@ -137,6 +137,7 @@ export const transactions = pgTable(
 
     // Business rule constraints
     check('transactions_positive_amount', sql`${table.amount} > 0`), // Amounts must be positive
+    check('transactions_max_amount', sql`${table.amount} <= 9007199254740991`), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
     check(
       'transactions_transfer_different_accounts',
       sql`${table.type} != 'transfer' OR ${table.accountId} != ${table.counterAccountId}`

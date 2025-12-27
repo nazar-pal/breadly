@@ -117,7 +117,8 @@ const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
   index('transactions_category_idx').on(table.categoryId), // Category transactions lookup
   index('transactions_date_idx').on(table.txDate), // Date range queries
   index('transactions_counter_account_idx').on(table.counterAccountId), // Transfer lookups
-  index('transactions_event_idx').on(table.eventId) // Event transactions lookup
+  index('transactions_event_idx').on(table.eventId), // Event transactions lookup
+  index('transactions_type_idx').on(table.type) // Filter by transaction type
 ]
 
 export const transactions = sqliteTable('transactions', columns, extraConfig)

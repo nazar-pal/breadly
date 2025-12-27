@@ -182,6 +182,7 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 | Positive amount       | ✅         | -                 | ✅ CHECK         |
 | Transfer rules        | ✅         | ✅ (merged state) | ✅ CHECK         |
 | Category type match   | -          | ✅                | ✅ Trigger       |
+| Category required     | ✅         | ✅ (merged state) | ✅ CHECK         |
 | Currency consistency  | -          | ✅                | ✅ Trigger       |
 | Name non-empty        | ✅         | -                 | ✅ CHECK         |
 | Unique names          | -          | ✅                | ✅ UNIQUE        |

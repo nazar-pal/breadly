@@ -127,6 +127,7 @@ export const budgets = pgTable(
 
     // Business rule constraints
     check('budgets_positive_amount', sql`${table.amount} > 0`),
+    check('budgets_max_amount', sql`${table.amount} <= 9007199254740991`), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
     check(
       'budgets_valid_year',
       sql`${table.budgetYear} >= 1970 AND ${table.budgetYear} <= 2100`

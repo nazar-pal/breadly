@@ -38,7 +38,16 @@ export async function createTransaction({
   data: Omit<z.input<typeof transactionInsertSchema>, 'userId' | 'id'>
 }) {
   const id = randomUUID()
-  const parsedData = transactionInsertSchema.parse({ ...data, userId, id })
+  // Normalize currency code to uppercase and trim whitespace
+  const normalizedData = {
+    ...data,
+    currencyId: data.currencyId.trim().toUpperCase()
+  }
+  const parsedData = transactionInsertSchema.parse({
+    ...normalizedData,
+    userId,
+    id
+  })
 
   // Perform validation and balance updates atomically
   const [error, result] = await asyncTryCatch(

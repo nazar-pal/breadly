@@ -48,7 +48,12 @@ export async function updateTransaction({
   transactionId: string
   data: z.input<typeof updateTransactionSchema>
 }) {
-  const parsedData = updateTransactionSchema.parse(data)
+  // Normalize currency code to uppercase and trim whitespace if provided
+  const normalizedData = {
+    ...data,
+    currencyId: data.currencyId?.trim().toUpperCase()
+  }
+  const parsedData = updateTransactionSchema.parse(normalizedData)
 
   const [error, result] = await asyncTryCatch(
     db.transaction(async tx => {
@@ -113,6 +118,11 @@ export async function updateTransaction({
       // Transfer transactions cannot have a category (server trigger enforces this)
       if (finalType === 'transfer' && finalCategoryId != null) {
         throw new Error('Transfer transactions cannot have a category')
+      }
+
+      // Income/expense must have category (server CHECK constraint enforces this)
+      if (finalType !== 'transfer' && finalCategoryId == null) {
+        throw new Error('Income and expense transactions must have a category')
       }
 
       // Validate event exists and belongs to user (if provided or being changed)

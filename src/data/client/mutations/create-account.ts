@@ -26,12 +26,21 @@ export async function createAccount({
   data: Omit<z.input<typeof accountInsertSchema>, 'userId' | 'id'>
 }) {
   const id = randomUUID()
+  // Normalize currency code to uppercase and trim whitespace
+  const normalizedData = {
+    ...data,
+    currencyId: data.currencyId?.trim().toUpperCase() ?? 'USD'
+  }
   // Zod schema handles all CHECK constraint validations:
   // - Name is non-empty after trimming
   // - Savings fields only for saving accounts
   // - Debt fields only for debt accounts
   // - Positive amounts for savingsTargetAmount and debtInitialAmount
-  const parsedData = accountInsertSchema.parse({ ...data, userId, id })
+  const parsedData = accountInsertSchema.parse({
+    ...normalizedData,
+    userId,
+    id
+  })
 
   const [error, result] = await asyncTryCatch(
     db.transaction(async tx => {
