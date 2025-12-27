@@ -89,7 +89,7 @@ export const attachments = pgTable(
     bucketPath: text().notNull(), // Cloud storage path (S3, etc.) - unlimited length for complex paths
     mime: varchar({ length: 150 }).notNull(), // File MIME type - supports complex MIME types
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
-    fileSize: integer().notNull(), // File size in bytes (for storage management)
+    fileSize: integer().notNull(), // File size in bytes (max: 2,147,483,647 bytes / ~2 GB, limited by PostgreSQL integer type)
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
     uploadedAt: timestamp({ withTimezone: true, precision: 3 }), // When upload completed successfully
     createdAt: createdAtColumn(), // Record creation timestamp

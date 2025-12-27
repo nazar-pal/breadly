@@ -344,8 +344,7 @@ All triggers have corresponding client-side validation in Zod schemas and mutati
 
 1. **Client Zod Schemas:** Replicate CHECK constraints and basic business rules
 2. **Client Mutations:** Validate foreign key references and ownership before database operations
-3. **Server Zod Schemas:** Basic type coercion during sync (minimal)
-4. **PostgreSQL Triggers:** Final safety net that catches edge cases and prevents data corruption
+3. **PostgreSQL Triggers:** Final safety net that catches edge cases and prevents data corruption
 
 This multi-layer approach ensures:
 

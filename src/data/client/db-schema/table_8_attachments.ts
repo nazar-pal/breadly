@@ -84,7 +84,7 @@ const columns = {
   bucketPath: text('bucket_path').notNull(), // Cloud storage path (S3, etc.)
   mime: text({ length: 150 }).notNull(), // File MIME type
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
-  fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
+  fileSize: integer('file_size').notNull(), // File size in bytes (max: 2,147,483,647 bytes / ~2 GB, limited by PostgreSQL integer type)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
   uploadedAt: timestampTextNullable('uploaded_at'), // When upload completed successfully
   createdAt: createdAtColumn(), // Record creation timestamp

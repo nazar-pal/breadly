@@ -1,12 +1,5 @@
 # PowerSync Sync Rules
 # This file defines which data is synced to which users
-# ---------------------------------------------------------------------------------
-# Conventions used below:
-# 1) Timestamps (timestamptz) → synced as ISO 8601 text (e.g., '2024-12-25T10:00:00.000Z')
-#    PowerSync natively syncs Postgres timestamptz as text, no conversion needed.
-# 2) Dates (date) → synced as TEXT 'YYYY-MM-DD' (no conversion needed)
-# 3) Monetary columns are stored as bigint (smallest currency unit) - no conversion needed.
-# ---------------------------------------------------------------------------------
 
 bucket_definitions:
   # Global data accessible to all authenticated users
@@ -139,7 +132,7 @@ bucket_definitions:
           bucket_path,
           mime,
           file_name,
-          CAST(file_size AS integer) AS file_size,
+          file_size,
           duration,
           uploaded_at,
           created_at,

@@ -369,3 +369,36 @@ Use [date-fns](https://date-fns.org/) directly:
    - A calendar date → use date-only approach (LOCAL time, string storage)
 
 > **Key Point:** The string format (`'YYYY-MM-DD'` or ISO 8601) is what gets synced, not the JavaScript Date object. Design your date handling around string preservation to ensure offline sync safety.
+
+---
+
+## 7. File Size Limitations
+
+The current database design limits file attachments to a maximum size of **2,147,483,647 bytes** (2 GiB - 1 byte, approximately 2 GB).
+
+### Technical Details
+
+This limitation comes from PostgreSQL's `integer` type (32-bit signed integer), which is used for the `file_size` column in the `attachments` table:
+
+- **PostgreSQL `integer`**: 32-bit signed, range -2,147,483,648 to 2,147,483,647
+- **SQLite `INTEGER`**: 64-bit signed (can store much larger values)
+
+Since PostgreSQL is the server-side source of truth and uses the more restrictive type, the effective limit is determined by PostgreSQL's `integer` type. For file sizes (which are always positive), the maximum value is 2,147,483,647 bytes.
+
+### Implications
+
+- Files larger than ~2 GB cannot be stored in the current schema
+- If larger file support is needed in the future, the `file_size` column would need to be changed to `bigint` on the server (and potentially on the client for consistency)
+- Changing from `integer` to `bigint` would require a database migration
+
+### Current Usage
+
+This limit is sufficient for most use cases:
+
+- Receipt photos: typically < 10 MB
+- PDF documents: typically < 50 MB
+- Voice messages: typically < 100 MB
+
+For the vast majority of attachment use cases in a personal finance app, 2 GB is more than adequate.
+
+> **Key Point:** The file size limit is determined by PostgreSQL's `integer` type. If larger files are needed in the future, migrate the `file_size` column to `bigint` on both server and client schemas.
