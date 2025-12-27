@@ -103,7 +103,7 @@ export const accounts = pgTable(
     debtDueDate: date(), // Due date for debt payment (debt only)
 
     isArchived: isArchivedColumn(), // Soft deletion flag
-    archivedAt: timestamp({ withTimezone: true }), // When the account was archived
+    archivedAt: timestamp({ withTimezone: true, precision: 3 }), // When the account was archived
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn()
   },

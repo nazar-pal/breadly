@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { parseDateString, toDateString } from './date-string'
 
 /**
  * ISO datetime string ↔ Date. Validates ISO 8601 format, preserves timezone.
@@ -11,19 +12,12 @@ export const isoDatetimeToDate = z.codec(z.iso.datetime(), z.date(), {
 
 /**
  * ISO date string (YYYY-MM-DD) ↔ Date. Date-only, time stripped on encode.
+ * Uses LOCAL timezone to preserve calendar date (see @/lib/utils/date-string).
  * @example isoDateToDate.parse('2024-01-15')
  */
 export const isoDateToDate = z.codec(z.iso.date(), z.date(), {
-  decode: isoString => {
-    const [year, month, day] = isoString.split('-').map(Number)
-    return new Date(year, month - 1, day)
-  },
-  encode: date => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
+  decode: parseDateString,
+  encode: toDateString
 })
 
 /**

@@ -23,9 +23,16 @@ export const uuidPrimaryKey = () => uuid().defaultRandom().primaryKey()
  * In our offline-first architecture, timestamps represent when data was
  * created/updated on the client device, not when it was synced to the server.
  * The client always provides these values during sync operations.
+ *
+ * PRECISION: We use precision: 3 (milliseconds) to match JavaScript's Date
+ * precision. PostgreSQL supports up to microseconds (precision: 6) by default,
+ * but JavaScript Date only has millisecond precision. This ensures the stored
+ * value exactly matches what the client sends.
  */
-export const createdAtColumn = () => timestamp({ withTimezone: true }).notNull()
-export const updatedAtColumn = () => timestamp({ withTimezone: true }).notNull()
+export const createdAtColumn = () =>
+  timestamp({ withTimezone: true, precision: 3 }).notNull()
+export const updatedAtColumn = () =>
+  timestamp({ withTimezone: true, precision: 3 }).notNull()
 
 // soft deletion (archiving) for categories and accounts
 export const isArchivedColumn = () => boolean().default(false).notNull()

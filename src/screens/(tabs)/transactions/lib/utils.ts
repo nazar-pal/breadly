@@ -1,52 +1,42 @@
+import { toDateString } from '@/lib/utils'
+import { addDays, isToday, isYesterday, startOfToday, subDays } from 'date-fns'
 import type { DateGroup, Transaction } from './types'
 
 export function getDateRanges() {
-  const now = new Date()
-
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  return { today, tomorrow, yesterday }
+  return {
+    today: startOfToday(),
+    tomorrow: addDays(startOfToday(), 1),
+    yesterday: subDays(startOfToday(), 1)
+  }
 }
 
 function formatDateKey(date: Date): string {
-  return date.toISOString().split('T')[0] // YYYY-MM-DD
+  // Use toDateString to safely convert to 'YYYY-MM-DD' without timezone shifts
+  return toDateString(date)
 }
 
 function formatDateLabel(date: Date): string {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  const txDate = new Date(date)
-  txDate.setHours(0, 0, 0, 0)
-
-  if (txDate.getTime() === today.getTime()) {
+  if (isToday(date)) {
     return 'Today'
   }
 
-  if (txDate.getTime() === yesterday.getTime()) {
+  if (isYesterday(date)) {
     return 'Yesterday'
   }
 
   // Check if it's this year
-  const isThisYear = txDate.getFullYear() === today.getFullYear()
+  const today = startOfToday()
+  const isThisYear = date.getFullYear() === today.getFullYear()
 
   if (isThisYear) {
-    return txDate.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric'
     })
   }
 
-  return txDate.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',

@@ -179,7 +179,9 @@ export const transactionInsertSchema = createInsertSchema(transactions, {
   id: s => s.default(randomUUID),
   amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
   currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
-  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
+  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional(),
+  // Custom types need explicit Zod type override
+  txDate: z.date()
 })
   .omit({ createdAt: true, updatedAt: true })
   // Transfers must have a source account
@@ -231,7 +233,9 @@ export type TransactionInsertSchemaOutput = z.output<
 export const transactionUpdateSchema = createUpdateSchema(transactions, {
   amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
   currencyId: s => s.trim().length(VALIDATION.CURRENCY_CODE_LENGTH),
-  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional()
+  notes: s => s.trim().min(1).max(VALIDATION.MAX_NOTES_LENGTH).optional(),
+  // Custom types need explicit Zod type override
+  txDate: z.date().optional()
 }).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type TransactionUpdateSchemaInput = z.input<

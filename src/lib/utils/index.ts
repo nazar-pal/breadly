@@ -1,5 +1,6 @@
 export { cn } from './cn'
 export { getAllCurrencies, getCurrencyInfo } from './currency-info'
+export * from './date-string'
 export { formatBytes } from './format-bytes'
 export { formatCurrency, type FormatCurrencyOptions } from './format-currency'
 export { getAccountProgress } from './get-account-progress'

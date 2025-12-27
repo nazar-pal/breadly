@@ -1,5 +1,6 @@
 import { Icon } from '@/components/ui/lucide-icon'
 import { cn, formatCurrency } from '@/lib/utils'
+import { isToday, isYesterday } from 'date-fns'
 import { Link } from 'expo-router'
 import {
   ArrowRightLeft,
@@ -56,11 +57,7 @@ function getTypeConfig(type: string): TypeConfig {
 }
 
 function formatDate(date: Date) {
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  if (date.toDateString() === today.toDateString()) {
+  if (isToday(date)) {
     return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
@@ -68,7 +65,7 @@ function formatDate(date: Date) {
     })
   }
 
-  if (date.toDateString() === yesterday.toDateString()) {
+  if (isYesterday(date)) {
     return 'Yesterday'
   }
 

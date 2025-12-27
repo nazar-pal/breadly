@@ -1,6 +1,6 @@
 import { Text } from '@/components/ui/text'
 import { useCalculator } from '@/lib/hooks/use-calculator'
-import { format } from 'date-fns'
+import { format, startOfToday } from 'date-fns'
 import { useState } from 'react'
 import { View } from 'react-native'
 import { CalculatorDisplay } from './calculator-display'
@@ -19,7 +19,7 @@ export function Calculator({ isDisabled, handleSubmit }: Props) {
 
   // Transaction metadata
   const [comment, setComment] = useState('')
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date>(() => startOfToday())
 
   // Modal visibility
   const [showCommentModal, setShowCommentModal] = useState(false)

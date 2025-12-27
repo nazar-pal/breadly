@@ -24,17 +24,18 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 
 import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
-import { index, integer, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { index, sqliteTable } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
-  dateOnlyText,
+  dateOnlyTextNullable,
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  timestampTextNullable,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -76,10 +77,10 @@ const columns = {
   userId: clerkUserIdColumn(), // Clerk user ID for multi-tenant isolation
   name: nameColumn(), // Required: "Italy Vacation", "Wedding"
   description: descriptionColumn(), // Optional notes about the event
-  startDate: dateOnlyText('start_date'), // Optional: when event starts (YYYY-MM-DD)
-  endDate: dateOnlyText('end_date'), // Optional: when event ends (YYYY-MM-DD)
+  startDate: dateOnlyTextNullable('start_date'), // Optional: when event starts (YYYY-MM-DD)
+  endDate: dateOnlyTextNullable('end_date'), // Optional: when event ends (YYYY-MM-DD)
   isArchived: isArchivedColumn(), // User marks when done tracking
-  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }), // When archived
+  archivedAt: timestampTextNullable('archived_at'), // When archived
   createdAt: createdAtColumn(), // Record creation timestamp
   updatedAt: updatedAtColumn()
 }
@@ -113,7 +114,11 @@ export const eventInsertSchema = createInsertSchema(events, {
   id: s => s.default(randomUUID),
   name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
   description: s =>
-    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional()
+    s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
+  // Custom types need explicit Zod type override
+  archivedAt: z.date().nullable().optional(),
+  startDate: z.date().nullable().optional(),
+  endDate: z.date().nullable().optional()
 })
   .omit({ createdAt: true, updatedAt: true })
 
@@ -138,7 +143,10 @@ export type EventInsertSchemaOutput = z.output<typeof eventInsertSchema>
  */
 export const eventUpdateSchema = createUpdateSchema(events, {
   name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
-  description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH)
+  description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH),
+  // Custom types need explicit Zod type override
+  startDate: z.date().nullable().optional(),
+  endDate: z.date().nullable().optional()
 }).omit({
   id: true,
   userId: true,

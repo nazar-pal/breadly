@@ -227,3 +227,145 @@ Using `ON DELETE CASCADE` on your PostgreSQL server is fine for an offline-first
 On the client, you must delete related rows manually if you need immediate consistency, and ensure that your backend deletion handlers are idempotent—delete requests for already-deleted rows should be treated as successful rather than errors.
 
 When the server processes a deletion and cascades child deletions, PowerSync will sync those changes back, and the client's local SQLite database will match the server state.
+
+---
+
+## 6. Date and Timestamp Handling
+
+Proper date handling is critical for offline-first applications. Different timezone handling between timestamps and date-only fields prevents data corruption during sync.
+
+### Two Types of Date Fields
+
+| Type           | Examples                                  | Storage             | Timezone              |
+| -------------- | ----------------------------------------- | ------------------- | --------------------- |
+| **Timestamps** | `created_at`, `updated_at`, `archived_at` | ISO 8601 with time  | UTC (timezone-aware)  |
+| **Date-only**  | `tx_date`, `start_date`, `due_date`       | `YYYY-MM-DD` string | Local (calendar date) |
+
+### Timestamps (Timezone-Aware)
+
+Timestamps represent exact moments in time and should be stored in UTC.
+
+```typescript
+// ✅ Correct - Timestamps use UTC
+const createdAt = new Date() // Current moment
+// Stored as: '2024-12-25 10:30:00.000Z'
+```
+
+**How it works:**
+
+1. Client creates timestamp with `new Date()`
+2. Custom Drizzle type converts to ISO 8601 string (UTC)
+3. PowerSync syncs the string to server
+4. Server parses back to Date object
+
+**Safe operations:**
+
+- `new Date()` - creates current timestamp
+- `.toISOString()` - always produces UTC (safe for timestamps)
+- Standard date-fns functions work correctly
+
+### Date-Only Fields (Calendar Dates)
+
+Date-only fields represent calendar dates without time (e.g., "December 25, 2024"). The user's intent is to record a specific calendar day, regardless of timezone.
+
+```typescript
+// ✅ Correct - Use helper functions for date-only fields
+import { createLocalDate, toDateString } from '@/lib/utils'
+import { startOfToday, addDays, isToday } from 'date-fns'
+
+const txDate = createLocalDate(2024, 12, 25) // Dec 25, 2024 (1-indexed month)
+const today = startOfToday() // Today's date at midnight local time
+const tomorrow = addDays(startOfToday(), 1)
+const dateStr = toDateString(txDate) // '2024-12-25'
+if (isToday(txDate)) { ... }
+
+// ❌ WRONG - May shift the date!
+const wrong = txDate.toISOString().split('T')[0]
+// If user is in UTC+12 at midnight Dec 25:
+// toISOString() returns '2024-12-24T12:00:00.000Z'
+// split('T')[0] gives '2024-12-24' - SHIFTED!
+```
+
+**How it works:**
+
+1. Client stores date as `YYYY-MM-DD` string in SQLite
+2. PowerSync syncs the **raw string** (not the Date object)
+3. Server receives string and parses at UTC midnight for Postgres
+4. Round-trip preserves the exact date string
+
+**Critical Rule:** Never use `.toISOString()` on date-only Date objects. It converts to UTC which may shift the calendar date.
+
+### Offline Sync Safety
+
+Date-only strings are inherently safe for offline sync:
+
+1. User creates transaction on Dec 25 → stored as `'2024-12-25'`
+2. User goes offline for 3 days
+3. Sync happens on Dec 28 → PowerSync syncs `'2024-12-25'` string
+4. Server receives `'2024-12-25'` → stores in Postgres date column
+5. Date is preserved because **the string is the source of truth**
+
+### Available Helper Functions
+
+**For date-only field conversions (critical for offline-first):**
+
+Import from `@/lib/utils`:
+
+| Function                            | Purpose                                                       |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `toDateString(date)`                | Convert Date → `'YYYY-MM-DD'` string (LOCAL time)             |
+| `parseDateString(str)`              | Convert `'YYYY-MM-DD'` string → Date (LOCAL midnight)         |
+| `createLocalDate(year, month, day)` | Create date from components (1-indexed month, LOCAL midnight) |
+
+**For all other date operations:**
+
+Use [date-fns](https://date-fns.org/) directly:
+
+| date-fns Function                         | Purpose                                                  |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `startOfToday()`                          | Get today at midnight local time                         |
+| `startOfMonth(date)`, `endOfMonth(date)`  | Month boundaries                                         |
+| `startOfYear(date)`, `endOfYear(date)`    | Year boundaries                                          |
+| `addDays(date, n)`, `subDays(date, n)`    | Add/subtract days                                        |
+| `addMonths(date, n)`, `addYears(date, n)` | Add months/years                                         |
+| `isToday(date)`, `isYesterday(date)`      | Date comparisons                                         |
+| `isSameDay(date1, date2)`                 | Compare calendar days                                    |
+| `format(date, 'yyyy-MM-dd')`              | Format dates (use `toDateString` for date-only fields)   |
+| `parse(str, 'yyyy-MM-dd', new Date())`    | Parse dates (use `parseDateString` for date-only fields) |
+
+### Data Flow Summary
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        TIMESTAMPS                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│ Client (SQLite)     → PowerSync      → Server (Postgres)            │
+│ TEXT                  TEXT             timestamptz                   │
+│ '2024-12-25 10:00Z'   '2024-12-25...'  2024-12-25 10:00:00+00        │
+│                                                                      │
+│ new Date()          → toISOString()  → new Date(str)                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                        DATE-ONLY                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Client (SQLite)     → PowerSync      → Server (Postgres)            │
+│ TEXT                  TEXT             date                          │
+│ '2024-12-25'          '2024-12-25'     2024-12-25                    │
+│                                                                      │
+│ Date (local)        → toDateString() → Date.UTC() → date column     │
+│ ⚠️ NEVER toISOString()                                              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Best Practices
+
+1. **For date-only fields**, use `toDateString()` and `parseDateString()` from `@/data/date-utils` - these ensure LOCAL time conversion
+2. **For all other date operations**, use date-fns functions directly (e.g., `startOfToday()`, `addDays()`, `isToday()`)
+3. **Use `new Date()` directly** only for timestamps (created_at, updated_at)
+4. **Never use `.toISOString()`** on date-only Date objects - it may shift the calendar date
+5. **When in doubt**, check if the field represents:
+   - A moment in time → use timestamp approach (UTC)
+   - A calendar date → use date-only approach (LOCAL time, string storage)
+
+> **Key Point:** The string format (`'YYYY-MM-DD'` or ISO 8601) is what gets synced, not the JavaScript Date object. Design your date handling around string preservation to ensure offline sync safety.

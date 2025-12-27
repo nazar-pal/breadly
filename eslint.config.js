@@ -39,6 +39,23 @@ module.exports = defineConfig([
             }
           ]
         }
+      ],
+      // Warn about .toISOString() usage which can cause date-shifting issues
+      // for date-only fields. This rule catches common patterns and educates devs.
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector:
+            "CallExpression[callee.property.name='toISOString'] > MemberExpression[property.name='split']",
+          message:
+            "⚠️ DATE SHIFT RISK: .toISOString().split('T')[0] can shift dates!\n\nFor date-only fields (tx_date, start_date, due_date), use:\n  import { toDateString } from '@/data/date-utils'\n  toDateString(date) // Returns 'YYYY-MM-DD' safely\n\nFor timestamps (created_at, updated_at), .toISOString() is safe.\n\nSee: src/data/DatabaseDesignGuidelines.md § Date and Timestamp Handling"
+        },
+        {
+          selector:
+            "MemberExpression[property.name='toISOString']:has(MemberExpression[property.name='split'])",
+          message:
+            "⚠️ DATE SHIFT RISK: .toISOString().split('T')[0] can shift dates!\n\nFor date-only fields (tx_date, start_date, due_date), use:\n  import { toDateString } from '@/data/date-utils'\n  toDateString(date) // Returns 'YYYY-MM-DD' safely\n\nFor timestamps (created_at, updated_at), .toISOString() is safe.\n\nSee: src/data/DatabaseDesignGuidelines.md § Date and Timestamp Handling"
+        }
       ]
     }
   },

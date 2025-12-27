@@ -1,6 +1,7 @@
 import { createTransaction } from '@/data/client/mutations'
 import { getCurrency } from '@/data/client/queries'
 import { toSmallestUnit } from '@/lib/utils/currency-info'
+import { startOfToday } from 'date-fns'
 import { CalculatorInputs, WorkflowMap } from './types'
 
 export async function submitExpenseIncomeCurrency(
@@ -19,7 +20,7 @@ export async function submitExpenseIncomeCurrency(
       categoryId: args.categoryId,
       currencyId: currency.id,
       amount: toSmallestUnit(inputs.amount, currency.id),
-      txDate: inputs.txDate ?? new Date(),
+      txDate: inputs.txDate ?? startOfToday(),
       notes: inputs.comment || undefined
     }
   })

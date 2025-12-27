@@ -5,7 +5,11 @@ import { and, eq } from 'drizzle-orm'
 import { createUpdateSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-const accountUpdateSchema = createUpdateSchema(accounts).pick({
+const accountUpdateSchema = createUpdateSchema(accounts, {
+  // Custom types need explicit Zod type override
+  savingsTargetDate: z.date().nullable().optional(),
+  debtDueDate: z.date().nullable().optional()
+}).pick({
   name: true,
   description: true,
   balance: true,

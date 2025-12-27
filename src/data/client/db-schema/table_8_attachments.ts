@@ -25,14 +25,15 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
-import { VALIDATION } from '@/data/const'
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  timestampTextNullable,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -85,7 +86,7 @@ const columns = {
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
   fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-  uploadedAt: integer('uploaded_at', { mode: 'timestamp_ms' }), // When upload completed successfully
+  uploadedAt: timestampTextNullable('uploaded_at'), // When upload completed successfully
   createdAt: createdAtColumn(), // Record creation timestamp
   updatedAt: updatedAtColumn()
 }
@@ -123,7 +124,9 @@ export const attachmentInsertSchema = createInsertSchema(attachments, {
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
-  duration: s => s.positive().optional()
+  duration: s => s.positive().optional(),
+  // Custom types need explicit Zod type override
+  uploadedAt: z.date().nullable().optional()
 })
   .omit({ createdAt: true, updatedAt: true })
   // Voice messages require duration
@@ -147,7 +150,9 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
   fileSize: s => s.positive(),
-  duration: s => s.positive()
+  duration: s => s.positive(),
+  // Custom types need explicit Zod type override
+  uploadedAt: z.date().nullable().optional()
 }).omit({
   id: true,
   userId: true,

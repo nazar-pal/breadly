@@ -91,7 +91,7 @@ export const attachments = pgTable(
     fileName: varchar({ length: 500 }).notNull(), // Original filename - supports very long file names
     fileSize: integer().notNull(), // File size in bytes (for storage management)
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-    uploadedAt: timestamp({ withTimezone: true }), // When upload completed successfully
+    uploadedAt: timestamp({ withTimezone: true, precision: 3 }), // When upload completed successfully
     createdAt: createdAtColumn(), // Record creation timestamp
     updatedAt: updatedAtColumn()
   },
