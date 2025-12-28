@@ -73,6 +73,13 @@ export function transformDataForPostgres(data: any, table: string): any {
   const transformed: any = {}
 
   // ---------------------------------------------------------------------
+  // Server-managed fields that clients must NOT send
+  // These are automatically set by the database and should be stripped
+  // to prevent clients from manipulating audit timestamps
+  // ---------------------------------------------------------------------
+  const serverManagedFields = ['server_created_at', 'server_updated_at']
+
+  // ---------------------------------------------------------------------
   // Field mappings per table
   // ---------------------------------------------------------------------
   const timestampFields: Record<string, string[]> = {
@@ -119,6 +126,11 @@ export function transformDataForPostgres(data: any, table: string): any {
   // 1) Convert snake_case → camelCase and handle timestamps/dates immediately
   // ---------------------------------------------------------------------
   for (const [key, value] of Object.entries(data)) {
+    // Strip server-managed fields - clients must not send these
+    if (serverManagedFields.includes(key)) {
+      continue
+    }
+
     const camelKey = snakeToCamel(key)
 
     // Timestamp conversion: ISO 8601 string → Date object
