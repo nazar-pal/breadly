@@ -111,7 +111,9 @@ const columns = {
 const extraConfig = (table: BuildColumns<string, typeof columns, 'sqlite'>) => [
   index('budgets_user_idx').on(table.userId),
   index('budgets_category_idx').on(table.categoryId),
-  index('budgets_year_idx').on(table.budgetYear)
+  index('budgets_year_idx').on(table.budgetYear),
+  index('budgets_period_idx').on(table.period), // Filter by budget period (monthly/yearly)
+  index('budgets_currency_id_idx').on(table.currencyId) // Filter by currency
 ]
 
 export const budgets = sqliteTable('budgets', columns, extraConfig)

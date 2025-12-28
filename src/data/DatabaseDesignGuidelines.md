@@ -227,3 +227,257 @@ Using `ON DELETE CASCADE` on your PostgreSQL server is fine for an offline-first
 On the client, you must delete related rows manually if you need immediate consistency, and ensure that your backend deletion handlers are idempotent—delete requests for already-deleted rows should be treated as successful rather than errors.
 
 When the server processes a deletion and cascades child deletions, PowerSync will sync those changes back, and the client's local SQLite database will match the server state.
+
+---
+
+## 6. Date and Timestamp Handling
+
+Proper date handling is critical for offline-first applications. Different timezone handling between timestamps and date-only fields prevents data corruption during sync.
+
+### Two Types of Date Fields
+
+| Type           | Examples                                  | Storage             | Timezone              |
+| -------------- | ----------------------------------------- | ------------------- | --------------------- |
+| **Timestamps** | `created_at`, `updated_at`, `archived_at` | ISO 8601 with time  | UTC (timezone-aware)  |
+| **Date-only**  | `tx_date`, `start_date`, `due_date`       | `YYYY-MM-DD` string | Local (calendar date) |
+
+### Timestamps (Timezone-Aware)
+
+Timestamps represent exact moments in time and should be stored in UTC.
+
+```typescript
+// ✅ Correct - Timestamps use UTC
+const createdAt = new Date() // Current moment
+// Stored as: '2024-12-25 10:30:00.000Z'
+```
+
+**How it works:**
+
+1. Client creates timestamp with `new Date()`
+2. Custom Drizzle type converts to ISO 8601 string (UTC)
+3. PowerSync syncs the string to server
+4. Server parses back to Date object
+
+**Safe operations:**
+
+- `new Date()` - creates current timestamp
+- `.toISOString()` - always produces UTC (safe for timestamps)
+- Standard date-fns functions work correctly
+
+### Date-Only Fields (Calendar Dates)
+
+Date-only fields represent calendar dates without time (e.g., "December 25, 2024"). The user's intent is to record a specific calendar day, regardless of timezone.
+
+```typescript
+// ✅ Correct - Use helper functions for date-only fields
+import { createLocalDate, toDateString } from '@/lib/utils'
+import { startOfToday, addDays, isToday } from 'date-fns'
+
+const txDate = createLocalDate(2024, 12, 25) // Dec 25, 2024 (1-indexed month)
+const today = startOfToday() // Today's date at midnight local time
+const tomorrow = addDays(startOfToday(), 1)
+const dateStr = toDateString(txDate) // '2024-12-25'
+if (isToday(txDate)) { ... }
+
+// ❌ WRONG - May shift the date!
+const wrong = txDate.toISOString().split('T')[0]
+// If user is in UTC+12 at midnight Dec 25:
+// toISOString() returns '2024-12-24T12:00:00.000Z'
+// split('T')[0] gives '2024-12-24' - SHIFTED!
+```
+
+**How it works:**
+
+1. Client stores date as `YYYY-MM-DD` string in SQLite
+2. PowerSync syncs the **raw string** (not the Date object)
+3. Server receives string and parses at UTC midnight for Postgres
+4. Round-trip preserves the exact date string
+
+**Critical Rule:** Never use `.toISOString()` on date-only Date objects. It converts to UTC which may shift the calendar date.
+
+### Offline Sync Safety
+
+Date-only strings are inherently safe for offline sync:
+
+1. User creates transaction on Dec 25 → stored as `'2024-12-25'`
+2. User goes offline for 3 days
+3. Sync happens on Dec 28 → PowerSync syncs `'2024-12-25'` string
+4. Server receives `'2024-12-25'` → stores in Postgres date column
+5. Date is preserved because **the string is the source of truth**
+
+### Available Helper Functions
+
+**For date-only field conversions (critical for offline-first):**
+
+Import from `@/lib/utils`:
+
+| Function                            | Purpose                                                       |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `toDateString(date)`                | Convert Date → `'YYYY-MM-DD'` string (LOCAL time)             |
+| `parseDateString(str)`              | Convert `'YYYY-MM-DD'` string → Date (LOCAL midnight)         |
+| `createLocalDate(year, month, day)` | Create date from components (1-indexed month, LOCAL midnight) |
+
+**For all other date operations:**
+
+Use [date-fns](https://date-fns.org/) directly:
+
+| date-fns Function                         | Purpose                                                  |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `startOfToday()`                          | Get today at midnight local time                         |
+| `startOfMonth(date)`, `endOfMonth(date)`  | Month boundaries                                         |
+| `startOfYear(date)`, `endOfYear(date)`    | Year boundaries                                          |
+| `addDays(date, n)`, `subDays(date, n)`    | Add/subtract days                                        |
+| `addMonths(date, n)`, `addYears(date, n)` | Add months/years                                         |
+| `isToday(date)`, `isYesterday(date)`      | Date comparisons                                         |
+| `isSameDay(date1, date2)`                 | Compare calendar days                                    |
+| `format(date, 'yyyy-MM-dd')`              | Format dates (use `toDateString` for date-only fields)   |
+| `parse(str, 'yyyy-MM-dd', new Date())`    | Parse dates (use `parseDateString` for date-only fields) |
+
+### Data Flow Summary
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        TIMESTAMPS                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│ Client (SQLite)     → PowerSync      → Server (Postgres)            │
+│ TEXT                  TEXT             timestamptz                   │
+│ '2024-12-25 10:00Z'   '2024-12-25...'  2024-12-25 10:00:00+00        │
+│                                                                      │
+│ new Date()          → toISOString()  → new Date(str)                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                        DATE-ONLY                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Client (SQLite)     → PowerSync      → Server (Postgres)            │
+│ TEXT                  TEXT             date                          │
+│ '2024-12-25'          '2024-12-25'     2024-12-25                    │
+│                                                                      │
+│ Date (local)        → toDateString() → Date.UTC() → date column     │
+│ ⚠️ NEVER toISOString()                                              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Best Practices
+
+1. **For date-only fields**, use `toDateString()` and `parseDateString()` from `@/data/date-utils` - these ensure LOCAL time conversion
+2. **For all other date operations**, use date-fns functions directly (e.g., `startOfToday()`, `addDays()`, `isToday()`)
+3. **Use `new Date()` directly** only for timestamps (created_at, updated_at)
+4. **Never use `.toISOString()`** on date-only Date objects - it may shift the calendar date
+5. **When in doubt**, check if the field represents:
+   - A moment in time → use timestamp approach (UTC)
+   - A calendar date → use date-only approach (LOCAL time, string storage)
+
+> **Key Point:** The string format (`'YYYY-MM-DD'` or ISO 8601) is what gets synced, not the JavaScript Date object. Design your date handling around string preservation to ensure offline sync safety.
+
+---
+
+## 7. File Size Limitations
+
+The current database design limits file attachments to a maximum size of **2,147,483,647 bytes** (2 GiB - 1 byte, approximately 2 GB).
+
+### Technical Details
+
+This limitation comes from PostgreSQL's `integer` type (32-bit signed integer), which is used for the `file_size` column in the `attachments` table:
+
+- **PostgreSQL `integer`**: 32-bit signed, range -2,147,483,648 to 2,147,483,647
+- **SQLite `INTEGER`**: 64-bit signed (can store much larger values)
+
+Since PostgreSQL is the server-side source of truth and uses the more restrictive type, the effective limit is determined by PostgreSQL's `integer` type. For file sizes (which are always positive), the maximum value is 2,147,483,647 bytes.
+
+### Implications
+
+- Files larger than ~2 GB cannot be stored in the current schema
+- If larger file support is needed in the future, the `file_size` column would need to be changed to `bigint` on the server (and potentially on the client for consistency)
+- Changing from `integer` to `bigint` would require a database migration
+
+### Current Usage
+
+This limit is sufficient for most use cases:
+
+- Receipt photos: typically < 10 MB
+- PDF documents: typically < 50 MB
+- Voice messages: typically < 100 MB
+
+For the vast majority of attachment use cases in a personal finance app, 2 GB is more than adequate.
+
+> **Key Point:** The file size limit is determined by PostgreSQL's `integer` type. If larger files are needed in the future, migrate the `file_size` column to `bigint` on both server and client schemas.
+
+---
+
+## 8. Server-Side Timestamps for Offline-First Sync
+
+### The Problem
+
+In offline-first applications, client timestamps (`created_at`, `updated_at`) represent when the user performed an action on their device. However, if the user was offline, the data may reach the server hours or days later.
+
+**Example Scenario:**
+
+- User creates a transaction on Dec 20th (offline)
+- User syncs on Dec 28th (when internet connection is restored)
+- `created_at` = Dec 20th (when user created it)
+- `server_created_at` = Dec 28th (when server received it)
+
+### The Solution
+
+Every client-delivered table includes server-managed timestamps:
+
+| Column              | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `server_created_at` | When the server first received and stored the record   |
+| `server_updated_at` | When the server last processed an update to the record |
+
+### Key Properties
+
+- **Server-only**: These columns are NOT synced to clients (not in `sync_rules.yaml`)
+- **Automatic**: Set by PostgreSQL/Drizzle ORM, no application code needed
+- **Immutable by clients**: Clients cannot set or modify these values
+- **Database-managed**: `server_created_at` uses PostgreSQL's `DEFAULT NOW()`, `server_updated_at` uses Drizzle's `$onUpdate()` hook
+
+### Implementation
+
+Server timestamps are defined using helper functions in `src/data/server/db-schema/utils.ts`:
+
+```typescript
+export const serverCreatedAtColumn = () =>
+  timestamp('server_created_at', { withTimezone: true, precision: 3 })
+    .notNull()
+    .defaultNow()
+
+export const serverUpdatedAtColumn = () =>
+  timestamp('server_updated_at', { withTimezone: true, precision: 3 })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date())
+```
+
+**Tables with server timestamps:**
+
+- `user_preferences`
+- `categories`
+- `budgets`
+- `accounts`
+- `transactions`
+- `attachments`
+- `transaction_attachments`
+- `events`
+
+**Tables without server timestamps:**
+
+- `currencies` - server-managed seed data
+- `exchange_rates` - server-managed via scheduled jobs
+
+### Use Cases
+
+1. **Audit Trail**: Prove when your server received specific data (important for financial/regulatory compliance)
+2. **Sync Debugging**: Compare `created_at` vs `server_created_at` to identify sync delays and connectivity issues
+3. **Analytics**: Understand offline patterns (how long users go between syncs, average sync delay)
+4. **Anomaly Detection**: Flag records where timestamps differ significantly (potential clock drift or data manipulation)
+
+### Technical Notes
+
+- **No database triggers needed**: PostgreSQL's `DEFAULT now()` handles INSERT. Drizzle's `$onUpdate()` hook handles UPDATE operations automatically.
+- **How `$onUpdate()` works**: This is a JavaScript-level hook, not a database trigger. When you call `db.update(table).set(data)`, Drizzle automatically adds the `$onUpdate` column to the SET clause. This works with our sync router because it uses Drizzle's query builder (`db.update(cfg.table).set(transformed)`).
+- **sync_rules.yaml**: These columns are intentionally excluded from sync queries — they only exist on the server.
+
+> **Key Point:** Server timestamps provide operational visibility into your sync system. They're invisible to clients but invaluable for debugging, analytics, and compliance in offline-first architectures.

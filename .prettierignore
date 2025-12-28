@@ -20,3 +20,6 @@ exported-artifacts
 
 # Ignore miscellaneous
 *.log
+
+# Ignore generated uniwind types
+uniwind-types.d.ts

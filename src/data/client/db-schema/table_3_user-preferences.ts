@@ -90,7 +90,8 @@ export const userPreferenceInsertSchema = createInsertSchema(userPreferences, {
     s.min(VALIDATION.MIN_WEEKDAY).max(VALIDATION.MAX_WEEKDAY).default(1),
   locale: s =>
     s.trim().min(2).max(VALIDATION.MAX_LOCALE_LENGTH).default('en-US'),
-  defaultCurrency: s => s.length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
+  defaultCurrency: s =>
+    s.trim().toUpperCase().length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
 }).omit({ createdAt: true, updatedAt: true })
 
 export type UserPreferenceInsertSchemaInput = z.input<
@@ -103,7 +104,8 @@ export type UserPreferenceInsertSchemaOutput = z.output<
 export const userPreferenceUpdateSchema = createUpdateSchema(userPreferences, {
   firstWeekday: s => s.min(VALIDATION.MIN_WEEKDAY).max(VALIDATION.MAX_WEEKDAY),
   locale: s => s.trim().min(2).max(VALIDATION.MAX_LOCALE_LENGTH),
-  defaultCurrency: s => s.length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
+  defaultCurrency: s =>
+    s.trim().toUpperCase().length(VALIDATION.CURRENCY_CODE_LENGTH).optional()
 }).omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 
 export type UserPreferenceUpdateSchemaInput = z.input<

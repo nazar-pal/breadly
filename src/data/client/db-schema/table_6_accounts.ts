@@ -31,11 +31,12 @@ import { z } from 'zod'
 import {
   clerkUserIdColumn,
   createdAtColumn,
-  dateOnlyText,
+  dateOnlyTextNullable,
   descriptionColumn,
   isArchivedColumn,
   isoCurrencyCodeColumn,
   nameColumn,
+  timestampTextNullable,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -89,14 +90,14 @@ const columns = {
 
   // Type-specific fields for savings accounts
   savingsTargetAmount: integer('savings_target_amount'), // Target savings goal in smallest currency unit (savings only)
-  savingsTargetDate: dateOnlyText('savings_target_date'), // Target date (YYYY-MM-DD TEXT)
+  savingsTargetDate: dateOnlyTextNullable('savings_target_date'), // Target date (YYYY-MM-DD TEXT)
 
   // Type-specific fields for debt accounts
   debtInitialAmount: integer('debt_initial_amount'), // Original debt amount in smallest currency unit (debt only)
-  debtDueDate: dateOnlyText('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
+  debtDueDate: dateOnlyTextNullable('debt_due_date'), // Due date (YYYY-MM-DD TEXT)
 
   isArchived: isArchivedColumn(), // Soft deletion flag
-  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }), // When the account was archived
+  archivedAt: timestampTextNullable('archived_at'), // When the account was archived
   createdAt: createdAtColumn(),
   updatedAt: updatedAtColumn()
 }
@@ -138,7 +139,10 @@ export const accountInsertSchema = createInsertSchema(accounts, {
   savingsTargetAmount: s =>
     s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT).optional(),
   debtInitialAmount: s =>
-    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT).optional()
+    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT).optional(),
+  // Custom types need explicit Zod type override
+  savingsTargetDate: z.date().nullable().optional(),
+  debtDueDate: z.date().nullable().optional()
 })
   .omit({ updatedAt: true, createdAt: true, archivedAt: true })
   // Savings fields only for saving accounts
@@ -192,7 +196,12 @@ export const accountUpdateSchema = createUpdateSchema(accounts, {
   description: s => s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH),
   savingsTargetAmount: s =>
     s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
-  debtInitialAmount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT)
+  debtInitialAmount: s =>
+    s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT),
+  // Custom types need explicit Zod type override
+  archivedAt: z.date().nullable().optional(),
+  savingsTargetDate: z.date().nullable().optional(),
+  debtDueDate: z.date().nullable().optional()
 }).omit({
   id: true,
   userId: true,

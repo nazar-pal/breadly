@@ -37,6 +37,7 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  timestampTextNullable,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -83,7 +84,7 @@ const columns = {
   icon: text({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
   sortOrder: integer('sort_order').notNull().default(1000),
   isArchived: isArchivedColumn(), // Soft deletion flag
-  archivedAt: integer('archived_at', { mode: 'timestamp_ms' }),
+  archivedAt: timestampTextNullable('archived_at'),
   createdAt: createdAtColumn(),
   updatedAt: updatedAtColumn()
 }
@@ -121,7 +122,9 @@ export const categoryInsertSchema = createInsertSchema(categories, {
   name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
   description: s =>
     s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
-  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle')
+  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle'),
+  // Custom types need explicit Zod type override
+  archivedAt: z.date().nullable().optional()
 })
   .omit({ createdAt: true, updatedAt: true })
   // Prevent self-referencing parent (categories_no_self_parent)
@@ -137,7 +140,9 @@ export const categoryUpdateSchema = createUpdateSchema(categories, {
   name: s => s.trim().min(1).max(VALIDATION.MAX_NAME_LENGTH),
   description: s =>
     s.trim().min(1).max(VALIDATION.MAX_DESCRIPTION_LENGTH).optional(),
-  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle')
+  icon: s => s.trim().min(1).max(VALIDATION.MAX_ICON_LENGTH).default('circle'),
+  // Custom types need explicit Zod type override
+  archivedAt: z.date().nullable().optional()
 })
   // Not possible to prevent self-referencing parent (categories_no_self_parent) on the schema level
   .omit({

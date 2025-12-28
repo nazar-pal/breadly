@@ -36,6 +36,8 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -82,9 +84,11 @@ export const categories = pgTable(
     icon: varchar({ length: 50 }).notNull().default('circle'), // Lucide icon name for UI
     sortOrder: integer('sort_order').notNull().default(1000),
     isArchived: isArchivedColumn(), // Soft deletion flag
-    archivedAt: timestamp({ withTimezone: true }),
+    archivedAt: timestamp({ withTimezone: true, precision: 3 }),
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Self-referencing foreign key for hierarchy

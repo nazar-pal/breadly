@@ -276,11 +276,13 @@ Ensures transaction type matches category type (expense→expense, income→inco
 - Income transactions can only use income categories
 - Category type must match transaction type exactly
 
-**Note:** The rule "transfer transactions cannot have a category" is enforced by the
-CHECK constraint `transactions_transfer_no_category`, not by this trigger.
+**Important Notes:**
+
+- The rule "transfer transactions cannot have a category" is enforced by the CHECK constraint `transactions_transfer_no_category`, not by this trigger.
+- The rule "income/expense transactions must have a category" is enforced by the CHECK constraint `transactions_income_expense_has_category`, not by this trigger. This trigger only validates that when a category is provided, its type matches the transaction type.
 
 **Client-Side Validation:**  
-Client mutations validate category type matching before inserting/updating transactions.
+Client mutations validate category type matching and category requirement (for income/expense transactions) before inserting/updating transactions.
 
 ---
 
@@ -344,8 +346,7 @@ All triggers have corresponding client-side validation in Zod schemas and mutati
 
 1. **Client Zod Schemas:** Replicate CHECK constraints and basic business rules
 2. **Client Mutations:** Validate foreign key references and ownership before database operations
-3. **Server Zod Schemas:** Basic type coercion during sync (minimal)
-4. **PostgreSQL Triggers:** Final safety net that catches edge cases and prevents data corruption
+3. **PostgreSQL Triggers:** Final safety net that catches edge cases and prevents data corruption
 
 This multi-layer approach ensures:
 

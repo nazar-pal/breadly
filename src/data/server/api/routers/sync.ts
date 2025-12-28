@@ -3,29 +3,13 @@ import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import {
   accounts,
-  accountsInsertSchemaPg,
-  accountsUpdateSchemaPg,
   attachments,
-  attachmentsInsertSchemaPg,
-  attachmentsUpdateSchemaPg,
   budgets,
-  budgetsInsertSchemaPg,
-  budgetsUpdateSchemaPg,
   categories,
-  categoriesInsertSchemaPg,
-  categoriesUpdateSchemaPg,
   events,
-  eventsInsertSchemaPg,
-  eventsUpdateSchemaPg,
   transactionAttachments,
-  transactionAttachmentsInsertSchemaPg,
-  transactionAttachmentsUpdateSchemaPg,
   transactions,
-  transactionsInsertSchemaPg,
-  transactionsUpdateSchemaPg,
-  userPreferences,
-  userPreferencesInsertSchemaPg,
-  userPreferencesUpdateSchemaPg
+  userPreferences
 } from '../../db-schema'
 import {
   createTRPCContext,
@@ -47,50 +31,34 @@ const operationSchema = z.object({
 const tableConfigs = {
   user_preferences: {
     table: userPreferences,
-    insertSchema: userPreferencesInsertSchemaPg,
-    updateSchema: userPreferencesUpdateSchemaPg,
     idColumn: null
   },
   categories: {
     table: categories,
-    insertSchema: categoriesInsertSchemaPg,
-    updateSchema: categoriesUpdateSchemaPg,
     idColumn: categories.id
   },
   budgets: {
     table: budgets,
-    insertSchema: budgetsInsertSchemaPg,
-    updateSchema: budgetsUpdateSchemaPg,
     idColumn: budgets.id
   },
   accounts: {
     table: accounts,
-    insertSchema: accountsInsertSchemaPg,
-    updateSchema: accountsUpdateSchemaPg,
     idColumn: accounts.id
   },
   events: {
     table: events,
-    insertSchema: eventsInsertSchemaPg,
-    updateSchema: eventsUpdateSchemaPg,
     idColumn: events.id
   },
   transactions: {
     table: transactions,
-    insertSchema: transactionsInsertSchemaPg,
-    updateSchema: transactionsUpdateSchemaPg,
     idColumn: transactions.id
   },
   attachments: {
     table: attachments,
-    insertSchema: attachmentsInsertSchemaPg,
-    updateSchema: attachmentsUpdateSchemaPg,
     idColumn: attachments.id
   },
   transaction_attachments: {
     table: transactionAttachments,
-    insertSchema: transactionAttachmentsInsertSchemaPg,
-    updateSchema: transactionAttachmentsUpdateSchemaPg,
     idColumn: transactionAttachments.id
   }
 } as const
@@ -112,14 +80,11 @@ const insertHelper = async (
   const transformed = transformDataForPostgres(opData, tableName)
   validateRecordUserId(transformed, session, 'insert')
 
-  const validated = cfg.insertSchema
-    .extend({ id: z.string() })
-    .parse(transformed)
-
   // Use onConflictDoNothing for idempotent inserts as recommended by PowerSync.
   // If the record already exists (same ID), skip the insert silently.
   // This handles sync replays where the same INSERT operation may be sent multiple times.
-  await db.insert(cfg.table).values(validated).onConflictDoNothing()
+  // Database constraints and triggers handle validation.
+  await db.insert(cfg.table).values(transformed).onConflictDoNothing()
 }
 
 const updateHelper = async (
@@ -136,15 +101,12 @@ const updateHelper = async (
   const transformed = transformDataForPostgres(opData, tableName)
   const userId = validateRecordUserId(transformed, session, 'update')
 
-  const validated = cfg.updateSchema
-    .extend({ id: z.string() })
-    .parse(transformed)
-
   const whereClause = cfg.idColumn
     ? and(eq(cfg.idColumn, id), eq(cfg.table.userId, userId))
     : eq(cfg.table.userId, userId)
 
-  await db.update(cfg.table).set(validated).where(whereClause)
+  // Database constraints and triggers handle validation.
+  await db.update(cfg.table).set(transformed).where(whereClause)
 }
 
 const deleteHelper = async (

@@ -33,6 +33,8 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -106,7 +108,9 @@ export const budgets = pgTable(
     budgetMonth: smallint('budget_month'), // The month 1-12 (NULL for yearly budgets)
 
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)
@@ -127,6 +131,7 @@ export const budgets = pgTable(
 
     // Business rule constraints
     check('budgets_positive_amount', sql`${table.amount} > 0`),
+    check('budgets_max_amount', sql`${table.amount} <= 9007199254740991`), // Maximum safe integer (Number.MAX_SAFE_INTEGER) to match client validation
     check(
       'budgets_valid_year',
       sql`${table.budgetYear} >= 1970 AND ${table.budgetYear} <= 2100`

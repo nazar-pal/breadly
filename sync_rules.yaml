@@ -1,13 +1,21 @@
 # PowerSync Sync Rules
 # This file defines which data is synced to which users
-# ---------------------------------------------------------------------------------
-# Conventions used below:
-# 1) Date/timestamp columns → `CAST(unixepoch(col) * 1000 AS integer)`
-#    PowerSync helper returns seconds; multiplying by 1000 converts to milliseconds,
-#    and casting to integer ensures 64-bit integer ms for `{ mode: 'timestamp_ms' }` columns.
-# 2) Monetary columns are stored as bigint (smallest currency unit) - no conversion needed.
-# Keep comments minimal; adjust only when new date or numeric fields are added.
-# ---------------------------------------------------------------------------------
+#
+# NOTE: Server-Only Columns
+# ─────────────────────────────────────────────────────────────────────────────
+# The following columns exist in the PostgreSQL database but are intentionally
+# NOT synced to clients:
+#
+#   - server_created_at: When the server first received and stored the record
+#   - server_updated_at: When the server last processed an update to the record
+#
+# These server timestamps are used for audit trails, sync debugging, and analytics.
+# They are separate from client timestamps (created_at, updated_at) which represent
+# when the user performed the action on their device (which may be hours/days before
+# sync if the user was offline).
+#
+# See DatabaseDesignGuidelines.md section 8 for more details.
+# ─────────────────────────────────────────────────────────────────────────────
 
 bucket_definitions:
   # Global data accessible to all authenticated users
@@ -35,12 +43,12 @@ bucket_definitions:
           default_currency,
           first_weekday,
           locale,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          created_at,
+          updated_at
         FROM user_preferences
         WHERE user_id = bucket.user_id
 
-      # User's categories (convert created_at and archived_at)
+      # User's categories
       - |
         SELECT
           id,
@@ -52,13 +60,13 @@ bucket_definitions:
           icon,
           sort_order,
           is_archived,
-          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          archived_at,
+          created_at,
+          updated_at
         FROM categories
         WHERE user_id = bucket.user_id
 
-      # User's budgets (one row per period - simple and explicit)
+      # User's budgets
       - |
         SELECT
           id,
@@ -69,12 +77,12 @@ bucket_definitions:
           period,
           budget_year,
           budget_month,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          created_at,
+          updated_at
         FROM budgets
         WHERE user_id = bucket.user_id
 
-      # User's accounts (leave date-only fields as DATE -> TEXT)
+      # User's accounts
       - |
         SELECT
           id,
@@ -89,9 +97,9 @@ bucket_definitions:
           debt_initial_amount,
           debt_due_date,
           is_archived,
-          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          archived_at,
+          created_at,
+          updated_at
         FROM accounts
         WHERE user_id = bucket.user_id
 
@@ -105,13 +113,13 @@ bucket_definitions:
           start_date,
           end_date,
           is_archived,
-          CAST(unixepoch(archived_at) * 1000 AS integer) AS archived_at,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          archived_at,
+          created_at,
+          updated_at
         FROM events
         WHERE user_id = bucket.user_id
 
-      # User's transactions (leave tx_date as DATE -> TEXT)
+      # User's transactions
       - |
         SELECT
           id,
@@ -125,12 +133,12 @@ bucket_definitions:
           currency_id,
           tx_date,
           notes,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          created_at,
+          updated_at
         FROM transactions
         WHERE user_id = bucket.user_id
 
-      # User's attachments (convert timestamps)
+      # User's attachments
       - |
         SELECT
           id,
@@ -140,22 +148,22 @@ bucket_definitions:
           bucket_path,
           mime,
           file_name,
-          CAST(file_size AS integer) AS file_size,
+          file_size,
           duration,
-          CAST(unixepoch(uploaded_at) * 1000 AS integer) AS uploaded_at,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          uploaded_at,
+          created_at,
+          updated_at
         FROM attachments
         WHERE user_id = bucket.user_id
 
-      # Transaction attachments (convert created_at)
+      # Transaction attachments
       - |
         SELECT
           id,
           user_id,
           transaction_id,
           attachment_id,
-          CAST(unixepoch(created_at) * 1000 AS integer) AS created_at,
-          CAST(unixepoch(updated_at) * 1000 AS integer) AS updated_at
+          created_at,
+          updated_at
         FROM transaction_attachments
         WHERE user_id = bucket.user_id

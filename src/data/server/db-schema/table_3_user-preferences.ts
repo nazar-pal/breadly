@@ -24,6 +24,8 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumnNullable,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn
 } from './utils'
 
@@ -53,7 +55,9 @@ export const userPreferences = pgTable(
     firstWeekday: smallint().default(1), // Week start day (1=Monday, 2=Tuesday, ..., 7=Sunday)
     locale: varchar({ length: 20 }).default('en-US'), // Localization/language code (ISO format)
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Business rule constraints

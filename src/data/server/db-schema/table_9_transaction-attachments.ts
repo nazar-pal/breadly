@@ -25,6 +25,8 @@ import { attachments } from './table_8_attachments'
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -57,7 +59,9 @@ export const transactionAttachments = pgTable(
       .references(() => attachments.id, { onDelete: 'cascade' })
       .notNull(), // Attachment being referenced
     createdAt: createdAtColumn(), // Link creation timestamp
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Unique constraint ensures each transaction-attachment pair exists only once

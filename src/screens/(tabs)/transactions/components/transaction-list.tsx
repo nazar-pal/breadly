@@ -1,5 +1,6 @@
-import { cn } from '@/lib/utils'
+import { cn, toDateString } from '@/lib/utils'
 import { LegendList } from '@legendapp/list'
+import { startOfToday } from 'date-fns'
 import React from 'react'
 import { View, useColorScheme } from 'react-native'
 import type { DateGroup, ListItem } from '../lib/types'
@@ -52,7 +53,7 @@ function buildListData(dateGroups: DateGroup[]): ListItem[] {
   }
 
   // Check if today has any transactions
-  const todayKey = new Date().toISOString().split('T')[0]
+  const todayKey = toDateString(startOfToday())
   const hasTodayGroup = dateGroups.some(g => g.key === todayKey)
 
   // If no today group, add empty today section first
@@ -81,7 +82,7 @@ function buildListData(dateGroups: DateGroup[]): ListItem[] {
 function RenderItem({ item }: { item: ListItem }) {
   switch (item.type) {
     case 'header':
-      const todayKey = new Date().toISOString().split('T')[0]
+      const todayKey = toDateString(startOfToday())
       const isFirstSection =
         item.id === 'today-header' || item.id.includes(todayKey)
       return (

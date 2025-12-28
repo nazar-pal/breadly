@@ -25,14 +25,15 @@ Note: The id column is explicitly defined for Drizzle ORM type safety.
 
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+import { VALIDATION } from '@/data/const'
 import type { BuildColumns } from 'drizzle-orm/column-builder'
 import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'
-import { VALIDATION } from '@/data/const'
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  timestampTextNullable,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -83,9 +84,9 @@ const columns = {
   bucketPath: text('bucket_path').notNull(), // Cloud storage path (S3, etc.)
   mime: text({ length: 150 }).notNull(), // File MIME type
   fileName: text('file_name', { length: 500 }).notNull(), // Original filename
-  fileSize: integer('file_size').notNull(), // File size in bytes (for storage management)
+  fileSize: integer('file_size').notNull(), // File size in bytes (max: 2,147,483,647 bytes / ~2 GB, limited by PostgreSQL integer type)
   duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
-  uploadedAt: integer('uploaded_at', { mode: 'timestamp_ms' }), // When upload completed successfully
+  uploadedAt: timestampTextNullable('uploaded_at'), // When upload completed successfully
   createdAt: createdAtColumn(), // Record creation timestamp
   updatedAt: updatedAtColumn()
 }
@@ -122,8 +123,10 @@ export const attachmentInsertSchema = createInsertSchema(attachments, {
   bucketPath: s => s.trim().min(1),
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
-  fileSize: s => s.positive(),
-  duration: s => s.positive().optional()
+  fileSize: s => s.positive().max(2_147_483_647), // Max PostgreSQL integer (2^31 - 1)
+  duration: s => s.positive().optional(),
+  // Custom types need explicit Zod type override
+  uploadedAt: z.date().nullable().optional()
 })
   .omit({ createdAt: true, updatedAt: true })
   // Voice messages require duration
@@ -146,17 +149,32 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   bucketPath: s => s.trim().min(1),
   fileName: s => s.trim().min(1).max(VALIDATION.MAX_FILE_NAME_LENGTH),
   mime: s => s.trim().min(1).max(VALIDATION.MAX_MIME_LENGTH),
-  fileSize: s => s.positive(),
-  duration: s => s.positive()
-}).omit({
-  id: true,
-  userId: true,
-  type: true,
-  createdAt: true,
-  updatedAt: true
+  fileSize: s => s.positive().max(2_147_483_647), // Max PostgreSQL integer (2^31 - 1)
+  duration: s => s.positive(),
+  // Custom types need explicit Zod type override
+  uploadedAt: z.date().nullable().optional()
 })
-// Note: Cross-field validation for status='ready' requiring uploadedAt cannot be
-// fully validated at schema level for partial updates. Validate in mutation with merged state.
+  .omit({
+    id: true,
+    userId: true,
+    type: true,
+    createdAt: true,
+    updatedAt: true
+  })
+  // Ready attachments must have uploadedAt timestamp (when both fields are present)
+  // Note: For partial updates where only status is changed, mutations must validate
+  // merged state to ensure uploadedAt is set when status becomes 'ready'
+  .refine(
+    data =>
+      data.status === undefined ||
+      data.uploadedAt !== undefined ||
+      data.status !== 'ready' ||
+      data.uploadedAt != null,
+    {
+      message: 'Ready attachments must have uploadedAt timestamp',
+      path: ['uploadedAt']
+    }
+  )
 
 export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
 export type AttachmentUpdateSchemaOutput = z.output<

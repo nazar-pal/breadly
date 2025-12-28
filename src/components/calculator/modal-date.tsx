@@ -1,6 +1,7 @@
 import { CalendarDialog } from '@/components/ui/calendar-dialog'
 import { Text } from '@/components/ui/text'
 import { toDateId } from '@marceloterreiro/flash-calendar'
+import { startOfToday, subDays } from 'date-fns'
 import { View } from 'react-native'
 import { Button } from '../ui/button'
 
@@ -37,7 +38,7 @@ export function DateModal({
           variant="default"
           className="w-1/2"
           onPress={() => {
-            onSelectDate(new Date())
+            onSelectDate(startOfToday())
             onClose()
           }}
         >
@@ -47,7 +48,7 @@ export function DateModal({
           variant="outline"
           className="w-1/2"
           onPress={() => {
-            onSelectDate(new Date(Date.now() - 24 * 60 * 60 * 1000))
+            onSelectDate(subDays(startOfToday(), 1))
             onClose()
           }}
         >

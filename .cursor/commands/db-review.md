@@ -51,12 +51,12 @@ Additionally review:
 
 ### **Reference Files**
 
-1. **Guidelines** – Design considerations for offline-first database using PowerSync + PostgreSQL: @src/data/DatabaseDesignGuidelines.md @src/data/ValidationStrategy.md
+1. **Guidelines** – Design considerations for offline-first database using PowerSync + PostgreSQL (do not treat it as a holy grail. This is the file that was created by me, and this is my vision, and I might be wrong): @src/data/DatabaseDesignGuidelines.md @src/data/ValidationStrategy.md
 2. **Client Drizzle Schema:** @src/data/client/db-schema
 3. **Server Drizzle Schema:** @src/data/server/db-schema
 4. **Synchronization Rules (server → client):** : @sync_rules.yaml
 5. **Sync Route (client → server):** @src/data/server/api/routers/sync.ts . _Also review how data is transformed and validated on server:_ (@src/data/server/api/utils/transform-data-for-pg.ts and other functions).
-6. Some custom y migrations (there are some custom functions and triggers that I have not been able to define on the Drizzle schema level): @src/data/TRIGGERS.md @src/data/server/migrations (please note that the existing migrations have not yet been applied to the database, so if we need to change something in the migration files, we are free to do it)
+6. Some custom y migrations (there are some custom functions and triggers that I have not been able to define on the Drizzle schema level): @src/data/TRIGGERS.md @src/data/server/migrations
 7. Client mutations: @src/data/client/mutations
 
 ---

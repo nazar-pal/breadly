@@ -24,6 +24,8 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -71,9 +73,11 @@ export const events = pgTable(
     startDate: date(), // Optional: when event starts (informational)
     endDate: date(), // Optional: when event ends (informational)
     isArchived: isArchivedColumn(), // User marks when done tracking
-    archivedAt: timestamp({ withTimezone: true }), // When archived
+    archivedAt: timestamp({ withTimezone: true, precision: 3 }), // When archived
     createdAt: createdAtColumn(), // Record creation timestamp
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)

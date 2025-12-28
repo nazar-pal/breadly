@@ -45,7 +45,12 @@ export async function updateAccount({
   accountId: string
   data: z.input<typeof updateAccountSchema>
 }) {
-  const parsedData = updateAccountSchema.parse(data)
+  // Normalize currency code to uppercase and trim whitespace if provided
+  const normalizedData = {
+    ...data,
+    currencyId: data.currencyId?.trim().toUpperCase()
+  }
+  const parsedData = updateAccountSchema.parse(normalizedData)
 
   const [error, result] = await asyncTryCatch(
     db.transaction(async tx => {

@@ -6,11 +6,11 @@
 
 ## Overview
 
-Breadly uses a **4-layer validation architecture** to ensure data integrity across client and server environments. This strategy balances proactive client-side validation (for better UX) with authoritative server-side enforcement (for security and correctness).
+Breadly uses a **3-layer validation architecture** to ensure data integrity across client and server environments. This strategy balances proactive client-side validation (for better UX) with authoritative server-side enforcement (for security and correctness).
 
 ---
 
-## The 4-Layer Architecture
+## The 3-Layer Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -27,11 +27,7 @@ Breadly uses a **4-layer validation architecture** to ensure data integrity acro
 │   - Cross-table business rules (category type, currency match)  │
 │   - Unique constraint checks                                    │
 ├─────────────────────────────────────────────────────────────────┤
-│ Layer 3: Server Zod Schemas (via sync.ts)                       │
-│   - Basic type coercion (no custom refinements)                 │
-│   - Relies on DB for business rules                             │
-├─────────────────────────────────────────────────────────────────┤
-│ Layer 4: PostgreSQL Constraints + Triggers                      │
+│ Layer 3: PostgreSQL Constraints + Triggers                      │
 │   - Final safety net                                            │
 │   - CHECK constraints, FKs, unique indexes                      │
 │   - Custom triggers for complex rules                           │
@@ -123,34 +119,7 @@ if (parsedData.categoryId) {
 
 ---
 
-## Layer 3: Server Zod Schemas
-
-**Location:** `src/data/server/db-schema/index.ts` (via `createInsertSchema`/`createUpdateSchema`)
-
-**Purpose:** Basic type coercion during sync operations.
-
-**What it validates:**
-
-- Basic type checking (strings, numbers, booleans)
-- No custom refinements or complex validations
-
-**Example:**
-
-```typescript
-export const transactionsInsertSchemaPg = createInsertSchema(transactions)
-// No custom refinements - relies on PostgreSQL for validation
-```
-
-**Why this layer is minimal:**
-
-- Client already validates before sync
-- PostgreSQL enforces all constraints anyway
-- Duplicating Zod refinements would add complexity without benefit
-- Server acts as final authority, not duplicate validator
-
----
-
-## Layer 4: PostgreSQL Constraints + Triggers
+## Layer 3: PostgreSQL Constraints + Triggers
 
 **Location:**
 
@@ -208,18 +177,19 @@ FOR EACH ROW EXECUTE FUNCTION validate_transaction_category_type();
 
 ## Validation Mapping Reference
 
-| Validation Type       | Client Zod | Client Mutation   | Server Zod | Server DB        |
-| --------------------- | ---------- | ----------------- | ---------- | ---------------- |
-| Positive amount       | ✅         | -                 | -          | ✅ CHECK         |
-| Transfer rules        | ✅         | ✅ (merged state) | -          | ✅ CHECK         |
-| Category type match   | -          | ✅                | -          | ✅ Trigger       |
-| Currency consistency  | -          | ✅                | -          | ✅ Trigger       |
-| Name non-empty        | ✅         | -                 | -          | ✅ CHECK         |
-| Unique names          | -          | ✅                | -          | ✅ UNIQUE        |
-| FK existence          | -          | ✅                | -          | ✅ FK            |
-| Ownership             | -          | ✅                | -          | ✅ Trigger + RLS |
-| Archived entity check | -          | ✅                | -          | -                |
-| Nesting limits        | -          | ✅                | -          | ✅ Trigger       |
+| Validation Type       | Client Zod | Client Mutation   | Server DB        |
+| --------------------- | ---------- | ----------------- | ---------------- |
+| Positive amount       | ✅         | -                 | ✅ CHECK         |
+| Transfer rules        | ✅         | ✅ (merged state) | ✅ CHECK         |
+| Category type match   | -          | ✅                | ✅ Trigger       |
+| Category required     | ✅         | ✅ (merged state) | ✅ CHECK         |
+| Currency consistency  | -          | ✅                | ✅ Trigger       |
+| Name non-empty        | ✅         | -                 | ✅ CHECK         |
+| Unique names          | -          | ✅                | ✅ UNIQUE        |
+| FK existence          | -          | ✅                | ✅ FK            |
+| Ownership             | -          | ✅                | ✅ Trigger + RLS |
+| Archived entity check | -          | ✅                | -                |
+| Nesting limits        | -          | ✅                | ✅ Trigger       |
 
 ---
 
@@ -258,11 +228,7 @@ reference categories, accounts, or events.
    - ✅ Archived entity checks
    - ❌ Don't duplicate Zod schema validations
 
-3. **Server Zod Schema:**
-   - ✅ Basic type coercion only
-   - ❌ Don't add custom refinements (DB handles it)
-
-4. **PostgreSQL:**
+3. **PostgreSQL:**
    - ✅ All CHECK constraints (replicated in Client Zod)
    - ✅ Foreign keys (validated in Client Mutation)
    - ✅ Unique indexes (checked in Client Mutation)
@@ -289,10 +255,7 @@ reference categories, accounts, or events.
 2. **Client Mutation** (`create-transaction.ts`):
    - Not needed (Zod handles it)
 
-3. **Server Zod** (`table_7_transactions.ts`):
-   - Not needed (minimal by design)
-
-4. **PostgreSQL** (`table_7_transactions.ts`):
+3. **PostgreSQL** (`table_7_transactions.ts`):
    ```typescript
    check(
      'transactions_max_future_date',
@@ -324,8 +287,7 @@ When testing validations:
 
 1. **Test Client Zod:** Verify immediate feedback in UI
 2. **Test Client Mutations:** Verify offline validation prevents invalid data
-3. **Test Server Constraints:** Verify server rejects invalid data even if client validation is bypassed
-4. **Test Triggers:** Verify complex cross-table rules are enforced
+3. **Test Server Constraints and Triggers:** Verify server rejects invalid data even if client validation is bypassed
 
 **Note:** In an offline-first app, client validation is critical because users may be offline for extended periods. Invalid data caught early prevents sync failures later.
 
