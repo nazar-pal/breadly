@@ -34,6 +34,32 @@ export const createdAtColumn = () =>
 export const updatedAtColumn = () =>
   timestamp({ withTimezone: true, precision: 3 }).notNull()
 
+/**
+ * Server-side timestamp columns for tracking when data arrives at the server.
+ *
+ * These columns are SERVER-ONLY and NOT synced to clients. They capture:
+ * - server_created_at: When the server received and stored the record
+ * - server_updated_at: When the server last processed an update
+ *
+ * USE CASE: In offline-first apps, client timestamps (created_at, updated_at)
+ * represent when the user performed the action on their device. Server timestamps
+ * capture when that data actually reached the server, which may be hours or days
+ * later if the user was offline.
+ *
+ * This enables:
+ * - Audit trails proving when server received data
+ * - Sync debugging (comparing client vs server timestamps)
+ * - Analytics on offline user behavior patterns
+ */
+export const serverCreatedAtColumn = () =>
+  timestamp('server_created_at', { withTimezone: true }).notNull().defaultNow()
+
+export const serverUpdatedAtColumn = () =>
+  timestamp('server_updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date())
+
 // soft deletion (archiving) for categories and accounts
 export const isArchivedColumn = () => boolean().default(false).notNull()
 

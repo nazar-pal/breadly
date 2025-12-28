@@ -37,6 +37,8 @@ import {
   isArchivedColumn,
   isoCurrencyCodeColumn,
   nameColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -105,7 +107,9 @@ export const accounts = pgTable(
     isArchived: isArchivedColumn(), // Soft deletion flag
     archivedAt: timestamp({ withTimezone: true, precision: 3 }), // When the account was archived
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)

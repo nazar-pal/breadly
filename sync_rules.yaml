@@ -1,5 +1,21 @@
 # PowerSync Sync Rules
 # This file defines which data is synced to which users
+#
+# NOTE: Server-Only Columns
+# ─────────────────────────────────────────────────────────────────────────────
+# The following columns exist in the PostgreSQL database but are intentionally
+# NOT synced to clients:
+#
+#   - server_created_at: When the server first received and stored the record
+#   - server_updated_at: When the server last processed an update to the record
+#
+# These server timestamps are used for audit trails, sync debugging, and analytics.
+# They are separate from client timestamps (created_at, updated_at) which represent
+# when the user performed the action on their device (which may be hours/days before
+# sync if the user was offline).
+#
+# See DatabaseDesignGuidelines.md section 8 for more details.
+# ─────────────────────────────────────────────────────────────────────────────
 
 bucket_definitions:
   # Global data accessible to all authenticated users

@@ -40,6 +40,8 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -123,7 +125,9 @@ export const transactions = pgTable(
     txDate: date().notNull(), // Transaction date (when the transaction occurred)
     notes: varchar({ length: 1000 }), // Optional user notes/description
     createdAt: createdAtColumn(), // Record creation timestamp
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)

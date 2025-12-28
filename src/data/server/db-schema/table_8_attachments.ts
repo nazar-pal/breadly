@@ -34,6 +34,8 @@ import {
 import {
   clerkUserIdColumn,
   createdAtColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -93,7 +95,9 @@ export const attachments = pgTable(
     duration: integer(), // Duration in seconds (required for voice, optional for video receipts)
     uploadedAt: timestamp({ withTimezone: true, precision: 3 }), // When upload completed successfully
     createdAt: createdAtColumn(), // Record creation timestamp
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)

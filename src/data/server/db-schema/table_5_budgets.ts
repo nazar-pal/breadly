@@ -33,6 +33,8 @@ import {
   clerkUserIdColumn,
   createdAtColumn,
   isoCurrencyCodeColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -106,7 +108,9 @@ export const budgets = pgTable(
     budgetMonth: smallint('budget_month'), // The month 1-12 (NULL for yearly budgets)
 
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Essential indexes (server-side operations only)

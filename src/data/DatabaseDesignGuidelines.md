@@ -402,3 +402,82 @@ This limit is sufficient for most use cases:
 For the vast majority of attachment use cases in a personal finance app, 2 GB is more than adequate.
 
 > **Key Point:** The file size limit is determined by PostgreSQL's `integer` type. If larger files are needed in the future, migrate the `file_size` column to `bigint` on both server and client schemas.
+
+---
+
+## 8. Server-Side Timestamps for Offline-First Sync
+
+### The Problem
+
+In offline-first applications, client timestamps (`created_at`, `updated_at`) represent when the user performed an action on their device. However, if the user was offline, the data may reach the server hours or days later.
+
+**Example Scenario:**
+
+- User creates a transaction on Dec 20th (offline)
+- User syncs on Dec 28th (when internet connection is restored)
+- `created_at` = Dec 20th (when user created it)
+- `server_created_at` = Dec 28th (when server received it)
+
+### The Solution
+
+Every client-delivered table includes server-managed timestamps:
+
+| Column              | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `server_created_at` | When the server first received and stored the record   |
+| `server_updated_at` | When the server last processed an update to the record |
+
+### Key Properties
+
+- **Server-only**: These columns are NOT synced to clients (not in `sync_rules.yaml`)
+- **Automatic**: Set by PostgreSQL/Drizzle ORM, no application code needed
+- **Immutable by clients**: Clients cannot set or modify these values
+- **Database-managed**: `server_created_at` uses PostgreSQL's `DEFAULT NOW()`, `server_updated_at` uses Drizzle's `$onUpdate()` hook
+
+### Implementation
+
+Server timestamps are defined using helper functions in `src/data/server/db-schema/utils.ts`:
+
+```typescript
+export const serverCreatedAtColumn = () =>
+  timestamp('server_created_at', { withTimezone: true, precision: 3 })
+    .notNull()
+    .defaultNow()
+
+export const serverUpdatedAtColumn = () =>
+  timestamp('server_updated_at', { withTimezone: true, precision: 3 })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date())
+```
+
+**Tables with server timestamps:**
+
+- `user_preferences`
+- `categories`
+- `budgets`
+- `accounts`
+- `transactions`
+- `attachments`
+- `transaction_attachments`
+- `events`
+
+**Tables without server timestamps:**
+
+- `currencies` - server-managed seed data
+- `exchange_rates` - server-managed via scheduled jobs
+
+### Use Cases
+
+1. **Audit Trail**: Prove when your server received specific data (important for financial/regulatory compliance)
+2. **Sync Debugging**: Compare `created_at` vs `server_created_at` to identify sync delays and connectivity issues
+3. **Analytics**: Understand offline patterns (how long users go between syncs, average sync delay)
+4. **Anomaly Detection**: Flag records where timestamps differ significantly (potential clock drift or data manipulation)
+
+### Technical Notes
+
+- **No database triggers needed**: PostgreSQL's `DEFAULT now()` handles INSERT. Drizzle's `$onUpdate()` hook handles UPDATE operations automatically.
+- **How `$onUpdate()` works**: This is a JavaScript-level hook, not a database trigger. When you call `db.update(table).set(data)`, Drizzle automatically adds the `$onUpdate` column to the SET clause. This works with our sync router because it uses Drizzle's query builder (`db.update(cfg.table).set(transformed)`).
+- **sync_rules.yaml**: These columns are intentionally excluded from sync queries — they only exist on the server.
+
+> **Key Point:** Server timestamps provide operational visibility into your sync system. They're invisible to clients but invaluable for debugging, analytics, and compliance in offline-first architectures.

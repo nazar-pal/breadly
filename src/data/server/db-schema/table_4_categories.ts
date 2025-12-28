@@ -36,6 +36,8 @@ import {
   descriptionColumn,
   isArchivedColumn,
   nameColumn,
+  serverCreatedAtColumn,
+  serverUpdatedAtColumn,
   updatedAtColumn,
   uuidPrimaryKey
 } from './utils'
@@ -84,7 +86,9 @@ export const categories = pgTable(
     isArchived: isArchivedColumn(), // Soft deletion flag
     archivedAt: timestamp({ withTimezone: true, precision: 3 }),
     createdAt: createdAtColumn(),
-    updatedAt: updatedAtColumn()
+    updatedAt: updatedAtColumn(),
+    serverCreatedAt: serverCreatedAtColumn(),
+    serverUpdatedAt: serverUpdatedAtColumn()
   },
   table => [
     // Self-referencing foreign key for hierarchy
