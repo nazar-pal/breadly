@@ -164,17 +164,10 @@ export const attachmentUpdateSchema = createUpdateSchema(attachments, {
   // Ready attachments must have uploadedAt timestamp (when both fields are present)
   // Note: For partial updates where only status is changed, mutations must validate
   // merged state to ensure uploadedAt is set when status becomes 'ready'
-  .refine(
-    data =>
-      data.status === undefined ||
-      data.uploadedAt !== undefined ||
-      data.status !== 'ready' ||
-      data.uploadedAt != null,
-    {
-      message: 'Ready attachments must have uploadedAt timestamp',
-      path: ['uploadedAt']
-    }
-  )
+  .refine(data => data.status !== 'ready' || data.uploadedAt != null, {
+    message: 'Ready attachments must have uploadedAt timestamp',
+    path: ['uploadedAt']
+  })
 
 export type AttachmentUpdateSchemaInput = z.input<typeof attachmentUpdateSchema>
 export type AttachmentUpdateSchemaOutput = z.output<
