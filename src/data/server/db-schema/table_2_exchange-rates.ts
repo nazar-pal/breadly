@@ -12,6 +12,20 @@ Key Features:
 - Date-specific rate validation
 - Automatic currency conversion support
 - Business rule enforcement for rate integrity
+- Server-managed data (read-only from clients)
+
+SERVER-MANAGED DATA:
+─────────────────────────────────────────────────────
+Exchange rates are populated and updated by server-side scheduled jobs.
+Clients receive exchange rates via PowerSync's global bucket (read-only).
+
+- Clients should NEVER attempt to create, update, or delete exchange rates
+- Exchange rates are synced to all authenticated users via the global bucket
+- Rate updates happen automatically on the server (typically daily/hourly)
+- Historical rates are preserved for accurate reporting and conversions
+
+See sync_rules.yaml for the global bucket configuration.
+See migrations/0007_custom-seed-exchange-rates.sql for initial seed data.
 ================================================================================
 */
 

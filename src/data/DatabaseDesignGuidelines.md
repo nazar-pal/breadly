@@ -481,3 +481,71 @@ export const serverUpdatedAtColumn = () =>
 - **sync_rules.yaml**: These columns are intentionally excluded from sync queries — they only exist on the server.
 
 > **Key Point:** Server timestamps provide operational visibility into your sync system. They're invisible to clients but invaluable for debugging, analytics, and compliance in offline-first architectures.
+
+---
+
+## 9. Integer and BigInt Type Handling
+
+Monetary amounts and large numeric values are stored differently between the client (SQLite) and server (PostgreSQL) databases, but both systems can handle the same range of values safely.
+
+### Type Differences
+
+| Database   | Type      | Size   | Range                                                   |
+| ---------- | --------- | ------ | ------------------------------------------------------- |
+| SQLite     | `INTEGER` | 64-bit | -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 |
+| PostgreSQL | `bigint`  | 64-bit | -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 |
+
+**Affected Columns:**
+
+- `accounts.balance`
+- `accounts.savingsTargetAmount`
+- `accounts.debtInitialAmount`
+- `transactions.amount`
+- `budgets.amount`
+
+### JavaScript Number Precision
+
+JavaScript uses 64-bit floating-point numbers (IEEE 754) with a 53-bit mantissa, which limits safe integer precision to:
+
+- **Maximum Safe Integer:** `Number.MAX_SAFE_INTEGER` = 9,007,199,254,740,991 (2^53 - 1)
+- **Minimum Safe Integer:** `Number.MIN_SAFE_INTEGER` = -9,007,199,254,740,991
+
+### Validation Strategy
+
+Both client and server schemas validate monetary amounts against `Number.MAX_SAFE_INTEGER`:
+
+```typescript
+// Client Zod schema
+amount: s => s.int().positive().max(VALIDATION.MAX_MONETARY_AMOUNT)
+
+// Server CHECK constraint
+check('transactions_max_amount', sql`${table.amount} <= 9007199254740991`)
+```
+
+This ensures:
+
+1. **No precision loss** when JavaScript processes these values
+2. **Consistent validation** between client and server
+3. **Safe arithmetic** operations in application code
+
+### Why This Works
+
+- **SQLite `INTEGER`** can store the full 64-bit signed integer range
+- **PostgreSQL `bigint`** can store the full 64-bit signed integer range
+- **JavaScript validation** prevents values larger than `MAX_SAFE_INTEGER` from entering the system
+- **Database storage** preserves exact values without precision loss
+
+### Practical Implications
+
+For typical financial applications:
+
+- **2-decimal currencies** (USD, EUR): Maximum value ≈ $90 trillion
+- **4-decimal currencies** (some cryptocurrencies): Maximum value ≈ $900 billion
+
+These limits are far beyond typical use cases. If larger values are needed in the future, consider:
+
+1. Using a different storage format (e.g., string-based arbitrary precision)
+2. Splitting amounts across multiple records
+3. Using a specialized numeric library for JavaScript
+
+> **Key Point:** The type difference (`integer` vs `bigint`) is cosmetic—both store 64-bit integers. The real constraint is JavaScript's safe integer precision, which both schemas validate against to prevent arithmetic errors.

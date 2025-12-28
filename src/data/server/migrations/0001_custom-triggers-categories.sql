@@ -90,10 +90,8 @@ DECLARE
 BEGIN
   -- Only validate if parent_id is being set
   IF NEW.parent_id IS NOT NULL THEN
-    -- Get the parent category's type
-    -- NOTE: This function was fixed in migration 0014_fix-enum-type-comparison-triggers.sql
-    --       to cast enum values to text (type::text) to avoid PostgreSQL operator mismatch errors
-    SELECT type INTO parent_type
+    -- Cast enum to text when selecting into variable
+    SELECT type::text INTO parent_type
     FROM categories
     WHERE id = NEW.parent_id;
 
@@ -103,8 +101,8 @@ BEGIN
     END IF;
 
     -- Category type must match parent type
-    -- NOTE: Fixed in migration 0014 - comparison now uses NEW.type::text
-    IF parent_type != NEW.type THEN
+    -- Cast both sides to text for comparison (text != text works)
+    IF parent_type != NEW.type::text THEN
       RAISE EXCEPTION 'Child category type (%) must match parent category type (%). Category: %, Parent ID: %',
         NEW.type, parent_type, NEW.name, NEW.parent_id;
     END IF;
@@ -185,7 +183,7 @@ COMMENT ON FUNCTION validate_category_nesting() IS
 'Ensures categories cannot be nested more than one level deep (parent → child only, no grandchildren)';
 
 COMMENT ON FUNCTION validate_category_parent_type() IS 
-'Validates that child category type matches parent category type: income→income, expense→expense';
+'Validates that child category type matches parent category type: income→income, expense→expense. FIXED: Casts enum values to text for comparison to avoid PostgreSQL operator mismatch errors.';
 
 COMMENT ON FUNCTION validate_category_type_change() IS 
 'Prevents changing category type when transactions or budgets reference the category';

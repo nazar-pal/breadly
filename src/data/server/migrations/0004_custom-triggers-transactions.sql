@@ -49,35 +49,58 @@ Business Rules:
 
 CREATE OR REPLACE FUNCTION validate_account_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+  account_user_id text;
+  counter_account_user_id text;
 BEGIN
   -- Non-transfer: only validate ownership if an account is provided
-  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
-  --       to distinguish between missing accounts and ownership mismatches with detailed error messages
   IF NEW.type <> 'transfer' THEN
     IF NEW.account_id IS NOT NULL THEN
-      IF NOT EXISTS (
-        SELECT 1 FROM accounts 
-        WHERE id = NEW.account_id AND user_id = NEW.user_id
-      ) THEN
-        RAISE EXCEPTION 'Account does not belong to user';
+      SELECT user_id INTO account_user_id
+      FROM accounts
+      WHERE id = NEW.account_id;
+      
+      IF account_user_id IS NULL THEN
+        RAISE EXCEPTION 'Account not found. Account ID: %, Transaction ID: %, User ID: %',
+          NEW.account_id, NEW.id, NEW.user_id;
+      END IF;
+      
+      IF account_user_id != NEW.user_id THEN
+        RAISE EXCEPTION 'Account ownership mismatch. Account ID: % belongs to user %, but transaction belongs to user %. Transaction ID: %',
+          NEW.account_id, account_user_id, NEW.user_id, NEW.id;
       END IF;
     END IF;
 
   -- Transfer: validate ownership for both accounts
-  -- Note: CHECK constraints guarantee both account_id and counter_account_id are NOT NULL
   ELSE
-    IF NOT EXISTS (
-      SELECT 1 FROM accounts 
-      WHERE id = NEW.account_id AND user_id = NEW.user_id
-    ) THEN
-      RAISE EXCEPTION 'Account does not belong to user';
+    -- Validate source account
+    SELECT user_id INTO account_user_id
+    FROM accounts
+    WHERE id = NEW.account_id;
+    
+    IF account_user_id IS NULL THEN
+      RAISE EXCEPTION 'Account not found. Account ID: %, Transaction ID: %, User ID: %',
+        NEW.account_id, NEW.id, NEW.user_id;
+    END IF;
+    
+    IF account_user_id != NEW.user_id THEN
+      RAISE EXCEPTION 'Account ownership mismatch. Account ID: % belongs to user %, but transaction belongs to user %. Transaction ID: %',
+        NEW.account_id, account_user_id, NEW.user_id, NEW.id;
     END IF;
 
-    IF NOT EXISTS (
-      SELECT 1 FROM accounts 
-      WHERE id = NEW.counter_account_id AND user_id = NEW.user_id
-    ) THEN
-      RAISE EXCEPTION 'Counter account does not belong to user';
+    -- Validate destination account
+    SELECT user_id INTO counter_account_user_id
+    FROM accounts
+    WHERE id = NEW.counter_account_id;
+    
+    IF counter_account_user_id IS NULL THEN
+      RAISE EXCEPTION 'Counter account not found. Counter Account ID: %, Transaction ID: %, User ID: %',
+        NEW.counter_account_id, NEW.id, NEW.user_id;
+    END IF;
+    
+    IF counter_account_user_id != NEW.user_id THEN
+      RAISE EXCEPTION 'Counter account ownership mismatch. Counter Account ID: % belongs to user %, but transaction belongs to user %. Transaction ID: %',
+        NEW.counter_account_id, counter_account_user_id, NEW.user_id, NEW.id;
     END IF;
   END IF;
   
@@ -104,18 +127,26 @@ FOR EACH ROW EXECUTE FUNCTION validate_account_ownership();
 
 CREATE OR REPLACE FUNCTION validate_category_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+  category_user_id text;
 BEGIN
   -- Only validate if a category is specified (category_id is optional)
-  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
-  --       to distinguish between missing categories and ownership mismatches with detailed error messages
   IF NEW.category_id IS NOT NULL THEN
+    -- First check if category exists and get its user_id
+    SELECT user_id INTO category_user_id
+    FROM categories
+    WHERE id = NEW.category_id;
     
-    -- Verify that category_id belongs to the user creating the transaction
-    IF NOT EXISTS (
-      SELECT 1 FROM categories 
-      WHERE id = NEW.category_id AND user_id = NEW.user_id
-    ) THEN
-      RAISE EXCEPTION 'Category does not belong to user';
+    -- Category doesn't exist
+    IF category_user_id IS NULL THEN
+      RAISE EXCEPTION 'Category not found. Category ID: %, Transaction ID: %, User ID: %',
+        NEW.category_id, NEW.id, NEW.user_id;
+    END IF;
+    
+    -- Category exists but belongs to another user
+    IF category_user_id != NEW.user_id THEN
+      RAISE EXCEPTION 'Category ownership mismatch. Category ID: % belongs to user %, but transaction belongs to user %. Transaction ID: %',
+        NEW.category_id, category_user_id, NEW.user_id, NEW.id;
     END IF;
   END IF;
   
@@ -142,16 +173,25 @@ FOR EACH ROW EXECUTE FUNCTION validate_category_ownership();
 
 CREATE OR REPLACE FUNCTION validate_event_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+  event_user_id text;
 BEGIN
   -- Only validate if an event is specified (event_id is optional)
-  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
-  --       to distinguish between missing events and ownership mismatches with detailed error messages
   IF NEW.event_id IS NOT NULL THEN
-    IF NOT EXISTS (
-      SELECT 1 FROM events 
-      WHERE id = NEW.event_id AND user_id = NEW.user_id
-    ) THEN
-      RAISE EXCEPTION 'Event does not belong to user';
+    SELECT user_id INTO event_user_id
+    FROM events
+    WHERE id = NEW.event_id;
+    
+    -- Event doesn't exist
+    IF event_user_id IS NULL THEN
+      RAISE EXCEPTION 'Event not found. Event ID: %, Transaction ID: %, User ID: %',
+        NEW.event_id, NEW.id, NEW.user_id;
+    END IF;
+    
+    -- Event exists but belongs to another user
+    IF event_user_id != NEW.user_id THEN
+      RAISE EXCEPTION 'Event ownership mismatch. Event ID: % belongs to user %, but transaction belongs to user %. Transaction ID: %',
+        NEW.event_id, event_user_id, NEW.user_id, NEW.id;
     END IF;
   END IF;
   
@@ -271,9 +311,8 @@ BEGIN
   -- Note: Transfers cannot have categories (enforced by CHECK constraint),
   -- so this block only runs for expense/income transactions.
   IF NEW.category_id IS NOT NULL THEN
-    -- NOTE: This function was fixed in migration 0014_fix-enum-type-comparison-triggers.sql
-    --       to cast enum values to text (type::text) to avoid PostgreSQL operator mismatch errors
-    SELECT type INTO category_type
+    -- Cast enum to text when selecting into variable
+    SELECT type::text INTO category_type
     FROM categories
     WHERE id = NEW.category_id;
 
@@ -283,8 +322,8 @@ BEGIN
     END IF;
 
     -- Category type must match transaction type
-    -- NOTE: Fixed in migration 0014 - comparison now uses NEW.type::text
-    IF category_type != NEW.type THEN
+    -- Cast both sides to text for comparison (text != text works)
+    IF category_type != NEW.type::text THEN
       RAISE EXCEPTION 'Transaction type (%) does not match category type (%). Category ID: %',
         NEW.type, category_type, NEW.category_id;
     END IF;
@@ -319,13 +358,13 @@ CREATE TRIGGER trg_validate_transaction_category_type_update
 
 -- Ownership functions
 COMMENT ON FUNCTION validate_account_ownership() IS 
-'Ensures users can only use accounts they own in transactions; validates both accounts for transfers';
+'Ensures users can only use accounts they own in transactions; validates both accounts for transfers. IMPROVED: Distinguishes between missing accounts and ownership mismatches with detailed error messages.';
 
 COMMENT ON FUNCTION validate_category_ownership() IS 
-'Ensures users can only reference categories they own in transactions';
+'Ensures users can only reference categories they own in transactions. IMPROVED: Distinguishes between missing categories and ownership mismatches with detailed error messages.';
 
 COMMENT ON FUNCTION validate_event_ownership() IS 
-'Ensures users can only reference events they own in transactions';
+'Ensures users can only link transactions to events they own. IMPROVED: Distinguishes between missing events and ownership mismatches with detailed error messages.';
 
 -- Currency functions
 COMMENT ON FUNCTION validate_transaction_currency() IS 
@@ -333,7 +372,7 @@ COMMENT ON FUNCTION validate_transaction_currency() IS
 
 -- Category type functions
 COMMENT ON FUNCTION validate_transaction_category_type() IS 
-'Validates that transaction type matches category type: expense→expense, income→income. Transfer category check handled by CHECK constraint.';
+'Validates that transaction type matches category type: expense→expense, income→income. Transfer category check handled by CHECK constraint. FIXED: Casts enum values to text for comparison to avoid PostgreSQL operator mismatch errors.';
 
 -- Triggers
 COMMENT ON TRIGGER trg_validate_account_ownership ON transactions IS 
