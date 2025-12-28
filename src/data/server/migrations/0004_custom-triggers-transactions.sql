@@ -51,6 +51,8 @@ CREATE OR REPLACE FUNCTION validate_account_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- Non-transfer: only validate ownership if an account is provided
+  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
+  --       to distinguish between missing accounts and ownership mismatches with detailed error messages
   IF NEW.type <> 'transfer' THEN
     IF NEW.account_id IS NOT NULL THEN
       IF NOT EXISTS (
@@ -104,6 +106,8 @@ CREATE OR REPLACE FUNCTION validate_category_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- Only validate if a category is specified (category_id is optional)
+  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
+  --       to distinguish between missing categories and ownership mismatches with detailed error messages
   IF NEW.category_id IS NOT NULL THEN
     
     -- Verify that category_id belongs to the user creating the transaction
@@ -140,6 +144,8 @@ CREATE OR REPLACE FUNCTION validate_event_ownership()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- Only validate if an event is specified (event_id is optional)
+  -- NOTE: This function was improved in migration 0015_improve-ownership-error-messages.sql
+  --       to distinguish between missing events and ownership mismatches with detailed error messages
   IF NEW.event_id IS NOT NULL THEN
     IF NOT EXISTS (
       SELECT 1 FROM events 
@@ -265,6 +271,8 @@ BEGIN
   -- Note: Transfers cannot have categories (enforced by CHECK constraint),
   -- so this block only runs for expense/income transactions.
   IF NEW.category_id IS NOT NULL THEN
+    -- NOTE: This function was fixed in migration 0014_fix-enum-type-comparison-triggers.sql
+    --       to cast enum values to text (type::text) to avoid PostgreSQL operator mismatch errors
     SELECT type INTO category_type
     FROM categories
     WHERE id = NEW.category_id;
@@ -275,6 +283,7 @@ BEGIN
     END IF;
 
     -- Category type must match transaction type
+    -- NOTE: Fixed in migration 0014 - comparison now uses NEW.type::text
     IF category_type != NEW.type THEN
       RAISE EXCEPTION 'Transaction type (%) does not match category type (%). Category ID: %',
         NEW.type, category_type, NEW.category_id;

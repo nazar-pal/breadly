@@ -91,6 +91,8 @@ BEGIN
   -- Only validate if parent_id is being set
   IF NEW.parent_id IS NOT NULL THEN
     -- Get the parent category's type
+    -- NOTE: This function was fixed in migration 0014_fix-enum-type-comparison-triggers.sql
+    --       to cast enum values to text (type::text) to avoid PostgreSQL operator mismatch errors
     SELECT type INTO parent_type
     FROM categories
     WHERE id = NEW.parent_id;
@@ -101,6 +103,7 @@ BEGIN
     END IF;
 
     -- Category type must match parent type
+    -- NOTE: Fixed in migration 0014 - comparison now uses NEW.type::text
     IF parent_type != NEW.type THEN
       RAISE EXCEPTION 'Child category type (%) must match parent category type (%). Category: %, Parent ID: %',
         NEW.type, parent_type, NEW.name, NEW.parent_id;
