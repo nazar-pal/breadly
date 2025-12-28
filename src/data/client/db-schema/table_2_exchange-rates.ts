@@ -11,6 +11,17 @@ Key Features:
 - Base-to-quote currency pair relationships
 - Date-specific rate validation
 - Automatic currency conversion support
+- Server-managed data (read-only from clients)
+
+SERVER-MANAGED DATA:
+─────────────────────────────────────────────────────
+Exchange rates are populated and updated by server-side scheduled jobs.
+Clients receive exchange rates via PowerSync's global bucket (read-only).
+
+- Clients should NEVER attempt to create, update, or delete exchange rates
+- Exchange rates are synced to all authenticated users via the global bucket
+- Rate updates happen automatically on the server (typically daily/hourly)
+- Historical rates are preserved for accurate reporting and conversions
 
 PowerSync Limitations (JSON-based views):
 - CHECK constraints are NOT enforced (validated via Zod instead)

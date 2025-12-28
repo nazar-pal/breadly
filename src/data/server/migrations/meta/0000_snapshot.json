@@ -1,5 +1,5 @@
 {
-  "id": "a938c483-dac7-4317-be31-d9f7e64ec326",
+  "id": "5d1f9dd8-0045-454d-84de-cf74008a18f2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,14 +50,14 @@
         },
         "balance": {
           "name": "balance",
-          "type": "numeric(14, 2)",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": "'0'"
+          "default": 0
         },
         "savings_target_amount": {
           "name": "savings_target_amount",
-          "type": "numeric(14, 2)",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },
@@ -69,7 +69,7 @@
         },
         "debt_initial_amount": {
           "name": "debt_initial_amount",
-          "type": "numeric(14, 2)",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },
@@ -88,21 +88,35 @@
         },
         "archived_at": {
           "name": "archived_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -183,13 +197,25 @@
           "name": "accounts_name_not_empty",
           "value": "length(trim(\"accounts\".\"name\")) > 0"
         },
+        "accounts_max_balance": {
+          "name": "accounts_max_balance",
+          "value": "\"accounts\".\"balance\" <= 9007199254740991"
+        },
         "accounts_positive_target_amount": {
           "name": "accounts_positive_target_amount",
           "value": "\"accounts\".\"savings_target_amount\" IS NULL OR \"accounts\".\"savings_target_amount\" > 0"
         },
+        "accounts_max_target_amount": {
+          "name": "accounts_max_target_amount",
+          "value": "\"accounts\".\"savings_target_amount\" IS NULL OR \"accounts\".\"savings_target_amount\" <= 9007199254740991"
+        },
         "accounts_positive_debt_initial_amount": {
           "name": "accounts_positive_debt_initial_amount",
           "value": "\"accounts\".\"debt_initial_amount\" IS NULL OR \"accounts\".\"debt_initial_amount\" > 0"
+        },
+        "accounts_max_debt_initial_amount": {
+          "name": "accounts_max_debt_initial_amount",
+          "value": "\"accounts\".\"debt_initial_amount\" IS NULL OR \"accounts\".\"debt_initial_amount\" <= 9007199254740991"
         },
         "accounts_savings_fields_only_for_saving": {
           "name": "accounts_savings_fields_only_for_saving",
@@ -271,21 +297,35 @@
         },
         "uploaded_at": {
           "name": "uploaded_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -405,7 +445,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(14, 2)",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -436,15 +476,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -564,6 +618,10 @@
           "name": "budgets_positive_amount",
           "value": "\"budgets\".\"amount\" > 0"
         },
+        "budgets_max_amount": {
+          "name": "budgets_max_amount",
+          "value": "\"budgets\".\"amount\" <= 9007199254740991"
+        },
         "budgets_valid_year": {
           "name": "budgets_valid_year",
           "value": "\"budgets\".\"budget_year\" >= 1970 AND \"budgets\".\"budget_year\" <= 2100"
@@ -645,21 +703,35 @@
         },
         "archived_at": {
           "name": "archived_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -781,18 +853,6 @@
           "type": "varchar(3)",
           "primaryKey": true,
           "notNull": true
-        },
-        "symbol": {
-          "name": "symbol",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
@@ -804,14 +864,6 @@
         "currencies_code_format": {
           "name": "currencies_code_format",
           "value": "\"currencies\".\"code\" ~ '^[A-Z]{3}$'"
-        },
-        "currencies_symbol_not_empty": {
-          "name": "currencies_symbol_not_empty",
-          "value": "length(trim(\"currencies\".\"symbol\")) > 0"
-        },
-        "currencies_name_not_empty": {
-          "name": "currencies_name_not_empty",
-          "value": "length(trim(\"currencies\".\"name\")) > 0"
         }
       },
       "isRLSEnabled": false
@@ -867,21 +919,35 @@
         },
         "archived_at": {
           "name": "archived_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -980,7 +1046,7 @@
         },
         "rate": {
           "name": "rate",
-          "type": "numeric(20, 10)",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
@@ -1140,15 +1206,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -1342,7 +1422,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(14, 2)",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -1366,15 +1446,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -1597,6 +1691,10 @@
           "name": "transactions_positive_amount",
           "value": "\"transactions\".\"amount\" > 0"
         },
+        "transactions_max_amount": {
+          "name": "transactions_max_amount",
+          "value": "\"transactions\".\"amount\" <= 9007199254740991"
+        },
         "transactions_transfer_different_accounts": {
           "name": "transactions_transfer_different_accounts",
           "value": "\"transactions\".\"type\" != 'transfer' OR \"transactions\".\"account_id\" != \"transactions\".\"counter_account_id\""
@@ -1657,15 +1755,29 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "server_created_at": {
+          "name": "server_created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "server_updated_at": {
+          "name": "server_updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

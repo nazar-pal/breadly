@@ -97,6 +97,11 @@ Ensures child categories have the same type (income/expense) as their parent, pr
 - Child categories must have the same `type` as their parent
 - Prevents income categories under expense parents and vice versa
 
+**Technical Implementation:**
+
+- Enum values are cast to text (`type::text`) when selecting into variables and during comparisons to avoid PostgreSQL operator mismatch errors
+- This ensures reliable comparison between enum columns and text variables
+
 **Client-Side Validation:**  
 Client mutations validate parent type matching before inserting/updating categories.
 
@@ -194,6 +199,14 @@ Ensures users can only create transactions using accounts they own, preventing c
 - For transfer transactions: Both `account_id` and `counter_account_id` must belong to the user
 - Prevents unauthorized cross-tenant account access
 
+**Error Messages:**
+
+The function provides detailed error messages that distinguish between:
+- **Account not found**: When the referenced account doesn't exist (includes account ID, transaction ID, and user ID)
+- **Ownership mismatch**: When the account exists but belongs to another user (includes account ID, account owner, transaction owner, and transaction ID)
+
+This helps with debugging sync issues and data integrity problems.
+
 **Client-Side Validation:**  
 Client mutations validate account ownership before inserting/updating transactions.
 
@@ -214,6 +227,14 @@ Ensures users can only reference categories they own in transactions.
 - If `category_id` is provided, it must belong to the user creating the transaction
 - Prevents cross-user category access
 
+**Error Messages:**
+
+The function provides detailed error messages that distinguish between:
+- **Category not found**: When the referenced category doesn't exist (includes category ID, transaction ID, and user ID)
+- **Ownership mismatch**: When the category exists but belongs to another user (includes category ID, category owner, transaction owner, and transaction ID)
+
+This helps with debugging sync issues, especially when categories haven't synced yet or were deleted but transactions still reference them.
+
 **Client-Side Validation:**  
 Client mutations validate category ownership before inserting/updating transactions.
 
@@ -233,6 +254,14 @@ Ensures users can only link transactions to events they own.
 
 - If `event_id` is provided, it must belong to the user creating the transaction
 - Prevents unauthorized cross-tenant event access
+
+**Error Messages:**
+
+The function provides detailed error messages that distinguish between:
+- **Event not found**: When the referenced event doesn't exist (includes event ID, transaction ID, and user ID)
+- **Ownership mismatch**: When the event exists but belongs to another user (includes event ID, event owner, transaction owner, and transaction ID)
+
+This helps with debugging sync issues and data integrity problems.
 
 **Client-Side Validation:**  
 Client mutations validate event ownership before inserting/updating transactions.
@@ -275,6 +304,11 @@ Ensures transaction type matches category type (expense→expense, income→inco
 - Expense transactions can only use expense categories
 - Income transactions can only use income categories
 - Category type must match transaction type exactly
+
+**Technical Implementation:**
+
+- Enum values are cast to text (`type::text`) when selecting into variables and during comparisons to avoid PostgreSQL operator mismatch errors
+- This ensures reliable comparison between enum columns and text variables
 
 **Important Notes:**
 
