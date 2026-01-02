@@ -1,6 +1,6 @@
 import { categories } from '@/data/client/db-schema'
 import { toSmallestUnit } from '@/lib/utils/currency-info'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { eq } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
 import type { CsvArr } from './csv-arr-schema'

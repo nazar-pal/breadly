@@ -3,7 +3,7 @@ import {
   CATEGORY_TYPE,
   transactions
 } from '@/data/client/db-schema'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, asc, eq, gte, isNull, lte } from 'drizzle-orm'
 
 interface Params {

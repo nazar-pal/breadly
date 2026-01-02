@@ -1,6 +1,6 @@
 import { asyncTryCatch } from '@/lib/utils'
 import { needsRebalancing } from '@/lib/utils/fractional-ordering'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, asc, eq, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 import { categories, CATEGORY_TYPE } from '../../db-schema'

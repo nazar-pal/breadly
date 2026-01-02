@@ -2,9 +2,7 @@ import { GestureHandlerRootView } from '@/components/ui/gesture-handler-root-vie
 import { queryClient } from '@/data/trpc/query-client'
 import { env } from '@/env'
 import { useNavTheme } from '@/lib/hooks'
-import { PowerSyncContextProvider } from '@/system/powersync/context'
-import { PurchasesInitializer } from '@/system/purchases/purchases-initializer'
-import { UserSessionInitializer } from '@/system/session-and-migration'
+import { SyncOrchestrator } from '@/system-v2'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { resourceCache } from '@clerk/clerk-expo/resource-cache'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
@@ -120,16 +118,13 @@ function RootLayoutNative() {
                   __experimental_resourceCache={resourceCache}
                 >
                   <ClerkLoaded>
-                    <UserSessionInitializer>
-                      <PurchasesInitializer />
-                      <PowerSyncContextProvider>
-                        <StatusBar
-                          style={colorScheme === 'dark' ? 'light' : 'dark'}
-                        />
-                        <StackRoutes />
-                        <PortalHost />
-                      </PowerSyncContextProvider>
-                    </UserSessionInitializer>
+                    <SyncOrchestrator>
+                      <StatusBar
+                        style={colorScheme === 'dark' ? 'light' : 'dark'}
+                      />
+                      <StackRoutes />
+                      <PortalHost />
+                    </SyncOrchestrator>
                   </ClerkLoaded>
                 </ClerkProvider>
               </ThemeProvider>

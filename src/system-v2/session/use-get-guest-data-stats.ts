@@ -1,0 +1,140 @@
+import {
+  accounts,
+  attachments,
+  budgets,
+  categories,
+  events,
+  transactions
+} from '@/data/client/db-schema'
+import { useDrizzleQuery } from '@/lib/hooks'
+import { db } from '@/system-v2'
+import { count, eq } from 'drizzle-orm'
+
+export type GuestDataStats = {
+  categories: number
+  accounts: number
+  transactions: number
+  budgets: number
+  events: number
+  attachments: number
+  total: number
+  hasData: boolean
+}
+
+/**
+ * Hook to get guest data statistics
+ * Returns counts for all data types and computed values for easy UI usage
+ *
+ * @param userId - The user ID to check for data
+ * @returns Object containing counts, loading state, and other query metadata
+ */
+export function useGetGuestDataStats({ userId }: { userId: string }) {
+  // Query for categories count
+  const categoriesQuery = db
+    .select({
+      count: count()
+    })
+    .from(categories)
+    .where(eq(categories.userId, userId))
+
+  // Query for accounts count
+  const accountsQuery = db
+    .select({
+      count: count()
+    })
+    .from(accounts)
+    .where(eq(accounts.userId, userId))
+
+  // Query for transactions count
+  const transactionsQuery = db
+    .select({
+      count: count()
+    })
+    .from(transactions)
+    .where(eq(transactions.userId, userId))
+
+  // Query for budgets count
+  const budgetsQuery = db
+    .select({
+      count: count()
+    })
+    .from(budgets)
+    .where(eq(budgets.userId, userId))
+
+  // Query for events count
+  const eventsQuery = db
+    .select({
+      count: count()
+    })
+    .from(events)
+    .where(eq(events.userId, userId))
+
+  // Query for attachments count
+  const attachmentsQuery = db
+    .select({
+      count: count()
+    })
+    .from(attachments)
+    .where(eq(attachments.userId, userId))
+
+  const categoriesResult = useDrizzleQuery(categoriesQuery)
+  const accountsResult = useDrizzleQuery(accountsQuery)
+  const transactionsResult = useDrizzleQuery(transactionsQuery)
+  const budgetsResult = useDrizzleQuery(budgetsQuery)
+  const eventsResult = useDrizzleQuery(eventsQuery)
+  const attachmentsResult = useDrizzleQuery(attachmentsQuery)
+
+  const isLoading =
+    categoriesResult.isLoading ||
+    accountsResult.isLoading ||
+    transactionsResult.isLoading ||
+    budgetsResult.isLoading ||
+    eventsResult.isLoading ||
+    attachmentsResult.isLoading
+
+  // Process the data to calculate stats
+  let stats: GuestDataStats = {
+    categories: 0,
+    accounts: 0,
+    transactions: 0,
+    budgets: 0,
+    events: 0,
+    attachments: 0,
+    total: 0,
+    hasData: false
+  }
+
+  if (!isLoading) {
+    const categoriesCount = categoriesResult.data?.[0]?.count || 0
+    const accountsCount = accountsResult.data?.[0]?.count || 0
+    const transactionsCount = transactionsResult.data?.[0]?.count || 0
+    const budgetsCount = budgetsResult.data?.[0]?.count || 0
+    const eventsCount = eventsResult.data?.[0]?.count || 0
+    const attachmentsCount = attachmentsResult.data?.[0]?.count || 0
+
+    const total =
+      categoriesCount +
+      accountsCount +
+      transactionsCount +
+      budgetsCount +
+      eventsCount +
+      attachmentsCount
+
+    stats = {
+      categories: categoriesCount,
+      accounts: accountsCount,
+      transactions: transactionsCount,
+      budgets: budgetsCount,
+      events: eventsCount,
+      attachments: attachmentsCount,
+      total,
+      hasData: total > 0
+    }
+  }
+
+  return {
+    ...categoriesResult,
+    data: stats,
+    isLoading
+  }
+}

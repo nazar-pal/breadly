@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { createCategory } from '@/data/client/mutations'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 

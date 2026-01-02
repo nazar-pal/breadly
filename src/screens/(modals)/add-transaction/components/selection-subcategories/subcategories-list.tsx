@@ -1,6 +1,6 @@
 import { getCategories } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import React from 'react'
 import { SubcategoriesItem } from './subcategories-item'
 

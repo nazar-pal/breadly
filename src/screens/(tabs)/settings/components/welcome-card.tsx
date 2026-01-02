@@ -1,7 +1,6 @@
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
-import { GoogleOAuthButton } from '@/system/session-and-migration'
-import { DataLossWarning } from '@/system/session-and-migration/components/data-loss-warning'
+import { DataLossWarning, GoogleOAuthButton } from '@/system-v2/components'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useColorScheme, View } from 'react-native'
 

@@ -202,6 +202,7 @@ Ensures users can only create transactions using accounts they own, preventing c
 **Error Messages:**
 
 The function provides detailed error messages that distinguish between:
+
 - **Account not found**: When the referenced account doesn't exist (includes account ID, transaction ID, and user ID)
 - **Ownership mismatch**: When the account exists but belongs to another user (includes account ID, account owner, transaction owner, and transaction ID)
 
@@ -230,6 +231,7 @@ Ensures users can only reference categories they own in transactions.
 **Error Messages:**
 
 The function provides detailed error messages that distinguish between:
+
 - **Category not found**: When the referenced category doesn't exist (includes category ID, transaction ID, and user ID)
 - **Ownership mismatch**: When the category exists but belongs to another user (includes category ID, category owner, transaction owner, and transaction ID)
 
@@ -258,6 +260,7 @@ Ensures users can only link transactions to events they own.
 **Error Messages:**
 
 The function provides detailed error messages that distinguish between:
+
 - **Event not found**: When the referenced event doesn't exist (includes event ID, transaction ID, and user ID)
 - **Ownership mismatch**: When the event exists but belongs to another user (includes event ID, event owner, transaction owner, and transaction ID)
 

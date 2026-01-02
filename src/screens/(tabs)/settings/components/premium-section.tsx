@@ -1,16 +1,16 @@
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
-import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
-import { usePurchasesStore } from '@/system/purchases'
+import { usePurchases } from '@/system-v2/purchases'
+import { useSyncEnabled } from '@/system-v2/orchestrator'
 import { useAuth } from '@clerk/clerk-expo'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, type Href } from 'expo-router'
 import { Pressable, View } from 'react-native'
 
 export function PremiumSection() {
-  const { isPremium } = usePurchasesStore()
+  const { isPremium } = usePurchases()
   const { isSignedIn } = useAuth()
-  const { syncEnabled } = useSessionPersistentStore()
+  const syncEnabled = useSyncEnabled()
 
   if (!isSignedIn || isPremium) return null
 

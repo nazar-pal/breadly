@@ -5,7 +5,7 @@ import {
   useAccountModalState
 } from '@/lib/storage/account-modal-store'
 import { toSmallestUnit } from '@/lib/utils/currency-info'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { useForm } from 'react-hook-form'

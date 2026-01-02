@@ -5,7 +5,7 @@ import {
 } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { formatCurrency } from '@/lib/utils'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import { startOfMonth } from 'date-fns'
 import React from 'react'
 import { View } from 'react-native'

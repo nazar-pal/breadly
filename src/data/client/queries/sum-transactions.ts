@@ -1,5 +1,5 @@
 import { CATEGORY_TYPE, transactions } from '@/data/client/db-schema'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, eq, gte, lte, sum } from 'drizzle-orm'
 
 interface Params {

@@ -1,6 +1,6 @@
 import { createMMKV } from 'react-native-mmkv'
 
-export const storage = createMMKV({ id: 'app-storage-v1' })
+export const storage = createMMKV({ id: 'app-storage-v11' })
 
 export const LocalStore = {
   getItem(key: string): string | null {

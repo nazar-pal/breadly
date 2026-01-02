@@ -1,6 +1,6 @@
 import { categories, transactions } from '@/data/client/db-schema'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, count, eq } from 'drizzle-orm'
 
 export function useCheckCategoryDependencies({

@@ -8,7 +8,7 @@ import { Pressable, View } from 'react-native'
 type HeaderCardProps = {
   appUserId: string | null
   isPremium: boolean
-  isCustomerInfoFresh: boolean
+  isPurchaseStatusVerified: boolean
   packageCount: number
   entitlementCount: number
 }
@@ -16,7 +16,7 @@ type HeaderCardProps = {
 export function HeaderCard({
   appUserId,
   isPremium,
-  isCustomerInfoFresh,
+  isPurchaseStatusVerified,
   packageCount,
   entitlementCount
 }: HeaderCardProps) {
@@ -70,7 +70,7 @@ export function HeaderCard({
           <View className="flex-1 gap-2">
             <Stat
               icon="Activity"
-              value={isCustomerInfoFresh ? 'Fresh' : 'Cached'}
+              value={isPurchaseStatusVerified ? 'Verified' : 'Cached'}
               label="Status"
             />
             <Stat icon="Key" value={entitlementCount} label="Entitlements" />

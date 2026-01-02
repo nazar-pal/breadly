@@ -5,7 +5,7 @@ import { OPSqliteOpenFactory } from '@powersync/op-sqlite'
 import { PowerSyncDatabase } from '@powersync/react-native'
 import { makeSchema } from './utils'
 
-export const dbName = 'powersync_v111.db'
+export const dbName = 'powersync_v201.db'
 const { syncEnabled } = sessionPersistentStore.getState()
 
 const opSqlite = new OPSqliteOpenFactory({ dbFilename: dbName })

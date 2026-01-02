@@ -1,4 +1,4 @@
-import { usePurchasesStore } from '@/system/purchases'
+import { usePurchases } from '@/system-v2/purchases'
 import { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import Purchases, { type PurchasesOfferings } from 'react-native-purchases'
@@ -16,8 +16,8 @@ export default function PurchasesScreen() {
     customerInfo,
     setCustomerInfo,
     activeEntitlementIds,
-    isCustomerInfoFresh
-  } = usePurchasesStore()
+    isPurchaseStatusVerified
+  } = usePurchases()
 
   const [offerings, setOfferings] = useState<PurchasesOfferings | null>(null)
   const [appUserId, setAppUserId] = useState<string | null>(null)
@@ -71,7 +71,7 @@ export default function PurchasesScreen() {
         <HeaderCard
           appUserId={appUserId}
           isPremium={isPremium}
-          isCustomerInfoFresh={isCustomerInfoFresh}
+          isPurchaseStatusVerified={isPurchaseStatusVerified}
           packageCount={packageCount}
           entitlementCount={entitlementCount}
         />

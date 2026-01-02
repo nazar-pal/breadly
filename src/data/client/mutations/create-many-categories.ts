@@ -1,6 +1,6 @@
 import { categories, categoryInsertSchema } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'

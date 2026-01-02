@@ -1,4 +1,4 @@
-import { Paywall } from '@/system/purchases/paywall'
+import { Paywall } from '@/system-v2/purchases'
 import React from 'react'
 import { Platform } from 'react-native'
 

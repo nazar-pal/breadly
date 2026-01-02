@@ -2,9 +2,9 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Icon } from '@/components/ui/lucide-icon-by-name'
 import { Text } from '@/components/ui/text'
-import { useSessionPersistentStore } from '@/lib/storage/user-session-persistent-store'
-import { usePurchasesStore } from '@/system/purchases'
-import { SignOutButton } from '@/system/session-and-migration/components/sign-out-button'
+import { usePurchases } from '@/system-v2/purchases'
+import { SignOutButton } from '@/system-v2/components'
+import { useSyncEnabled } from '@/system-v2/orchestrator'
 import { useUser } from '@clerk/clerk-expo'
 import { useStatus } from '@powersync/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -12,8 +12,8 @@ import { View } from 'react-native'
 
 export function ProfileSection() {
   const { user } = useUser()
-  const { isPremium } = usePurchasesStore()
-  const { syncEnabled } = useSessionPersistentStore()
+  const { isPremium } = usePurchases()
+  const syncEnabled = useSyncEnabled()
   const status = useStatus()
 
   if (!user) return null

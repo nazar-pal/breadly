@@ -1,6 +1,6 @@
 import { accounts, transactions } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, count, eq, or } from 'drizzle-orm'
 
 export async function deleteAccount({

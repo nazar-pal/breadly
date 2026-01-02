@@ -6,7 +6,7 @@ import {
 } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import { router } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'

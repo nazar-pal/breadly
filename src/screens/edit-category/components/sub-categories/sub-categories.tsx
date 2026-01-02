@@ -8,7 +8,7 @@ import {
 import { useDrizzleQuery } from '@/lib/hooks'
 import { useCategoryFormModalActions } from '@/lib/storage/category-form-modal-store'
 import { cn } from '@/lib/utils'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist'

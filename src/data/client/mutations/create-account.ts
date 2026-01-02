@@ -4,7 +4,7 @@ import {
   currencies
 } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { eq } from 'drizzle-orm'
 import { randomUUID } from 'expo-crypto'
 import { z } from 'zod'

@@ -5,7 +5,7 @@ import {
   transactions
 } from '@/data/client/db-schema'
 import { asyncTryCatch } from '@/lib/utils/index'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { and, eq, or } from 'drizzle-orm'
 import { z } from 'zod'
 

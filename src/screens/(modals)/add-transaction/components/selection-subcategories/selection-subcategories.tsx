@@ -1,6 +1,6 @@
 import { getCategory } from '@/data/client/queries'
 import { useDrizzleQuery } from '@/lib/hooks'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import { useTransactionParamsActions } from '../../store'

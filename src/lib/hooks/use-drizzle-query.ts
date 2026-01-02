@@ -1,4 +1,4 @@
-import { db as drizzleDb } from '@/system/powersync/system'
+import { db as drizzleDb } from '@/system-v2'
 import { toCompilableQuery } from '@powersync/drizzle-driver'
 import type { AdditionalOptions } from '@powersync/react-native'
 import { useQuery } from '@powersync/react-native'
@@ -29,7 +29,7 @@ import type { Query } from 'drizzle-orm'
  * ```ts
  * import { toCompilableQuery } from '@powersync/drizzle-driver'
  * import { useQuery } from '@powersync/react-native'
- * import { db } from '@/system/powersync/system'
+ * import { db } from '@/system-v2'
  * import { accounts } from '@/data/client/db-schema'
  * import { eq } from 'drizzle-orm'
  *
@@ -43,7 +43,7 @@ import type { Query } from 'drizzle-orm'
  *
  * ```ts
  * import { useDrizzleQuery } from '@/lib/hooks'
- * import { db } from '@/system/powersync/system'
+ * import { db } from '@/system-v2'
  * import { accounts } from '@/data/client/db-schema'
  * import { eq } from 'drizzle-orm'
  *

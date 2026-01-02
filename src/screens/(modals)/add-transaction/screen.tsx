@@ -1,7 +1,7 @@
 import { Calculator } from '@/components/calculator'
 import { SafeAreaView } from '@/components/ui/safe-area-view'
 import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animation-store'
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import * as Sentry from '@sentry/react-native'
 import React, { useEffect } from 'react'
 import { Platform, View } from 'react-native'

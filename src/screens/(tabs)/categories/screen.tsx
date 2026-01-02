@@ -9,7 +9,7 @@ import { categoryTotalAnimationStore } from '@/lib/storage/category-total-animat
 import { useLastParams } from '@/lib/storage/last-transaction-params-store'
 import { openExpenseIncomeBottomSheet } from '@/screens/(modals)/add-transaction'
 import { CategoryCardsGrid } from '@/screens/(tabs)/categories/components/category-cards-grid'
-import { useUserSession } from '@/system/session-and-migration/hooks'
+import { useUserSession } from '@/system-v2/session'
 import { router } from 'expo-router'
 import React, { useEffect, useRef } from 'react'
 import { View } from 'react-native'

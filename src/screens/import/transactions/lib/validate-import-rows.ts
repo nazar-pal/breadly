@@ -4,7 +4,7 @@ import type {
   PostValidationResult,
   RowValidationError
 } from '@/lib/hooks/use-csv-import'
-import { db } from '@/system/powersync/system'
+import { db } from '@/system-v2'
 import { startOfDay } from 'date-fns'
 import { eq } from 'drizzle-orm'
 import type { CsvArr } from './csv-arr-schema'

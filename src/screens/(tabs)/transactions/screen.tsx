@@ -1,4 +1,4 @@
-import { useUserSession } from '@/system/session-and-migration'
+import { useUserSession } from '@/system-v2/session'
 import React from 'react'
 import {
   LoadingState,
